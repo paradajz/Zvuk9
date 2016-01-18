@@ -1,0 +1,222 @@
+#include "Pads.h"
+#include "eeprom/EEPROMsettings.h"
+
+//difference? investigate
+bool Pads::getAfterTouchSendEnabled(uint8_t padNumber) {
+
+    return bitRead(padFeatures[padNumber], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH);
+
+}
+
+void Pads::setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state) {
+
+    int16_t eepromAddress = getEEPROMaddressFeatures(padNumber);
+
+    bitWrite(padFeatures[padNumber], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH, state);
+    eeprom_update_byte((uint8_t*)eepromAddress, padFeatures[padNumber]);
+
+}
+
+void Pads::afterTouchOnOff()    {
+
+    bool newAfterTouchState;
+
+    if (splitCounter != 2)   {   //feature splitting is off
+
+        newAfterTouchState = !bitRead(padFeatures[0], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH);
+
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+        setAfterTouchSendEnabled(i, newAfterTouchState);
+
+        #if MODE_SERIAL
+        Serial.print(F("Aftertouch "));
+        newAfterTouchState ? Serial.print(F("on ")) : Serial.print(F("off "));
+        Serial.println(F("for all pads"));
+        #endif
+
+    }
+
+    else {  //feature splitting is on
+
+        newAfterTouchState = !bitRead(padFeatures[lastTouchedPad], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH);
+
+        setAfterTouchSendEnabled(lastTouchedPad, newAfterTouchState);
+
+        #if MODE_SERIAL
+        Serial.print(F("Aftertouch "));
+        newAfterTouchState ? Serial.print(F("on")) : Serial.print(F("off"));
+        Serial.print(F(" for pad "));
+        Serial.println(lastTouchedPad);
+        #endif
+
+    }
+
+}
+
+bool Pads::getAfterTouchSendState(uint8_t pad) {
+
+    return bitRead(padFeatures[pad], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH);
+
+}
+
+//end investigate
+
+void Pads::getAfterTouchUpperPressureLimits()    {
+
+    uint8_t ratio = eeprom_read_byte((uint8_t*)EEPROM_PAD_AFTERTOUCH_PRESSURE_UPPER);
+
+    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+
+        int32_t afterTouchPressure = padPressureLimitUpper[i] + (int32_t)(((padPressureLimitUpper[i] - padPressureLimitLower[i]) * (int32_t)100) * (uint32_t)ratio) / 10000;
+        padPressureLimitUpperAfterTouch[i] = afterTouchPressure;
+
+    }
+
+}
+
+bool Pads::setAfterTouchPressureRatio(uint8_t ratio)   {
+
+    if ((ratio == 0) || (ratio > 100))    return false;
+
+    eeprom_update_byte((uint8_t*)EEPROM_PAD_AFTERTOUCH_PRESSURE_UPPER, ratio);
+
+    if (eeprom_read_byte((uint8_t*)EEPROM_PAD_AFTERTOUCH_PRESSURE_UPPER) == ratio)  {
+
+        getAfterTouchUpperPressureLimits();
+        return true;
+
+    }   return false;
+
+}
+
+
+bool Pads::getAfterTouchGestureActivated(uint8_t padNumber, uint8_t pressure)  {
+
+    if (afterTouchGestureCounter[padNumber] == GESTURE_NUMBER_OF_CHANGES) return true;
+
+    //reset gesture if GESTURE_ACTIVATION_TIME is exceeded
+    if (
+    (newMillis() - afterTouchGestureTimer[padNumber] > GESTURE_ACTIVATION_TIME) &&
+    (afterTouchGestureCounter[padNumber] != 0)
+    )    {
+
+        resetAfterTouchCounters(padNumber);
+        initialPressure[padNumber] = pressure;
+
+    }
+
+    if (abs(pressure - initialPressure[padNumber]) > AFTERTOUCH_SEND_AFTER_DIFFERENCE)  {
+
+        bool tempGestureDirection = (initialPressure[padNumber] > pressure);
+
+        if (afterTouchGestureCounter[padNumber] == 0)   {
+
+            //record new reference value
+            initialPressure[padNumber] = pressure;
+            //start gesture timer
+            afterTouchGestureTimer[padNumber] = newMillis();
+            //increment gesture counter
+            afterTouchGestureCounter[padNumber]++;
+
+            }   else if (tempGestureDirection != lastAfterTouchGestureDirection[padNumber]) {
+
+            //only increase gesture counter if there's been a direction change
+            afterTouchGestureCounter[padNumber]++;
+            //record new reference value
+            initialPressure[padNumber] = pressure;
+
+        }
+
+        //update last direction with current
+        lastAfterTouchGestureDirection[padNumber] = tempGestureDirection;
+
+    }
+
+    return false;
+
+}
+
+void Pads::resetAfterTouchCounters(uint8_t padNumber) {
+
+    afterTouchGestureCounter[padNumber]   = 0;
+    afterTouchGestureTimer[padNumber]     = 0;
+    initialPressure[padNumber]            = 0;
+    initialXvalue[padNumber]              = -999;
+    initialYvalue[padNumber]              = -999;
+
+}
+
+
+void Pads::sendPadAftertouch()  {
+
+    uint8_t pad = padID[activePad];
+
+    #if MODE_SERIAL
+    Serial.print(F("Pad "));
+    Serial.print(pad);
+    Serial.print(F(" aftertouch value: "));
+    Serial.println(midiAfterTouch);
+    #else
+    for (int i=0; i<NOTES_PER_PAD; i++) {
+
+        if (padNote[pad][i] != BLANK_NOTE)
+            midi.sendAfterTouch(midiChannel, padNote[pad][i], midiAfterTouch);
+
+    }
+    #endif
+    if (!getPadEditMode())  sendLCDAfterTouchCallback(midiAfterTouch);
+
+    afterTouchAvailable = false;
+
+}
+
+bool Pads::afterTouchMIDIdataAvailable()    {
+
+    return afterTouchAvailable;
+
+}
+
+void Pads::checkAftertouch()  {
+
+    uint8_t pad = activePad;
+    int16_t pressure = lastPressureValue[pad]; //latest value
+
+    if (!bitRead(padPressed, pad)) return; //don't check aftertouch if pad isn't pressed
+
+    afterTouchActivated[pad] = getAfterTouchSendEnabled(pad) && getAfterTouchGestureActivated(pad, calibratePressure(pad, pressure, pressureVelocity));
+
+    //aftertouch
+    if (afterTouchActivated[pad]) {
+
+        uint8_t calibratedPressureAfterTouch = calibratePressure(pad, pressure, pressureAfterTouch);
+
+        uint32_t timeDifference = newMillis() - afterTouchSendTimer[pad];
+        bool afterTouchSend = false;
+
+        if (timeDifference > AFTERTOUCH_SEND_TIMEOUT)  {
+
+            if (abs(calibratedPressureAfterTouch - lastAfterTouchValue[pad]) > AFTERTOUCH_SEND_TIMEOUT_STEP)    {
+
+                afterTouchSend = true;
+
+            }
+
+            }   else if ((calibratedPressureAfterTouch != lastAfterTouchValue[pad]) && (timeDifference > AFTERTOUCH_SEND_TIMEOUT_IGNORE)) {
+
+            afterTouchSend = true;
+
+        }
+
+        if (afterTouchSend) {
+
+            afterTouchAvailable = true;
+            padMovementDetected = true;
+            midiAfterTouch = calibratedPressureAfterTouch;
+            lastAfterTouchValue[pad] = midiAfterTouch;
+            afterTouchSendTimer[pad] = newMillis();
+
+        }
+
+    }
+    
+}
