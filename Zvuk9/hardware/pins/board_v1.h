@@ -1,7 +1,7 @@
 #ifndef KONTROLAPCBIDS_H_
 #define KONTROLAPCBIDS_H_
 
-#define KONTROLA_PCB
+#define BOARD_V1
 
 //mux
 #define MUX_COMMON_PIN_0            A3
@@ -127,13 +127,22 @@
 #define ENCODER_PAIR_09_PIN_1       12
 
 //LCD
-//#define LCD_D4_PIN                  5
-//#define LCD_D5_PIN                  6
-//#define LCD_D6_PIN                  7
-//#define LCD_D7_PIN                  8
+#define LCD_DB4_PORT                PORTD       // If using 4 bit mode, you must configure DB4-DB7
+#define LCD_DB4_PIN                 5
+#define LCD_DB5_PORT                PORTD
+#define LCD_DB5_PIN                 6
+#define LCD_DB6_PORT                PORTD
+#define LCD_DB6_PIN                 7
+#define LCD_DB7_PORT                PORTE
+#define LCD_DB7_PIN                 0
 
-//#define LCD_ENABLE_PIN              4
-//#define LCD_RW_PIN                  2
-//#define LCD_RS_PIN                  27
+#define LCD_RS_PORT                 PORTB       // Port for RS line
+#define LCD_RS_PIN                  7           // Pin for RS line
 
-#endif /* KONTROLAPCBIDS_H_ */
+#define LCD_RW_PORT                 PORTD       // Port for RW line (ONLY used if RW_LINE_IMPLEMENTED=1)
+#define LCD_RW_PIN                  2           // Pin for RW line (ONLY used if RW_LINE_IMPLEMENTED=1)
+
+#define LCD_E_PORT                  PORTD       // Port for E line
+#define LCD_E_PIN                   4           // Pin for E line
+
+#endif

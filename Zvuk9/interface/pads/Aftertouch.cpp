@@ -2,93 +2,7 @@
 #include "eeprom/EEPROMsettings.h"
 
 //difference? investigate
-bool Pads::getAfterTouchSendEnabled(uint8_t padNumber) {
-
-    return bitRead(padFeatures[padNumber], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH);
-
-}
-
-void Pads::setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state) {
-
-    int16_t eepromAddress = getEEPROMaddressFeatures(padNumber);
-
-    bitWrite(padFeatures[padNumber], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH, state);
-    eeprom_update_byte((uint8_t*)eepromAddress, padFeatures[padNumber]);
-
-}
-
-void Pads::afterTouchOnOff()    {
-
-    bool newAfterTouchState;
-
-    if (splitCounter != 2)   {   //feature splitting is off
-
-        newAfterTouchState = !bitRead(padFeatures[0], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH);
-
-        for (int i=0; i<NUMBER_OF_PADS; i++)
-        setAfterTouchSendEnabled(i, newAfterTouchState);
-
-        #if MODE_SERIAL
-        Serial.print(F("Aftertouch "));
-        newAfterTouchState ? Serial.print(F("on ")) : Serial.print(F("off "));
-        Serial.println(F("for all pads"));
-        #endif
-
-    }
-
-    else {  //feature splitting is on
-
-        newAfterTouchState = !bitRead(padFeatures[lastTouchedPad], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH);
-
-        setAfterTouchSendEnabled(lastTouchedPad, newAfterTouchState);
-
-        #if MODE_SERIAL
-        Serial.print(F("Aftertouch "));
-        newAfterTouchState ? Serial.print(F("on")) : Serial.print(F("off"));
-        Serial.print(F(" for pad "));
-        Serial.println(lastTouchedPad);
-        #endif
-
-    }
-
-}
-
-bool Pads::getAfterTouchSendState(uint8_t pad) {
-
-    return bitRead(padFeatures[pad], EEPROM_PAD_FEATURE_BIT_AFTERTOUCH);
-
-}
-
 //end investigate
-
-void Pads::getAfterTouchUpperPressureLimits()    {
-
-    uint8_t ratio = eeprom_read_byte((uint8_t*)EEPROM_PAD_AFTERTOUCH_PRESSURE_UPPER);
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
-
-        int32_t afterTouchPressure = padPressureLimitUpper[i] + (int32_t)(((padPressureLimitUpper[i] - padPressureLimitLower[i]) * (int32_t)100) * (uint32_t)ratio) / 10000;
-        padPressureLimitUpperAfterTouch[i] = afterTouchPressure;
-
-    }
-
-}
-
-bool Pads::setAfterTouchPressureRatio(uint8_t ratio)   {
-
-    if ((ratio == 0) || (ratio > 100))    return false;
-
-    eeprom_update_byte((uint8_t*)EEPROM_PAD_AFTERTOUCH_PRESSURE_UPPER, ratio);
-
-    if (eeprom_read_byte((uint8_t*)EEPROM_PAD_AFTERTOUCH_PRESSURE_UPPER) == ratio)  {
-
-        getAfterTouchUpperPressureLimits();
-        return true;
-
-    }   return false;
-
-}
-
 
 bool Pads::getAfterTouchGestureActivated(uint8_t padNumber, uint8_t pressure)  {
 
@@ -145,7 +59,6 @@ void Pads::resetAfterTouchCounters(uint8_t padNumber) {
     initialYvalue[padNumber]              = -999;
 
 }
-
 
 void Pads::sendPadAftertouch()  {
 

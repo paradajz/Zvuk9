@@ -14,12 +14,12 @@ typedef enum {
 
 typedef enum {
 
-    limitPressureLower,
-    limitPressureUpper,
-    limitXlower,
-    limitXupper,
-    limitYlower,
-    limitYupper,
+    limitPressureLowerSection,
+    limitPressureUpperSection,
+    limitXlowerSection,
+    limitXupperSection,
+    limitYlowerSection,
+    limitYupperSection,
     LIMIT_SECTIONS
 
 } limitSection;

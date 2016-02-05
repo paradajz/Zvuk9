@@ -157,8 +157,4 @@ const uint8_t defaultPredefinedScaleParametersArray[] = {
 #define DEFAULT_PAD_Y_LIMIT_LOWER                   450
 #define DEFAULT_PAD_Y_LIMIT_UPPER                   600
 
-#define DEFAULT_AFTERTOUCH_PRESSURE_RATIO           100
-
-
-
 #endif

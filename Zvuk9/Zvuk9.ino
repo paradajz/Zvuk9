@@ -10,7 +10,7 @@
 #include "eeprom/EEPROMsettings.h"
 #include "interface/leds/LEDs.h"
 #include "interface/encoders/Encoders.h"
-#include "hardware/pins/HardwareIDs.h"
+#include "hardware/pins/Pins.h"
 #include "Types.h"
 #include "hardware/timer/TimerObject.h"
 #include "hardware/reset/Reset.h"
@@ -20,9 +20,9 @@
 void startUpAnimation() {
 
     //slow down fading for effect
-    leds.setFadeSpeed(1);
+    leds.setFadeSpeed(3);
 
-    ledIntensity tempLedStateArray[NUMBER_OF_LEDS];
+    ledIntensity_t tempLedStateArray[NUMBER_OF_LEDS];
 
     for (int i=0; i<NUMBER_OF_LEDS; i++)    {
 
@@ -33,25 +33,43 @@ void startUpAnimation() {
 
     }
 
+    sei();
+
     //turn all leds on slowly
     leds.allLEDsOn();
-    newDelay(2700);
+
+    lcDisplay.displayHelloMessage();
+    newDelay(2000);
 
     //restore led states
     for (int i=0; i<NUMBER_OF_LEDS; i++)
         leds.setLEDstate(i, tempLedStateArray[i]);
 
-    newDelay(2500);
+    newDelay(1150);
 
     //restore normal fade speed
     leds.setFadeSpeed(DEFAULT_FADE_SPEED);
 
 }
 
-void handleTransportControl(uint8_t buttonNumber, buttonState state)  {
+void setTonicLEDs() {
+
+    //first, turn off all tonic LEDs
+    leds.tonicLEDsOff();
+    for (int i=0; i<MIDI_NOTES; i++)  {
+
+        //turn tonic LED on only if corresponding note is active
+        if (pads.noteActive((tonic_t)i))
+            leds.setTonicLEDstate((tonic_t)i, ledIntensityDim);
+
+    }
+
+}
+
+void handleTransportControl(uint8_t buttonNumber, buttonState_t state)  {
 
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
-    transportControl type = transportStop;
+    transportControl_t type = transportStop;
     bool displayState = true;
 
     switch(buttonNumber)    {
@@ -84,7 +102,7 @@ void handleTransportControl(uint8_t buttonNumber, buttonState state)  {
         case BUTTON_TRANSPORT_RECORD:
         if (state == buttonPressed) {
 
-            ledIntensity recordState = leds.getLEDstate(LED_TRANSPORT_RECORD);
+            ledIntensity_t recordState = leds.getLEDstate(LED_TRANSPORT_RECORD);
             if (recordState == ledIntensityFull) {
 
                 sysExArray[4] = 0x07;
@@ -190,14 +208,14 @@ void setLEDTonicStateEditMode(uint8_t pad) {
 
     //turn off all LEDs
     for (int i=0; i<MIDI_OCTAVE_RANGE; i++)
-        leds.setTonicLEDstate((tonic)i, ledIntensityOff);
+        leds.setTonicLEDstate((tonic_t)i, ledIntensityOff);
 
     //set dim led state for assigned notes on current pad
     for (int i=0; i<NOTES_PER_PAD; i++) {
 
         if (tonicArray[i] != MIDI_OCTAVE_RANGE) {
 
-            leds.setTonicLEDstate((tonic)i, ledIntensityDim);
+            leds.setTonicLEDstate((tonic_t)i, ledIntensityDim);
 
         }
 
@@ -209,7 +227,7 @@ void setLEDTonicStateEditMode(uint8_t pad) {
         if (tonicArray[i] != MIDI_OCTAVE_RANGE) {
 
             if (octaveArray[i] == pads.getActiveOctave())
-                leds.setTonicLEDstate((tonic)i, ledIntensityFull);
+                leds.setTonicLEDstate((tonic_t)i, ledIntensityFull);
 
         }
 
@@ -217,13 +235,13 @@ void setLEDTonicStateEditMode(uint8_t pad) {
 
 }
 
-void padsFunctionOnOff(uint8_t buttonNumber, buttonState state)    {
+void padsFunctionOnOff(uint8_t buttonNumber, buttonState_t state)    {
 
     //determine action based on pressed button
 
     uint8_t ledNumber = 0;
-    functionsOnOff lcdMessageType;
-    ledIntensity ledState = ledIntensityOff;
+    functionsOnOff_t lcdMessageType;
+    ledIntensity_t ledState = ledIntensityOff;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     switch (buttonNumber)    {
@@ -232,28 +250,28 @@ void padsFunctionOnOff(uint8_t buttonNumber, buttonState state)    {
         pads.notesOnOff();
         lcdMessageType = featureNotes;
         ledNumber = LED_ON_OFF_NOTES;
-        if (pads.getNoteSendState(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        if (pads.getNoteSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
-        pads.afterTouchOnOff();
+        pads.aftertouchOnOff();
         lcdMessageType = featureAftertouch;
         ledNumber = LED_ON_OFF_AFTERTOUCH;
-        if (pads.getAfterTouchSendState(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        if (pads.getAfterTouchSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
         break;
 
         case BUTTON_ON_OFF_X:
         pads.xOnOff();
         lcdMessageType = featureX;
         ledNumber = LED_ON_OFF_X;
-        if (pads.getXSendState(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        if (pads.getCCXsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
         break;
 
         case BUTTON_ON_OFF_Y:
         pads.yOnOff();
         lcdMessageType = featureY;
         ledNumber = LED_ON_OFF_Y;
-        if (pads.getYSendState(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        if (pads.getCCYsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
         break;
 
         case BUTTON_ON_OFF_SPLIT:
@@ -323,23 +341,11 @@ void padsOctaveUpDown(uint8_t direction, bool buttonState)    {
             //shift entire octave
 
             //shift all notes up or down
-            if (buttonState)    {
+            if (!buttonState)    {
 
-                //#if defined(KONTROLA_PCB) && defined (MODULE_LED)
-                //if (direction)  leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
-                //else            leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
-                //#endif
-
-            }   else {
-
-                changeOutput shiftResult = pads.shiftOctave(direction);
+                changeOutput_t shiftResult = pads.shiftOctave(direction);
                 int8_t activeOctave = pads.getActiveOctave();
                 lcDisplay.displayNoteChange(shiftResult, octaveChange, activeOctave);
-
-                #if defined(KONTROLA_PCB)
-                    //if (direction) leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
-                    //else           leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-                #endif
 
             }
 
@@ -358,7 +364,7 @@ void padsOctaveUpDown(uint8_t direction, bool buttonState)    {
                 //stop button is modifier
                 //disable it on release
                 buttons.pauseCallback(BUTTON_TRANSPORT_STOP);
-                changeOutput shiftResult = pads.shiftNote(direction);
+                changeOutput_t shiftResult = pads.shiftNote(direction);
                 lcDisplay.displayNoteChange(shiftResult, noteUpOrDown, direction);
 
             }
@@ -384,39 +390,38 @@ void padsOctaveUpDown(uint8_t direction, bool buttonState)    {
 
 }
 
-void handleTonicPress(tonic _tonic) {
+void handleTonicPress(tonic_t _tonic) {
 
     if (!pads.getPadEditMode())   {
 
         //change tonic
-        changeOutput result = pads.setTonic(_tonic);
+        //FIXME: DO NOT ALLOW THIS WHILE PADS ARE PRESSED
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+            if (pads.getPadPressed(i))  {
+                
+                //
+                return;
+                
+            }
+
+        changeOutput_t result = pads.setTonic(_tonic);
 
         if (result == outputChanged)    {
 
-            //tonic is changed, set correct LED states
-
-            leds.tonicLEDsOff();    //turn off all tonic leds
-
-            for (int i=0; i<tonicInvalid; i++)  {   //iterate over all tonics
-
-                if (pads.noteActive((tonic)i))
-                    leds.setTonicLEDstate((tonic)i, ledIntensityDim);
-
-            }
+            setTonicLEDs();
 
         }
 
-        tonic activeTonic = pads.getActiveTonic();
+        tonic_t activeTonic = pads.getActiveTonic();
         lcDisplay.displayNoteChange(result, noteChange, activeTonic);
 
     }   else {
 
         //add note to pad
-        lcDisplay.displayPadEditResult(pads.changePadNote(_tonic));
+        lcDisplay.displayPadEditResult(pads.assignPadNote(_tonic));
         displayActivePadNotes(pads.getLastTouchedPad());
 
     }
-
 
 }
 
@@ -455,8 +460,8 @@ void clearPadEditMode() {
     //set all active tonic leds from full to dim intensity
     for (int i=0; i<tonicInvalid; i++)  {
 
-        if (leds.getTonicLEDstate((tonic)i) == ledIntensityFull)
-            leds.setTonicLEDstate((tonic)i, ledIntensityDim);
+        if (leds.getTonicLEDstate((tonic_t)i) == ledIntensityFull)
+            leds.setTonicLEDstate((tonic_t)i, ledIntensityDim);
 
     }
 
@@ -474,7 +479,7 @@ void handlePadPress(uint8_t pad, uint8_t notes[], uint8_t numberOfNotes, uint8_t
         for (int i=0; i<numberOfNotes; i++) {
 
             tonicArray[i] = (uint8_t)pads.getTonicFromNote(notes[i]);
-            leds.setTonicLEDstate((tonic)tonicArray[i], ledIntensityFull);
+            leds.setTonicLEDstate((tonic_t)tonicArray[i], ledIntensityFull);
             octaveArray[i] = pads.getOctaveFromNote(notes[i]);
 
         }
@@ -519,7 +524,7 @@ void handlePadRelease(uint8_t pad, uint8_t notes[], uint8_t numberOfNotes)  {
 
             }
 
-        }   if (!noteActive) leds.setTonicLEDstate(pads.getTonicFromNote((tonic)notes[z]), ledIntensityDim);
+        }   if (!noteActive) leds.setTonicLEDstate(pads.getTonicFromNote((tonic_t)notes[z]), ledIntensityDim);
 
     }
 
@@ -556,10 +561,11 @@ void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps)   {
         }
 
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
-    splitState _splitState = pads.getSplitState();
-    changeOutput result;
-    curveType activeCurve = curveTypeInvalid;
+    splitState_t _splitState = pads.getSplitState();
+    changeOutput_t result;
+    curveType_t activeCurve = curveTypeInvalid;
     uint8_t value;
+    int8_t activePreset;
 
     switch(encoderNumber)   {
 
@@ -570,73 +576,51 @@ void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps)   {
             //disable it on release
             buttons.pauseCallback(BUTTON_TRANSPORT_STOP);
             //change midi channel in case it's pressed
-            pads.changeMIDIchannel(direction);
+            uint8_t midiChannel = pads.getMIDIchannel();
+
+            if (direction) midiChannel++;
+            else           midiChannel--;
+
+            if (midiChannel < 1)  midiChannel = 16;
+            if (midiChannel > 16) midiChannel = 1;
+            pads.setMIDIchannel(midiChannel);
 
             lcDisplay.displayMIDIchannelChange(pads.getMIDIchannel());
 
         } else {
 
-            //preset is contained within program
-            //save current preset and check if it's changed after program change
-            bool programChanged = pads.changeActiveProgram(direction);
+            int8_t activeProgram = pads.getActiveProgram();
 
-            if (programChanged)    {
+            if (direction) activeProgram++; else activeProgram--;
+            if (activeProgram == NUMBER_OF_PROGRAMS) activeProgram = 0;
+            else if (activeProgram < 0) activeProgram = (NUMBER_OF_PROGRAMS-1);
+            pads.setActiveProgram(activeProgram);
+            lcDisplay.setProgram(activeProgram+1);
 
-                //program is changed
-                uint8_t program = pads.getActiveProgram();
-                lcDisplay.setProgram(program+1);
+            //get last active preset on current program
+            uint8_t currentPreset = pads.getActivePreset();
 
-                //get last active preset on current program
-                uint8_t currentPreset = pads.getActivePreset();
+            //preset is changed
+            setTonicLEDs();
 
-                //if (currentPreset != lastActivePreset)  {
-
-                    bool presetChanged = pads.changeActivePreset_direct(currentPreset);
-
-                    if (presetChanged) {
-
-                        //preset is changed
-                        //turn off all tonic leds
-                        leds.tonicLEDsOff();
-                        //turn on tonic leds
-                        for (int i=0; i<tonicInvalid; i++)  {
-
-                            if (pads.noteActive((tonic)i))
-                            leds.setTonicLEDstate((tonic)i, ledIntensityDim);
-
-                        }
-
-                        //display preset on display
-                        lcDisplay.setPreset(currentPreset);
-
-                    }
-
-                //}
-
-            }
+            //display preset on display
+            lcDisplay.setPreset(currentPreset);
 
         }
         break;
 
         case PRESET_ENCODER:
-        if (pads.changeActivePreset_incDec(direction)) {
+        activePreset = pads.getActivePreset();
+        if (direction) activePreset++; else activePreset--;
+        if (activePreset == (NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES)) activePreset = 0;
+        else if (activePreset < 0) activePreset = (NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1);
 
-            //preset is changed
-            //turn off all tonic leds
-            leds.tonicLEDsOff();
-            //turn on tonic leds
-            for (int i=0; i<tonicInvalid; i++)  {
+        pads.setActivePreset(activePreset);
 
-                if (pads.noteActive((tonic)i))
-                    leds.setTonicLEDstate((tonic)i, ledIntensityDim);
+        setTonicLEDs();
 
-            }
-
-            //display preset on display
-            uint8_t _preset = pads.getActivePreset();
-            lcDisplay.setPreset(_preset);
-
-        }
+        //display preset on display
+        lcDisplay.setPreset(activePreset);
         break;
 
         case X_CC_ENCODER:
@@ -689,7 +673,7 @@ void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps)   {
 
 }
 
-void setLEDstate(uint8_t ledNumber, ledIntensity state)   {
+void setLEDstate(uint8_t ledNumber, ledIntensity_t state)   {
 
     leds.setLEDstate(ledNumber, state);
 
@@ -732,22 +716,25 @@ void configureCallbacks()   {
 
 }
 
-
 //init
 
 void initHardware() {
 
     //do not change order of initialization!
 
-    configuration.init();
+    //buttons use TWI, and we need to setup port expanders
+    //the process requires interrupts to be enabled so init buttons first
+    //and later reconfigure timers
+    buttons.init();
+    cli();
 
+    configuration.init();
     timers.init();
 
     midi.init();
     lcDisplay.init();
     leds.init();
     pads.init();
-    buttons.init();
     encoders.init();
 
     //setup program/preset on display
@@ -757,16 +744,13 @@ void initHardware() {
     lcDisplay.setProgram(activeProgram+1);
     lcDisplay.setPreset(activePreset);
 
-    //tonic leds
-    leds.tonicLEDsOff();
-    for (int i=0; i<tonicInvalid; i++)  {
+    setTonicLEDs();
 
-        if (pads.noteActive((tonic)i))
-            leds.setTonicLEDstate((tonic)i, ledIntensityDim);
-
-    }
-
-    startUpAnimation();
+    #if START_UP_ANIMATION > 0
+        startUpAnimation();
+    #else
+        sei();
+    #endif
 
 }
 
@@ -774,93 +758,52 @@ void setup()    {
 
     #if MODE_SERIAL
         Serial.begin(38400);
+        _delay_ms(100);
     #endif
 
     configureCallbacks();
     initHardware();
 
     //calibration
-    #ifdef KONTROLA_BREADBOARD
-        pads.setLowerXLimit(0, 422);
-        pads.setLowerXLimit(1, 422);
-        pads.setLowerXLimit(2, 422);
-        pads.setLowerXLimit(3, 460);
-        pads.setLowerXLimit(4, 422);
-        pads.setLowerXLimit(5, 422);
-        pads.setLowerXLimit(6, 422);
-        pads.setLowerXLimit(7, 422);
-        pads.setLowerXLimit(8, 422);
-
-        pads.setUpperXLimit(0, 570);
-        pads.setUpperXLimit(1, 570);
-        pads.setUpperXLimit(2, 570);
-        pads.setUpperXLimit(3, 600);
-        pads.setUpperXLimit(4, 570);
-        pads.setUpperXLimit(5, 570);
-        pads.setUpperXLimit(6, 570);
-        pads.setUpperXLimit(7, 565);
-        pads.setUpperXLimit(8, 570);
-
-        pads.setLowerYLimit(0, 450);
-        pads.setLowerYLimit(1, 450);
-        pads.setLowerYLimit(2, 450);
-        pads.setLowerYLimit(3, 462);
-        pads.setLowerYLimit(4, 450);
-        pads.setLowerYLimit(5, 450);
-        pads.setLowerYLimit(6, 450);
-        pads.setLowerYLimit(7, 450);
-        pads.setLowerYLimit(8, 450);
-
-        pads.setUpperYLimit(0, 612);
-        pads.setUpperYLimit(1, 612);
-        pads.setUpperYLimit(2, 612);
-        pads.setUpperYLimit(3, 615);
-        pads.setUpperYLimit(4, 575);
-        pads.setUpperYLimit(5, 612);
-        pads.setUpperYLimit(6, 612);
-        pads.setUpperYLimit(7, 610);
-        pads.setUpperYLimit(8, 610);
-    #elif defined KONTROLA_PCB
-        pads.setLowerXLimit(0, 438);
-        pads.setLowerXLimit(1, 442);
-        pads.setLowerXLimit(2, 438);
-        pads.setLowerXLimit(3, 438);
-        pads.setLowerXLimit(4, 442);
-        pads.setLowerXLimit(5, 438);
-        pads.setLowerXLimit(6, 438);
-        pads.setLowerXLimit(7, 438);
-        pads.setLowerXLimit(8, 442);
-
-        pads.setUpperXLimit(0, 604);
-        pads.setUpperXLimit(1, 600);
-        pads.setUpperXLimit(2, 604);
-        pads.setUpperXLimit(3, 604);
-        pads.setUpperXLimit(4, 604);
-        pads.setUpperXLimit(5, 604);
-        pads.setUpperXLimit(6, 604);
-        pads.setUpperXLimit(7, 602);
-        pads.setUpperXLimit(8, 604);
-
-        pads.setLowerYLimit(0, 445);
-        pads.setLowerYLimit(1, 445);
-        pads.setLowerYLimit(2, 445);
-        pads.setLowerYLimit(3, 445);
-        pads.setLowerYLimit(4, 445);
-        pads.setLowerYLimit(5, 445);
-        pads.setLowerYLimit(6, 445);
-        pads.setLowerYLimit(7, 445);
-        pads.setLowerYLimit(8, 445);
-
-        pads.setUpperYLimit(0, 595);
-        pads.setUpperYLimit(1, 595);
-        pads.setUpperYLimit(2, 595);
-        pads.setUpperYLimit(3, 595);
-        pads.setUpperYLimit(4, 595);
-        pads.setUpperYLimit(5, 595);
-        pads.setUpperYLimit(6, 595);
-        pads.setUpperYLimit(7, 595);
-        pads.setUpperYLimit(8, 590);
-    #endif
+    //pads.setLowerXLimit(0, 438);
+    //pads.setLowerXLimit(1, 442);
+    //pads.setLowerXLimit(2, 438);
+    //pads.setLowerXLimit(3, 438);
+    //pads.setLowerXLimit(4, 442);
+    //pads.setLowerXLimit(5, 438);
+    //pads.setLowerXLimit(6, 438);
+    //pads.setLowerXLimit(7, 438);
+    //pads.setLowerXLimit(8, 442);
+//
+    //pads.setUpperXLimit(0, 604);
+    //pads.setUpperXLimit(1, 600);
+    //pads.setUpperXLimit(2, 604);
+    //pads.setUpperXLimit(3, 604);
+    //pads.setUpperXLimit(4, 604);
+    //pads.setUpperXLimit(5, 604);
+    //pads.setUpperXLimit(6, 604);
+    //pads.setUpperXLimit(7, 602);
+    //pads.setUpperXLimit(8, 604);
+//
+    //pads.setLowerYLimit(0, 445);
+    //pads.setLowerYLimit(1, 445);
+    //pads.setLowerYLimit(2, 445);
+    //pads.setLowerYLimit(3, 445);
+    //pads.setLowerYLimit(4, 445);
+    //pads.setLowerYLimit(5, 445);
+    //pads.setLowerYLimit(6, 445);
+    //pads.setLowerYLimit(7, 445);
+    //pads.setLowerYLimit(8, 445);
+//
+    //pads.setUpperYLimit(0, 595);
+    //pads.setUpperYLimit(1, 595);
+    //pads.setUpperYLimit(2, 595);
+    //pads.setUpperYLimit(3, 595);
+    //pads.setUpperYLimit(4, 595);
+    //pads.setUpperYLimit(5, 595);
+    //pads.setUpperYLimit(6, 595);
+    //pads.setUpperYLimit(7, 595);
+    //pads.setUpperYLimit(8, 590);
 
 }
 

@@ -2,7 +2,7 @@
 #define TIMEROBJECT_H_
 
 #include "Arduino.h"
-#include "hardware/pins/HardwareIDs.h"
+#include "hardware/pins/Pins.h"
 #include "Types.h"
 
 void newDelay(uint32_t);
@@ -13,9 +13,9 @@ class TimerObject {
     public:
     TimerObject();
     void init();
-    ledIntensity getLEDstate(uint8_t ledNumber);
-    void setLEDstate(uint8_t ledNumber, ledIntensity intensity);
-    encoderPosition getEncoderState(uint8_t encoderID);
+    ledIntensity_t getLEDstate(uint8_t ledNumber);
+    void setLEDstate(uint8_t ledNumber, ledIntensity_t intensity);
+    encoderPosition_t getEncoderState(uint8_t encoderID);
     void setPWMsteps(uint8_t steps);
 
     private:

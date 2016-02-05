@@ -34,28 +34,29 @@ class LCD   {
     void updateNote(uint8_t pad, uint8_t *note, uint8_t *octave, uint8_t numberOfNotes, uint8_t velocity);
     void clearPadData();
     void setXYData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
-    void displayOnOffMessage(functionsOnOff messageType, splitState _splitState, bool functionState, uint8_t padNumber);
-    void displayCurveChangeMessage(curveCoordinate coordinate, changeOutput result, splitState _splitState, curveType curveValue, uint8_t padNumber);
-    void displayCClimitChangeMessage(ccLimitType type, changeOutput result, splitState _splitState, uint8_t ccValue, uint8_t padNumber);
-    void displayCCchangeMessage(ccType type, changeOutput result, splitState _splitState, uint8_t ccValue, uint8_t padNumber);
-    void displayTransportControlMessage(transportControl type, bool state);
-    void displayNoteChange(changeOutput result, changeType type, int8_t value);
+    void displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber);
+    void displayCurveChangeMessage(curveCoordinate_t coordinate, changeOutput_t result, splitState_t _splitState, curveType_t curveValue, uint8_t padNumber);
+    void displayCClimitChangeMessage(ccLimitType_t type, changeOutput_t result, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayCCchangeMessage(ccType_t type, changeOutput_t result, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayTransportControlMessage(transportControl_t type, bool state);
+    void displayNoteChange(changeOutput_t result, changeType_t type, int8_t value);
     void displayOctaveChange(uint8_t octave);
     void updateAfterTouch(uint8_t afterTouch);
     void setCCData(uint8_t pad, uint8_t x, uint8_t y);
     void update();
     void displayPadEditMode(uint8_t padNumber);
     void clearPadEditMode();
-    void displayEditModeNotAllowed(padEditError errorType);
+    void displayEditModeNotAllowed(padEditError_t errorType);
     void displayMIDIchannelChange(uint8_t channel);
     void displayActiveOctave(uint8_t octave);
     void displayActivePadNotes(uint8_t *notes, uint8_t *octaves);
-    void displayPadEditResult(changeOutput result);
+    void displayPadEditResult(changeOutput_t result);
     void displayUserMessage(String message);
+    void displayHelloMessage();
 
     private:
     void clearRow(uint8_t rowNumber);
-    void expandLine(uint8_t lineNumber, lcdLineType lineType);
+    void expandLine(uint8_t lineNumber, lcdLineType_t lineType);
     void resetData();
     void setProgramAndPreset();
     bool checkClearScreen();

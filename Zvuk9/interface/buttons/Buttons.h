@@ -10,7 +10,7 @@ Button control using two MPC23017 expanders.
 #include "Arduino.h"
 #include "Wire.h"
 #include "Debug.h"
-#include "hardware/pins/HardwareIDs.h"
+#include "hardware/pins/Pins.h"
 #include "midi/MIDI_parameters.h"
 #include "Types.h"
 #include "hardware/timer/TimerObject.h"
@@ -31,17 +31,17 @@ class Buttons   {
     void pauseCallback(uint8_t buttonNumber);
 
     //callbacks
-    void setHandleOnOffPress(void (*fptr)(uint8_t buttonNumber, buttonState state));
-    void setHandleTransportControlCallback(void (*fptr)(uint8_t buttonNumber, buttonState state));
+    void setHandleOnOffPress(void (*fptr)(uint8_t buttonNumber, buttonState_t state));
+    void setHandleTransportControlCallback(void (*fptr)(uint8_t buttonNumber, buttonState_t state));
     void setHandleOctaveUpDownPress(void (*fptr)(uint8_t direction, bool state));
-    void setHandleTonic(void (*fptr)(tonic _tonic));
+    void setHandleTonic(void (*fptr)(tonic_t _tonic));
 
     private:
     //callbacks
-    void (*sendOnOffPressCallback)(uint8_t buttonNumber, buttonState state);
-    void (*sendTransportControlCallback)(uint8_t buttonNumber, buttonState state);
+    void (*sendOnOffPressCallback)(uint8_t buttonNumber, buttonState_t state);
+    void (*sendTransportControlCallback)(uint8_t buttonNumber, buttonState_t state);
     void (*sendOctaveUpDownPressCallback)(uint8_t direction, bool state);
-    void (*sendTonicCallback)(tonic _tonic);
+    void (*sendTonicCallback)(tonic_t _tonic);
     bool callbackEnabled(uint8_t buttonNumber);
     void enableCallback(uint8_t buttonNumber);
 
@@ -53,10 +53,10 @@ class Buttons   {
     void setPreviousButtonState(uint8_t buttonNumber, uint8_t state);
 
     //send MIDI transport control
-    void sendTransportControl(uint8_t buttonNumber, buttonState state);
+    void sendTransportControl(uint8_t buttonNumber, buttonState_t state);
 
     //getters
-    tonic getTonicFromButton(uint8_t buttonNumber);
+    tonic_t getTonicFromButton(uint8_t buttonNumber);
 
     uint32_t mcpData;                                       //store data from all expander inputs
     uint8_t previousButtonState[MAX_NUMBER_OF_BUTTONS];     //debounce status

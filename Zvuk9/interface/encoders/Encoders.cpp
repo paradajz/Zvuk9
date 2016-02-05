@@ -30,7 +30,7 @@ void Encoders::update() {
 
     for (int i=0; i<NUMBER_OF_ENCODERS; i++)    {
 
-        encoderPosition encoderState = timers.getEncoderState(i);
+        encoderPosition_t encoderState = timers.getEncoderState(i);
         if (encoderState == encStopped) continue;
 
         uint32_t timeDifference = newMillis() - lastStepTime[i];

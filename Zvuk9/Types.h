@@ -7,7 +7,7 @@ Define custom data types.
 #ifndef TYPES_H_
 #define TYPES_H_
 
-enum ccLimitType {
+enum ccLimitType_t {
 
     ccLimitTypeXmin = 0x00,
     ccLimitTypeXmax = 0x01,
@@ -16,14 +16,14 @@ enum ccLimitType {
 
 };
 
-enum ccType {
+enum ccType_t {
 
     ccTypeX = 0x00,
     ccTypeY = 0x01
 
 };
 
-enum ledIntensity   {
+enum ledIntensity_t   {
 
     ledIntensityOff = 0x00,
     ledIntensityDim = 70,
@@ -31,7 +31,7 @@ enum ledIntensity   {
 
 };
 
-enum splitState {
+enum splitState_t {
 
     splitOff = 0x00,
     splitXY = 0x01,
@@ -40,7 +40,7 @@ enum splitState {
 
 };
 
-enum functionsOnOff    {
+enum functionsOnOff_t    {
 
     featureNotes,
     featureAftertouch,
@@ -50,7 +50,7 @@ enum functionsOnOff    {
 
 };
 
-enum transportControl {
+enum transportControl_t {
 
     transportStop,
     transportPlay,
@@ -58,7 +58,7 @@ enum transportControl {
 
 };
 
-enum changeOutput {
+enum changeOutput_t {
 
     noChange,
     outputChanged,
@@ -67,7 +67,7 @@ enum changeOutput {
 
 };
 
-enum changeType {
+enum changeType_t {
 
     noteChange,
     octaveChange,
@@ -79,7 +79,7 @@ enum changeType {
 
 };
 
-enum coordinateType {
+enum coordinateType_t {
 
     coordinateZ,
     coordinateX,
@@ -87,14 +87,14 @@ enum coordinateType {
 
 };
 
-enum padEditError   {
+enum padEditError_t   {
 
     noUserPreset,
     padNotReleased
 
 };
 
-enum lcdLineType {
+enum lcdLineType_t {
 
     regularLine,
     messageLine,
@@ -102,14 +102,14 @@ enum lcdLineType {
 
 };
 
-enum pressureType   {
+enum pressureType_t   {
 
     pressureVelocity,
     pressureAfterTouch
 
 };
 
-enum encoderPosition {
+enum encoderPosition_t {
 
     encMoveLeft = 1,
     encMoveRight = 127,
@@ -117,7 +117,7 @@ enum encoderPosition {
 
 };
 
-enum scaleType {
+enum scaleType_t {
 
     fiveNoteScale = 5,
     sevenNoteScale = 7,
@@ -125,7 +125,7 @@ enum scaleType {
 
 };
 
-enum tonic {
+enum tonic_t {
 
     tonicC,
     tonicCSharp,
@@ -143,7 +143,7 @@ enum tonic {
 
 };
 
-enum curveCoordinate  {
+enum curveCoordinate_t  {
 
     curveCoordinateX = 0x00,
     curveCoordinateY = 0x01,
@@ -151,7 +151,7 @@ enum curveCoordinate  {
 
 };
 
-enum curveType {
+enum curveType_t {
 
     curveTypeLinear,
     curveTypeWideMiddle,
@@ -160,7 +160,7 @@ enum curveType {
 
 };
 
-enum buttonState    {
+enum buttonState_t    {
 
     buttonReleased,
     buttonPressed

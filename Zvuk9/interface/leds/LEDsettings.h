@@ -6,6 +6,8 @@
 
 #define NUMBER_OF_LEDS              24
 
+#define LED_STARTUP_ANIMATION       1
+
 const uint8_t ledTransitionScale[] = {
 
     0,

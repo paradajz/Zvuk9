@@ -6,20 +6,18 @@
 #define NUMBER_OF_LED_COLUMNS       8
 #define NUMBER_OF_LED_ROWS          3
 
-#define ENCODER_READ_PER_INTERRUPT  (NUMBER_OF_ENCODERS/2)
-
 #define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
 #define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
 #define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
 
 //LEDs
 volatile int8_t             activeColumnInterrupt = 0;
-ledIntensity                ledState[NUMBER_OF_LEDS] = { ledIntensityOff };
+ledIntensity_t              ledState[NUMBER_OF_LEDS] = { ledIntensityOff };
 volatile int16_t            transitionCounter[NUMBER_OF_LEDS] = { 0 };
 volatile uint8_t            pwmSteps = DEFAULT_FADE_SPEED;
 
 //encoders
-volatile encoderPosition    encoderMoving[NUMBER_OF_ENCODERS];
+volatile encoderPosition_t    encoderMoving[NUMBER_OF_ENCODERS];
 volatile uint8_t*           pin1_register[NUMBER_OF_ENCODERS];
 volatile uint8_t*           pin2_register[NUMBER_OF_ENCODERS];
 uint8_t                     pin1_bitmask[NUMBER_OF_ENCODERS];
@@ -61,6 +59,9 @@ const uint8_t encoderPin2Array[] = {
 };
 
 inline void updateEncoder(uint8_t id)    {
+
+    pinMode(encoderPin1Array[id], INPUT_PULLUP);
+    pinMode(encoderPin2Array[id], INPUT_PULLUP);
 
     uint8_t p1val = DIRECT_PIN_READ(pin1_register[id], pin1_bitmask[id]);
     uint8_t p2val = DIRECT_PIN_READ(pin2_register[id], pin2_bitmask[id]);
@@ -177,7 +178,7 @@ ISR(TIMER3_COMPA_vect)  {
     for (int i=0; i<NUMBER_OF_LED_ROWS; i++)  {
 
         uint8_t ledNumber = activeColumnInterrupt+i*NUMBER_OF_LED_COLUMNS;
-        ledIntensity ledStateSingle = ledState[ledNumber];
+        ledIntensity_t ledStateSingle = ledState[ledNumber];
 
         if (transitionCounter[ledNumber]) ledRowOn(i, transitionCounter[ledNumber]);
         if (transitionCounter[ledNumber] < ledStateSingle)
@@ -198,17 +199,15 @@ ISR(TIMER3_COMPA_vect)  {
 
 }
 
-ledIntensity TimerObject::getLEDstate(uint8_t ledNumber)  {
+ledIntensity_t TimerObject::getLEDstate(uint8_t ledNumber)  {
 
     return ledState[ledNumber];
 
 }
 
-void TimerObject::setLEDstate(uint8_t ledNumber, ledIntensity intensity) {
+void TimerObject::setLEDstate(uint8_t ledNumber, ledIntensity_t intensity) {
 
-    cli();
     ledState[ledNumber] = intensity;
-    sei();
 
 }
 
@@ -220,13 +219,15 @@ TimerObject::TimerObject()  {
 
 void TimerObject::init() {
 
-    cli();
-
     //configure timer3
     //used for led control
     TCCR3A = 0;
     TCCR3B = 0;
     TCNT3  = 0;
+    TIMSK3 = 0;
+    OCR3A = 0;
+    OCR3B = 0;
+    OCR3C = 0;
 
     //turn on CTC mode
     TCCR3B |= (1 << WGM32);
@@ -237,15 +238,39 @@ void TimerObject::init() {
     //set compare match register to desired timer count
     OCR3A = 94; //around 1500us
 
-    //set PWM frequency to 31kHz
-    TCCR1B = (TCCR1B & 0b11111000) | 0x01;
-    TCCR2B = (TCCR2B & 0b11111000) | 0x01;
+    //configure timer1/2 for LED matrix PWM
+    TCCR1A = 0;
+    TCCR1B = 0;
+    TCCR1C = 0;
+    TIMSK1 = 0;
+    TCNT1 = 0;
+    OCR1A = 0;
+    OCR1B = 0;
+    OCR1C = 0;
+
+    TCCR2A = 0;
+    TCCR2B = 0;
+    TIMSK2 = 0;
+    TCNT2 = 0;
+    OCR2A = 0;
+    OCR2B = 0;
+
+    //phase correct PWM, top 0xFF
+    TCCR1A |= (1<<WGM10);
+    TCCR2A |= (1<<WGM20);
+
+    //prescaler 1
+    TCCR1B |= (1<<CS10);
+    TCCR2B |= (1<<CS20);
 
     //configure timer0
     //used for delay/millis/encoders
     TCCR0A = 0;
     TCCR0B = 0;
-    TCNT0  = 0;
+    TCNT0 = 0;
+    TIMSK0 = 0;
+    OCR0A = 0;
+    OCR0B = 0;
 
     //turn on CTC mode
     TCCR0A |= (1 << WGM01);
@@ -256,23 +281,20 @@ void TimerObject::init() {
     //set compare match register to desired timer count
     OCR0A = 124; //500uS
 
-
     //enable CTC interrupt for timer3
     TIMSK3 |= (1 << OCIE3A);
 
     //enable CTC interrupt for timer0
     TIMSK0 |= (1 << OCIE0A);
 
-    sei();
-
     for (int i=0; i<NUMBER_OF_ENCODERS; i++)
         setupEncoder(i, encoderPin1Array[i], encoderPin2Array[i]);
 
 };
 
-encoderPosition TimerObject::getEncoderState(uint8_t encoderNumber)  {
+encoderPosition_t TimerObject::getEncoderState(uint8_t encoderNumber)  {
 
-    encoderPosition returnValue;
+    encoderPosition_t returnValue;
     returnValue = encoderMoving[encoderNumber];
     encoderMoving[encoderNumber] = encStopped;
     return returnValue;
@@ -281,18 +303,11 @@ encoderPosition TimerObject::getEncoderState(uint8_t encoderNumber)  {
 
 void TimerObject::setPWMsteps(uint8_t steps)    {
 
-    cli();
     pwmSteps = steps;
-    //for (int i=0; i<NUMBER_OF_LEDS; i++)
-        //transitionCounter[i] = 0;
-    sei();
 
 }
 
 void TimerObject::setupEncoder(uint8_t id, uint8_t pin1, uint8_t pin2) {
-
-    pinMode(pin1, INPUT_PULLUP);
-    pinMode(pin2, INPUT_PULLUP);
 
     pin1_register[id] = PIN_TO_BASEREG(pin1);
     pin1_bitmask[id] = PIN_TO_BITMASK(pin1);
@@ -301,11 +316,6 @@ void TimerObject::setupEncoder(uint8_t id, uint8_t pin1, uint8_t pin2) {
     pin2_bitmask[id] = PIN_TO_BITMASK(pin2);
 
     position[id] = 0;
-
-    //allow time for a passive R-C filter to charge
-    //through the pullup resistors, before reading
-    //the initial state
-    _delay_ms(2);
 
     uint8_t s = 0;
 

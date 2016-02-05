@@ -1,7 +1,7 @@
 #include "Buttons.h"
 
 //time after which expanders are checked in ms
-#define EXPANDER_CHECK_TIME         3
+#define EXPANDER_CHECK_TIME         2
 
 #define EDIT_MODE_COUNTER           2
 
@@ -172,7 +172,7 @@ void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
             case BUTTON_ON_OFF_Y:
             case BUTTON_ON_OFF_SPLIT:
             if (callbackEnabled(buttonNumber))
-                sendOnOffPressCallback(buttonNumber, (buttonState)state);
+                sendOnOffPressCallback(buttonNumber, (buttonState_t)state);
             break;
 
             case BUTTON_NOTE_C_SHARP:
@@ -187,7 +187,7 @@ void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
             case BUTTON_NOTE_G:
             case BUTTON_NOTE_A:
             case BUTTON_NOTE_B:
-            tonic _tonic = getTonicFromButton(buttonNumber);
+            tonic_t _tonic = getTonicFromButton(buttonNumber);
             if (callbackEnabled(buttonNumber))
                 sendTonicCallback(_tonic);
             break;
@@ -212,7 +212,7 @@ void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
         case BUTTON_TRANSPORT_PLAY:
         case BUTTON_TRANSPORT_RECORD:
         if (callbackEnabled(buttonNumber))
-            sendTransportControlCallback(buttonNumber, (buttonState)state);
+            sendTransportControlCallback(buttonNumber, (buttonState_t)state);
         break;
 
     }
@@ -242,7 +242,7 @@ void Buttons::setPreviousButtonState(uint8_t buttonNumber, uint8_t state) {
 
 }
 
-tonic Buttons::getTonicFromButton(uint8_t buttonNumber)   {
+tonic_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
 
     switch(buttonNumber)    {
 
@@ -288,7 +288,7 @@ tonic Buttons::getTonicFromButton(uint8_t buttonNumber)   {
 
 //callbacks
 
-void Buttons::setHandleOnOffPress(void (*fptr)(uint8_t buttonNumber, buttonState state))   {
+void Buttons::setHandleOnOffPress(void (*fptr)(uint8_t buttonNumber, buttonState_t state))   {
 
     sendOnOffPressCallback = fptr;
 
@@ -300,13 +300,13 @@ void Buttons::setHandleOctaveUpDownPress(void (*fptr)(uint8_t direction, bool st
 
 }
 
-void Buttons::setHandleTonic(void (*fptr)(tonic _tonic))   {
+void Buttons::setHandleTonic(void (*fptr)(tonic_t _tonic))   {
 
     sendTonicCallback = fptr;
 
 }
 
-void Buttons::setHandleTransportControlCallback(void (*fptr)(uint8_t buttonNumber, buttonState state))  {
+void Buttons::setHandleTransportControlCallback(void (*fptr)(uint8_t buttonNumber, buttonState_t state))  {
 
     sendTransportControlCallback = fptr;
 
@@ -329,6 +329,5 @@ void Buttons::pauseCallback(uint8_t buttonNumber)  {
     bitWrite(callbackEnableState, buttonNumber, 0);
 
 }
-
 
 Buttons buttons;

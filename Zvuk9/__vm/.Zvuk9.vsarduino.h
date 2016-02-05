@@ -23,12 +23,13 @@
 extern "C" void __cxa_pure_virtual() {;}
 
 void startUpAnimation();
-void handleTransportControl(uint8_t buttonNumber, buttonState state);
+void setTonicLEDs();
+void handleTransportControl(uint8_t buttonNumber, buttonState_t state);
 bool checkOctaveUpDownEnabled();
 void setLEDTonicStateEditMode(uint8_t pad);
-void padsFunctionOnOff(uint8_t buttonNumber, buttonState state);
+void padsFunctionOnOff(uint8_t buttonNumber, buttonState_t state);
 void padsOctaveUpDown(uint8_t direction, bool buttonState);
-void handleTonicPress(tonic _tonic);
+void handleTonicPress(tonic_t _tonic);
 void displayActivePadNotes(uint8_t pad);
 void setUpPadEditMode(uint8_t pad);
 void clearPadEditMode();
@@ -38,7 +39,7 @@ void setLCDAfterTouch(uint8_t pressure);
 void setLCDxyData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
 void clearPadData(uint8_t pad);
 void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps);
-void setLEDstate(uint8_t ledNumber, ledIntensity state);
+void setLEDstate(uint8_t ledNumber, ledIntensity_t state);
 void configurePadCallbacks();
 void configureButtonCallbacks();
 void configureEncoderCallbacks();
@@ -60,11 +61,8 @@ void initHardware();
 #include <interface\encoders\EncoderSettings.h>
 #include <interface\encoders\Encoders.cpp>
 #include <interface\encoders\Encoders.h>
-#include <hardware\pins\HardwareIDs.h>
 #include <midi\hw_midi\HwMIDI.cpp>
 #include <midi\hw_midi\HwMIDI.h>
-#include <hardware\pins\KontrolaBreadBoardIDs.h>
-#include <hardware\pins\KontrolaPCBIDs.h>
 #include <interface\lcd\LCD.cpp>
 #include <interface\lcd\LCD.h>
 #include <interface\lcd\LCDsettings.h>
@@ -80,11 +78,15 @@ void initHardware();
 #include <interface\pads\Pads.h>
 #include <interface\pads\PadsCalibration.h>
 #include <interface\pads\PadsCallbacks.cpp>
+#include <interface\pads\PadsConfigurationGet.cpp>
+#include <interface\pads\PadsConfigurationSet.cpp>
 #include <interface\pads\PadsHardwareControl.cpp>
 #include <interface\pads\PadsHardwareRead.cpp>
 #include <hardware\pins\PinManipulation.h>
+#include <hardware\pins\Pins.h>
 #include <hardware\reset\Reset.cpp>
 #include <hardware\reset\Reset.h>
+#include <..\Zvuk9\Scales.cpp>
 #include <..\Zvuk9\Scales.h>
 #include <eeprom\Sections.h>
 #include <hardware\timer\TimerObject.cpp>
@@ -94,6 +96,7 @@ void initHardware();
 #include <hardware\uart\UART.h>
 #include <eeprom\UniqueID.h>
 #include <..\Zvuk9\Version.h>
+#include <hardware\pins\board_v1.h>
 #include <hardware\lcd\hd44780.cpp>
 #include <hardware\lcd\hd44780.h>
 #include <hardware\lcd\hd44780_settings.h>

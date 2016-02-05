@@ -56,7 +56,6 @@ class EEPROMsettings {
     public:
     EEPROMsettings();
     void clearEEPROM();
-    void writeConfiguration();
     void init();
     void initSettings();
     void factoryReset();
@@ -92,7 +91,7 @@ class EEPROMsettings {
         }   return 0;
 
     };
-    bool writeParameter(uint8_t blockID, uint8_t sectionID, uint8_t parameterID, uint8_t newValue);
+    bool writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue);
     blockDescriptor blocks[CONF_BLOCKS];
 
     private:

@@ -55,19 +55,19 @@ void LEDs::allLEDsOn() {
 
 }
 
-void LEDs::setLEDstate(uint8_t ledNumber, ledIntensity state)    {
+void LEDs::setLEDstate(uint8_t ledNumber, ledIntensity_t state)    {
 
     timers.setLEDstate(ledNumber, state);
 
 }
 
-uint8_t LEDs::getLEDnumberFromTonic(tonic _tonic)  {
+uint8_t LEDs::getLEDnumberFromTonic(tonic_t _tonic)  {
 
     return ledNoteArray[_tonic];
 
 }
 
-ledIntensity LEDs::getLEDstate(uint8_t ledNumber)    {
+ledIntensity_t LEDs::getLEDstate(uint8_t ledNumber)    {
 
     return timers.getLEDstate(ledNumber);
 
@@ -86,14 +86,14 @@ void LEDs::tonicLEDsOff()   {
 
 }
 
-void LEDs::setTonicLEDstate(tonic _tonic, ledIntensity state)   {
+void LEDs::setTonicLEDstate(tonic_t _tonic, ledIntensity_t state)   {
 
     uint8_t ledNumber = getLEDnumberFromTonic(_tonic);
     timers.setLEDstate(ledNumber, state);
 
 }
 
-ledIntensity LEDs::getTonicLEDstate(tonic _tonic)   {
+ledIntensity_t LEDs::getTonicLEDstate(tonic_t _tonic)   {
 
     return timers.getLEDstate(getLEDnumberFromTonic(_tonic));
 

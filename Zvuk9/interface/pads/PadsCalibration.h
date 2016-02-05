@@ -15,6 +15,8 @@
 
 #define GESTURE_ACTIVATION_TIME             2000    //activation time in ms
 
+#define DEFAULT_AFTERTOUCH_PRESSURE_RATIO   100
+
 #define GESTURE_NUMBER_OF_CHANGES           4
 
 #define AFTERTOUCH_SEND_TIMEOUT             100

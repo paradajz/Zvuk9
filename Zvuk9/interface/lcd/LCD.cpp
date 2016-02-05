@@ -53,13 +53,16 @@ void LCD::init()    {
 
    lcd_set_cursor(0, 0);
 
+}
+
+void LCD::displayHelloMessage() {
+
     lastLcdLine[0] = helloMessage;
 
     for (int i=0; i<(int)lastLcdLine[0].length(); i++)  {
 
         lcd_putc(lastLcdLine[0][i]);
         newDelay(75);
-        //delay(75);
 
     } newDelay(250); lineChange[0] = true;
 
@@ -266,7 +269,7 @@ void LCD::setXYData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAv
 
 }
 
-void LCD::displayOnOffMessage(functionsOnOff messageType, splitState _splitState, bool functionState, uint8_t padNumber)  {
+void LCD::displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber)  {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
@@ -388,7 +391,7 @@ void LCD::displayOnOffMessage(functionsOnOff messageType, splitState _splitState
 
 }
 
-void LCD::displayTransportControlMessage(transportControl type, bool state)  {
+void LCD::displayTransportControlMessage(transportControl_t type, bool state)  {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
@@ -420,7 +423,7 @@ void LCD::displayTransportControlMessage(transportControl type, bool state)  {
 
 }
 
-void LCD::displayCCchangeMessage(ccType type, changeOutput result, splitState _splitState, uint8_t ccValue, uint8_t padNumber)   {
+void LCD::displayCCchangeMessage(ccType_t type, changeOutput_t result, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
@@ -443,7 +446,7 @@ void LCD::displayCCchangeMessage(ccType type, changeOutput result, splitState _s
 
 }
 
-void LCD::displayCClimitChangeMessage(ccLimitType type, changeOutput result, splitState _splitState, uint8_t ccValue, uint8_t padNumber)  {
+void LCD::displayCClimitChangeMessage(ccLimitType_t type, changeOutput_t result, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)  {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
@@ -466,7 +469,7 @@ void LCD::displayCClimitChangeMessage(ccLimitType type, changeOutput result, spl
 
 }
 
-void LCD::displayCurveChangeMessage(curveCoordinate coordinate, changeOutput result, splitState _splitState, curveType type, uint8_t padNumber)  {
+void LCD::displayCurveChangeMessage(curveCoordinate_t coordinate, changeOutput_t result, splitState_t _splitState, curveType_t type, uint8_t padNumber)  {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
@@ -491,7 +494,7 @@ void LCD::displayCurveChangeMessage(curveCoordinate coordinate, changeOutput res
 
 }
 
-void LCD::displayNoteChange(changeOutput result, changeType type, int8_t value) {
+void LCD::displayNoteChange(changeOutput_t result, changeType_t type, int8_t value) {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
@@ -667,7 +670,7 @@ void LCD::update()  {
 
 }
 
-void LCD::expandLine(uint8_t lineNumber, lcdLineType lineType)    {
+void LCD::expandLine(uint8_t lineNumber, lcdLineType_t lineType)    {
 
     switch (lineType)   {
 
@@ -747,7 +750,7 @@ void LCD::clearPadEditMode()    {
 
 }
 
-void LCD::displayEditModeNotAllowed(padEditError errorType)   {
+void LCD::displayEditModeNotAllowed(padEditError_t errorType)   {
 
     uint8_t errorIndex = 0;
 
@@ -823,7 +826,7 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[])  {
 
 }
 
-void LCD::displayPadEditResult(changeOutput result)    {
+void LCD::displayPadEditResult(changeOutput_t result)    {
 
     if (result == outOfRange)   {
 

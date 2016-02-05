@@ -2,7 +2,7 @@
 #define LEDS_H_
 
 #include "Arduino.h"
-#include "hardware/pins/HardwareIDs.h"
+#include "hardware/pins/Pins.h"
 #include "Types.h"
 #include "LEDsettings.h"
 
@@ -15,14 +15,14 @@ class LEDs  {
     void allLEDsOn();
     void allLEDsOff();
 
-    void setLEDstate(uint8_t ledNumber, ledIntensity state);
-    ledIntensity getLEDstate(uint8_t ledNumber);
+    void setLEDstate(uint8_t ledNumber, ledIntensity_t state);
+    ledIntensity_t getLEDstate(uint8_t ledNumber);
     void setFadeSpeed(uint8_t speed);
 
-    uint8_t getLEDnumberFromTonic(tonic _tonic);
+    uint8_t getLEDnumberFromTonic(tonic_t _tonic);
     void tonicLEDsOff();
-    void setTonicLEDstate(tonic _tonic, ledIntensity state);
-    ledIntensity getTonicLEDstate(tonic _tonic);
+    void setTonicLEDstate(tonic_t _tonic, ledIntensity_t state);
+    ledIntensity_t getTonicLEDstate(tonic_t _tonic);
 
     private:
 

@@ -24,7 +24,7 @@ void Pads::setHandleLCDAfterTouchCallback(void (*fptr)(uint8_t pressure))   {
 
 }
 
-void Pads::setHandleLEDstateCallback(void (*fptr)(uint8_t ledNumber, ledIntensity state))   {
+void Pads::setHandleLEDstateCallback(void (*fptr)(uint8_t ledNumber, ledIntensity_t state))   {
 
     sendLEDstateCallback = fptr;
 
