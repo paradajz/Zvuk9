@@ -86,7 +86,7 @@ void LEDs::tonicLEDsOff()   {
 
 }
 
-void LEDs::setTonicLEDstate(tonic_t _tonic, ledIntensity_t state)   {
+void LEDs::setNoteLEDstate(tonic_t _tonic, ledIntensity_t state)   {
 
     uint8_t ledNumber = getLEDnumberFromTonic(_tonic);
     timers.setLEDstate(ledNumber, state);

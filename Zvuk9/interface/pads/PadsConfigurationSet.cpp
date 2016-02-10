@@ -894,6 +894,10 @@ changeOutput_t Pads::assignPadNote(uint8_t tonic)    {
         padNote[lastTouchedPad][noteIndex] = note;
         configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+noteIndex+(NOTES_PER_PAD*lastTouchedPad), note);
 
+        #if MODE_SERIAL >0
+            Serial.print(F("Adding note "));
+        #endif
+
     }   else {
 
         note = BLANK_NOTE; //else delete note (assign BLANK_NOTE)
@@ -917,7 +921,17 @@ changeOutput_t Pads::assignPadNote(uint8_t tonic)    {
         for (int i=0; i<NOTES_PER_PAD; i++)
             configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*lastTouchedPad), padNote[lastTouchedPad][i]);
 
+        #if MODE_SERIAL >0
+            Serial.print(F("Removing note "));
+        #endif
+
     }
+
+    #if MODE_SERIAL > 0
+        Serial.print(tonic);
+        Serial.print(F(" to pad "));
+        Serial.println(lastTouchedPad);
+    #endif
 
     return outputChanged;
 

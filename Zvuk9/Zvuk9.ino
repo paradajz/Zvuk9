@@ -60,7 +60,7 @@ void setTonicLEDs() {
 
         //turn tonic LED on only if corresponding note is active
         if (pads.noteActive((tonic_t)i))
-            leds.setTonicLEDstate((tonic_t)i, ledIntensityDim);
+            leds.setNoteLEDstate((tonic_t)i, ledIntensityDim);
 
     }
 
@@ -206,20 +206,16 @@ void setLEDTonicStateEditMode(uint8_t pad) {
 
     }
 
+    for (int i=0; i<NOTES_PER_PAD; i++)
+        Serial.println(tonicArray[i]);
+
     //turn off all LEDs
     for (int i=0; i<MIDI_OCTAVE_RANGE; i++)
-        leds.setTonicLEDstate((tonic_t)i, ledIntensityOff);
+        leds.setNoteLEDstate((tonic_t)i, ledIntensityOff);
 
     //set dim led state for assigned notes on current pad
-    for (int i=0; i<NOTES_PER_PAD; i++) {
-
-        if (tonicArray[i] != MIDI_OCTAVE_RANGE) {
-
-            leds.setTonicLEDstate((tonic_t)i, ledIntensityDim);
-
-        }
-
-    }
+    for (int i=0; i<NOTES_PER_PAD; i++)
+        leds.setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityDim);
 
     //set full led state for assigned notes on current pad if note matches current octave
     for (int i=0; i<NOTES_PER_PAD; i++) {
@@ -227,7 +223,7 @@ void setLEDTonicStateEditMode(uint8_t pad) {
         if (tonicArray[i] != MIDI_OCTAVE_RANGE) {
 
             if (octaveArray[i] == pads.getActiveOctave())
-                leds.setTonicLEDstate((tonic_t)i, ledIntensityFull);
+                leds.setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityFull);
 
         }
 
@@ -350,7 +346,7 @@ void padsOctaveUpDown(uint8_t direction, bool buttonState)    {
 
             }   else {
 
-                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                //direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
 
             }
 
@@ -466,7 +462,7 @@ void clearPadEditMode() {
     for (int i=0; i<tonicInvalid; i++)  {
 
         if (leds.getTonicLEDstate((tonic_t)i) == ledIntensityFull)
-            leds.setTonicLEDstate((tonic_t)i, ledIntensityDim);
+            leds.setNoteLEDstate((tonic_t)i, ledIntensityDim);
 
     }
 
@@ -484,7 +480,7 @@ void handlePadPress(uint8_t pad, uint8_t notes[], uint8_t numberOfNotes, uint8_t
         for (int i=0; i<numberOfNotes; i++) {
 
             tonicArray[i] = (uint8_t)pads.getTonicFromNote(notes[i]);
-            leds.setTonicLEDstate((tonic_t)tonicArray[i], ledIntensityFull);
+            leds.setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityFull);
             octaveArray[i] = pads.getOctaveFromNote(notes[i]);
 
         }
@@ -529,7 +525,7 @@ void handlePadRelease(uint8_t pad, uint8_t notes[], uint8_t numberOfNotes)  {
 
             }
 
-        }   if (!noteActive) leds.setTonicLEDstate(pads.getTonicFromNote((tonic_t)notes[z]), ledIntensityDim);
+        }   if (!noteActive) leds.setNoteLEDstate(pads.getTonicFromNote((tonic_t)notes[z]), ledIntensityDim);
 
     }
 

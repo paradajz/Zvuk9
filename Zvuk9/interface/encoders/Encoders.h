@@ -2,7 +2,7 @@
 #define ENCODERS_H_
 
 #include "Arduino.h"
-#include "Debug.h"
+#include "hardware/pins/Pins.h"
 
 #define PROGRAM_ENCODER         0
 #define PRESET_ENCODER          1

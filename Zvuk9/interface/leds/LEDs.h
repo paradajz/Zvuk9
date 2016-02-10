@@ -21,7 +21,7 @@ class LEDs  {
 
     uint8_t getLEDnumberFromTonic(tonic_t _tonic);
     void tonicLEDsOff();
-    void setTonicLEDstate(tonic_t _tonic, ledIntensity_t state);
+    void setNoteLEDstate(tonic_t _tonic, ledIntensity_t state);
     ledIntensity_t getTonicLEDstate(tonic_t _tonic);
 
     private:
