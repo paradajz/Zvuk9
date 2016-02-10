@@ -12,18 +12,17 @@
 
 //LEDs
 volatile int8_t             activeColumnInterrupt = 0;
-ledIntensity_t              ledState[NUMBER_OF_LEDS] = { ledIntensityOff };
-volatile int16_t            transitionCounter[NUMBER_OF_LEDS] = { 0 };
+ledIntensity_t              ledState[NUMBER_OF_LEDS];
+int16_t                     transitionCounter[NUMBER_OF_LEDS];
 volatile uint8_t            pwmSteps = DEFAULT_FADE_SPEED;
 
 //encoders
-volatile encoderPosition_t    encoderMoving[NUMBER_OF_ENCODERS];
+volatile int8_t             encoderMoving[NUMBER_OF_ENCODERS];
 volatile uint8_t*           pin1_register[NUMBER_OF_ENCODERS];
 volatile uint8_t*           pin2_register[NUMBER_OF_ENCODERS];
 uint8_t                     pin1_bitmask[NUMBER_OF_ENCODERS];
 uint8_t                     pin2_bitmask[NUMBER_OF_ENCODERS];
-uint8_t                     state[NUMBER_OF_ENCODERS];
-int32_t                     position[NUMBER_OF_ENCODERS];
+uint16_t encoderData[NUMBER_OF_ENCODERS];
 
 //timer1 testing
 volatile uint32_t rTime_ms;
@@ -58,70 +57,74 @@ const uint8_t encoderPin2Array[] = {
 
 };
 
-inline void updateEncoder(uint8_t id)    {
+inline void updateEncoder(uint8_t encoderID)    {
 
-    pinMode(encoderPin1Array[id], INPUT_PULLUP);
-    pinMode(encoderPin2Array[id], INPUT_PULLUP);
+    uint8_t p1val = DIRECT_PIN_READ(pin1_register[encoderID], pin1_bitmask[encoderID]);
+    uint8_t p2val = DIRECT_PIN_READ(pin2_register[encoderID], pin2_bitmask[encoderID]);
 
-    uint8_t p1val = DIRECT_PIN_READ(pin1_register[id], pin1_bitmask[id]);
-    uint8_t p2val = DIRECT_PIN_READ(pin2_register[id], pin2_bitmask[id]);
+    uint8_t pairState = p1val;
+    pairState <<= 1;
+    pairState |= p2val;
 
-    uint8_t newState = state[id] & 3;
-    int32_t lastPosition = position[id];
+    //add new data
+    uint8_t newPairData = 0;
+    newPairData |= (((encoderData[encoderID] << 2) & 0x000F) | (uint16_t)pairState);
+    encoderData[encoderID] &= ENCODER_CLEAR_TEMP_STATE_MASK;
 
-    if (p1val) newState |= 4;
-    if (p2val) newState |= 8;
+    //shift in new data
+    encoderData[encoderID] |= (uint16_t)newPairData;
 
-    state[id] = (newState >> 2);
+    int8_t encRead = encoderLookUpTable[newPairData];
 
-    switch (newState) {
+    if (!encRead) return;
 
-        case 1: case 7: case 8: case 14:
-        position[id]++;
-        break;
+    bool newEncoderDirection = encRead > 0;
+    //get current number of pulses from encoderData
+    int8_t currentPulses = (encoderData[encoderID] >> 4) & 0x000F;
+    currentPulses += encRead;
+    //clear current pulses
+    encoderData[encoderID] &= ENCODER_CLEAR_PULSES_MASK;
+    //shift in new pulse count
+    encoderData[encoderID] |= (uint16_t)(currentPulses << 4);
+    //get last encoder direction
+    bool lastEncoderDirection = bitRead(encoderData[encoderID], ENCODER_DIRECTION_BIT);
+    //write new encoder direction
+    bitWrite(encoderData[encoderID], ENCODER_DIRECTION_BIT, newEncoderDirection);
 
-        case 2: case 4: case 11: case 13:
-        position[id]--;
-        break;
+    if (lastEncoderDirection != newEncoderDirection) return;
+    if (currentPulses % PULSES_PER_STEP) return;
 
-        case 3: case 12:
-        position[id] += 2;
-        break;
+    //clear current pulses
+    encoderData[encoderID] &= ENCODER_CLEAR_PULSES_MASK;
 
-        case 6: case 9:
-        position[id] -= 2;
-        break;
+    //set default pulse count
+    encoderData[encoderID] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);
 
-    }
-
-    if (position[id] != lastPosition)    {
-
-        bool encoderDirection = position[id] > lastPosition;
-
-        if ((position[id] % PULSES_PER_STEP) == 0)   {
-
-            if (encoderDirection) encoderMoving[id] = encMoveRight;
-            else encoderMoving[id] = encMoveLeft;
-
-        }
-
-    }
+    //clear current moving status
+    //encoderData[encoderID] &= ENCODER_CLEAR_MOVING_STATUS_MASK;
+    if (newEncoderDirection) encoderMoving[encoderID]++;
+    else encoderMoving[encoderID]--;
 
 }
 
 inline void ledRowsOff() {
 
-    digitalWrite(LED_ROW_1_PIN, LOW);
-    digitalWrite(LED_ROW_2_PIN, LOW);
-    digitalWrite(LED_ROW_3_PIN, LOW);
+    //turn off pwm
+    TCCR2A &= ~(1<<COM2A1);
+    TCCR1A &= ~(1<<COM1A1);
+    TCCR1A &= ~(1<<COM1B1);
+
+    setLowMacro(LED_ROW_1_PORT, LED_ROW_3_PIN_INDEX);
+    setLowMacro(LED_ROW_2_PORT, LED_ROW_3_PIN_INDEX);
+    setLowMacro(LED_ROW_3_PORT, LED_ROW_3_PIN_INDEX);
 
 }
 
 inline void activateColumn(uint8_t column) {
 
-    digitalWrite(DECODER_OUT_1, bitRead(column, 0));
-    digitalWrite(DECODER_OUT_2, bitRead(column, 1));
-    digitalWrite(DECODER_OUT_3, bitRead(column, 2));
+    bitRead(column, 0) ? setHighMacro(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX) : setLowMacro(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX);
+    bitRead(column, 1) ? setHighMacro(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN_INDEX) : setLowMacro(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN_INDEX);
+    bitRead(column, 2) ? setHighMacro(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN_INDEX) : setLowMacro(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN_INDEX);
 
 }
 
@@ -130,15 +133,18 @@ inline void ledRowOn(uint8_t rowNumber, uint8_t value)  {
     switch (rowNumber)  {
 
         case 0:
-        analogWrite(LED_ROW_1_PIN, value);
+        OCR2A = value;
+        TCCR2A |= (1<<COM2A1);
         break;
 
         case 1:
-        analogWrite(LED_ROW_2_PIN, value);
+        OCR1A = value;
+        TCCR1A |= (1<<COM1A1);
         break;
 
         case 2:
-        analogWrite(LED_ROW_3_PIN, value);
+        OCR1B = value;
+        TCCR1A |= (1<<COM1B1);
         break;
 
     }
@@ -152,6 +158,63 @@ inline void ledRowOn(uint8_t rowNumber, uint8_t value)  {
 
 ISR(TIMER0_COMPA_vect)    {
 
+    static uint8_t ledUpdateCounter = 0;
+
+    if (ledUpdateCounter == 2)  {
+
+        ledUpdateCounter = 0;
+
+        //LEDs
+        ledRowsOff();
+        if (activeColumnInterrupt == NUMBER_OF_LED_COLUMNS) activeColumnInterrupt = 0;
+        activateColumn(activeColumnInterrupt);
+
+        uint8_t ledNumber;
+        ledIntensity_t ledStateSingle;
+        uint8_t currentStepValue;
+        bool stepDirection;
+        bool stepUpdate;
+
+        for (int i=0; i<NUMBER_OF_LED_ROWS; i++)  {
+
+            ledNumber = activeColumnInterrupt+i*NUMBER_OF_LED_COLUMNS;
+            ledStateSingle = ledState[ledNumber];
+            currentStepValue = transitionCounter[ledNumber];
+            stepUpdate = currentStepValue != ledStateSingle;
+
+            if (currentStepValue)
+                ledRowOn(i, currentStepValue);
+
+            if (stepUpdate) {
+
+                stepDirection = currentStepValue < ledStateSingle;
+
+                switch(stepDirection)   {
+
+                    case true:
+                    transitionCounter[ledNumber] += pwmSteps;
+                    if (transitionCounter[ledNumber] > ledStateSingle)
+                        transitionCounter[ledNumber] = ledStateSingle;
+                    break;
+
+                    case false:
+                    transitionCounter[ledNumber] -= pwmSteps;
+                    if (transitionCounter[ledNumber] < ledStateSingle)
+                        transitionCounter[ledNumber] = ledStateSingle;
+                    break;
+
+                }
+
+            }
+
+        }
+
+        activeColumnInterrupt++;
+
+    }
+
+    ledUpdateCounter++;
+
     static bool updateMillis = false;
 
     if (updateMillis)   {
@@ -164,38 +227,15 @@ ISR(TIMER0_COMPA_vect)    {
 
     }   updateMillis = !updateMillis;
 
-    for (int i=0; i<NUMBER_OF_ENCODERS; i++)
-        updateEncoder(i);
-
 }
 
 ISR(TIMER3_COMPA_vect)  {
 
-    //LEDs
-    ledRowsOff();
-    activateColumn(activeColumnInterrupt);
-
-    for (int i=0; i<NUMBER_OF_LED_ROWS; i++)  {
-
-        uint8_t ledNumber = activeColumnInterrupt+i*NUMBER_OF_LED_COLUMNS;
-        ledIntensity_t ledStateSingle = ledState[ledNumber];
-
-        if (transitionCounter[ledNumber]) ledRowOn(i, transitionCounter[ledNumber]);
-        if (transitionCounter[ledNumber] < ledStateSingle)
-        transitionCounter[ledNumber] += pwmSteps;
-        if (transitionCounter[ledNumber] > 255) transitionCounter[ledNumber] = 255;
-
-        if ((ledStateSingle == 0) || (ledStateSingle == ledIntensityDim))
-        transitionCounter[ledNumber] -= pwmSteps;
-
-        if ((ledStateSingle == ledIntensityDim) && (transitionCounter[ledNumber] < ledIntensityDim))
-        transitionCounter[ledNumber] = ledIntensityDim;
-        if (transitionCounter[ledNumber] < 0) transitionCounter[ledNumber] = 0;
-
-    }
-
-    activeColumnInterrupt++;
-    if (activeColumnInterrupt == NUMBER_OF_LED_COLUMNS) activeColumnInterrupt = 0;
+    static uint8_t encoderCounter = 0;
+    updateEncoder(encoderCounter);
+    encoderCounter++;
+    if (encoderCounter == NUMBER_OF_ENCODERS)
+    encoderCounter = 0;
 
 }
 
@@ -219,8 +259,7 @@ TimerObject::TimerObject()  {
 
 void TimerObject::init() {
 
-    //configure timer3
-    //used for led control
+    //clear timer3 info
     TCCR3A = 0;
     TCCR3B = 0;
     TCNT3  = 0;
@@ -234,9 +273,6 @@ void TimerObject::init() {
 
     //set prescaler to 256
     TCCR3B |= (1 << CS32);
-
-    //set compare match register to desired timer count
-    OCR3A = 94; //around 1500us
 
     //configure timer1/2 for LED matrix PWM
     TCCR1A = 0;
@@ -281,22 +317,23 @@ void TimerObject::init() {
     //set compare match register to desired timer count
     OCR0A = 124; //500uS
 
-    //enable CTC interrupt for timer3
-    TIMSK3 |= (1 << OCIE3A);
+    OCR3A = 10;
 
     //enable CTC interrupt for timer0
     TIMSK0 |= (1 << OCIE0A);
+
+    TIMSK3 |= (1<<OCIE3A);
 
     for (int i=0; i<NUMBER_OF_ENCODERS; i++)
         setupEncoder(i, encoderPin1Array[i], encoderPin2Array[i]);
 
 };
 
-encoderPosition_t TimerObject::getEncoderState(uint8_t encoderNumber)  {
+int8_t TimerObject::getEncoderState(uint8_t encoderNumber)  {
 
-    encoderPosition_t returnValue;
+    int8_t returnValue;
     returnValue = encoderMoving[encoderNumber];
-    encoderMoving[encoderNumber] = encStopped;
+    encoderMoving[encoderNumber] = 0;
     return returnValue;
 
 }
@@ -309,20 +346,21 @@ void TimerObject::setPWMsteps(uint8_t steps)    {
 
 void TimerObject::setupEncoder(uint8_t id, uint8_t pin1, uint8_t pin2) {
 
+    pinMode(pin1, INPUT_PULLUP);
+    pinMode(pin2, INPUT_PULLUP);
+
     pin1_register[id] = PIN_TO_BASEREG(pin1);
     pin1_bitmask[id] = PIN_TO_BITMASK(pin1);
 
     pin2_register[id] = PIN_TO_BASEREG(pin2);
     pin2_bitmask[id] = PIN_TO_BITMASK(pin2);
 
-    position[id] = 0;
+    for (int i=0; i<NUMBER_OF_ENCODERS; i++)    {
 
-    uint8_t s = 0;
+        encoderData[i] |= ((uint16_t)0 << 8);
+        encoderData[i] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);   //set number of pulses to 8
 
-    if (DIRECT_PIN_READ(pin1_register[id], pin1_bitmask[id])) s |= 1;
-    if (DIRECT_PIN_READ(pin2_register[id], pin2_bitmask[id])) s |= 2;
-
-    state[id] = s;
+    }
 
 }
 

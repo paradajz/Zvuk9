@@ -7,6 +7,8 @@ Define custom data types.
 #ifndef TYPES_H_
 #define TYPES_H_
 
+#include "interface/leds/LEDsettings.h"
+
 enum ccLimitType_t {
 
     ccLimitTypeXmin = 0x00,
@@ -26,8 +28,8 @@ enum ccType_t {
 enum ledIntensity_t   {
 
     ledIntensityOff = 0x00,
-    ledIntensityDim = 70,
-    ledIntensityFull = 255
+    ledIntensityDim = HALF_INTENSITY,
+    ledIntensityFull = FULL_INTENSITY
 
 };
 
@@ -106,14 +108,6 @@ enum pressureType_t   {
 
     pressureVelocity,
     pressureAfterTouch
-
-};
-
-enum encoderPosition_t {
-
-    encMoveLeft = 1,
-    encMoveRight = 127,
-    encStopped = 0
 
 };
 

@@ -23,21 +23,38 @@
 #define PAD_0                       2
 #define PAD_1                       1
 #define PAD_2                       0
-#define PAD_3                       3
+#define PAD_3                       6
 #define PAD_4                       4
 #define PAD_5                       5
-#define PAD_6                       6
+#define PAD_6                       3
 #define PAD_7                       7
 #define PAD_8                       8
 
 //LEDs
-#define LED_ROW_1_PIN               24
-#define LED_ROW_2_PIN               25
-#define LED_ROW_3_PIN               26
 
-#define DECODER_OUT_1               21
-#define DECODER_OUT_2               22
-#define DECODER_OUT_3               23
+#define LED_ROW_1_PORT              PORTB
+#define LED_ROW_1_DDR               DDRB
+#define LED_ROW_1_PIN_INDEX         4
+
+#define LED_ROW_2_PORT              PORTB
+#define LED_ROW_2_DDR               DDRB
+#define LED_ROW_2_PIN_INDEX         5
+
+#define LED_ROW_3_PORT              PORTB
+#define LED_ROW_3_DDR               DDRB
+#define LED_ROW_3_PIN_INDEX         6
+
+#define DECODER_OUT_1_PORT          PORTB
+#define DECODER_OUT_1_DDR           DDRB
+#define DECODER_OUT_1_PIN_INDEX     1
+
+#define DECODER_OUT_2_PORT          PORTB
+#define DECODER_OUT_2_DDR           DDRB
+#define DECODER_OUT_2_PIN_INDEX     2
+
+#define DECODER_OUT_3_PORT          PORTB
+#define DECODER_OUT_3_DDR           DDRB
+#define DECODER_OUT_3_PIN_INDEX     3
 
 #define LED_NOTE_C_SHARP            18
 #define LED_NOTE_D_SHARP            22

@@ -30,8 +30,8 @@ void Encoders::update() {
 
     for (int i=0; i<NUMBER_OF_ENCODERS; i++)    {
 
-        encoderPosition_t encoderState = timers.getEncoderState(i);
-        if (encoderState == encStopped) continue;
+        int8_t encoderSteps = timers.getEncoderState(i);
+        if (encoderSteps == 0) continue;
 
         uint32_t timeDifference = newMillis() - lastStepTime[i];
         uint8_t steps = ENCODER_SPEED_1;
@@ -41,10 +41,8 @@ void Encoders::update() {
 
         lastStepTime[i] = newMillis();
 
-        if (encoderState == encMoveLeft) 
-            sendEncoderCallback(i, false, steps);
-
-        else sendEncoderCallback(i, true, steps);
+        for (int j=0; j<abs(encoderSteps); j++)
+            sendEncoderCallback(i, (encoderSteps > 0), steps);
 
     }
 

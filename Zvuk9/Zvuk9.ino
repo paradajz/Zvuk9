@@ -20,7 +20,7 @@
 void startUpAnimation() {
 
     //slow down fading for effect
-    leds.setFadeSpeed(3);
+    leds.setFadeSpeed(1);
 
     ledIntensity_t tempLedStateArray[NUMBER_OF_LEDS];
 
@@ -33,19 +33,19 @@ void startUpAnimation() {
 
     }
 
-    sei();
-
     //turn all leds on slowly
     leds.allLEDsOn();
 
+    sei();
+
     lcDisplay.displayHelloMessage();
-    newDelay(2000);
+    newDelay(600);
 
     //restore led states
     for (int i=0; i<NUMBER_OF_LEDS; i++)
         leds.setLEDstate(i, tempLedStateArray[i]);
 
-    newDelay(1150);
+    newDelay(1500);
 
     //restore normal fade speed
     leds.setFadeSpeed(DEFAULT_FADE_SPEED);
@@ -346,6 +346,11 @@ void padsOctaveUpDown(uint8_t direction, bool buttonState)    {
                 changeOutput_t shiftResult = pads.shiftOctave(direction);
                 int8_t activeOctave = pads.getActiveOctave();
                 lcDisplay.displayNoteChange(shiftResult, octaveChange, activeOctave);
+                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+
+            }   else {
+
+                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
 
             }
 

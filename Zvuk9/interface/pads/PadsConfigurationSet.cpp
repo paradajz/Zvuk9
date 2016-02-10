@@ -394,10 +394,17 @@ void Pads::checkOctaveShift()   {
 
 changeOutput_t Pads::setTonic(tonic_t _tonic, bool internalChange)  {
 
-    //should we do this in user scales?
-
     changeOutput_t result = noChange;
-    tonic_t currentScaleTonic = getActiveTonic();
+    tonic_t currentScaleTonic;
+
+    if (internalChange) {
+
+        //internal change means that this function got called on startup
+        //on startup, tonic isn't applied yet, so it's first note on first pad by default
+        //this never gets called on startup for user presets
+        currentScaleTonic = getTonicFromNote(padNote[0][0]);
+
+    }   else currentScaleTonic = getActiveTonic();
 
     //determine distance between notes
     uint8_t changeDifference;

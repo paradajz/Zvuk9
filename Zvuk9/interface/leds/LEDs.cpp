@@ -21,17 +21,17 @@ const uint8_t ledNoteArray[] = {
 LEDs::LEDs()    {
 
     //default constructor
-    pinMode(LED_ROW_1_PIN, OUTPUT);
-    pinMode(LED_ROW_2_PIN, OUTPUT);
-    pinMode(LED_ROW_3_PIN, OUTPUT);
+    setOutputMacro(LED_ROW_1_DDR, LED_ROW_1_PIN_INDEX);
+    setOutputMacro(LED_ROW_2_DDR, LED_ROW_2_PIN_INDEX);
+    setOutputMacro(LED_ROW_3_DDR, LED_ROW_3_PIN_INDEX);
 
-    digitalWrite(LED_ROW_1_PIN, LOW);
-    digitalWrite(LED_ROW_2_PIN, LOW);
-    digitalWrite(LED_ROW_3_PIN, LOW);
+    setLowMacro(LED_ROW_1_PORT, LED_ROW_1_PIN_INDEX);
+    setLowMacro(LED_ROW_2_PORT, LED_ROW_2_PIN_INDEX);
+    setLowMacro(LED_ROW_3_PORT, LED_ROW_3_PIN_INDEX);
 
-    pinMode(DECODER_OUT_1, OUTPUT);
-    pinMode(DECODER_OUT_2, OUTPUT);
-    pinMode(DECODER_OUT_3, OUTPUT);
+    setOutputMacro(DECODER_OUT_1_DDR, DECODER_OUT_1_PIN_INDEX);
+    setOutputMacro(DECODER_OUT_2_DDR, DECODER_OUT_2_PIN_INDEX);
+    setOutputMacro(DECODER_OUT_3_DDR, DECODER_OUT_3_PIN_INDEX);
 
 }
 

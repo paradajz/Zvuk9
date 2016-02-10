@@ -12,9 +12,9 @@
 #define X_MIN_ENCODER           6
 #define X_CURVE_ENCODER         2
 
-#define Y_CC_ENCODER            5
+#define Y_CC_ENCODER            7
 #define Y_MAX_ENCODER           9
-#define Y_MIN_ENCODER           7
+#define Y_MIN_ENCODER           5
 #define Y_CURVE_ENCODER         4
 
 class Encoders  {
