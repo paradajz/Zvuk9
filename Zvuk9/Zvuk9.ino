@@ -457,14 +457,7 @@ void clearPadEditMode() {
 
     lcDisplay.clearPadEditMode();
     pads.setPadEditMode(false);
-
-    //set all active tonic leds from full to dim intensity
-    for (int i=0; i<tonicInvalid; i++)  {
-
-        if (leds.getTonicLEDstate((tonic_t)i) == ledIntensityFull)
-            leds.setNoteLEDstate((tonic_t)i, ledIntensityDim);
-
-    }
+    setTonicLEDs();
 
 }
 
