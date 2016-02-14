@@ -148,11 +148,11 @@ const uint8_t defaultPredefinedScaleParametersArray[] = {
 #define DEFAULT_ACTIVE_PROGRAM                      0
 #define DEFAULT_ACTIVE_SCALE                        0
 
-#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER            35
+#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER            20
 #define DEFAULT_PAD_PRESSURE_LIMIT_UPPER            350
 
-#define DEFAULT_PAD_X_LIMIT_LOWER                   420
-#define DEFAULT_PAD_X_LIMIT_UPPER                   564
+#define DEFAULT_PAD_X_LIMIT_LOWER                   450
+#define DEFAULT_PAD_X_LIMIT_UPPER                   600
 
 #define DEFAULT_PAD_Y_LIMIT_LOWER                   450
 #define DEFAULT_PAD_Y_LIMIT_UPPER                   600

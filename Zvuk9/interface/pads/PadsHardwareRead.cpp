@@ -65,7 +65,14 @@ int16_t Pads::getX()  {
     static bool xSwitched = false;
     static bool admuxSet = false;
 
-    if (!admuxSet)  { setupX(); setAnalogInput(READ_X); admuxSet = true; return -1; }
+    if (!admuxSet)  {
+
+        setupX();
+        setAnalogInput(READ_X);
+        admuxSet = true;
+        return -1;
+
+    }
 
     if (!readInitiated && !xSwitched)   {
 
@@ -74,7 +81,14 @@ int16_t Pads::getX()  {
         return -1;
 
     }   else if (readInitiated && xSwitched)   return -1;
-    else { xSwitched = false; admuxSet = false; return 1023 - getAnalogValue(); }
+    else {
+
+        xSwitched = false;
+        admuxSet = false;
+
+        return getAnalogValue();
+
+    }
 
 }
 
@@ -84,7 +98,14 @@ int16_t Pads::getY()  {
     static bool ySwitched = false;
     static bool admuxSet = false;
 
-    if (!admuxSet)  { setupY(); setAnalogInput(READ_Y); admuxSet = true; return -1; }
+    if (!admuxSet)  {
+
+        setupY();
+        setAnalogInput(READ_Y);
+        admuxSet = true;
+        return -1;
+
+    }
 
     if (!readInitiated && !ySwitched)   {
 
@@ -93,7 +114,14 @@ int16_t Pads::getY()  {
         return -1;
 
     }   else if (readInitiated && ySwitched)   return -1;
-    //else { ySwitched = false; admuxSet = false; return 1023 - getAnalogValue(); }
-    else { ySwitched = false; admuxSet = false; return getAnalogValue(); }
+
+    else {
+
+        ySwitched = false;
+        admuxSet = false;
+
+        return getAnalogValue();
+
+    }
 
 }

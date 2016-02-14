@@ -9,12 +9,13 @@
 volatile int16_t adcValue = 0;
 volatile bool adcConversionInProgress = false;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 uint8_t adcPinReadOrder[] = {
 
-    muxCommonPinsAnalogRead[2], //pressure, first reading
-    muxCommonPinsAnalogRead[1], //pressure, second reading
-    muxCommonPinsAnalogRead[1], //x coordinate
-    muxCommonPinsAnalogRead[3]  //y coordinate
+    muxCommonPinsAnalogRead[2], //pressure, first reading, Y+
+    muxCommonPinsAnalogRead[0], //pressure, second reading, X+
+    muxCommonPinsAnalogRead[2], //y coordinate, X+
+    muxCommonPinsAnalogRead[0]  //x coordinate, Y+
 
 };
 
@@ -422,7 +423,11 @@ bool Pads::processXY()  {
 
         if (xValue == -1) {
 
-            xValue = getX();
+            #if XY_FLIP_AXIS > 0
+                xValue = getY();
+            #else
+                xValue = getX();
+            #endif
 
         }
 
@@ -431,7 +436,11 @@ bool Pads::processXY()  {
         //we have x
         if (yValue == -1) {
 
-            yValue = getY();
+            #if XY_FLIP_AXIS > 0
+                yValue = getX();
+            #else
+                yValue = getY();
+            #endif
 
         }
         if (!((xValue != -1) && (yValue != -1))) return false;    //we don't have y yet
@@ -702,11 +711,15 @@ void Pads::sendPadXY()  {
                 Serial.print(F("X for pad "));
                 Serial.print(pad);
                 Serial.print(F(": "));
-                Serial.println(midiX);
+                #if XY_FLIP_VALUES > 0
+                    Serial.println(127-midiX);
+                #else
+                    Serial.println(127-midiX);
+                #endif
                 Serial.print(F("X CC: "));
                 Serial.println(ccXPad[pad]);
             #else
-                #if XY_INVERT > 0
+                #if XY_FLIP_VALUES > 0
                     midi.sendControlChange(midiChannel, ccXPad[pad], 127-midiX);
                 #else
                     midi.sendControlChange(midiChannel, ccXPad[pad], midiX);
@@ -726,11 +739,15 @@ void Pads::sendPadXY()  {
                 Serial.print(F("Y for pad "));
                 Serial.print(pad);
                 Serial.print(F(": "));
-                Serial.println(midiY);
+                #if XY_FLIP_VALUES > 0
+                    Serial.println(127-midiY);
+                #else
+                    Serial.println(midiY);
+                #endif
                 Serial.print(F("Y CC: "));
                 Serial.println(ccYPad[pad]);
             #else
-                #if XY_INVERT > 0
+                #if XY_FLIP_VALUES > 0
                     midi.sendControlChange(midiChannel, ccYPad[pad], 127-midiY);
                 #else
                     midi.sendControlChange(midiChannel, ccYPad[pad], midiY);

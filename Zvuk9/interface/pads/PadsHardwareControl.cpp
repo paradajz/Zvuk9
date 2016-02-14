@@ -40,31 +40,33 @@ void Pads::setMuxInput(uint8_t muxInput)   {
 
 void Pads::setupPressure()  {
 
-    pinMode(muxCommonPins[0], OUTPUT);
-    pinMode(muxCommonPins[1], INPUT);
-    pinMode(muxCommonPins[2], INPUT);
-    pinMode(muxCommonPins[3], OUTPUT);
+    //pressure is read from x+/y+
+    //set 0/5V across x-/y-
 
-    digitalWrite(muxCommonPins[0], HIGH);
-    digitalWrite(muxCommonPins[1], LOW);
-    digitalWrite(muxCommonPins[2], LOW);
-    digitalWrite(muxCommonPins[3], LOW);
+    pinMode(muxCommonPins[0], INPUT); //x+
+    pinMode(muxCommonPins[1], OUTPUT); //x-
+    pinMode(muxCommonPins[2], INPUT); //y+
+    pinMode(muxCommonPins[3], OUTPUT); //y-
 
-    _NOP();
+    digitalWrite(muxCommonPins[1], HIGH); //x+
+    digitalWrite(muxCommonPins[3], LOW); //y-
+
+    _NOP(); _NOP(); _NOP(); _NOP();
 
 }
 
 void Pads::setupX()  {
 
-    pinMode(muxCommonPins[0], INPUT);
-    pinMode(muxCommonPins[1], INPUT);
-    pinMode(muxCommonPins[2], OUTPUT);
-    pinMode(muxCommonPins[3], OUTPUT);
+    //x is read from y+
+    //set 0/5V across x+/x-
+
+    pinMode(muxCommonPins[0], OUTPUT); //x+
+    pinMode(muxCommonPins[1], OUTPUT); //x-
+    pinMode(muxCommonPins[2], INPUT); //y+
+    pinMode(muxCommonPins[3], INPUT); //y-
 
     digitalWrite(muxCommonPins[0], LOW);
-    digitalWrite(muxCommonPins[1], LOW);
-    digitalWrite(muxCommonPins[2], LOW);
-    digitalWrite(muxCommonPins[3], HIGH);
+    digitalWrite(muxCommonPins[1], HIGH);
 
     _NOP(); _NOP(); _NOP(); _NOP();
 
@@ -72,17 +74,17 @@ void Pads::setupX()  {
 
 void Pads::setupY()  {
 
-    //set pins for y
-    pinMode(muxCommonPins[0], OUTPUT);
-    pinMode(muxCommonPins[1], OUTPUT);
-    pinMode(muxCommonPins[2], INPUT);
-    pinMode(muxCommonPins[3], INPUT);
+    //y is read from x+
+    //set 0/5V across y+/y-
 
-    digitalWrite(muxCommonPins[0], LOW);
-    digitalWrite(muxCommonPins[1], HIGH);
+    pinMode(muxCommonPins[0], INPUT); //x+
+    pinMode(muxCommonPins[1], INPUT); //x-
+    pinMode(muxCommonPins[2], OUTPUT); //y+
+    pinMode(muxCommonPins[3], OUTPUT); //y-
+
     digitalWrite(muxCommonPins[2], LOW);
-    digitalWrite(muxCommonPins[3], LOW);
+    digitalWrite(muxCommonPins[3], HIGH);
 
-    _NOP();
+    _NOP(); _NOP(); _NOP(); _NOP();
 
 }

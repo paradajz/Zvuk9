@@ -3,8 +3,8 @@
 
 #define BOARD_V1
 
-//#define VARIANT_1
-#define VARIANT_2
+#define VARIANT_1
+//#define VARIANT_2
 
 //mux
 #define MUX_COMMON_PIN_0            A3
