@@ -34,7 +34,7 @@
 
 #ifdef VARIANT_2
 #define XY_FLIP_AXIS                        1
-#define XY_FLIP_VALUES                      1
+#define XY_FLIP_VALUES                      0
 #else
 #define XY_FLIP_AXIS                        0
 #define XY_FLIP_VALUES                      0

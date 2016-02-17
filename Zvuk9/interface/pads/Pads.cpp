@@ -740,17 +740,17 @@ void Pads::sendPadXY()  {
                 Serial.print(pad);
                 Serial.print(F(": "));
                 #if XY_FLIP_VALUES > 0
-                    Serial.println(127-midiY);
-                #else
                     Serial.println(midiY);
+                #else
+                    Serial.println(127-midiY);
                 #endif
                 Serial.print(F("Y CC: "));
                 Serial.println(ccYPad[pad]);
             #else
                 #if XY_FLIP_VALUES > 0
-                    midi.sendControlChange(midiChannel, ccYPad[pad], 127-midiY);
-                #else
                     midi.sendControlChange(midiChannel, ccYPad[pad], midiY);
+                #else
+                    midi.sendControlChange(midiChannel, ccYPad[pad], 127-midiY);
                 #endif
                 lastYMIDIvalue[pad] = midiY;
             #endif
@@ -761,10 +761,10 @@ void Pads::sendPadXY()  {
 
     if (!getPadEditMode())      {
 
-        #if XY_INVERT > 0
-            sendLCDxyCallback(pad, 127-midiX, 127-midiY, xAvailable_, yAvailable_);
+        #if XY_FLIP_VALUES > 0
+            sendLCDxyCallback(pad, 127-midiX, midiY, xAvailable_, yAvailable_);
         #else
-            sendLCDxyCallback(pad, midiX, midiY, xAvailable_, yAvailable_);
+            sendLCDxyCallback(pad, midiX, 127-midiY, xAvailable_, yAvailable_);
         #endif
 
     }
