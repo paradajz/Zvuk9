@@ -714,7 +714,7 @@ void Pads::sendPadXY()  {
                 #if XY_FLIP_VALUES > 0
                     Serial.println(127-midiX);
                 #else
-                    Serial.println(127-midiX);
+                    Serial.println(midiX);
                 #endif
                 Serial.print(F("X CC: "));
                 Serial.println(ccXPad[pad]);
