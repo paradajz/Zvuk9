@@ -3,8 +3,9 @@
 
 #define BOARD_V1
 
-#define VARIANT_1
-//#define VARIANT_2
+#ifdef BOARD_V1
+#include "Variants.h"
+#endif
 
 //mux
 #define MUX_COMMON_PIN_0            A3
