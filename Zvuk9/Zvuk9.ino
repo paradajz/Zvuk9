@@ -17,6 +17,27 @@
 #include <util/delay.h>
 #include "midi/MIDI.h"
 
+//define function prototypes
+void startUpAnimation();
+void setTonicLEDs();
+void handleTransportControl(uint8_t buttonNumber, buttonState_t state);
+bool checkOctaveUpDownEnabled();
+void setLEDTonicStateEditMode(uint8_t pad);
+void padsFunctionOnOff(uint8_t buttonNumber, buttonState_t state);
+void padsOctaveUpDown(uint8_t direction, bool buttonState);
+void handleTonicPress(tonic_t _tonic);
+void displayActivePadNotes(uint8_t pad);
+void setUpPadEditMode(uint8_t pad);
+void clearPadEditMode();
+void handlePadPress(uint8_t pad, uint8_t notes[], uint8_t numberOfNotes, uint8_t velocity, uint8_t ccX, uint8_t ccY);
+void handlePadRelease(uint8_t pad, uint8_t notes[], uint8_t numberOfNotes);
+void setLCDAfterTouch(uint8_t pressure);
+void setLCDxyData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
+void clearPadData(uint8_t pad);
+void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps);
+void setLEDstate(uint8_t ledNumber, ledIntensity_t state);
+
+//implementation
 void startUpAnimation() {
 
     //slow down fading for effect
