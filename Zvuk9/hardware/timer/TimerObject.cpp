@@ -101,7 +101,6 @@ inline void updateEncoder(uint8_t encoderID)    {
     encoderData[encoderID] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);
 
     //clear current moving status
-    //encoderData[encoderID] &= ENCODER_CLEAR_MOVING_STATUS_MASK;
     if (newEncoderDirection) encoderMoving[encoderID]++;
     else encoderMoving[encoderID]--;
 
