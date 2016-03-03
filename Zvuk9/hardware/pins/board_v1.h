@@ -148,14 +148,14 @@
 #define ENCODER_PAIR_09_PIN_1       12
 
 //LCD
-#define LCD_D4_PORT                 PORTD       // If using 4 bit mode, you must configure DB4-DB7
-#define LCD_D4_PIN                  5
-#define LCD_D5_PORT                 PORTD
-#define LCD_D5_PIN                  6
-#define LCD_D6_PORT                 PORTD
-#define LCD_D6_PIN                  7
-#define LCD_D7_PORT                 PORTE
-#define LCD_D7_PIN                  0
+#define LCD_DB4_PORT                 PORTD       // If using 4 bit mode, you must configure DB4-DB7
+#define LCD_DB4_PIN                  5
+#define LCD_DB5_PORT                 PORTD
+#define LCD_DB5_PIN                  6
+#define LCD_DB6_PORT                 PORTD
+#define LCD_DB6_PIN                  7
+#define LCD_DB7_PORT                 PORTE
+#define LCD_DB7_PIN                  0
 
 #define LCD_RS_PORT                 PORTB       // Port for RS line
 #define LCD_RS_PIN                  7           // Pin for RS line
