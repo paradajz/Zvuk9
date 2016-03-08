@@ -6,7 +6,7 @@
 #ifdef VARIANT_1
 #define MODE_SERIAL 0
 #elif defined (VARIANT_2)
-#define MODE_SERIAL 0
+#define MODE_SERIAL 1
 #endif
 
 #define START_UP_ANIMATION  1
