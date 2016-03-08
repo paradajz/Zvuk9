@@ -840,11 +840,11 @@ void Pads::storePadNotes()  {
         uint8_t ccXvalueActivePad = getPadCCvalue(ccTypeX, pad);
         uint8_t ccYvalueActivePad = getPadCCvalue(ccTypeY, pad);
 
-        if (ccXvalueActivePad == ccXvaluePreviousPad)   {
+        if ((ccXvalueActivePad == ccXvaluePreviousPad) && ccXsendEnabled)   {
 
             midi.sendControlChange(midiChannel, ccXvaluePreviousPad, lastXMIDIvalue[previousPad]);
 
-        }   else if (ccYvalueActivePad == ccYvaluePreviousPad)  {
+        }   else if ((ccYvalueActivePad == ccYvaluePreviousPad) && ccYsendEnabled) {
 
             midi.sendControlChange(midiChannel, ccYvaluePreviousPad, lastYMIDIvalue[previousPad]);
 
@@ -919,7 +919,7 @@ void Pads::checkMIDIdata()   {
 
     //send X/Y immediately
     if (xyMIDIdataAvailable())
-        sendPadXY();
+    sendPadXY();
 
     //if notes are available, store them in buffer first
     if (pressureMIDIdataAvailable())
