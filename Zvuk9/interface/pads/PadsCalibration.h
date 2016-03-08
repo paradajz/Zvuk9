@@ -5,10 +5,10 @@
 
 #define PAD_PRESS_DEBOUNCE_TIME             3
 
-#define PAD_RELEASE_DEBOUNCE_TIME           10
+#define PAD_RELEASE_DEBOUNCE_TIME           5
 
 //start reading X/Y PAD_X_Y_DEBOUNCE_TIMEms after pressure
-#define PAD_X_Y_DEBOUNCE_TIME               20
+#define PAD_X_Y_DEBOUNCE_TIME               10
 
 //send x/y and then notes after this delay
 #define PAD_NOTE_SEND_DELAY                 20
