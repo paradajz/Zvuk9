@@ -292,7 +292,7 @@ void padsFunctionOnOff(uint8_t buttonNumber, buttonState_t state)    {
         break;
 
         case BUTTON_ON_OFF_SPLIT:
-        pads.splitFunctions();
+        pads.setSplit();
         lcdMessageType = featureSplit;
         ledNumber = LED_ON_OFF_SPLIT;
         ledState = pads.getSplitStateLEDvalue();

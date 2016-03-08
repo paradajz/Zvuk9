@@ -61,7 +61,7 @@ class EEPROMsettings {
     void factoryReset();
     void createMemoryLayout();
     void createSectionAddresses();
-    inline uint16_t readParameter(uint8_t blockID, uint8_t sectionID, uint8_t parameterID = 0)  {
+    inline uint16_t readParameter(uint8_t blockID, uint8_t sectionID, uint16_t parameterID = 0)  {
 
         uint16_t startAddress = getSectionAddress(blockID, sectionID);
         uint8_t parameterType = getParameterType(blockID, sectionID);

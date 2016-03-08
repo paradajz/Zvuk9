@@ -55,7 +55,7 @@ class Pads  {
     bool setLowerYLimit(uint8_t pad, uint16_t limit);
     bool setUpperYLimit(uint8_t pad, uint16_t limit);
 
-    void splitFunctions();
+    void setSplit();
 
     bool noteActive(tonic_t _tonic);
 

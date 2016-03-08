@@ -14,7 +14,7 @@ void Pads::setCCXsendEnabled(uint8_t padNumber, uint8_t state)    {
 
         case splitXYFunctions:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_ENABLE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*padNumber), state);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*padNumber+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), state);
         xSendEnabled[padNumber] = state;
         break;
 
@@ -36,7 +36,7 @@ void Pads::setCCYsendEnabled(uint8_t padNumber, uint8_t state)    {
 
         case splitXYFunctions:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_ENABLE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*padNumber), state);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*padNumber+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), state);
         ySendEnabled[padNumber] = state;
         break;
 
@@ -58,7 +58,7 @@ void Pads::setNoteSendEnabled(uint8_t padNumber, uint8_t state)   {
 
         case splitXYFunctions:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*padNumber), state);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*padNumber+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), state);
         noteSendEnabled[padNumber] = state;
         break;
 
@@ -80,7 +80,7 @@ void Pads::setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state) {
 
         case splitXYFunctions:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*padNumber), state);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*padNumber+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), state);
         aftertouchSendEnabled[padNumber] = state;
         break;
 
@@ -189,7 +189,7 @@ bool Pads::setActivePreset(uint8_t preset)  {
 
 }
 
-void Pads::splitFunctions() {
+void Pads::setSplit() {
 
     splitCounter++;
     if (splitCounter == splitEnd)  splitCounter = splitOff;
@@ -530,7 +530,7 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_CC_X_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*startPad), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*startPad+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), changedValue);
                 ccXPad[startPad] = changedValue;
                 break;
 
@@ -566,7 +566,7 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_CC_Y_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*startPad), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*startPad+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), changedValue);
                 ccYPad[startPad] = changedValue;
                 break;
 
@@ -588,8 +588,6 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 }
 
 changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t steps)  {
-
-    Serial.print("direction: "); Serial.println(direction);
 
     bool globalShift = (splitCounter == 0);
     changeOutput_t result = outputChanged;
@@ -624,7 +622,7 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_MAX_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*startPad), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*startPad+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), changedValue);
                 ccXmaxPad[startPad] = changedValue;
                 break;
 
@@ -660,7 +658,7 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_MIN_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*startPad), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*startPad+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), changedValue);
                 ccXminPad[startPad] = changedValue;
                 break;
 
@@ -696,7 +694,7 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_MAX_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*startPad), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*startPad+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), changedValue);
                 ccYmaxPad[startPad] = changedValue;
                 break;
 
@@ -732,7 +730,7 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_MIN_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*startPad), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*startPad+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), changedValue);
                     ccYminPad[startPad] = changedValue;
                 break;
 
@@ -788,7 +786,7 @@ changeOutput_t Pads::changeCurve(bool direction, curveCoordinate_t coordinate, i
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_CURVE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*startPad), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*startPad+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), changedValue);
                     padCurveX[startPad] = changedValue;
                 break;
 
@@ -824,7 +822,7 @@ changeOutput_t Pads::changeCurve(bool direction, curveCoordinate_t coordinate, i
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_CURVE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*startPad), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*startPad+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram), changedValue);
                 padCurveY[startPad] = changedValue;
                 break;
 
@@ -936,7 +934,6 @@ changeOutput_t Pads::assignPadNote(uint8_t tonic)    {
     return outputChanged;
 
 }
-
 
 changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
 

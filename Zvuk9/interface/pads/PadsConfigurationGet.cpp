@@ -102,14 +102,14 @@ void Pads::getPadParameters()   {
                 aftertouchSendEnabled[i]        = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*activeProgram));
 
                 //pads have individual settings
-                ccXPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_CC_X_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccYPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_CC_Y_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccXminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_MIN_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccXmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_MAX_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccYminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_MIN_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccYmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_MAX_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_CURVE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_CURVE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
+                ccXPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccYPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccXminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccXmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccYminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccYmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
 
                 #if MODE_SERIAL
                     if (!i) {
@@ -145,18 +145,18 @@ void Pads::getPadParameters()   {
         //pads have individual settings and functions
         for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-                xSendEnabled[i]             = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_ENABLE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ySendEnabled[i]             = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_ENABLE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                noteSendEnabled[i]          = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                aftertouchSendEnabled[i]    = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccXPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_CC_X_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccYPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_CC_Y_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccXminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_MIN_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccXmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_MAX_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccYminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_MIN_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                ccYmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_MAX_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_X_CURVE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
-                padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, LOCAL_PROGRAM_SETTING_Y_CURVE_ID+((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*activeProgram)+(LOCAL_PROGRAM_SETTINGS*i));
+                xSendEnabled[i]             = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ySendEnabled[i]             = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                noteSendEnabled[i]          = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                aftertouchSendEnabled[i]    = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccXPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccYPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccXminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccXmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccYminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                ccYmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
+                padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*activeProgram));
 
                 #if MODE_SERIAL
 
