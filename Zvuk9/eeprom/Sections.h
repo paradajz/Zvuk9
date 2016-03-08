@@ -14,6 +14,7 @@ typedef enum {
 
 typedef enum {
 
+    padCalibrationStatus,
     padCalibrationPressureLowerSection,
     padCalibrationPressureUpperSection,
     padCalibrationXlowerSection,

@@ -40,6 +40,9 @@ void EEPROMsettings::createMemoryLayout() {
 
         blocks[CONF_BLOCK_PAD_CALIBRATION].partialResetEnabled = true;
 
+        blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameters[padCalibrationStatus] = 1;
+        blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameterType[padCalibrationStatus] = BYTE_PARAMETER;
+
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameters[padCalibrationPressureLowerSection] = NUMBER_OF_PADS;
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameterType[padCalibrationPressureLowerSection] = WORD_PARAMETER;
 

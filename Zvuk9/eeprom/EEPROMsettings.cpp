@@ -321,6 +321,10 @@ void EEPROMsettings::initPadCalibration(bool partialReset)   {
     uint16_t blockStartAddress = blocks[CONF_BLOCK_PAD_CALIBRATION].blockStartAddress;
     uint16_t parameterAddress;
 
+    //set padCalibrationStatus to false by default
+    parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationStatus];
+    eeprom_update_byte((uint8_t*)parameterAddress, 0);
+
     //init lower pressure limits
     for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
