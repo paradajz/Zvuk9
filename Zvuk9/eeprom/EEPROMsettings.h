@@ -39,6 +39,14 @@ typedef enum {
 
 } sectionParameterType_t;
 
+typedef enum {
+
+    FACTORY_RESET_WIPE_RESTORE,
+    FACTORY_RESET_RESTORE_FULL,
+    FACTORY_RESET_RESTORE_PARTIAL
+
+} factoryResetType_t;
+
 typedef struct {
 
     uint8_t sections;
@@ -46,6 +54,7 @@ typedef struct {
     uint16_t sectionAddress[10];
     uint16_t sectionParameters[10];
     sectionParameterType_t sectionParameterType[10];
+    bool partialResetEnabled;
 
 } blockDescriptor;
 
@@ -57,8 +66,8 @@ class EEPROMsettings {
     EEPROMsettings();
     void clearEEPROM();
     void init();
-    void initSettings();
-    void factoryReset();
+    void initSettings(bool partialReset = false);
+    void factoryReset(factoryResetType_t type);
     void createMemoryLayout();
     void createSectionAddresses();
     inline uint16_t readParameter(uint8_t blockID, uint8_t sectionID, uint16_t parameterID = 0)  {
@@ -105,9 +114,9 @@ class EEPROMsettings {
         return blocks[blockID].sectionParameterType[sectionID];
 
     }
-    void initProgramSettings();
-    void initUserScales();
-    void initLimits();
+    void initProgramSettings(bool partialReset = false);
+    void initUserScales(bool partialReset = false);
+    void initPadCalibration(bool partialReset = false);
 
 };
 

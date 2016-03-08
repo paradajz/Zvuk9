@@ -5,7 +5,7 @@ typedef enum {
 
     CONF_BLOCK_PROGRAM,
     CONF_BLOCK_USER_SCALE,
-    CONF_BLOCK_LIMIT,
+    CONF_BLOCK_PAD_CALIBRATION,
     CONF_BLOCKS
 
 } blocks;

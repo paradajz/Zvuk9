@@ -14,15 +14,15 @@ typedef enum {
 
 typedef enum {
 
-    limitPressureLowerSection,
-    limitPressureUpperSection,
-    limitXlowerSection,
-    limitXupperSection,
-    limitYlowerSection,
-    limitYupperSection,
-    LIMIT_SECTIONS
+    padCalibrationPressureLowerSection,
+    padCalibrationPressureUpperSection,
+    padCalibrationXlowerSection,
+    padCalibrationXupperSection,
+    padCalibrationYlowerSection,
+    padCalibrationYupperSection,
+    PAD_CALIBRATION_SECTIONS
 
-} limitSection;
+} padCalibrationSection;
 
 typedef enum {
 

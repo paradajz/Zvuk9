@@ -93,7 +93,7 @@ bool Pads::setLowerPressureLimit(uint8_t pad, uint16_t limit)   {
     if ((int)limit != padPressureLimitLower[pad])    {
 
         padPressureLimitLower[pad] = limit;
-        configuration.writeParameter(CONF_BLOCK_LIMIT, limitPressureLowerSection, pad, limit);
+        configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureLowerSection, pad, limit);
         return true;
 
     }   return false;
@@ -105,7 +105,7 @@ bool Pads::setUpperPressureLimit(uint8_t pad, uint16_t limit)   {
     if ((int)limit != padPressureLimitUpper[pad])    {
 
         padPressureLimitUpper[pad] = limit;
-        configuration.writeParameter(CONF_BLOCK_LIMIT, limitPressureUpperSection, pad, limit);
+        configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, pad, limit);
         return true;
 
     }   return false;
@@ -117,7 +117,7 @@ bool Pads::setLowerXLimit(uint8_t pad, uint16_t limit)   {
     if ((int)limit != padXLimitLower[pad])    {
 
         padXLimitLower[pad] = limit;
-        configuration.writeParameter(CONF_BLOCK_LIMIT, limitXlowerSection, pad, limit);
+        configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXlowerSection, pad, limit);
         return true;
 
     }   return false;
@@ -129,7 +129,7 @@ bool Pads::setUpperXLimit(uint8_t pad, uint16_t limit)   {
     if ((int)limit != padXLimitUpper[pad])    {
 
         padXLimitUpper[pad] = limit;
-        configuration.writeParameter(CONF_BLOCK_LIMIT, limitXupperSection, pad, limit);
+        configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, pad, limit);
         return true;
 
     }   return false;
@@ -141,7 +141,7 @@ bool Pads::setLowerYLimit(uint8_t pad, uint16_t limit)   {
     if ((int)limit != padYLimitLower[pad])    {
 
         padYLimitLower[pad] = limit;
-        configuration.writeParameter(CONF_BLOCK_LIMIT, limitYlowerSection, pad, limit);
+        configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYlowerSection, pad, limit);
         return true;
 
     }   return false;
@@ -153,7 +153,7 @@ bool Pads::setUpperYLimit(uint8_t pad, uint16_t limit)   {
     if ((int)limit != padYLimitUpper[pad])    {
 
         padYLimitUpper[pad] = limit;
-        configuration.writeParameter(CONF_BLOCK_LIMIT, limitYupperSection, pad, limit);
+        configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, pad, limit);
         return true;
 
     }   return false;

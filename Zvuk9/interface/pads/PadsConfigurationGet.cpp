@@ -357,8 +357,8 @@ void Pads::getPressureLimits()  {
 
     for (int i=0; i<NUMBER_OF_PADS; i++) {
 
-        padPressureLimitLower[i] = configuration.readParameter(CONF_BLOCK_LIMIT, limitPressureLowerSection, i);
-        padPressureLimitUpper[i] = configuration.readParameter(CONF_BLOCK_LIMIT, limitPressureUpperSection, i);
+        padPressureLimitLower[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureLowerSection, i);
+        padPressureLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
 
         #if MODE_SERIAL > 0
             Serial.print(F("Lower pressure limit for pad "));
@@ -387,8 +387,8 @@ void Pads::getXLimits()  {
 
     for (int i=0; i<NUMBER_OF_PADS; i++) {
 
-        padXLimitLower[i] = configuration.readParameter(CONF_BLOCK_LIMIT, limitXlowerSection, i);
-        padXLimitUpper[i] = configuration.readParameter(CONF_BLOCK_LIMIT, limitXupperSection, i);
+        padXLimitLower[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXlowerSection, i);
+        padXLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, i);
 
         #if MODE_SERIAL > 0
             Serial.print(F("Lower X limit for pad "));
@@ -417,8 +417,8 @@ void Pads::getYLimits()  {
 
     for (int i=0; i<NUMBER_OF_PADS; i++) {
 
-        padYLimitLower[i] = configuration.readParameter(CONF_BLOCK_LIMIT, limitYlowerSection, i);
-        padYLimitUpper[i] = configuration.readParameter(CONF_BLOCK_LIMIT, limitYupperSection, i);
+        padYLimitLower[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYlowerSection, i);
+        padYLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, i);
 
         #if MODE_SERIAL > 0
             Serial.print(F("Lower Y limit for pad "));

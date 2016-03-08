@@ -779,47 +779,6 @@ void setup()    {
     configureCallbacks();
     initHardware();
 
-    //calibration
-    //pads.setLowerXLimit(0, 438);
-    //pads.setLowerXLimit(1, 442);
-    //pads.setLowerXLimit(2, 438);
-    //pads.setLowerXLimit(3, 438);
-    //pads.setLowerXLimit(4, 442);
-    //pads.setLowerXLimit(5, 438);
-    //pads.setLowerXLimit(6, 438);
-    //pads.setLowerXLimit(7, 438);
-    //pads.setLowerXLimit(8, 442);
-//
-    //pads.setUpperXLimit(0, 604);
-    //pads.setUpperXLimit(1, 600);
-    //pads.setUpperXLimit(2, 604);
-    //pads.setUpperXLimit(3, 604);
-    //pads.setUpperXLimit(4, 604);
-    //pads.setUpperXLimit(5, 604);
-    //pads.setUpperXLimit(6, 604);
-    //pads.setUpperXLimit(7, 602);
-    //pads.setUpperXLimit(8, 604);
-//
-    //pads.setLowerYLimit(0, 445);
-    //pads.setLowerYLimit(1, 445);
-    //pads.setLowerYLimit(2, 445);
-    //pads.setLowerYLimit(3, 445);
-    //pads.setLowerYLimit(4, 445);
-    //pads.setLowerYLimit(5, 445);
-    //pads.setLowerYLimit(6, 445);
-    //pads.setLowerYLimit(7, 445);
-    //pads.setLowerYLimit(8, 445);
-//
-    //pads.setUpperYLimit(0, 595);
-    //pads.setUpperYLimit(1, 595);
-    //pads.setUpperYLimit(2, 595);
-    //pads.setUpperYLimit(3, 595);
-    //pads.setUpperYLimit(4, 595);
-    //pads.setUpperYLimit(5, 595);
-    //pads.setUpperYLimit(6, 595);
-    //pads.setUpperYLimit(7, 595);
-    //pads.setUpperYLimit(8, 590);
-
 }
 
 void loop()     {

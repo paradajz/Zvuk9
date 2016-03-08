@@ -23,7 +23,24 @@ void EEPROMsettings::init() {
     (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_1) == EEPROM_UNIQUE_ID) &&
     (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_2) == EEPROM_UNIQUE_ID)
 
-    ))  factoryReset();
+    ))  {
+
+        if (
+        //if all three IDs are the same, there's no point in clearing eeprom first
+        ((eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_0)) == (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_1))) &&
+        ((eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_0)) == (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_2)))
+
+        )   factoryReset(FACTORY_RESET_RESTORE_FULL);
+        else {
+
+            eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_0, EEPROM_UNIQUE_ID);
+            eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_1, EEPROM_UNIQUE_ID);
+            eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_2, EEPROM_UNIQUE_ID);
+            factoryReset(FACTORY_RESET_WIPE_RESTORE);
+
+        }
+
+    }
 
     #if MODE_SERIAL > 0
         Serial.println(F("EEPROM memory readout"));
@@ -45,7 +62,7 @@ void EEPROMsettings::clearEEPROM()  {
 
 }
 
-void EEPROMsettings::factoryReset()   {
+void EEPROMsettings::factoryReset(factoryResetType_t type)   {
 
     lcd_set_cursor(0, 0);
     lcd_puts("Factory reset in");
@@ -62,14 +79,24 @@ void EEPROMsettings::factoryReset()   {
     lcd_set_cursor(0, 0);
     lcd_puts("Factory reset...");
     lcd_set_cursor(0, 1);
-    lcd_puts("Wiping memory");
 
-    clearEEPROM();
+    switch(type)    {
+
+        case FACTORY_RESET_WIPE_RESTORE:
+        lcd_puts("Wiping memory");
+        clearEEPROM();
+        break;
+
+        default:
+        //nothing
+        break;
+
+    }
 
     lcd_set_cursor(0, 1);
     lcd_puts("Restoring defaults");
 
-    //write default configuration stored in PROGMEM to EEPROM
+    //write default configuration to EEPROM
     initSettings();
 
     lcd_clrscr();
@@ -79,60 +106,6 @@ void EEPROMsettings::factoryReset()   {
     lcd_puts("finished!");
 
     _delay_ms(2000);
-
-}
-
-void EEPROMsettings::createMemoryLayout() {
-
-    //create memory layout
-
-    {
-        blocks[CONF_BLOCK_PROGRAM].sections = PROGRAM_SECTIONS;
-
-        blocks[CONF_BLOCK_PROGRAM].sectionParameters[programLastActiveProgramSection] = 1;
-        blocks[CONF_BLOCK_PROGRAM].sectionParameterType[programLastActiveProgramSection] = BYTE_PARAMETER;
-
-        blocks[CONF_BLOCK_PROGRAM].sectionParameters[programLastActiveScaleSection] = NUMBER_OF_PROGRAMS;
-        blocks[CONF_BLOCK_PROGRAM].sectionParameterType[programLastActiveScaleSection] = BYTE_PARAMETER;
-
-        blocks[CONF_BLOCK_PROGRAM].sectionParameters[programGlobalSettingsSection] = GLOBAL_PROGRAM_SETTINGS*NUMBER_OF_PROGRAMS;
-        blocks[CONF_BLOCK_PROGRAM].sectionParameterType[programGlobalSettingsSection] = BYTE_PARAMETER;
-
-        blocks[CONF_BLOCK_PROGRAM].sectionParameters[programLocalSettingsSection] = LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*NUMBER_OF_PROGRAMS;
-        blocks[CONF_BLOCK_PROGRAM].sectionParameterType[programLocalSettingsSection] = BYTE_PARAMETER;
-
-        blocks[CONF_BLOCK_PROGRAM].sectionParameters[programScalePredefinedSection] = PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES*NUMBER_OF_PROGRAMS;
-        blocks[CONF_BLOCK_PROGRAM].sectionParameterType[programScalePredefinedSection] = BYTE_PARAMETER;
-    }
-
-    {
-        blocks[CONF_BLOCK_USER_SCALE].sections = USER_SCALE_SECTIONS;
-
-        blocks[CONF_BLOCK_USER_SCALE].sectionParameters[padNotesSection] = NUMBER_OF_PADS*NOTES_PER_PAD*NUMBER_OF_USER_SCALES;
-        blocks[CONF_BLOCK_USER_SCALE].sectionParameterType[padNotesSection] = BYTE_PARAMETER;
-    }
-
-    {
-        blocks[CONF_BLOCK_LIMIT].sections = LIMIT_SECTIONS;
-
-        blocks[CONF_BLOCK_LIMIT].sectionParameters[limitPressureLowerSection] = NUMBER_OF_PADS;
-        blocks[CONF_BLOCK_LIMIT].sectionParameterType[limitPressureLowerSection] = WORD_PARAMETER;
-
-        blocks[CONF_BLOCK_LIMIT].sectionParameters[limitPressureUpperSection] = NUMBER_OF_PADS;
-        blocks[CONF_BLOCK_LIMIT].sectionParameterType[limitPressureUpperSection] = WORD_PARAMETER;
-
-        blocks[CONF_BLOCK_LIMIT].sectionParameters[limitXlowerSection] = NUMBER_OF_PADS;
-        blocks[CONF_BLOCK_LIMIT].sectionParameterType[limitXlowerSection] = WORD_PARAMETER;
-
-        blocks[CONF_BLOCK_LIMIT].sectionParameters[limitXupperSection] = NUMBER_OF_PADS;
-        blocks[CONF_BLOCK_LIMIT].sectionParameterType[limitXupperSection] = WORD_PARAMETER;
-
-        blocks[CONF_BLOCK_LIMIT].sectionParameters[limitYlowerSection] = NUMBER_OF_PADS;
-        blocks[CONF_BLOCK_LIMIT].sectionParameterType[limitYlowerSection] = WORD_PARAMETER;
-
-        blocks[CONF_BLOCK_LIMIT].sectionParameters[limitYupperSection] = NUMBER_OF_PADS;
-        blocks[CONF_BLOCK_LIMIT].sectionParameterType[limitYupperSection] = WORD_PARAMETER;
-    }
 
 }
 
@@ -239,21 +212,19 @@ void EEPROMsettings::createSectionAddresses()   {
 
 }
 
-void EEPROMsettings::initSettings() {
+void EEPROMsettings::initSettings(bool partialReset) {
 
     //we need to init each block and section with data
     //program area
-    initProgramSettings();
-    initUserScales();
-    initLimits();
-
-    eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_0, EEPROM_UNIQUE_ID);
-    eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_1, EEPROM_UNIQUE_ID);
-    eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_2, EEPROM_UNIQUE_ID);
+    initProgramSettings(partialReset);
+    initUserScales(partialReset);
+    initPadCalibration(partialReset);
 
 }
 
-void EEPROMsettings::initProgramSettings() {
+void EEPROMsettings::initProgramSettings(bool partialReset) {
+
+    if (partialReset && blocks[CONF_BLOCK_PROGRAM].partialResetEnabled) return;
 
     uint16_t blockStartAddress = blocks[CONF_BLOCK_PROGRAM].blockStartAddress;
 
@@ -314,7 +285,9 @@ void EEPROMsettings::initProgramSettings() {
 
 }
 
-void EEPROMsettings::initUserScales()   {
+void EEPROMsettings::initUserScales(bool partialReset)   {
+
+    if (partialReset && blocks[CONF_BLOCK_USER_SCALE].partialResetEnabled) return;
 
     uint16_t blockStartAddress = blocks[CONF_BLOCK_USER_SCALE].blockStartAddress;
     uint16_t parameterAddress;
@@ -341,15 +314,17 @@ void EEPROMsettings::initUserScales()   {
 
 }
 
-void EEPROMsettings::initLimits()   {
+void EEPROMsettings::initPadCalibration(bool partialReset)   {
 
-    uint16_t blockStartAddress = blocks[CONF_BLOCK_LIMIT].blockStartAddress;
+    if (partialReset && blocks[CONF_BLOCK_PAD_CALIBRATION].partialResetEnabled) return;
+
+    uint16_t blockStartAddress = blocks[CONF_BLOCK_PAD_CALIBRATION].blockStartAddress;
     uint16_t parameterAddress;
 
     //init lower pressure limits
     for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_LIMIT].sectionAddress[limitPressureLowerSection] + i*2;
+        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationPressureLowerSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
 
     }
@@ -357,7 +332,7 @@ void EEPROMsettings::initLimits()   {
     //init upper pressure limits
     for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_LIMIT].sectionAddress[limitPressureUpperSection] + i*2;
+        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationPressureUpperSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
 
     }
@@ -365,7 +340,7 @@ void EEPROMsettings::initLimits()   {
     //init lower x limits
     for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_LIMIT].sectionAddress[limitXlowerSection] + i*2;
+        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationXlowerSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_X_LIMIT_LOWER);
 
     }
@@ -373,7 +348,7 @@ void EEPROMsettings::initLimits()   {
     //init upper x limits
     for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_LIMIT].sectionAddress[limitXupperSection] + i*2;
+        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationXupperSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_X_LIMIT_UPPER);
 
     }
@@ -381,7 +356,7 @@ void EEPROMsettings::initLimits()   {
     //init lower y limits
     for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_LIMIT].sectionAddress[limitYlowerSection] + i*2;
+        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationYlowerSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_Y_LIMIT_LOWER);
 
     }
@@ -389,7 +364,7 @@ void EEPROMsettings::initLimits()   {
     //init upper y limits
     for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_LIMIT].sectionAddress[limitYupperSection] + i*2;
+        parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationYupperSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_Y_LIMIT_UPPER);
 
     }
