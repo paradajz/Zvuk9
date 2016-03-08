@@ -946,7 +946,7 @@ void Pads::checkNoteBuffer()    {
         bool noteState = note_state_buffer[i];
         uint32_t noteTime = pad_note_timer_buffer[i];
 
-        //proceed if noteState is off
+        //if note is on, and there's been less than PAD_NOTE_SEND_DELAY, exit function as it checks single pad at the time
         if (((newMillis() - noteTime) < PAD_NOTE_SEND_DELAY) && noteState) return;
 
         #if MODE_SERIAL
@@ -958,7 +958,7 @@ void Pads::checkNoteBuffer()    {
                 Serial.print(pad);
                 Serial.println(F(" pressed. Notes: "));
 
-                }   else {
+            }   else {
 
                 Serial.print(F("\nPad "));
                 Serial.print(pad);
@@ -980,10 +980,10 @@ void Pads::checkNoteBuffer()    {
                 if (padNote[pad][i] == BLANK_NOTE) continue;
 
                 #if MODE_SERIAL
-                if (noteState) Serial.println(padNote[pad][i]);
+                    if (noteState) Serial.println(padNote[pad][i]);
                 #else
-                if (noteState)
-                    midi.sendNoteOn(midiChannel, padNote[pad][i], velocity);
+                    if (noteState)
+                        midi.sendNoteOn(midiChannel, padNote[pad][i], velocity);
 
                 else {
 
@@ -996,7 +996,27 @@ void Pads::checkNoteBuffer()    {
 
                     }
 
-                    midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
+                    bool sendOff = true;
+                    //some special considerations here
+                    for (int j=0; j<NUMBER_OF_PADS; j++)    {
+
+                        //don't check current pad
+                        if (j == pad) continue;
+
+                        //don't check released pads
+                        if (!getPadPressed(j)) continue;
+
+                        //only send note off if the same note isn't active on some other pad already
+                        if (padNote[j][i] == padNote[pad][i])    {
+
+                            sendOff = false;
+                            break; //no need to check further
+
+                        }
+
+                    }
+
+                    if (sendOff) midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
 
                 }
                 #endif
