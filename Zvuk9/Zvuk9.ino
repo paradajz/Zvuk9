@@ -1,8 +1,6 @@
 //disable internal hardware serial object
 #define HardwareSerial_h
 
-#include <Wire.h>
-
 #include "interface/lcd/LCD.h"
 #include "interface/pads/Pads.h"
 #include "interface/buttons/Buttons.h"

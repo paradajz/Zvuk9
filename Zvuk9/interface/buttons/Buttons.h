@@ -8,7 +8,6 @@ Button control using two MPC23017 expanders.
 #define BUTTONS_H_
 
 #include "Arduino.h"
-#include "Wire.h"
 #include "Debug.h"
 #include "hardware/pins/Pins.h"
 #include "midi/MIDI_parameters.h"
@@ -62,7 +61,6 @@ class Buttons   {
     uint8_t previousButtonState[MAX_NUMBER_OF_BUTTONS];     //debounce status
     uint32_t lastButtonDataPress;                           //previous button value
     uint32_t lastCheckTime;                                 //last time buttons were checked
-    uint8_t lastCheckedChip;                                //check only one expander at time
     uint32_t callbackEnableState;                           //enable/disable callback for certain button
 
 

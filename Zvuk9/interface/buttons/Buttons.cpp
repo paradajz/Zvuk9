@@ -1,4 +1,5 @@
 #include "Buttons.h"
+#include "hardware/i2c/i2c_master.h"
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         2
@@ -21,7 +22,6 @@ Buttons::Buttons()  {
     lastCheckTime               = 0;
     lastButtonDataPress         = 0;
     mcpData                     = 0;
-    lastCheckedChip             = 0;
     callbackEnableState         = 0xFFFFFFFF;
 
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
@@ -34,49 +34,45 @@ Buttons::Buttons()  {
 
 }
 
+uint8_t read_I2C_reg(uint8_t address, uint8_t reg)   {
+
+    uint8_t value;
+
+    i2c_start((address << 1) + I2C_WRITE);
+    i2c_write(reg);
+    i2c_stop();
+
+    i2c_start((address << 1) + I2C_READ);
+    value = i2c_read_nack();
+    i2c_stop();
+
+    return value;
+}
+
+void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)  {
+
+    i2c_start((address << 1) + I2C_WRITE);
+    i2c_write(reg);
+    i2c_write(value);
+    i2c_stop();
+
+}
+
 void Buttons::init()  {
 
-    Wire.begin(); // wake up I2C bus
+    i2c_init();
 
-    Wire.beginTransmission(expanderAddress[0]);         //enable inputs, expander A, port A
-    Wire.write(iodirAddress[0]);
-    Wire.write(0xFF);
-    Wire.endTransmission();
+    write_I2C_reg(expanderAddress[0], iodirAddress[0], 0xFF);   //expander 1, set all pins on PORTA to input mode
+    write_I2C_reg(expanderAddress[0], iodirAddress[1], 0xFF);   //expander 1, set all pins on PORTB to input mode
 
-    Wire.beginTransmission(expanderAddress[0]);         //enable inputs, expander A, port B
-    Wire.write(iodirAddress[1]);
-    Wire.write(0xFF);
-    Wire.endTransmission();
+    write_I2C_reg(expanderAddress[1], iodirAddress[0], 0xFF);   //expander 2, set all pins on PORTA to input mode
+    write_I2C_reg(expanderAddress[1], iodirAddress[1], 0xFF);   //expander 2, set all pins on PORTB to input mode
 
-    Wire.beginTransmission(expanderAddress[1]);         //enable inputs, expander B, port A
-    Wire.write(iodirAddress[0]);
-    Wire.write(0xFF);
-    Wire.endTransmission();
+    write_I2C_reg(expanderAddress[0], gppuAddress[0], 0xFF);    //expander 1, turn on pull-ups, PORTA
+    write_I2C_reg(expanderAddress[0], gppuAddress[1], 0xFF);    //expander 1, turn on pull-ups, PORTB
 
-    Wire.beginTransmission(expanderAddress[1]);         //enable inputs, expander B, port B
-    Wire.write(iodirAddress[1]);
-    Wire.write(0xFF);
-    Wire.endTransmission();
-
-    Wire.beginTransmission(expanderAddress[0]);         //enable pull-ups, expander A, port A
-    Wire.write(gppuAddress[0]);
-    Wire.write(0xFF);
-    Wire.endTransmission();
-
-    Wire.beginTransmission(expanderAddress[0]);         //enable pull-ups, expander A, port B
-    Wire.write(gppuAddress[1]);
-    Wire.write(0xFF);
-    Wire.endTransmission();
-
-    Wire.beginTransmission(expanderAddress[1]);         //enable pull-ups, expander B, port A
-    Wire.write(gppuAddress[0]);
-    Wire.write(0xFF);
-    Wire.endTransmission();
-
-    Wire.beginTransmission(expanderAddress[1]);         //enable pull-ups, expander B, port B
-    Wire.write(gppuAddress[1]);
-    Wire.write(0xFF);
-    Wire.endTransmission();
+    write_I2C_reg(expanderAddress[1], gppuAddress[0], 0xFF);    //expander 2, turn on pull-ups, PORTA
+    write_I2C_reg(expanderAddress[1], gppuAddress[1], 0xFF);    //expander 2, turn on pull-ups, PORTB
 
 }
 
@@ -110,36 +106,16 @@ bool Buttons::getButtonPressed(uint8_t buttonNumber) {
 
 bool Buttons::readStates()   {
 
-    //only check one expander at the time
-
-    mcpData <<= 8; //make room for new data
-
-    Wire.beginTransmission(expanderAddress[lastCheckedChip]);
-    Wire.write(gpioAddress[0]);
-    Wire.endTransmission();
-
-    Wire.requestFrom((int16_t)expanderAddress[lastCheckedChip], 1);
-    while (Wire.available() == 0);
-    mcpData |= Wire.read();
     mcpData <<= 8;
-    Wire.endTransmission();
+    mcpData |= read_I2C_reg(expanderAddress[0], gpioAddress[0]);     //expander A, GPIOA
+    mcpData <<= 8;
+    mcpData |= read_I2C_reg(expanderAddress[0], gpioAddress[1]);     //expander A, GPIOB
+    mcpData <<= 8;
+    mcpData |= read_I2C_reg(expanderAddress[1], gpioAddress[0]);     //expander B, GPIOA
+    mcpData <<= 8;
+    mcpData |= read_I2C_reg(expanderAddress[1], gpioAddress[1]);     //expander B, GPIOB
 
-    Wire.beginTransmission(expanderAddress[lastCheckedChip]);
-    Wire.write(gpioAddress[1]);
-    Wire.endTransmission();
-
-    Wire.requestFrom((int16_t)expanderAddress[lastCheckedChip], 1);
-    while (Wire.available() == 0);
-    mcpData |= Wire.read();
-    Wire.endTransmission();
-
-    lastCheckedChip++;
-    if (lastCheckedChip == 2)   {
-
-        lastCheckedChip = 0;
-        return true;
-
-    }   return false;
+    return true;
 
 }
 
