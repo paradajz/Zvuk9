@@ -31,14 +31,11 @@ void EEPROMsettings::init() {
         ((eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_0)) == (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_2)))
 
         )   factoryReset(FACTORY_RESET_RESTORE_FULL);
-        else {
+        else factoryReset(FACTORY_RESET_WIPE_RESTORE);
 
-            eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_0, EEPROM_UNIQUE_ID);
-            eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_1, EEPROM_UNIQUE_ID);
-            eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_2, EEPROM_UNIQUE_ID);
-            factoryReset(FACTORY_RESET_WIPE_RESTORE);
-
-        }
+        eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_0, EEPROM_UNIQUE_ID);
+        eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_1, EEPROM_UNIQUE_ID);
+        eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_2, EEPROM_UNIQUE_ID);
 
     }
 
@@ -94,11 +91,23 @@ void EEPROMsettings::factoryReset(factoryResetType_t type)   {
     }
 
     lcd_set_cursor(0, 1);
-    lcd_puts("Restoring defaults");
 
-    //write default configuration to EEPROM
-    initSettings();
+    switch(type)    {
 
+        case FACTORY_RESET_WIPE_RESTORE:
+        case FACTORY_RESET_RESTORE_FULL:
+        lcd_puts("Full restore");
+        initSettings(false);
+        break;
+
+        case FACTORY_RESET_RESTORE_PARTIAL:
+        lcd_puts("Partial restore");
+        initSettings(true);
+        break;
+
+    }
+
+     _delay_ms(2000);
     lcd_clrscr();
     lcd_set_cursor(0,0);
     lcd_puts("Factory reset");

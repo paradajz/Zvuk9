@@ -41,9 +41,9 @@ typedef enum {
 
 typedef enum {
 
-    FACTORY_RESET_WIPE_RESTORE,
-    FACTORY_RESET_RESTORE_FULL,
-    FACTORY_RESET_RESTORE_PARTIAL
+    FACTORY_RESET_WIPE_RESTORE, //clear eeprom, restore defauls
+    FACTORY_RESET_RESTORE_FULL, //restore defaults
+    FACTORY_RESET_RESTORE_PARTIAL //partially restore defaults
 
 } factoryResetType_t;
 
@@ -66,7 +66,7 @@ class EEPROMsettings {
     EEPROMsettings();
     void clearEEPROM();
     void init();
-    void initSettings(bool partialReset = false);
+    void initSettings(bool partialReset);
     void factoryReset(factoryResetType_t type);
     void createMemoryLayout();
     void createSectionAddresses();
@@ -114,9 +114,9 @@ class EEPROMsettings {
         return blocks[blockID].sectionParameterType[sectionID];
 
     }
-    void initProgramSettings(bool partialReset = false);
-    void initUserScales(bool partialReset = false);
-    void initPadCalibration(bool partialReset = false);
+    void initProgramSettings(bool partialReset);
+    void initUserScales(bool partialReset);
+    void initPadCalibration(bool partialReset);
 
 };
 
