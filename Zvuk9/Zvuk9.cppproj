@@ -668,10 +668,19 @@ vmresolved.tools.path=D:\Applications
     <Compile Include="eeprom\EEPROMsettings.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="eeprom\MemoryLayout.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="eeprom\Sections.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="eeprom\UniqueID.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hardware\i2c\i2c_master.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hardware\i2c\i2c_master.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hardware\lcd\hd44780.cpp">
@@ -815,6 +824,7 @@ vmresolved.tools.path=D:\Applications
   </ItemGroup>
   <ItemGroup>
     <Folder Include="hardware\lcd\" />
+    <Folder Include="hardware\i2c" />
     <Folder Include="hardware\pins\" />
     <Folder Include="hardware\timer" />
     <Folder Include="hardware\reset" />
