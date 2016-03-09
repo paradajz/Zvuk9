@@ -62,7 +62,7 @@
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_SERIAL</Value>
+      <Value>USB_MIDI</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
@@ -72,8 +72,6 @@
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/wmx0gwyp.vtg/Micro Platforms/default/debuggers</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/libraries</Value>
-      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries/Wire/utility</Value>
-      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries/Wire</Value>
       <Value>../../Zvuk9</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/cores/teensy/avr</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/cores/teensy/utils</Value>
@@ -98,7 +96,7 @@
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_SERIAL</Value>
+      <Value>USB_MIDI</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
@@ -108,8 +106,6 @@
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/wmx0gwyp.vtg/Micro Platforms/default/debuggers</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/libraries</Value>
-      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries/Wire/utility</Value>
-      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries/Wire</Value>
       <Value>../../Zvuk9</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/cores/teensy/avr</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/cores/teensy/utils</Value>
@@ -368,7 +364,7 @@ vmresolved.tools.path=D:\Applications
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_SERIAL</Value>
+      <Value>USB_MIDI</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
@@ -378,8 +374,6 @@ vmresolved.tools.path=D:\Applications
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/wmx0gwyp.vtg/Micro Platforms/default/debuggers</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/libraries</Value>
-      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries/Wire/utility</Value>
-      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries/Wire</Value>
       <Value>../../Zvuk9</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/cores/teensy/avr</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/cores/teensy/utils</Value>
@@ -404,7 +398,7 @@ vmresolved.tools.path=D:\Applications
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_SERIAL</Value>
+      <Value>USB_MIDI</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
@@ -414,8 +408,6 @@ vmresolved.tools.path=D:\Applications
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/wmx0gwyp.vtg/Micro Platforms/default/debuggers</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/libraries</Value>
-      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries/Wire/utility</Value>
-      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries/Wire</Value>
       <Value>../../Zvuk9</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/cores/teensy/avr</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/cores/teensy/utils</Value>
