@@ -20,10 +20,7 @@
 #define NUMBER_OF_MEDIAN_RUNS               5
 
 //multiplexer pins
-const uint8_t muxCommonPins[] = { MUX_COMMON_PIN_0, MUX_COMMON_PIN_1, MUX_COMMON_PIN_2, MUX_COMMON_PIN_3 };
-const uint8_t muxCommonPinsAnalogRead[] = { MUX_COMMON_PIN_AR_0, MUX_COMMON_PIN_AR_1, MUX_COMMON_PIN_AR_2, MUX_COMMON_PIN_AR_3 };
-const uint8_t muxSelectPins[] = { MUX_SELECT_PIN_0, MUX_SELECT_PIN_1, MUX_SELECT_PIN_2, MUX_SELECT_PIN_3 };
-
+const uint8_t muxCommonPinsAnalogRead[] = { MUX_COMMON_PIN_0_INDEX, MUX_COMMON_PIN_1_INDEX, MUX_COMMON_PIN_2_INDEX, MUX_COMMON_PIN_3_INDEX };
 const uint8_t padID[] = { PAD_0, PAD_1, PAD_2, PAD_3, PAD_4, PAD_5, PAD_6, PAD_7, PAD_8 };
 
 class Pads  {
@@ -138,7 +135,6 @@ class Pads  {
     void getAfterTouchUpperPressureLimits();
 
     //hardware control
-    void switchMuxPins();
     void setMuxInput(uint8_t muxInput);
     void setupPressure();
     int16_t getPressure();

@@ -8,20 +8,39 @@
 #endif
 
 //mux
-#define MUX_COMMON_PIN_0            A3
-#define MUX_COMMON_PIN_1            A1
-#define MUX_COMMON_PIN_2            A2
-#define MUX_COMMON_PIN_3            A0
+//common
+#define MUX_COMMON_PIN_0_DDR        DDRF
+#define MUX_COMMON_PIN_0_PORT       PORTF
+#define MUX_COMMON_PIN_0_INDEX      3
 
-#define MUX_COMMON_PIN_AR_0         3
-#define MUX_COMMON_PIN_AR_1         1
-#define MUX_COMMON_PIN_AR_2         2
-#define MUX_COMMON_PIN_AR_3         0
+#define MUX_COMMON_PIN_1_DDR        DDRF
+#define MUX_COMMON_PIN_1_PORT       PORTF
+#define MUX_COMMON_PIN_1_INDEX      1
 
-#define MUX_SELECT_PIN_0            A5
-#define MUX_SELECT_PIN_1            A4
-#define MUX_SELECT_PIN_2            A6
-#define MUX_SELECT_PIN_3            A7
+#define MUX_COMMON_PIN_2_DDR        DDRF
+#define MUX_COMMON_PIN_2_PORT       PORTF
+#define MUX_COMMON_PIN_2_INDEX      2
+
+#define MUX_COMMON_PIN_3_DDR        DDRF
+#define MUX_COMMON_PIN_3_PORT       PORTF
+#define MUX_COMMON_PIN_3_INDEX      0
+
+//select
+#define MUX_SELECT_PIN_0_DDR        DDRF
+#define MUX_SELECT_PIN_0_PORT       PORTF
+#define MUX_SELECT_PIN_0_INDEX      5
+
+#define MUX_SELECT_PIN_1_DDR        DDRF
+#define MUX_SELECT_PIN_1_PORT       PORTF
+#define MUX_SELECT_PIN_1_INDEX      4
+
+#define MUX_SELECT_PIN_2_DDR        DDRF
+#define MUX_SELECT_PIN_2_PORT       PORTF
+#define MUX_SELECT_PIN_2_INDEX      6
+
+#define MUX_SELECT_PIN_3_DDR        DDRF
+#define MUX_SELECT_PIN_3_PORT       PORTF
+#define MUX_SELECT_PIN_3_INDEX      7
 
 //pads
 #define PAD_0                       2

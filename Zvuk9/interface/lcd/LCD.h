@@ -80,8 +80,6 @@ class LCD   {
 
     uint8_t currentPad;
 
-    elapsedMicros lcdUpdateTime;
-
     uint8_t lastCharPosition[NUMBER_OF_LCD_ROWS];
 
     String lcdLine[NUMBER_OF_LCD_ROWS];
