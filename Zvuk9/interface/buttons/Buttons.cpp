@@ -1,5 +1,5 @@
 #include "Buttons.h"
-#include "hardware/i2c/i2c_master.h"
+#include "../../hardware/i2c/i2c_master.h"
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         10

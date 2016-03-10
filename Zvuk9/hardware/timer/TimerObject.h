@@ -2,8 +2,8 @@
 #define TIMEROBJECT_H_
 
 #include "Arduino.h"
-#include "hardware/pins/Pins.h"
-#include "Types.h"
+#include "../pins/Pins.h"
+#include "../../Types.h"
 
 void newDelay(uint32_t);
 uint32_t newMillis();

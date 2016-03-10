@@ -1,7 +1,7 @@
 #include "Encoders.h"
 #include "EncoderSettings.h"
-#include "Types.h"
-#include "hardware/timer/TimerObject.h"
+#include "../../Types.h"
+#include "../../hardware/timer/TimerObject.h"
 
 #define ENCODER_SPEED_1         1
 #define ENCODER_SPEED_2         5

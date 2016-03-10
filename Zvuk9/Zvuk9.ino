@@ -418,10 +418,10 @@ void handleTonicPress(tonic_t _tonic) {
         //FIXME: DO NOT ALLOW THIS WHILE PADS ARE PRESSED
         for (int i=0; i<NUMBER_OF_PADS; i++)
             if (pads.getPadPressed(i))  {
-                
+
                 //
                 return;
-                
+
             }
 
         changeOutput_t result = pads.setTonic(_tonic);
@@ -541,7 +541,7 @@ void handlePadRelease(uint8_t pad, uint8_t notes[], uint8_t numberOfNotes)  {
 
     }
 
-} 
+}
 
 void setLCDAfterTouch(uint8_t pressure) {
 

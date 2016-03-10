@@ -1,6 +1,6 @@
 #include "TimerObject.h"
-#include "interface/leds/LEDsettings.h"
-#include "interface/encoders/EncoderSettings.h"
+#include "../../interface/leds/LEDsettings.h"
+#include "../../interface/encoders/EncoderSettings.h"
 #include <util/delay.h>
 
 #define NUMBER_OF_LED_COLUMNS       8

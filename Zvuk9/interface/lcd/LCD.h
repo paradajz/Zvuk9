@@ -2,14 +2,14 @@
 #define LCD_H_
 
 #include "Arduino.h"
-#include "eeprom/EEPROMsettings.h"
-#include "Types.h"
-#include "midi/MIDI_parameters.h"
-#include "hardware/lcd/hd44780.h"
+#include "../../eeprom/EEPROMsettings.h"
+#include "../../Types.h"
+#include "../../midi/MIDI_parameters.h"
+#include "../../hardware/lcd/hd44780.h"
 #include "LCDsettings.h"
 #include "LCDstrings.h"
-#include "Types.h"
-#include "hardware/timer/TimerObject.h"
+#include "../../Types.h"
+#include "../../hardware/timer/TimerObject.h"
 
 #define NUMBER_OF_LCD_COLUMNS           20
 #define NUMBER_OF_LCD_ROWS              4

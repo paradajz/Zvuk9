@@ -1,7 +1,7 @@
 #include "MIDI.h"
 #include "MIDI_parameters.h"
-#include "midi/hw_midi/HwMIDI.h"
-#include "Debug.h"
+#include "hw_midi/HwMIDI.h"
+#include "../Debug.h"
 
 MIDI::MIDI()    {
 

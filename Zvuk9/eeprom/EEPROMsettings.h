@@ -9,13 +9,13 @@ EEPROM addresses of parameters.
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 #include "UniqueID.h"
-#include "midi/MIDI_parameters.h"
-#include "hardware/lcd/hd44780.h"
-#include "interface/lcd/LCDstrings.h"
-#include "hardware/timer/TimerObject.h"
+#include "../midi/MIDI_parameters.h"
+#include "../hardware/lcd/hd44780.h"
+#include "../interface/lcd/LCDstrings.h"
+#include "../hardware/timer/TimerObject.h"
 #include "Defaults.h"
-#include "interface/pads/Pads.h"
-#include "Scales.h"
+#include "../interface/pads/Pads.h"
+#include "../Scales.h"
 #include "Blocks.h"
 #include "Sections.h"
 

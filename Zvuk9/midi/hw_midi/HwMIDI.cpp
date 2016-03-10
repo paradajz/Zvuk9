@@ -10,7 +10,7 @@
 
 #include "HwMIDI.h"
 #include <stdlib.h>
-#include "hardware\uart\UART.h"
+#include "../../hardware/uart/UART.h"
 
 /*! \brief Main instance (the class comes pre-instantiated). */
 MIDI_Class hwMIDI;

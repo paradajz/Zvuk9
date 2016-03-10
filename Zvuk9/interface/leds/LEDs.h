@@ -2,8 +2,8 @@
 #define LEDS_H_
 
 #include "Arduino.h"
-#include "hardware/pins/Pins.h"
-#include "Types.h"
+#include "../../hardware/pins/Pins.h"
+#include "../../Types.h"
 #include "LEDsettings.h"
 
 class LEDs  {

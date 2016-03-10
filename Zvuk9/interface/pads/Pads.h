@@ -3,15 +3,15 @@
 
 #include "Arduino.h"
 #include <avr/eeprom.h>
-#include "Debug.h"
-#include "hardware/pins/Pins.h"
+#include "../../Debug.h"
+#include "../../hardware/pins/Pins.h"
 #include "PadXYscales.h"
-#include "midi\MIDI_parameters.h"
+#include "../../midi/MIDI_parameters.h"
 #include "PadsCalibration.h"
-#include "Types.h"
-#include "hardware/timer/TimerObject.h"
-#include "midi/MIDI.h"
-#include "eeprom/EEPROMsettings.h"
+#include "../../Types.h"
+#include "../../hardware/timer/TimerObject.h"
+#include "../../midi/MIDI.h"
+#include "../../eeprom/EEPROMsettings.h"
 
 #define NUMBER_OF_PADS                      9
 

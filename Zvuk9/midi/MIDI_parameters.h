@@ -1,7 +1,7 @@
 #ifndef MIDI_PARAMETERS_H_
 #define MIDI_PARAMETERS_H_
 
-#include "Scales.h"
+#include "../Scales.h"
 
 #define MIN_MIDI_VALUE                      0
 #define MAX_MIDI_VALUE                      127

@@ -1,9 +1,9 @@
 #ifndef DEFS_H_
 #define DEFS_H_
 
-#include "Scales.h"
-#include "Types.h"
-#include "midi/MIDI_parameters.h"
+#include "../Scales.h"
+#include "../Types.h"
+#include "../midi/MIDI_parameters.h"
 
 typedef enum {  //list of IDs for global program settings for access
 

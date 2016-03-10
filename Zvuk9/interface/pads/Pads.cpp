@@ -1,5 +1,4 @@
 #include "Pads.h"
-#include "eeprom/EEPROMsettings.h"
 #include <avr/cpufunc.h>
 
 #define PAD_NOTE_BUFFER_SIZE    32
@@ -111,11 +110,11 @@ inline uint8_t mapInternal(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t ou
 
     /*
     
-    I mentioned earlier that the function’s actually working how it’s documented to work, just not how it’s usually used in examples. The map() docs state that “[t]he map() function uses integer math so will not generate fractions, when the math might indicate that it should do so. Fractional remainders are truncated, and are not rounded or averaged.”
+    I mentioned earlier that the functionï¿½s actually working how itï¿½s documented to work, just not how itï¿½s usually used in examples. The map() docs state that ï¿½[t]he map() function uses integer math so will not generate fractions, when the math might indicate that it should do so. Fractional remainders are truncated, and are not rounded or averaged.ï¿½
 
-    This completely makes sense – if you imagine a range of 1024 values between 0 and one, all of them will be less than 1 except the last value, and since it’s integer arithmetic, all the less-than-1 values are 0.
+    This completely makes sense ï¿½ if you imagine a range of 1024 values between 0 and one, all of them will be less than 1 except the last value, and since itï¿½s integer arithmetic, all the less-than-1 values are 0.
 
-    The solution is fairly simple – increase the in_max and out_max args by one more than the actual maximum value (and then wrap the output in constrain(), which you ought to have done anyway). It’s fairly easy to work through why this works in your head, but here are the same examples I gave above with the increased maximums:
+    The solution is fairly simple ï¿½ increase the in_max and out_max args by one more than the actual maximum value (and then wrap the output in constrain(), which you ought to have done anyway). Itï¿½s fairly easy to work through why this works in your head, but here are the same examples I gave above with the increased maximums:
 
     map(0..1023, 0, 1024, 0, 2);
     0   512

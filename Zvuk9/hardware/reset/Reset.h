@@ -2,7 +2,7 @@
 #define RESET_H_
 
 #include "Arduino.h"
-#include "hardware/timer/TimerObject.h"
+#include "../timer/TimerObject.h"
 
 bool checkReset(bool buttonState);
 void resetTeensy();
