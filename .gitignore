@@ -1,5 +1,3 @@
-Zvuk9/Debug/
-Zvuk9/__vm
-.vs/Zvuk9/v14/.atsuo
-Zvuk9/Zvuk9.componentinfo.xml
-Zvuk9/hardware/pins/Variants.h
+Zvuk9/arduino
+Zvuk9/Release
+Zvuk9/spec.d
