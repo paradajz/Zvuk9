@@ -29,30 +29,35 @@ class LCD   {
     public:
     LCD();
     void init();
+    void update();
+
     void setProgram(uint8_t preset);
     void setPreset(uint8_t program);
     void updateNote(uint8_t pad, uint8_t *note, uint8_t *octave, uint8_t numberOfNotes, uint8_t velocity);
     void clearPadData();
     void setXYData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
-    void displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber);
-    void displayCurveChangeMessage(curveCoordinate_t coordinate, changeOutput_t result, splitState_t _splitState, curveType_t curveValue, uint8_t padNumber);
-    void displayCClimitChangeMessage(ccLimitType_t type, changeOutput_t result, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
-    void displayCCchangeMessage(ccType_t type, changeOutput_t result, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
-    void displayTransportControlMessage(transportControl_t type, bool state);
-    void displayNoteChange(changeOutput_t result, changeType_t type, int8_t value);
-    void displayOctaveChange(uint8_t octave);
     void updateAfterTouch(uint8_t afterTouch);
     void setCCData(uint8_t pad, uint8_t x, uint8_t y);
-    void update();
+
+    void displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber);
+    void displayCurveChangeMessage(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t curveValue, uint8_t padNumber);
+    void displayCClimitChangeMessage(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayCCchangeMessage(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayTransportControlMessage(transportControl_t type, bool state);
+    void displayHelloMessage();
+    void displayEditModeNotAllowed(padEditError_t errorType);
+    void displayPadEditResult(changeOutput_t result);
+
+    void displayNoteChange(changeOutput_t result, changeType_t type, int8_t value);
+    void displayOctaveChange(uint8_t octave);
     void displayPadEditMode(uint8_t padNumber);
     void clearPadEditMode();
-    void displayEditModeNotAllowed(padEditError_t errorType);
+
     void displayMIDIchannelChange(uint8_t channel);
     void displayActiveOctave(uint8_t octave);
     void displayActivePadNotes(uint8_t *notes, uint8_t *octaves);
-    void displayPadEditResult(changeOutput_t result);
     void displayUserMessage(String message);
-    void displayHelloMessage();
+    void displayServiceMenu();
 
     private:
     void clearRow(uint8_t rowNumber);

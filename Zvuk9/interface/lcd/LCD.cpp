@@ -423,7 +423,7 @@ void LCD::displayTransportControlMessage(transportControl_t type, bool state)  {
 
 }
 
-void LCD::displayCCchangeMessage(ccType_t type, changeOutput_t result, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
+void LCD::displayCCchangeMessage(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
@@ -446,7 +446,7 @@ void LCD::displayCCchangeMessage(ccType_t type, changeOutput_t result, splitStat
 
 }
 
-void LCD::displayCClimitChangeMessage(ccLimitType_t type, changeOutput_t result, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)  {
+void LCD::displayCClimitChangeMessage(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)  {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
@@ -469,7 +469,7 @@ void LCD::displayCClimitChangeMessage(ccLimitType_t type, changeOutput_t result,
 
 }
 
-void LCD::displayCurveChangeMessage(curveCoordinate_t coordinate, changeOutput_t result, splitState_t _splitState, curveType_t type, uint8_t padNumber)  {
+void LCD::displayCurveChangeMessage(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber)  {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
@@ -900,6 +900,12 @@ bool LCD::checkClearScreen()    {
         return true;
 
     }   return false;
+
+}
+
+void LCD::displayServiceMenu()	{
+
+
 
 }
 

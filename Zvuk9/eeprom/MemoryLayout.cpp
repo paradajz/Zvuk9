@@ -8,7 +8,7 @@ void EEPROMsettings::createMemoryLayout() {
     {
         blocks[CONF_BLOCK_PROGRAM].sections = PROGRAM_SECTIONS;
 
-        blocks[CONF_BLOCK_PROGRAM].partialResetEnabled = false;
+        blocks[CONF_BLOCK_PROGRAM].resetEnabled = false;
 
         blocks[CONF_BLOCK_PROGRAM].sectionParameters[programLastActiveProgramSection] = 1;
         blocks[CONF_BLOCK_PROGRAM].sectionParameterType[programLastActiveProgramSection] = BYTE_PARAMETER;
@@ -29,7 +29,7 @@ void EEPROMsettings::createMemoryLayout() {
     {
         blocks[CONF_BLOCK_USER_SCALE].sections = USER_SCALE_SECTIONS;
         
-        blocks[CONF_BLOCK_USER_SCALE].partialResetEnabled = false;
+        blocks[CONF_BLOCK_USER_SCALE].resetEnabled = false;
 
         blocks[CONF_BLOCK_USER_SCALE].sectionParameters[padNotesSection] = NUMBER_OF_PADS*NOTES_PER_PAD*NUMBER_OF_USER_SCALES;
         blocks[CONF_BLOCK_USER_SCALE].sectionParameterType[padNotesSection] = BYTE_PARAMETER;
@@ -38,7 +38,7 @@ void EEPROMsettings::createMemoryLayout() {
     {
         blocks[CONF_BLOCK_PAD_CALIBRATION].sections = PAD_CALIBRATION_SECTIONS;
 
-        blocks[CONF_BLOCK_PAD_CALIBRATION].partialResetEnabled = true;
+        blocks[CONF_BLOCK_PAD_CALIBRATION].resetEnabled = true;
 
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameters[padCalibrationStatus] = 1;
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameterType[padCalibrationStatus] = BYTE_PARAMETER;

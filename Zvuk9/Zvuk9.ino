@@ -575,7 +575,6 @@ void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps)   {
 
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
     splitState_t _splitState = pads.getSplitState();
-    changeOutput_t result;
     curveType_t activeCurve = curveTypeInvalid;
     uint8_t value;
     int8_t activePreset;
@@ -637,49 +636,49 @@ void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps)   {
         break;
 
         case X_CC_ENCODER:
-        result = pads.changeCC(direction, ccTypeX, steps);
-        lcDisplay.displayCCchangeMessage(ccTypeX, result, _splitState, pads.getPadCCvalue(ccTypeX, lastTouchedPad), lastTouchedPad+1);
+        pads.changeCC(direction, ccTypeX, steps);
+        lcDisplay.displayCCchangeMessage(ccTypeX,  _splitState, pads.getPadCCvalue(ccTypeX, lastTouchedPad), lastTouchedPad+1);
         break;
 
         case Y_CC_ENCODER:
-        result = pads.changeCC(direction, ccTypeY, steps);
-        lcDisplay.displayCCchangeMessage(ccTypeY, result, _splitState, pads.getPadCCvalue(ccTypeY, lastTouchedPad), lastTouchedPad+1);
+        pads.changeCC(direction, ccTypeY, steps);
+        lcDisplay.displayCCchangeMessage(ccTypeY,  _splitState, pads.getPadCCvalue(ccTypeY, lastTouchedPad), lastTouchedPad+1);
         break;
 
         case X_MAX_ENCODER:
-        result = pads.changeXYlimits(direction, ccLimitTypeXmax, steps);
+        pads.changeXYlimits(direction, ccLimitTypeXmax, steps);
         value = pads.getPadCClimitValue(ccTypeX, ccLimitTypeXmax, lastTouchedPad);
-        lcDisplay.displayCClimitChangeMessage(ccLimitTypeXmax, result, _splitState, value, lastTouchedPad+1);
+        lcDisplay.displayCClimitChangeMessage(ccLimitTypeXmax, _splitState, value, lastTouchedPad+1);
         break;
 
         case X_MIN_ENCODER:
-        result = pads.changeXYlimits(direction, ccLimitTypeXmin, steps);
+        pads.changeXYlimits(direction, ccLimitTypeXmin, steps);
         value = pads.getPadCClimitValue(ccTypeX, ccLimitTypeXmin, lastTouchedPad);
-        lcDisplay.displayCClimitChangeMessage(ccLimitTypeXmin, result, _splitState, value, lastTouchedPad+1);
+        lcDisplay.displayCClimitChangeMessage(ccLimitTypeXmin, _splitState, value, lastTouchedPad+1);
         break;
 
         case Y_MAX_ENCODER:
-        result = pads.changeXYlimits(direction, ccLimitTypeYmax, steps);
+        pads.changeXYlimits(direction, ccLimitTypeYmax, steps);
         value = pads.getPadCClimitValue(ccTypeY, ccLimitTypeYmax, lastTouchedPad);
-        lcDisplay.displayCClimitChangeMessage(ccLimitTypeYmax, result, _splitState, value, lastTouchedPad+1);
+        lcDisplay.displayCClimitChangeMessage(ccLimitTypeYmax, _splitState, value, lastTouchedPad+1);
         break;
 
         case Y_MIN_ENCODER:
-        result = pads.changeXYlimits(direction, ccLimitTypeYmin, steps);
+        pads.changeXYlimits(direction, ccLimitTypeYmin, steps);
         value = pads.getPadCClimitValue(ccTypeY, ccLimitTypeYmin, lastTouchedPad);
-        lcDisplay.displayCClimitChangeMessage(ccLimitTypeYmin, result, _splitState, value, lastTouchedPad+1);
+        lcDisplay.displayCClimitChangeMessage(ccLimitTypeYmin, _splitState, value, lastTouchedPad+1);
         break;
 
         case X_CURVE_ENCODER:
-        result = pads.changeCurve(direction, curveCoordinateX);
+        pads.changeCurve(direction, curveCoordinateX);
         activeCurve = pads.getPadCurve(curveCoordinateX, lastTouchedPad);
-        lcDisplay.displayCurveChangeMessage(curveCoordinateX, result, _splitState, activeCurve, lastTouchedPad+1);
+        lcDisplay.displayCurveChangeMessage(curveCoordinateX, _splitState, activeCurve, lastTouchedPad+1);
         break;
 
         case Y_CURVE_ENCODER:
-        result = pads.changeCurve(direction, curveCoordinateY);
+        pads.changeCurve(direction, curveCoordinateY);
         activeCurve = pads.getPadCurve(curveCoordinateY, lastTouchedPad);
-        lcDisplay.displayCurveChangeMessage(curveCoordinateY, result, _splitState, activeCurve, lastTouchedPad+1);
+        lcDisplay.displayCurveChangeMessage(curveCoordinateY, _splitState, activeCurve, lastTouchedPad+1);
         break;
 
     }
@@ -776,6 +775,30 @@ void setup()    {
 
     configureCallbacks();
     initHardware();
+
+    uint32_t currentTime = newMillis();
+
+    //read buttons for 0.1 seconds
+    do {
+
+    	//read all buttons without activating callbacks
+    	buttons.update(false);
+
+    }	while (newMillis() - currentTime < 100);
+
+    if (buttons.getButtonPressed(BUTTON_TRANSPORT_PLAY) && buttons.getButtonPressed(BUTTON_TRANSPORT_STOP))	{
+
+    	_delay_ms(2000);
+
+    	//we should activate service menu now
+		#if MODE_SERIAL > 0
+    		Serial.println(F("Activating user menu"));
+		#endif
+
+    	lcDisplay.displayServiceMenu();
+
+
+    }
 
 }
 

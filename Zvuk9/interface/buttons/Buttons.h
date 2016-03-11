@@ -21,7 +21,7 @@ class Buttons   {
     public:
     Buttons();
     void init();
-    void update();
+    void update(bool processingEnabled = true);
 
     //getters
     bool getButtonPressed(uint8_t buttonNumber);

@@ -233,7 +233,7 @@ void EEPROMsettings::initSettings(bool partialReset) {
 
 void EEPROMsettings::initProgramSettings(bool partialReset) {
 
-    if (partialReset && blocks[CONF_BLOCK_PROGRAM].partialResetEnabled) return;
+    if (partialReset && blocks[CONF_BLOCK_PROGRAM].resetEnabled) return;
 
     uint16_t blockStartAddress = blocks[CONF_BLOCK_PROGRAM].blockStartAddress;
 
@@ -296,7 +296,7 @@ void EEPROMsettings::initProgramSettings(bool partialReset) {
 
 void EEPROMsettings::initUserScales(bool partialReset)   {
 
-    if (partialReset && blocks[CONF_BLOCK_USER_SCALE].partialResetEnabled) return;
+    if (partialReset && blocks[CONF_BLOCK_USER_SCALE].resetEnabled) return;
 
     uint16_t blockStartAddress = blocks[CONF_BLOCK_USER_SCALE].blockStartAddress;
     uint16_t parameterAddress;
@@ -325,7 +325,7 @@ void EEPROMsettings::initUserScales(bool partialReset)   {
 
 void EEPROMsettings::initPadCalibration(bool partialReset)   {
 
-    if (partialReset && blocks[CONF_BLOCK_PAD_CALIBRATION].partialResetEnabled) return;
+    if (partialReset && blocks[CONF_BLOCK_PAD_CALIBRATION].resetEnabled) return;
 
     uint16_t blockStartAddress = blocks[CONF_BLOCK_PAD_CALIBRATION].blockStartAddress;
     uint16_t parameterAddress;

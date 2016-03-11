@@ -82,7 +82,7 @@ void Buttons::init()  {
 
 }
 
-void Buttons::update()    {
+void Buttons::update(bool processingEnabled)    {
 
     if (!((newMillis() - lastCheckTime) > EXPANDER_CHECK_TIME)) return;
 
@@ -93,7 +93,7 @@ void Buttons::update()    {
              //invert button state because of pull-ups
              uint8_t state = !((mcpData >> i) & 0x01);
 
-             if (buttonDebounced(i, state))
+             if (buttonDebounced(i, state) && processingEnabled)
                 processButton(i, state);
 
          }   mcpData = 0;

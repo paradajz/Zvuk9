@@ -54,7 +54,7 @@ typedef struct {
     uint16_t sectionAddress[10];
     uint16_t sectionParameters[10];
     sectionParameterType_t sectionParameterType[10];
-    bool partialResetEnabled;
+    bool resetEnabled;
 
 } blockDescriptor;
 
