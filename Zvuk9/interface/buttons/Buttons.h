@@ -30,17 +30,15 @@ class Buttons   {
     void pauseCallback(uint8_t buttonNumber);
 
     //callbacks
-    void setHandleOnOffPress(void (*fptr)(uint8_t buttonNumber, buttonState_t state));
-    void setHandleTransportControlCallback(void (*fptr)(uint8_t buttonNumber, buttonState_t state));
     void setHandleOctaveUpDownPress(void (*fptr)(uint8_t direction, bool state));
     void setHandleTonic(void (*fptr)(tonic_t _tonic));
 
     private:
     //callbacks
-    void (*sendOnOffPressCallback)(uint8_t buttonNumber, buttonState_t state);
-    void (*sendTransportControlCallback)(uint8_t buttonNumber, buttonState_t state);
+    void handleOnOffEvent(uint8_t buttonNumber, buttonState_t state);
+    void handleTransportControlEvent(uint8_t buttonNumber, buttonState_t state);
+    void handleTonicEvent(tonic_t _tonic);
     void (*sendOctaveUpDownPressCallback)(uint8_t direction, bool state);
-    void (*sendTonicCallback)(tonic_t _tonic);
     bool callbackEnabled(uint8_t buttonNumber);
     void enableCallback(uint8_t buttonNumber);
 

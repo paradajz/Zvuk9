@@ -76,7 +76,7 @@ void Pads::sendPadAftertouch()  {
 
     }
     #endif
-    if (!getPadEditMode())  sendLCDAfterTouchCallback(midiAfterTouch);
+    lcDisplay.updateAfterTouch(midiAfterTouch);
 
     afterTouchAvailable = false;
 

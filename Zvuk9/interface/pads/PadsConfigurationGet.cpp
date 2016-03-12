@@ -181,11 +181,11 @@ void Pads::getPadParameters()   {
 
     }
 
-    sendLEDstateCallback(LED_ON_OFF_SPLIT, getSplitStateLEDvalue());
-    sendLEDstateCallback(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-    sendLEDstateCallback(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-    sendLEDstateCallback(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-    sendLEDstateCallback(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_SPLIT, getSplitStateLEDvalue());
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
 
 }
 
@@ -617,6 +617,15 @@ bool Pads::isUserScale(uint8_t scale)   {
 bool Pads::isPredefinedScale(uint8_t scale) {
 
     return (scale < NUMBER_OF_PREDEFINED_SCALES);
+
+}
+
+uint8_t Pads::getPadNote(uint8_t pad, uint8_t note) {
+
+    if (pad >= NUMBER_OF_PADS) return 0;
+    if (note >= NOTES_PER_PAD) return 0;
+
+    return padNote[pad][note];
 
 }
 

@@ -23,10 +23,9 @@ class Encoders  {
     Encoders();
     void init();
     void update();
-    void setHandleEncoderCallback(void (*fptr)(uint8_t encoderNumber, bool direction, uint8_t steps));
 
     private:
-    void (*sendEncoderCallback)(uint8_t encoderNumber, bool direction, uint8_t steps);
+    void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps);
     uint32_t lastStepTime[NUMBER_OF_ENCODERS];
 
 };

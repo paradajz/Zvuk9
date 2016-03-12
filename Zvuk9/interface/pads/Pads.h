@@ -12,6 +12,8 @@
 #include "../../hardware/timer/TimerObject.h"
 #include "../../midi/MIDI.h"
 #include "../../eeprom/EEPROMsettings.h"
+#include "../lcd/LCD.h"
+#include "../leds/LEDs.h"
 
 #define NUMBER_OF_PADS                      9
 
@@ -29,19 +31,27 @@ class Pads  {
 
     Pads();
     void init();
-    void update(bool midiEnabled = true);
+    void update(bool midiEnabled);
     changeOutput_t assignPadNote(uint8_t tonic);
 
     //program
     bool setActiveProgram(int8_t program);
+
+    //pad edit
+    void setupPadEditMode(uint8_t pad);
+    void displayActivePadNotes(uint8_t pad);
+    void setNoteLEDs();
+    bool editModeActive() {return editModeActivated; }
+    void setEditMode(bool state) {editModeActivated = state; };
+    void exitPadEditMode();
 
     void notesOnOff();
     void aftertouchOnOff();
     void xOnOff();
     void yOnOff();
 
-    void setPadEditMode(bool state);
-    bool getPadEditMode();
+    uint8_t getPadNote(uint8_t pad, uint8_t note);
+
     changeOutput_t changePadNote(uint8_t tonic);
 
     //calibration
@@ -62,15 +72,6 @@ class Pads  {
     changeOutput_t setTonic(tonic_t _tonic, bool internalChange = false);
     void changeActiveOctave(bool direction);
 
-    //callbacks
-    void setHandlePadEditModeCallback(void (*fptr)(uint8_t pad));
-    void setHandleLEDstateCallback(void (*fptr)(uint8_t ledNumber, ledIntensity_t state));
-    void setHandlePadPressCallback(void (*fptr)(uint8_t pad, uint8_t *notes, uint8_t numberOfNotes, uint8_t velocity, uint8_t ccX, uint8_t ccY));
-    void setHandlePadReleaseCallback(void (*fptr)(uint8_t pad, uint8_t *notes, uint8_t numberOfNotes));
-    void setHandleLCDAfterTouchCallback(void (*fptr)(uint8_t pressure));
-    void setHandleLCDxyCallback(void (*fptr)(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable));
-    void setHandleClearPadDataCallback(void(*fptr)(uint8_t pad));
-
     //setters
     changeOutput_t changeCC(bool direction, ccType_t type, int8_t steps);
     changeOutput_t changeXYlimits(bool direction, ccLimitType_t ccType, int8_t steps);
@@ -87,7 +88,6 @@ class Pads  {
     tonic_t getActiveTonic();
     uint8_t getActiveOctave();
     uint8_t getMIDIchannel();
-    uint8_t *getPadNotes(uint8_t padNumber);
 
     //split
     splitState_t getSplitState();
@@ -180,15 +180,9 @@ class Pads  {
     void setPadPressed(uint8_t padNumber, bool padState);
     bool pressureStable(uint8_t padNumber, uint8_t pressDetected);
 
-    //callbacks
-    void (*sendPadEditModeCallback)(uint8_t pad);
-    void (*sendLEDstateCallback)(uint8_t ledNumber, ledIntensity_t state);
-    void (*sendPadPressCallback)(uint8_t pad, uint8_t *notes, uint8_t numberOfNotes, uint8_t velocity, uint8_t ccX, uint8_t ccY);
-    void (*sendPadReleaseCallback)(uint8_t pad, uint8_t *notes, uint8_t numberOfNotes);
-    void (*sendLCDAfterTouchCallback)(uint8_t pressure);
-    void (*sendLCDxyCallback)(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
-    void (*sendClearPadDataCallback)(uint8_t pad);
-
+    //sent only if midisend is enabled
+    void handleNote(uint8_t pad, uint8_t velocity, bool state);
+    void handleXY(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable);
     //preset
     scaleType_t getScaleType(uint8_t scale);
 
@@ -221,7 +215,7 @@ class Pads  {
     bool afterTouchMIDIdataAvailable();
     bool xyMIDIdataAvailable();
     void checkNoteBuffer();
-    void updateLastTouchedPad();
+    void updateLastTouchedPad(bool midiEnabled);
     void checkMIDIdata();
 
     void generateScale(scale_t scale);
@@ -239,10 +233,9 @@ class Pads  {
     bool afterTouchAvailable;
     uint8_t midiAfterTouch;
     int8_t shiftedNote;
+    bool editModeActivated;
 
     uint8_t     selectedMuxChannel;
-
-    bool        padEditMode;
 
     uint8_t     lastPadState[NUMBER_OF_PADS],
                 sampleCounter;

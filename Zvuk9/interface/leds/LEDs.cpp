@@ -1,5 +1,6 @@
 #include "LEDs.h"
 #include "../../hardware/timer/TimerObject.h"
+#include "../pads/Pads.h"
 
 const uint8_t ledNoteArray[] = {
 
@@ -96,6 +97,60 @@ void LEDs::setNoteLEDstate(tonic_t _tonic, ledIntensity_t state)   {
 ledIntensity_t LEDs::getTonicLEDstate(tonic_t _tonic)   {
 
     return timers.getLEDstate(getLEDnumberFromTonic(_tonic));
+
+}
+
+void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad) {
+
+    switch(padEditMode) {
+
+        case true:
+        //indicate assigned notes in pad edit mode using note leds
+
+        uint8_t tonicArray[NOTES_PER_PAD],
+                octaveArray[NOTES_PER_PAD];
+
+        for (int i=0; i<NOTES_PER_PAD; i++) {
+
+            tonicArray[i] = pads.getTonicFromNote(pads.getPadNote(pad, i));
+            octaveArray[i] = pads.getOctaveFromNote(pads.getPadNote(pad, i));
+
+        }
+
+        //turn off all LEDs
+        for (int i=0; i<MIDI_NOTES; i++)
+            setNoteLEDstate((tonic_t)i, ledIntensityOff);
+
+        //set dim led state for assigned notes on current pad
+        for (int i=0; i<NOTES_PER_PAD; i++)
+            setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityDim);
+
+        //set full led state for assigned notes on current pad if note matches current octave
+        for (int i=0; i<NOTES_PER_PAD; i++) {
+
+            if (tonicArray[i] != MIDI_OCTAVE_RANGE) {
+
+                if (octaveArray[i] == pads.getActiveOctave())
+                    setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityFull);
+
+            }
+
+        }
+        break;
+
+        case false:
+        //first, turn off all tonic LEDs
+        tonicLEDsOff();
+        for (int i=0; i<MIDI_NOTES; i++)  {
+
+            //turn tonic LED on only if corresponding note is active
+            if (pads.noteActive((tonic_t)i))
+            leds.setNoteLEDstate((tonic_t)i, ledIntensityDim);
+
+        }
+        break;
+
+    }
 
 }
 

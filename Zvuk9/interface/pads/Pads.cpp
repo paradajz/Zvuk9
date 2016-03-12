@@ -150,13 +150,6 @@ inline uint8_t mapInternal(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t ou
 Pads::Pads()  {
 
     //default constructor
-    sendLEDstateCallback        = NULL;
-    sendPadPressCallback        = NULL;
-    sendPadReleaseCallback      = NULL;
-    sendLCDAfterTouchCallback   = NULL;
-    sendLCDxyCallback           = NULL;
-    sendClearPadDataCallback    = NULL;
-    sendPadEditModeCallback     = NULL;
 
 }
 
@@ -372,16 +365,16 @@ void Pads::setFunctionLEDs(uint8_t pad)   {
 
         //split features
         //turn off function LEDs first
-        sendLEDstateCallback(LED_ON_OFF_AFTERTOUCH, ledIntensityOff);
-        sendLEDstateCallback(LED_ON_OFF_NOTES, ledIntensityOff);
-        sendLEDstateCallback(LED_ON_OFF_X, ledIntensityOff);
-        sendLEDstateCallback(LED_ON_OFF_Y, ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_X, ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_Y, ledIntensityOff);
 
         //turn on feature LEDs depending on enabled features for last touched pad
-        sendLEDstateCallback(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
-        sendLEDstateCallback(LED_ON_OFF_NOTES, getNoteSendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
-        sendLEDstateCallback(LED_ON_OFF_X, getCCXsendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
-        sendLEDstateCallback(LED_ON_OFF_Y, getCCYsendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
 
     }
 
@@ -489,11 +482,8 @@ void Pads::update(bool midiEnabled)  {
     } else {
 
         bool xyProcessed = processXY();
-        if (xyProcessed)    {
-
+        if (xyProcessed)
             checkXY();
-
-        }
 
     }
 
@@ -505,29 +495,30 @@ void Pads::update(bool midiEnabled)  {
 
         if (padMovementDetected)   {
 
-            updateLastTouchedPad();
+            updateLastTouchedPad(midiEnabled);
             padMovementDetected = false;
 
         }
 
-        if (!padEditMode)   checkMIDIdata();
+        if (midiEnabled)   checkMIDIdata();
         firstRun = true;
         setNextPad();
 
-    }   if (!padEditMode)   checkNoteBuffer();  //send notes after some delay
+    }   if (midiEnabled)   checkNoteBuffer();  //send notes after some delay
 
     checkOctaveShift();
 
 }
 
-void Pads::updateLastTouchedPad()   {
+void Pads::updateLastTouchedPad(bool midiEnabled)   {
 
     if (padID[activePad] != previousPad)
         setFunctionLEDs(padID[activePad]);
 
     if (padID[activePad] != lastTouchedPad) {
 
-        if (padEditMode) sendPadEditModeCallback(padID[activePad]);
+        if (!midiEnabled)
+            setupPadEditMode(padID[activePad]);
 
         if (getPadPressed(lastTouchedPad)) previousPad = lastTouchedPad;
             lastTouchedPad = padID[activePad];
@@ -758,15 +749,11 @@ void Pads::sendPadXY()  {
 
     }
 
-    if (!getPadEditMode())      {
-
-        #if XY_FLIP_VALUES > 0
-            sendLCDxyCallback(pad, 127-midiX, midiY, xAvailable_, yAvailable_);
-        #else
-            sendLCDxyCallback(pad, midiX, 127-midiY, xAvailable_, yAvailable_);
-        #endif
-
-    }
+    #if XY_FLIP_VALUES > 0
+        handleXY(pad, 127-midiX, midiY, xAvailable_, yAvailable_);
+    #else
+        handleXY(pad, midiX, 127-midiY, xAvailable_, yAvailable_);
+    #endif
 
     //record first sent x/y values
     //if they change enough, reset aftertouch gesture counter
@@ -849,21 +836,10 @@ void Pads::storePadNotes()  {
 
         }
 
-            uint8_t noteArray[NOTES_PER_PAD],
-                    noteCounter = 0;
+            if (getNoteSendEnabled(previousPad))
+                handleNote(previousPad, lastVelocityValue[previousPad], true);
 
-            for (int i=0; i<NOTES_PER_PAD; i++) {
-
-                if (padNote[previousPad][i] != BLANK_NOTE)  {
-
-                    noteArray[noteCounter] = padNote[previousPad][i];
-                    noteCounter++;
-
-                }
-
-            }   sendPadPressCallback(previousPad, noteArray, noteCounter, lastVelocityValue[previousPad], ccXvaluePreviousPad, ccYvaluePreviousPad);
-
-        sendLCDxyCallback(previousPad, lastXValue[previousPad], lastYValue[previousPad], ccXsendEnabled, ccYsendEnabled);
+        handleXY(previousPad, lastXValue[previousPad], lastYValue[previousPad], ccXsendEnabled, ccYsendEnabled);
         setFunctionLEDs(previousPad);
 
     }   else if (!midiNoteOnOff) resetPadLCDdata = true;
@@ -871,7 +847,11 @@ void Pads::storePadNotes()  {
     storePadNote(pad, midiVelocity, midiNoteOnOff);
 
     lastVelocityValue[pad] = midiVelocity;
-    if (resetPadLCDdata && !getPadEditMode()) sendClearPadDataCallback(pad);
+    if (resetPadLCDdata)    {
+
+        lcDisplay.clearPadData();
+
+    }
     velocityAvailable = false;
 
 }
@@ -896,12 +876,6 @@ uint8_t Pads::getLastTouchedPad()   {
 
 }
 
-uint8_t* Pads::getPadNotes(uint8_t padNumber)   {
-
-    return padNote[padNumber];
-
-}
-
 bool Pads::pressureMIDIdataAvailable()  {
 
     return velocityAvailable;
@@ -918,7 +892,7 @@ void Pads::checkMIDIdata()   {
 
     //send X/Y immediately
     if (xyMIDIdataAvailable())
-    sendPadXY();
+        sendPadXY();
 
     //if notes are available, store them in buffer first
     if (pressureMIDIdataAvailable())
@@ -968,9 +942,6 @@ void Pads::checkNoteBuffer()    {
 
         }
         #endif
-
-        uint8_t noteArray[NOTES_PER_PAD],
-                noteCounter = 0;
 
         if (noteSendEnabled)    {
 
@@ -1031,27 +1002,9 @@ void Pads::checkNoteBuffer()    {
             }
             #endif
 
-            for (int i=0; i<NOTES_PER_PAD; i++) {
+            noteState ? handleNote(pad, velocity, true) : handleNote(pad, velocity, false);
 
-                if (padNote[pad][i] != BLANK_NOTE)  {
-
-                    noteArray[noteCounter] = padNote[pad][i];
-                    noteCounter++;
-
-                }
-
-            }
-
-            if (!noteState)  sendPadReleaseCallback(pad, noteArray, noteCounter);
-
-        }   if (noteState)  {
-
-                uint8_t ccX = getPadCCvalue(ccTypeX, pad);
-                uint8_t ccY = getPadCCvalue(ccTypeY, pad);
-
-                sendPadPressCallback(pad, noteArray, noteCounter, velocity, ccX, ccY);
-
-            }
+        }
 
         note_buffer_tail = i;
 
@@ -1059,15 +1012,84 @@ void Pads::checkNoteBuffer()    {
 
 }
 
-void Pads::setPadEditMode(bool state) {
+void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
-    padEditMode = state;
+    uint8_t noteArray[NOTES_PER_PAD],
+            noteCounter = 0;
+
+    for (int i=0; i<NOTES_PER_PAD; i++) {
+
+        if (padNote[pad][i] != BLANK_NOTE)  {
+
+            noteArray[noteCounter] = padNote[pad][i];
+            noteCounter++;
+
+        }
+
+    }
+
+    switch(state)   {
+
+        case true:
+        //note on
+        uint8_t tonicArray[NOTES_PER_PAD],
+                octaveArray[NOTES_PER_PAD];
+
+        for (int i=0; i<noteCounter; i++) {
+
+            tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
+            leds.setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityFull);
+            octaveArray[i] = getOctaveFromNote(noteArray[i]);
+
+        }
+
+        lcDisplay.updateNote(pad, tonicArray, octaveArray, noteCounter, velocity);
+        break;
+
+        case false:
+        //note off
+        //we need to set LEDs back to dim states for released pad, but only if
+        //some other pad with same active note isn't already pressed
+
+        bool noteActive;
+
+        for (int z=0; z<noteCounter; z++) {
+
+            //iterate over every note on released pad
+
+            noteActive = false;
+
+            for (int i=0; i<NUMBER_OF_PADS; i++)    {
+
+                if (!getPadPressed(i)) continue; //skip released pad
+                if (i == pad) continue; //skip current pad
+
+                for (int j=0; j<NOTES_PER_PAD; j++) {
+
+                    if (getTonicFromNote(padNote[i][j]) == getTonicFromNote(noteArray[z])) {
+
+                        noteActive = true;
+
+                    }
+
+                }
+
+            }   if (!noteActive) leds.setNoteLEDstate(getTonicFromNote((tonic_t)noteArray[z]), ledIntensityDim);
+
+        }
+        break;
+
+    }
 
 }
 
-bool Pads::getPadEditMode() {
+void Pads::handleXY(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable)   {
 
-    return padEditMode;
+    if (xAvailable || yAvailable)
+        lcDisplay.setXYData(pad, xPosition, yPosition, xAvailable, yAvailable);
+
+    //always display ccx/ccy
+    lcDisplay.setCCData(pad, ccXPad[pad], ccYPad[pad]);
 
 }
 
@@ -1093,6 +1115,5 @@ bool Pads::noteActive(tonic_t _tonic) {
     return false;
 
 }
-
 
 Pads pads;

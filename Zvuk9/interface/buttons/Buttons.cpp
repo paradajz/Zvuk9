@@ -1,5 +1,9 @@
 #include "Buttons.h"
 #include "../../hardware/i2c/i2c_master.h"
+#include "../pads/Pads.h"
+#include "../lcd/LCD.h"
+#include "../leds/LEDs.h"
+#include "../../midi/MIDI.h"
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         10
@@ -27,10 +31,7 @@ Buttons::Buttons()  {
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
         previousButtonState[i] = buttonDebounceCompare;
 
-    sendOnOffPressCallback          = NULL;
     sendOctaveUpDownPressCallback   = NULL;
-    sendTonicCallback               = NULL;
-    sendTransportControlCallback    = NULL;
 
 }
 
@@ -154,8 +155,7 @@ void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
             case BUTTON_ON_OFF_X:
             case BUTTON_ON_OFF_Y:
             case BUTTON_ON_OFF_SPLIT:
-            if (callbackEnabled(buttonNumber))
-                sendOnOffPressCallback(buttonNumber, (buttonState_t)state);
+            handleOnOffEvent(buttonNumber, (buttonState_t)state);
             break;
 
             case BUTTON_NOTE_C_SHARP:
@@ -171,8 +171,7 @@ void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
             case BUTTON_NOTE_A:
             case BUTTON_NOTE_B:
             tonic_t _tonic = getTonicFromButton(buttonNumber);
-            if (callbackEnabled(buttonNumber))
-                sendTonicCallback(_tonic);
+            handleTonicEvent(_tonic);
             break;
 
         }
@@ -194,8 +193,7 @@ void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
         case BUTTON_TRANSPORT_STOP:
         case BUTTON_TRANSPORT_PLAY:
         case BUTTON_TRANSPORT_RECORD:
-        if (callbackEnabled(buttonNumber))
-            sendTransportControlCallback(buttonNumber, (buttonState_t)state);
+        handleTransportControlEvent(buttonNumber, (buttonState_t)state);
         break;
 
     }
@@ -270,28 +268,9 @@ tonic_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
 }
 
 //callbacks
-
-void Buttons::setHandleOnOffPress(void (*fptr)(uint8_t buttonNumber, buttonState_t state))   {
-
-    sendOnOffPressCallback = fptr;
-
-}
-
 void Buttons::setHandleOctaveUpDownPress(void (*fptr)(uint8_t direction, bool state))   {
 
     sendOctaveUpDownPressCallback = fptr;
-
-}
-
-void Buttons::setHandleTonic(void (*fptr)(tonic_t _tonic))   {
-
-    sendTonicCallback = fptr;
-
-}
-
-void Buttons::setHandleTransportControlCallback(void (*fptr)(uint8_t buttonNumber, buttonState_t state))  {
-
-    sendTransportControlCallback = fptr;
 
 }
 
@@ -310,6 +289,168 @@ void Buttons::enableCallback(uint8_t buttonNumber)  {
 void Buttons::pauseCallback(uint8_t buttonNumber)  {
 
     bitWrite(callbackEnableState, buttonNumber, 0);
+
+}
+
+void Buttons::handleOnOffEvent(uint8_t buttonNumber, buttonState_t state)    {
+
+    //determine action based on pressed button
+
+    uint8_t ledNumber = 0;
+    functionsOnOff_t lcdMessageType;
+    ledIntensity_t ledState = ledIntensityOff;
+    uint8_t lastTouchedPad = pads.getLastTouchedPad();
+
+    switch (buttonNumber)    {
+
+        case BUTTON_ON_OFF_NOTES:
+        pads.notesOnOff();
+        lcdMessageType = featureNotes;
+        ledNumber = LED_ON_OFF_NOTES;
+        if (pads.getNoteSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        break;
+
+        case BUTTON_ON_OFF_AFTERTOUCH:
+        pads.aftertouchOnOff();
+        lcdMessageType = featureAftertouch;
+        ledNumber = LED_ON_OFF_AFTERTOUCH;
+        if (pads.getAfterTouchSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        break;
+
+        case BUTTON_ON_OFF_X:
+        pads.xOnOff();
+        lcdMessageType = featureX;
+        ledNumber = LED_ON_OFF_X;
+        if (pads.getCCXsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        break;
+
+        case BUTTON_ON_OFF_Y:
+        pads.yOnOff();
+        lcdMessageType = featureY;
+        ledNumber = LED_ON_OFF_Y;
+        if (pads.getCCYsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        break;
+
+        case BUTTON_ON_OFF_SPLIT:
+        pads.setSplit();
+        lcdMessageType = featureSplit;
+        ledNumber = LED_ON_OFF_SPLIT;
+        ledState = pads.getSplitStateLEDvalue();
+        break;
+
+        default:
+        return;
+
+    }
+
+    leds.setLEDstate(ledNumber, ledState);
+    lcDisplay.displayOnOffMessage(lcdMessageType, pads.getSplitState(), (ledState == ledIntensityFull), lastTouchedPad+1);
+
+}
+
+void Buttons::handleTransportControlEvent(uint8_t buttonNumber, buttonState_t state)  {
+
+    uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
+    transportControl_t type = transportStop;
+    bool displayState = true;
+
+    switch(buttonNumber)    {
+
+        case BUTTON_TRANSPORT_PLAY:
+        if (state == buttonPressed) {
+
+            sysExArray[4] = 0x02;
+            type = transportPlay;
+            #if MODE_SERIAL > 0
+                Serial.println(F("Transport Control Play"));
+            #endif
+
+        } else return;
+
+        break;
+
+        case BUTTON_TRANSPORT_STOP:
+        if (state == buttonReleased)    {
+
+            sysExArray[4] = 0x01;
+            type = transportStop;
+            #if MODE_SERIAL > 0
+            Serial.println(F("Transport Control Stop"));
+            #endif
+
+        } else return;
+        break;
+
+        case BUTTON_TRANSPORT_RECORD:
+        if (state == buttonPressed) {
+
+            ledIntensity_t recordState = leds.getLEDstate(LED_TRANSPORT_RECORD);
+            if (recordState == ledIntensityFull) {
+
+                sysExArray[4] = 0x07;
+                recordState = ledIntensityOff;
+                #if MODE_SERIAL > 0
+                    Serial.println(F("Transport Control Record Stop"));
+                #endif
+                displayState = false;
+
+                }   else if (recordState == ledIntensityOff) {
+
+                sysExArray[4] = 0x06;
+                recordState = ledIntensityFull;
+                #if MODE_SERIAL > 0
+                    Serial.println(F("Transport Control Record Start"));
+                #endif
+                displayState = true;
+
+            }
+
+            type = transportRecord;
+            leds.setLEDstate(LED_TRANSPORT_RECORD, recordState);
+
+        } else return;
+
+        break;
+
+    }
+
+    #if MODE_SERIAL < 1
+        midi.sendSysEx(sysExArray, SYS_EX_ARRAY_SIZE);
+    #endif
+
+    lcDisplay.displayTransportControlMessage(type, displayState);
+
+}
+
+void Buttons::handleTonicEvent(tonic_t _tonic) {
+
+    if (!pads.editModeActive())   {
+
+        //change tonic
+        //FIXME: DO NOT ALLOW THIS WHILE PADS ARE PRESSED
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+        if (pads.getPadPressed(i))  {
+
+            //
+            return;
+
+        }
+
+        changeOutput_t result = pads.setTonic(_tonic);
+
+        if (result == outputChanged)
+            leds.displayActiveNoteLEDs();
+
+        tonic_t activeTonic = pads.getActiveTonic();
+        lcDisplay.displayNoteChange(result, noteChange, activeTonic);
+
+        }   else {
+
+        //add note to pad
+        lcDisplay.displayPadEditResult(pads.assignPadNote(_tonic));
+        pads.displayActivePadNotes(pads.getLastTouchedPad());
+
+    }
 
 }
 

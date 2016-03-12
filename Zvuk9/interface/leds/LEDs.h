@@ -15,6 +15,8 @@ class LEDs  {
     void allLEDsOn();
     void allLEDsOff();
 
+    void displayActiveNoteLEDs(bool padEditMode = false, uint8_t padNumber = 0);
+
     void setLEDstate(uint8_t ledNumber, ledIntensity_t state);
     ledIntensity_t getLEDstate(uint8_t ledNumber);
     void setFadeSpeed(uint8_t speed);
