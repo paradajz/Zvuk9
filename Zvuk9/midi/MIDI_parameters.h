@@ -6,7 +6,7 @@
 #define MIN_MIDI_VALUE                      0
 #define MAX_MIDI_VALUE                      127
 
-#define MIDI_OCTAVE_RANGE                   12
+#define MIDI_OCTAVE_RANGE                   11
 
 #define NOTES_PER_PAD                       7
 

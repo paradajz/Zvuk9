@@ -195,8 +195,7 @@ void Pads::getPresetParameters()    {
         Serial.println(F("----------------------------------------"));
         Serial.println(F("Printing out preset settings"));
         Serial.println(F("----------------------------------------"));
-        Serial.print(F("Active preset: "));
-        Serial.println(activePreset);
+        Serial.print(F("Scale: "));
     #endif
 
     shiftAmount = 0;
@@ -212,11 +211,14 @@ void Pads::getPresetParameters()    {
     //reset this variable first
     localOctaveValue = DEFAULT_OCTAVE;
 
-    for (int i=0; i<NOTES_PER_PAD; i++)
+    for (int i=0; i<NOTES_PER_PAD; i++) {
+
         if (padNote[0][i] != BLANK_NOTE)    {
 
-            localOctaveValue = (padNote[0][i]) / MIDI_NOTES;
+            localOctaveValue = (padNote[0][i]) / MIDI_OCTAVE_RANGE;
             break;
+
+        }
 
     }
 
@@ -233,9 +235,11 @@ void Pads::generateScale(scale_t scale)    {
         int8_t shift = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram)+PREDEFINED_SCALE_PARAMETERS*activePreset);
 
         #if MODE_SERIAL > 0
-            Serial.println(F("----------------------------------------"));
-            Serial.println(F("Parameters for current scale: "));
-            Serial.println(F("----------------------------------------"));
+            char nameBuffer[20];
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(presetNameArray[(uint8_t)scale])));
+            Serial.print((uint8_t)scale);
+            Serial.print(F("/"));
+            Serial.println(nameBuffer);
             Serial.print(F("Octave: "));    Serial.println(octave);
             Serial.print(F("Tonic: "));     Serial.println(tonic_);
             Serial.print(F("Shift: "));     Serial.println(shift);
@@ -293,7 +297,14 @@ void Pads::generateScale(scale_t scale)    {
 
     }   else {  //user scales
 
-        uint8_t noteID = (scale - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
+        #if MODE_SERIAL > 0
+            Serial.print((uint8_t)scale);
+            Serial.print(F("/"));
+            Serial.print(F("User preset "));
+            Serial.println(scale-NUMBER_OF_PREDEFINED_SCALES);
+        #endif
+
+        uint16_t noteID = (scale - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
 
         for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
@@ -317,15 +328,8 @@ void Pads::generateScale(scale_t scale)    {
             Serial.print(i+1);
             Serial.println(F(":"));
 
-            for (int j=0; j<NOTES_PER_PAD; j++) {
-
-                if (padNote[i][j] != BLANK_NOTE)    {
-
-                    Serial.println(padNote[i][j]);
-
-                }
-
-            }
+            for (int j=0; j<NOTES_PER_PAD; j++)
+                Serial.println(padNote[i][j]);
 
         }
     #endif

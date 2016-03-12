@@ -781,10 +781,10 @@ void LCD::displayEditModeNotAllowed(padEditError_t errorType)   {
 
 }
 
-void LCD::displayActiveOctave(uint8_t octave)   {
+void LCD::displayActiveOctave(int8_t octave)   {
 
     lcdLine[2] = "Active octave: ";
-    lcdLine[2] += (octave-2);
+    lcdLine[2] += octave;
 
     lineChange[2] = true;
     expandLine(2, regularLine);

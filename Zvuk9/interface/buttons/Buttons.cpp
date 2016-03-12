@@ -451,17 +451,22 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     checkOctaveUpDownEnabled();
                     pads.setEditMode(false);
 
-                    }   else {
+                }   else {
 
                     //normally, this is called in automatically in Pads.cpp
                     //but on first occasion call it manually
+                    #if MODE_SERIAL > 0
+                        Serial.println(F("----------------------------------------"));
+                        Serial.println(F("Pad edit mode"));
+                        Serial.println(F("----------------------------------------"));
+                    #endif
                     pads.setupPadEditMode(pads.getLastTouchedPad());
 
                 }
 
             }   else pads.exitPadEditMode();
 
-            }   else {
+        }   else {
 
             //used to "cheat" checkOctaveUpDownEnabled function
             //this will cause reset of function counters so that buttons are disabled
@@ -473,62 +478,68 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
         }
 
-    }
+    }   else if (checkOctaveUpDownEnabled())    {
 
-    if (!pads.editModeActive() && checkOctaveUpDownEnabled())    {
+        bool editMode = pads.editModeActive();
 
-        if (!buttons.getButtonPressed(BUTTON_TRANSPORT_STOP))   {
+        switch(editMode)    {
 
-            //shift entire octave
+            case true:
+            //do not shift octaves while pad is pressed
+            if (pads.getPadPressed(pads.getLastTouchedPad()))   {
 
-            //shift all notes up or down
-            if (!state)    {
-
-                changeOutput_t shiftResult = pads.shiftOctave(direction);
-                int8_t activeOctave = pads.getActiveOctave();
-                lcDisplay.displayNoteChange(shiftResult, octaveChange, activeOctave);
-                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-
-                }   else {
-
-                //direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
-
-            }
-
-            }   else {
-
-            //shift single note
-            if (state)    {
-
-                if (pads.getPadPressed(pads.getLastTouchedPad()))   {
-
-                    lcDisplay.displayEditModeNotAllowed(padNotReleased);
-                    return;
-
-                }
-
-                //stop button is modifier
-                //disable it on release
-                buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
-                changeOutput_t shiftResult = pads.shiftNote(direction);
-                lcDisplay.displayNoteChange(shiftResult, noteUpOrDown, direction);
-
-            }
-
-        }
-
-        }   else if (pads.editModeActive() && checkOctaveUpDownEnabled()) {
-
-        //do not shift octaves while pad is pressed
-        if (pads.getPadPressed(pads.getLastTouchedPad()))   {
-
-            lcDisplay.displayEditModeNotAllowed(padNotReleased);
+                lcDisplay.displayEditModeNotAllowed(padNotReleased);
 
             }   else if (!state)   {
 
-            pads.changeActiveOctave(direction);
-            lcDisplay.displayActiveOctave(pads.getActiveOctave());
-            leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
+                pads.changeActiveOctave(direction);
+                lcDisplay.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
+                leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
+
+            }
+            break;
+
+            case false:
+            if (!buttons.getButtonPressed(BUTTON_TRANSPORT_STOP))   {
+
+                //shift entire octave
+
+                //shift all notes up or down
+                if (!state)    {
+
+                    changeOutput_t shiftResult = pads.shiftOctave(direction);
+                    int8_t activeOctave = pads.getActiveOctave();
+                    lcDisplay.displayNoteChange(shiftResult, octaveChange, activeOctave);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+
+                }   else {
+
+                    //direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+
+                }
+
+            }   else {
+
+                //shift single note
+                if (state)    {
+
+                    if (pads.getPadPressed(pads.getLastTouchedPad()))   {
+
+                        lcDisplay.displayEditModeNotAllowed(padNotReleased);
+                        return;
+
+                }
+
+                    //stop button is modifier
+                    //disable it on release
+                    buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
+                    changeOutput_t shiftResult = pads.shiftNote(direction);
+                    lcDisplay.displayNoteChange(shiftResult, noteUpOrDown, direction);
+
+                }
+
+            }
+            break;
 
         }
 

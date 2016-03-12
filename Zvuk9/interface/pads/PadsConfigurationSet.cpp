@@ -221,13 +221,11 @@ void Pads::setSplit() {
 void Pads::changeActiveOctave(bool direction)   {
 
     //used in pad edit mode
-
-    if (direction)  localOctaveValue++;
-    else localOctaveValue--;
+    direction ? localOctaveValue++ : localOctaveValue--;
 
     //overflow check
-    if (localOctaveValue >= (MIDI_OCTAVE_RANGE-2)) localOctaveValue--;
-    if (localOctaveValue < -2) localOctaveValue++;
+    if (localOctaveValue >= MIDI_OCTAVE_RANGE) localOctaveValue--;
+    if (localOctaveValue < 0) localOctaveValue++;
 
 }
 
@@ -247,7 +245,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
                 if (padNote[i][j] != BLANK_NOTE)
-                if (padNote[i][j] < MIDI_OCTAVE_RANGE)
+                if (padNote[i][j] < MIDI_NOTES)
                 notesChanged = false;
 
                 if (!notesChanged) break;
@@ -259,7 +257,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
                 if (padNote[i][j] != BLANK_NOTE)
-                if ((padNote[i][j] + MIDI_OCTAVE_RANGE) > MAX_MIDI_VALUE)
+                if ((padNote[i][j] + MIDI_NOTES) > MAX_MIDI_VALUE)
                 notesChanged = false;
 
                 if (!notesChanged) break;
@@ -867,7 +865,7 @@ changeOutput_t Pads::assignPadNote(uint8_t tonic)    {
 
     uint8_t noteIndex = 0;
     //calculate note to be added or removed
-    uint8_t note = getActiveOctave()*MIDI_OCTAVE_RANGE + tonic;
+    uint8_t note = getActiveOctave()*MIDI_NOTES + tonic;
     //note can added or removed, assume adding by default
     bool addOrRemove = true;
 
@@ -949,7 +947,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
         case true:
         //up, one note higher
         //last note gets increased, other notes get shifted down
-        tempNoteArray[NUMBER_OF_PADS-1] = padNote[NUMBER_OF_PADS-currentScaleType][0] + MIDI_OCTAVE_RANGE;
+        tempNoteArray[NUMBER_OF_PADS-1] = padNote[NUMBER_OF_PADS-currentScaleType][0] + MIDI_NOTES;
         if (tempNoteArray[NUMBER_OF_PADS-1] > 127) return outOfRange;
         for (int i=0; i<NUMBER_OF_PADS-1; i++)    {
 
@@ -962,7 +960,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
         case false:
         //down, one note lower
         //first note gets decreased, other notes get shifted up
-        tempNoteArray[0] = padNote[currentScaleType-1][0] - MIDI_OCTAVE_RANGE;
+        tempNoteArray[0] = padNote[currentScaleType-1][0] - MIDI_NOTES;
         if (tempNoteArray[0] < 0) return outOfRange;
         for (int i=0; i<NUMBER_OF_PADS-1; i++)    {
 
