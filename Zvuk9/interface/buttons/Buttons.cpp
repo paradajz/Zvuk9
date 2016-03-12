@@ -31,8 +31,6 @@ Buttons::Buttons()  {
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
         previousButtonState[i] = buttonDebounceCompare;
 
-    sendOctaveUpDownPressCallback   = NULL;
-
 }
 
 uint8_t read_I2C_reg(uint8_t address, uint8_t reg)   {
@@ -95,13 +93,13 @@ void Buttons::update(bool processingEnabled)    {
              uint8_t state = !((mcpData >> i) & 0x01);
              bool debounced = buttonDebounced(i, state);
 
-             if (debounced)	{
+             if (debounced) {
 
-            	 if (state == getPreviousButtonState(i)) continue;
+                if (state == getPreviousButtonState(i)) continue;
 
-            	 //update previous button state with current one
-            	 setPreviousButtonState(i, state);
-            	 if (processingEnabled) processButton(i, state);
+                //update previous button state with current one
+                setPreviousButtonState(i, state);
+                if (processingEnabled) processButton(i, state);
 
              }
 
@@ -144,7 +142,7 @@ bool Buttons::buttonDebounced(uint8_t buttonNumber, uint8_t state)  {
 
 }
 
-void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
+void Buttons::processButton(uint8_t buttonNumber, bool state)    {
 
     if (state)    {
 
@@ -155,7 +153,7 @@ void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
             case BUTTON_ON_OFF_X:
             case BUTTON_ON_OFF_Y:
             case BUTTON_ON_OFF_SPLIT:
-            handleOnOffEvent(buttonNumber, (buttonState_t)state);
+            handleOnOffEvent(buttonNumber);
             break;
 
             case BUTTON_NOTE_C_SHARP:
@@ -181,19 +179,17 @@ void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
     switch (buttonNumber)   {
 
         case BUTTON_OCTAVE_DOWN:
-        if (callbackEnabled(buttonNumber))
-            sendOctaveUpDownPressCallback(false, state);
+        handleOctaveEvent(false, state);
         break;
 
         case BUTTON_OCTAVE_UP:
-        if (callbackEnabled(buttonNumber))
-            sendOctaveUpDownPressCallback(true, state);
+        handleOctaveEvent(true, state);
         break;
 
         case BUTTON_TRANSPORT_STOP:
         case BUTTON_TRANSPORT_PLAY:
         case BUTTON_TRANSPORT_RECORD:
-        handleTransportControlEvent(buttonNumber, (buttonState_t)state);
+        handleTransportControlEvent(buttonNumber, state);
         break;
 
     }
@@ -267,13 +263,6 @@ tonic_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
 
 }
 
-//callbacks
-void Buttons::setHandleOctaveUpDownPress(void (*fptr)(uint8_t direction, bool state))   {
-
-    sendOctaveUpDownPressCallback = fptr;
-
-}
-
 bool Buttons::callbackEnabled(uint8_t buttonNumber) {
 
     return bitRead(callbackEnableState, buttonNumber);
@@ -292,7 +281,7 @@ void Buttons::pauseCallback(uint8_t buttonNumber)  {
 
 }
 
-void Buttons::handleOnOffEvent(uint8_t buttonNumber, buttonState_t state)    {
+void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
 
     //determine action based on pressed button
 
@@ -348,7 +337,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, buttonState_t state)    {
 
 }
 
-void Buttons::handleTransportControlEvent(uint8_t buttonNumber, buttonState_t state)  {
+void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
     transportControl_t type = transportStop;
@@ -357,7 +346,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, buttonState_t st
     switch(buttonNumber)    {
 
         case BUTTON_TRANSPORT_PLAY:
-        if (state == buttonPressed) {
+        if (state) {
 
             sysExArray[4] = 0x02;
             type = transportPlay;
@@ -370,7 +359,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, buttonState_t st
         break;
 
         case BUTTON_TRANSPORT_STOP:
-        if (state == buttonReleased)    {
+        if (!state)    {
 
             sysExArray[4] = 0x01;
             type = transportStop;
@@ -382,7 +371,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, buttonState_t st
         break;
 
         case BUTTON_TRANSPORT_RECORD:
-        if (state == buttonPressed) {
+        if (state) {
 
             ledIntensity_t recordState = leds.getLEDstate(LED_TRANSPORT_RECORD);
             if (recordState == ledIntensityFull) {
@@ -451,6 +440,162 @@ void Buttons::handleTonicEvent(tonic_t _tonic) {
         pads.displayActivePadNotes(pads.getLastTouchedPad());
 
     }
+
+}
+
+void Buttons::handleOctaveEvent(bool direction, bool state)   {
+
+    if (buttons.getButtonPressed(BUTTON_OCTAVE_DOWN) && buttons.getButtonPressed(BUTTON_OCTAVE_UP))   {
+
+        //try to enter pad edit mode
+
+        if (pads.getActivePreset() >= NUMBER_OF_PREDEFINED_SCALES)    {
+
+            pads.setEditMode(!pads.editModeActive());
+
+            if (pads.editModeActive())  {
+
+                //check if last touched pad is pressed
+                if (pads.getPadPressed(pads.getLastTouchedPad()))   {
+
+                    lcDisplay.displayEditModeNotAllowed(padNotReleased);
+                    checkOctaveUpDownEnabled();
+                    pads.setEditMode(false);
+
+                    }   else {
+
+                    //normally, this is called in automatically in Pads.cpp
+                    //but on first occasion call it manually
+                    pads.setupPadEditMode(pads.getLastTouchedPad());
+
+                }
+
+            }   else pads.exitPadEditMode();
+
+            }   else {
+
+            //used to "cheat" checkOctaveUpDownEnabled function
+            //this will cause reset of function counters so that buttons are disabled
+            //after LCD shows message that pad editing isn't allowed
+            pads.setEditMode(!pads.editModeActive());
+            checkOctaveUpDownEnabled();
+            pads.setEditMode(!pads.editModeActive());
+            lcDisplay.displayEditModeNotAllowed(noUserPreset);
+
+        }
+
+    }
+
+    if (!pads.editModeActive() && checkOctaveUpDownEnabled())    {
+
+        if (!buttons.getButtonPressed(BUTTON_TRANSPORT_STOP))   {
+
+            //shift entire octave
+
+            //shift all notes up or down
+            if (!state)    {
+
+                changeOutput_t shiftResult = pads.shiftOctave(direction);
+                int8_t activeOctave = pads.getActiveOctave();
+                lcDisplay.displayNoteChange(shiftResult, octaveChange, activeOctave);
+                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+
+                }   else {
+
+                //direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+
+            }
+
+            }   else {
+
+            //shift single note
+            if (state)    {
+
+                if (pads.getPadPressed(pads.getLastTouchedPad()))   {
+
+                    lcDisplay.displayEditModeNotAllowed(padNotReleased);
+                    return;
+
+                }
+
+                //stop button is modifier
+                //disable it on release
+                buttons.pauseCallback(BUTTON_TRANSPORT_STOP);
+                changeOutput_t shiftResult = pads.shiftNote(direction);
+                lcDisplay.displayNoteChange(shiftResult, noteUpOrDown, direction);
+
+            }
+
+        }
+
+        }   else if (pads.editModeActive() && checkOctaveUpDownEnabled()) {
+
+        //do not shift octaves while pad is pressed
+        if (pads.getPadPressed(pads.getLastTouchedPad()))   {
+
+            lcDisplay.displayEditModeNotAllowed(padNotReleased);
+
+            }   else if (!state)   {
+
+            pads.changeActiveOctave(direction);
+            lcDisplay.displayActiveOctave(pads.getActiveOctave());
+            leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
+
+        }
+
+    }
+
+}
+
+bool Buttons::checkOctaveUpDownEnabled() {
+
+    //HORRIBLE HACK!!!!!
+    //please fix me someday
+
+    //this function will check whether octave up/down is enabled
+    //there are two scenarios when those two buttons should be disabled:
+    //1) Pad edit mode is activated
+    //2) Pad edit mode is disabled
+
+    //in both cases octave/up down functions should be disabled until both buttons
+    //have been released
+
+    //check should start when pad edit mode is activated or deactivated and stopped when
+    //both buttons are released
+
+    static bool lastPadEditMode = false;
+    bool currentPadEditMode = pads.editModeActive();
+    static bool checkEnabled = false;
+    bool returnValue = true;
+
+    if (lastPadEditMode != currentPadEditMode) {
+
+        lastPadEditMode = currentPadEditMode;
+        checkEnabled = true;
+
+    }
+
+    if (checkEnabled) {
+
+        //checking has been started
+        if (!getButtonPressed(BUTTON_OCTAVE_DOWN) && !getButtonPressed(BUTTON_OCTAVE_UP))   {
+
+            //both buttons have been released, stop with the checking
+            //use returnValue as return variable since we don't want
+            //to enable octave up/down immediately after release,
+            //only when one of octave buttons has been pushed again
+            if (!checkEnabled) returnValue = true; else returnValue = false;
+            checkEnabled = false;
+
+        }
+
+    }
+
+    //if checking is in progress, return false
+    if (checkEnabled) return false;
+
+    //if checking has been finished, return returnValue
+    return returnValue;
 
 }
 

@@ -29,28 +29,25 @@ class Buttons   {
     //setters
     void pauseCallback(uint8_t buttonNumber);
 
-    //callbacks
-    void setHandleOctaveUpDownPress(void (*fptr)(uint8_t direction, bool state));
-    void setHandleTonic(void (*fptr)(tonic_t _tonic));
-
     private:
     //callbacks
-    void handleOnOffEvent(uint8_t buttonNumber, buttonState_t state);
-    void handleTransportControlEvent(uint8_t buttonNumber, buttonState_t state);
+    void handleOnOffEvent(uint8_t buttonNumber);
+    void handleTransportControlEvent(uint8_t buttonNumber, bool state);
     void handleTonicEvent(tonic_t _tonic);
-    void (*sendOctaveUpDownPressCallback)(uint8_t direction, bool state);
+    void handleOctaveEvent(bool direction, bool state);
     bool callbackEnabled(uint8_t buttonNumber);
     void enableCallback(uint8_t buttonNumber);
+    bool checkOctaveUpDownEnabled();
 
     //read/debounce handling
     bool readStates();
-    void processButton(uint8_t buttonNumber, uint8_t state);
+    void processButton(uint8_t buttonNumber, bool state);
     bool buttonDebounced(uint8_t buttonNumber, uint8_t state);
     bool getPreviousButtonState(uint8_t buttonNumber);
     void setPreviousButtonState(uint8_t buttonNumber, uint8_t state);
 
     //send MIDI transport control
-    void sendTransportControl(uint8_t buttonNumber, buttonState_t state);
+    void sendTransportControl(uint8_t buttonNumber, bool state);
 
     //getters
     tonic_t getTonicFromButton(uint8_t buttonNumber);

@@ -154,11 +154,4 @@ enum curveType_t {
 
 };
 
-enum buttonState_t    {
-
-    buttonReleased,
-    buttonPressed
-
-};
-
 #endif /* TYPES_H_ */
