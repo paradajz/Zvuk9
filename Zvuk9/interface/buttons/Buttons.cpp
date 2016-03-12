@@ -26,10 +26,13 @@ Buttons::Buttons()  {
     lastCheckTime               = 0;
     lastButtonDataPress         = 0;
     mcpData                     = 0;
-    callbackEnableState         = 0xFFFFFFFF;
 
-    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
+
         previousButtonState[i] = buttonDebounceCompare;
+        buttonEnabled[i] = true;
+
+    }
 
 }
 
@@ -144,62 +147,66 @@ bool Buttons::buttonDebounced(uint8_t buttonNumber, uint8_t state)  {
 
 void Buttons::processButton(uint8_t buttonNumber, bool state)    {
 
-    if (state)    {
+    if (buttonEnabled[buttonNumber])    {
 
-        switch(buttonNumber)    {
+        if (state)    {
 
-            case BUTTON_ON_OFF_AFTERTOUCH:
-            case BUTTON_ON_OFF_NOTES:
-            case BUTTON_ON_OFF_X:
-            case BUTTON_ON_OFF_Y:
-            case BUTTON_ON_OFF_SPLIT:
-            handleOnOffEvent(buttonNumber);
+            switch(buttonNumber)    {
+
+                case BUTTON_ON_OFF_AFTERTOUCH:
+                case BUTTON_ON_OFF_NOTES:
+                case BUTTON_ON_OFF_X:
+                case BUTTON_ON_OFF_Y:
+                case BUTTON_ON_OFF_SPLIT:
+                handleOnOffEvent(buttonNumber);
+                break;
+
+                case BUTTON_NOTE_C_SHARP:
+                case BUTTON_NOTE_D_SHARP:
+                case BUTTON_NOTE_F_SHARP:
+                case BUTTON_NOTE_G_SHARP:
+                case BUTTON_NOTE_A_SHARP:
+                case BUTTON_NOTE_C:
+                case BUTTON_NOTE_D:
+                case BUTTON_NOTE_E:
+                case BUTTON_NOTE_F:
+                case BUTTON_NOTE_G:
+                case BUTTON_NOTE_A:
+                case BUTTON_NOTE_B:
+                tonic_t _tonic = getTonicFromButton(buttonNumber);
+                handleTonicEvent(_tonic);
+                break;
+
+            }
+
+        }
+
+        switch (buttonNumber)   {
+
+            case BUTTON_OCTAVE_DOWN:
+            handleOctaveEvent(false, state);
             break;
 
-            case BUTTON_NOTE_C_SHARP:
-            case BUTTON_NOTE_D_SHARP:
-            case BUTTON_NOTE_F_SHARP:
-            case BUTTON_NOTE_G_SHARP:
-            case BUTTON_NOTE_A_SHARP:
-            case BUTTON_NOTE_C:
-            case BUTTON_NOTE_D:
-            case BUTTON_NOTE_E:
-            case BUTTON_NOTE_F:
-            case BUTTON_NOTE_G:
-            case BUTTON_NOTE_A:
-            case BUTTON_NOTE_B:
-            tonic_t _tonic = getTonicFromButton(buttonNumber);
-            handleTonicEvent(_tonic);
+            case BUTTON_OCTAVE_UP:
+            handleOctaveEvent(true, state);
+            break;
+
+            case BUTTON_TRANSPORT_STOP:
+            case BUTTON_TRANSPORT_PLAY:
+            case BUTTON_TRANSPORT_RECORD:
+            handleTransportControlEvent(buttonNumber, state);
             break;
 
         }
 
     }
 
-    switch (buttonNumber)   {
-
-        case BUTTON_OCTAVE_DOWN:
-        handleOctaveEvent(false, state);
-        break;
-
-        case BUTTON_OCTAVE_UP:
-        handleOctaveEvent(true, state);
-        break;
-
-        case BUTTON_TRANSPORT_STOP:
-        case BUTTON_TRANSPORT_PLAY:
-        case BUTTON_TRANSPORT_RECORD:
-        handleTransportControlEvent(buttonNumber, state);
-        break;
-
-    }
-
     //resume all callbacks
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
 
-        if (!callbackEnabled(i) && !getButtonPressed(i)) {
+        if (!buttonEnabled[i] && !getButtonPressed(i)) {
 
-            enableCallback(i);
+            buttonEnabled[i] = true;
 
         }
 
@@ -260,24 +267,6 @@ tonic_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
         return tonicB;
 
     }   return tonicInvalid;   //impossible case
-
-}
-
-bool Buttons::callbackEnabled(uint8_t buttonNumber) {
-
-    return bitRead(callbackEnableState, buttonNumber);
-
-}
-
-void Buttons::enableCallback(uint8_t buttonNumber)  {
-
-    bitWrite(callbackEnableState, buttonNumber, 1);
-
-}
-
-void Buttons::pauseCallback(uint8_t buttonNumber)  {
-
-    bitWrite(callbackEnableState, buttonNumber, 0);
 
 }
 
@@ -520,7 +509,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                 //stop button is modifier
                 //disable it on release
-                buttons.pauseCallback(BUTTON_TRANSPORT_STOP);
+                buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
                 changeOutput_t shiftResult = pads.shiftNote(direction);
                 lcDisplay.displayNoteChange(shiftResult, noteUpOrDown, direction);
 
@@ -596,6 +585,12 @@ bool Buttons::checkOctaveUpDownEnabled() {
 
     //if checking has been finished, return returnValue
     return returnValue;
+
+}
+
+void Buttons::pauseButton(uint8_t buttonNumber) {
+
+    buttonEnabled[buttonNumber] = false;
 
 }
 

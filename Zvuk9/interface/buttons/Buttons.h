@@ -22,12 +22,10 @@ class Buttons   {
     Buttons();
     void init();
     void update(bool processingEnabled = true);
+    void pauseButton(uint8_t buttonNumber);
 
     //getters
     bool getButtonPressed(uint8_t buttonNumber);
-
-    //setters
-    void pauseCallback(uint8_t buttonNumber);
 
     private:
     //callbacks
@@ -35,8 +33,6 @@ class Buttons   {
     void handleTransportControlEvent(uint8_t buttonNumber, bool state);
     void handleTonicEvent(tonic_t _tonic);
     void handleOctaveEvent(bool direction, bool state);
-    bool callbackEnabled(uint8_t buttonNumber);
-    void enableCallback(uint8_t buttonNumber);
     bool checkOctaveUpDownEnabled();
 
     //read/debounce handling
@@ -56,7 +52,7 @@ class Buttons   {
     uint8_t previousButtonState[MAX_NUMBER_OF_BUTTONS];     //debounce status
     uint32_t lastButtonDataPress;                           //previous button value
     uint32_t lastCheckTime;                                 //last time buttons were checked
-    uint32_t callbackEnableState;                           //enable/disable callback for certain button
+    bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
 
 
 };

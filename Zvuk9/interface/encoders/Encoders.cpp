@@ -74,7 +74,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
             //stop button is modifier
             //disable it on release
-            buttons.pauseCallback(BUTTON_TRANSPORT_STOP);
+            buttons.pauseButton(BUTTON_TRANSPORT_STOP);
             //change midi channel in case it's pressed
             uint8_t midiChannel = pads.getMIDIchannel();
 
@@ -83,11 +83,12 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
             if (midiChannel < 1)  midiChannel = 16;
             if (midiChannel > 16) midiChannel = 1;
+
             pads.setMIDIchannel(midiChannel);
 
             lcDisplay.displayMIDIchannelChange(pads.getMIDIchannel());
 
-            } else {
+        } else {
 
             int8_t activeProgram = pads.getActiveProgram();
 
