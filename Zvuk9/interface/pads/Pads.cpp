@@ -469,7 +469,7 @@ void Pads::setNextPad()    {
 
 }
 
-void Pads::update()  {
+void Pads::update(bool midiEnabled)  {
 
     static bool firstRun = true;    //true when switching to another pad
 

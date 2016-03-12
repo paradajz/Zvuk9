@@ -29,7 +29,7 @@ class Pads  {
 
     Pads();
     void init();
-    void update();
+    void update(bool midiEnabled = true);
     changeOutput_t assignPadNote(uint8_t tonic);
 
     //program
