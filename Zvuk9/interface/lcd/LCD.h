@@ -43,6 +43,7 @@ class LCD   {
     void displayCurveChangeMessage(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t curveValue, uint8_t padNumber);
     void displayCClimitChangeMessage(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
     void displayCCchangeMessage(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
+
     void displayTransportControlMessage(transportControl_t type, bool state);
     void displayHelloMessage();
     void displayEditModeNotAllowed(padEditError_t errorType);

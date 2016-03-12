@@ -1,4 +1,5 @@
 #include "LCD.h"
+#include "menu/ServiceMenuStrings.h"
 
 #define X_COORDINATE_START              5
 #define Y_COORDINATE_START              10
@@ -905,7 +906,18 @@ bool LCD::checkClearScreen()    {
 
 void LCD::displayServiceMenu()	{
 
+	lcdLine[0] = "Service menu";
+	lcdLine[1] = ">";
+	strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[0])));
+	lcdLine[1] += nameBuffer;
+	lcdLine[2] = emptyLine;
+	lcdLine[3] = emptyLine;
 
+	expandLine(0, regularLine);
+	expandLine(1, regularLine);
+
+	for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+		lineChange[i] = true;
 
 }
 

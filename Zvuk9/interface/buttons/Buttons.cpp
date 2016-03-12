@@ -92,9 +92,17 @@ void Buttons::update(bool processingEnabled)    {
 
              //invert button state because of pull-ups
              uint8_t state = !((mcpData >> i) & 0x01);
+             bool debounced = buttonDebounced(i, state);
 
-             if (buttonDebounced(i, state) && processingEnabled)
-                processButton(i, state);
+             if (debounced)	{
+
+            	 if (state == getPreviousButtonState(i)) continue;
+
+            	 //update previous button state with current one
+            	 setPreviousButtonState(i, state);
+            	 if (processingEnabled) processButton(i, state);
+
+             }
 
          }   mcpData = 0;
 
@@ -136,13 +144,6 @@ bool Buttons::buttonDebounced(uint8_t buttonNumber, uint8_t state)  {
 }
 
 void Buttons::processButton(uint8_t buttonNumber, uint8_t state)    {
-
-    if (state == getPreviousButtonState(buttonNumber)) return;
-
-    //update previous button state with current one
-    setPreviousButtonState(buttonNumber, state);
-
-    //only process button if its reading is different from last one
 
     if (state)    {
 

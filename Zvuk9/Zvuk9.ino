@@ -784,11 +784,9 @@ void setup()    {
     	//read all buttons without activating callbacks
     	buttons.update(false);
 
-    }	while (newMillis() - currentTime < 100);
+    }	while ((newMillis() - currentTime) < 100);
 
     if (buttons.getButtonPressed(BUTTON_TRANSPORT_PLAY) && buttons.getButtonPressed(BUTTON_TRANSPORT_STOP))	{
-
-    	_delay_ms(2000);
 
     	//we should activate service menu now
 		#if MODE_SERIAL > 0
