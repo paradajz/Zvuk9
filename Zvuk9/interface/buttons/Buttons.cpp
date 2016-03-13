@@ -359,6 +359,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
             leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
             leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+            //force message clear without restoring state
             lcDisplay.clearMessage(true);
 
         } else {
@@ -494,6 +495,10 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
         }
 
+        //restore leds
+        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
+        //stop buttons temporarily
         buttons.pauseButton(BUTTON_OCTAVE_DOWN);
         buttons.pauseButton(BUTTON_OCTAVE_UP);
 
@@ -509,11 +514,22 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                 lcDisplay.displayEditModeNotAllowed(padNotReleased);
 
-            }   else if (!state)   {
+            }   else {
 
-                pads.changeActiveOctave(direction);
-                lcDisplay.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
-                leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
+                switch(state)   {
+
+                    case false:
+                    pads.changeActiveOctave(direction);
+                    lcDisplay.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
+                    leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    break;
+
+                    case true:
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    break;
+
+                }
 
             }
             break;
@@ -529,11 +545,11 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     changeOutput_t shiftResult = pads.shiftOctave(direction);
                     int8_t activeOctave = pads.getActiveOctave();
                     lcDisplay.displayNoteChange(shiftResult, octaveChange, activeOctave);
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
 
                 }   else {
 
-                    //direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
 
                 }
 
@@ -547,13 +563,21 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                         lcDisplay.displayEditModeNotAllowed(padNotReleased);
                         return;
 
-                }
+                    }
+
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
 
                     //stop button is modifier
                     //disable it on release
                     buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
+                    //clear message as well
+                    lcDisplay.clearMessage(true);
                     changeOutput_t shiftResult = pads.shiftNote(direction);
                     lcDisplay.displayNoteChange(shiftResult, noteUpOrDown, direction);
+
+                }   else {
+
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
 
                 }
 
