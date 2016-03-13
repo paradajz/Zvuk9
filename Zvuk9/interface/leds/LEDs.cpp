@@ -102,18 +102,23 @@ ledIntensity_t LEDs::getTonicLEDstate(tonic_t _tonic)   {
 
 void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad) {
 
+    uint8_t tonicArray[NOTES_PER_PAD],
+            octaveArray[NOTES_PER_PAD],
+            padNote,
+            noteCounter = 0;
+
     switch(padEditMode) {
 
         case true:
         //indicate assigned notes in pad edit mode using note leds
-
-        uint8_t tonicArray[NOTES_PER_PAD],
-                octaveArray[NOTES_PER_PAD];
-
         for (int i=0; i<NOTES_PER_PAD; i++) {
 
-            tonicArray[i] = pads.getTonicFromNote(pads.getPadNote(pad, i));
-            octaveArray[i] = pads.getOctaveFromNote(pads.getPadNote(pad, i));
+            padNote = pads.getPadNote(pad, i);
+            if (padNote == BLANK_NOTE) continue;
+
+            tonicArray[noteCounter] = pads.getTonicFromNote(padNote);
+            octaveArray[noteCounter] = pads.getOctaveFromNote(padNote);
+            noteCounter++;
 
         }
 
@@ -122,18 +127,14 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad) {
             setNoteLEDstate((tonic_t)i, ledIntensityOff);
 
         //set dim led state for assigned notes on current pad
-        for (int i=0; i<NOTES_PER_PAD; i++)
+        for (int i=0; i<noteCounter; i++)
             setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityDim);
 
         //set full led state for assigned notes on current pad if note matches current octave
-        for (int i=0; i<NOTES_PER_PAD; i++) {
+        for (int i=0; i<noteCounter; i++) {
 
-            if (tonicArray[i] != MIDI_OCTAVE_RANGE) {
-
-                if (octaveArray[i] == pads.getActiveOctave())
-                    setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityFull);
-
-            }
+            if (octaveArray[i] == pads.getActiveOctave())
+                setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityFull);
 
         }
         break;
@@ -145,7 +146,7 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad) {
 
             //turn tonic LED on only if corresponding note is active
             if (pads.noteActive((tonic_t)i))
-            leds.setNoteLEDstate((tonic_t)i, ledIntensityDim);
+                leds.setNoteLEDstate((tonic_t)i, ledIntensityDim);
 
         }
         break;
