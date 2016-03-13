@@ -450,7 +450,6 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 if (pads.getPadPressed(pads.getLastTouchedPad()))   {
 
                     lcDisplay.displayEditModeNotAllowed(padNotReleased);
-                    checkOctaveUpDownEnabled();
                     pads.setEditMode(false);
 
                 }   else {
@@ -470,17 +469,14 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
         }   else {
 
-            //used to "cheat" checkOctaveUpDownEnabled function
-            //this will cause reset of function counters so that buttons are disabled
-            //after LCD shows message that pad editing isn't allowed
-            //pads.setEditMode(!pads.editModeActive());
-            //checkOctaveUpDownEnabled();
-            //pads.setEditMode(!pads.editModeActive());
             lcDisplay.displayEditModeNotAllowed(noUserPreset);
 
         }
 
-    }   else if (checkOctaveUpDownEnabled())    {
+        buttons.pauseButton(BUTTON_OCTAVE_DOWN);
+        buttons.pauseButton(BUTTON_OCTAVE_UP);
+
+    }   else {
 
         bool editMode = pads.editModeActive();
 
@@ -546,58 +542,6 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
         }
 
     }
-
-}
-
-bool Buttons::checkOctaveUpDownEnabled() {
-
-    //HORRIBLE HACK!!!!!
-    //please fix me someday
-
-    //this function will check whether octave up/down is enabled
-    //there are two scenarios when those two buttons should be disabled:
-    //1) Pad edit mode is activated
-    //2) Pad edit mode is disabled
-
-    //in both cases octave/up down functions should be disabled until both buttons
-    //have been released
-
-    //check should start when pad edit mode is activated or deactivated and stopped when
-    //both buttons are released
-
-    static bool lastPadEditMode = false;
-    bool currentPadEditMode = pads.editModeActive();
-    static bool checkEnabled = false;
-    bool returnValue = true;
-
-    if (lastPadEditMode != currentPadEditMode) {
-
-        lastPadEditMode = currentPadEditMode;
-        checkEnabled = true;
-
-    }
-
-    if (checkEnabled) {
-
-        //checking has been started
-        if (!getButtonPressed(BUTTON_OCTAVE_DOWN) && !getButtonPressed(BUTTON_OCTAVE_UP))   {
-
-            //both buttons have been released, stop with the checking
-            //use returnValue as return variable since we don't want
-            //to enable octave up/down immediately after release,
-            //only when one of octave buttons has been pushed again
-            if (!checkEnabled) returnValue = true; else returnValue = false;
-            checkEnabled = false;
-
-        }
-
-    }
-
-    //if checking is in progress, return false
-    if (checkEnabled) return false;
-
-    //if checking has been finished, return returnValue
-    return returnValue;
 
 }
 

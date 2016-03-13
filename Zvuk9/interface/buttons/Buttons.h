@@ -33,7 +33,6 @@ class Buttons   {
     void handleTransportControlEvent(uint8_t buttonNumber, bool state);
     void handleTonicEvent(tonic_t _tonic);
     void handleOctaveEvent(bool direction, bool state);
-    bool checkOctaveUpDownEnabled();
 
     //read/debounce handling
     bool readStates();
