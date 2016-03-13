@@ -57,7 +57,8 @@ class LCD   {
     void displayMIDIchannelChange(uint8_t channel);
     void displayActiveOctave(int8_t octave);
     void displayActivePadNotes(uint8_t *notes, uint8_t *octaves, uint8_t numberOfNotes);
-    void displayUserMessage(String message);
+    void displayUserMessage(String message, bool stayOn = false);
+    void clearMessage();
     void displayServiceMenu();
 
     private:
@@ -76,6 +77,7 @@ class LCD   {
     bool lcdUpdating;
     int8_t scrollIndex;
     uint32_t lastRefreshTime;
+    bool keepMessage;
 
     int8_t  program,
             preset;

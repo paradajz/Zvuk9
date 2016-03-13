@@ -342,6 +342,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             #if MODE_SERIAL > 0
                 Serial.println(F("Transport Control Play"));
             #endif
+            leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityFull);
 
         } else return;
 
@@ -353,10 +354,24 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             sysExArray[4] = 0x01;
             type = transportStop;
             #if MODE_SERIAL > 0
-            Serial.println(F("Transport Control Stop"));
+                Serial.println(F("Transport Control Stop"));
             #endif
+            leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
+            leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
+            leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+            lcDisplay.clearMessage();
 
-        } else return;
+        } else {    lcDisplay.displayUserMessage("Modifier active", true);
+
+            if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
+
+                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
+                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+
+            }
+            return;
+
+        }
         break;
 
         case BUTTON_TRANSPORT_RECORD:

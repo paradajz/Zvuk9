@@ -13,6 +13,7 @@ LCD::LCD()  {
     messageDisplayTime = 0;
     lcdUpdating = false;
     _clearPadData = false;
+    keepMessage = false;
 
     lcd_init();
 
@@ -272,7 +273,7 @@ void LCD::setXYData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAv
 
 void LCD::displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber)  {
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
+    clearMessage();
 
     switch(messageType) {
 
@@ -394,7 +395,7 @@ void LCD::displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitS
 
 void LCD::displayTransportControlMessage(transportControl_t type, bool state)  {
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
+    clearMessage();
 
     switch(type)    {
 
@@ -426,7 +427,7 @@ void LCD::displayTransportControlMessage(transportControl_t type, bool state)  {
 
 void LCD::displayCCchangeMessage(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
+    clearMessage();
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccArray[(uint8_t)type])));
 
@@ -449,7 +450,7 @@ void LCD::displayCCchangeMessage(ccType_t type, splitState_t _splitState, uint8_
 
 void LCD::displayCClimitChangeMessage(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)  {
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
+    clearMessage();
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccLimitArray[(uint8_t)type])));
 
@@ -472,7 +473,7 @@ void LCD::displayCClimitChangeMessage(ccLimitType_t type, splitState_t _splitSta
 
 void LCD::displayCurveChangeMessage(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber)  {
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
+    clearMessage();
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
 
@@ -497,7 +498,7 @@ void LCD::displayCurveChangeMessage(curveCoordinate_t coordinate, splitState_t _
 
 void LCD::displayNoteChange(changeOutput_t result, changeType_t type, int8_t value) {
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
+    clearMessage();
 
     if (type == noteUpOrDown)  {
 
@@ -539,7 +540,7 @@ void LCD::displayNoteChange(changeOutput_t result, changeType_t type, int8_t val
 
 void LCD::displayMIDIchannelChange(uint8_t channel) {
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
+    clearMessage();
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[5])));
     lcdLineMessage[1] = nameBuffer;
@@ -554,7 +555,7 @@ void LCD::displayMIDIchannelChange(uint8_t channel) {
 
 void LCD::displayOctaveChange(uint8_t octave)   {
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
+    clearMessage();
 
     lcdLineMessage[1] = "Octave set to " + octave;
 
@@ -593,15 +594,10 @@ void LCD::update()  {
 
         if (messageActivated)   {
 
-            if (!((newMillis() - messageDisplayTime) > LCD_MESSAGE_DURATION)) return;
+            if ((!((newMillis() - messageDisplayTime) > LCD_MESSAGE_DURATION)) || keepMessage) return;
+            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lineChange[i] = true;
 
-            messageActivated = false;
-            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
-
-                lcdLineMessage[i] = emptyLine;
-                lineChange[i] = true;
-
-            }
+            clearMessage();
 
         }
 
@@ -842,17 +838,27 @@ void LCD::displayPadEditResult(changeOutput_t result)    {
 
 }
 
-void LCD::displayUserMessage(String message)  {
+void LCD::displayUserMessage(String message, bool stayOn)  {
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-        clearRow(i);
+    lcdLineMessage[1] = message;
+    expandLine(1, messageLine);
 
-    lcdLine[0] = message;
+    messageDisplayTime = newMillis();
+    displayMessage = true;
+    keepMessage = stayOn;
 
-    expandLine(0, regularLine);
+}
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-        lineChange[i] = true;
+void LCD::clearMessage()    {
+
+    messageActivated = false;
+    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
+
+        lcdLineMessage[i] = emptyLine;
+
+    }
+
+    keepMessage = false;
 
 }
 
