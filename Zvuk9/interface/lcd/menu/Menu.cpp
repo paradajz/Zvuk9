@@ -19,6 +19,12 @@ void Menu::displayMenu(menuType_t type) {
         activeMenu = serviceMenu;
         break;
 
+        case userMenu:
+        break;
+
+        case noMenu:
+        break;
+
     }
 
 }
@@ -37,7 +43,13 @@ void Menu::changeOption(bool direction) {
 
         case serviceMenu:
         if (activeOption < 0) activeOption = 0;
-        if (activeOption > (progmemArraySize(service_menu_options)-1)) activeOption--;
+        if (activeOption > (int8_t)(progmemArraySize(service_menu_options)-1)) activeOption--;
+        break;
+
+        case userMenu:
+        break;
+
+        case noMenu:
         break;
 
     }

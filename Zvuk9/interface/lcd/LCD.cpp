@@ -949,12 +949,12 @@ bool LCD::checkClearScreen()    {
 
 void LCD::displayServiceMenu()  {
 
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(menu_types[1])));
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(menu_types[serviceMenu])));
     lcdLine[0] = nameBuffer;
     expandLine(0, regularLine);
     lineChange[0] = true;
 
-    for (int i=0; i<progmemArraySize(service_menu_options); i++)    {
+    for (int i=0; i<(int16_t)progmemArraySize(service_menu_options); i++)    {
 
         (!i) ? lcdLine[i+1] = ">" : lcdLine[i+1] = " ";
         strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
@@ -974,7 +974,7 @@ void LCD::changeMenuOption(menuType_t menuType, uint8_t option, uint8_t subOptio
     switch(menuType)    {
 
         case serviceMenu:
-        for (int i=0; i<progmemArraySize(service_menu_options); i++)    {
+        for (int i=0; i<(int)progmemArraySize(service_menu_options); i++)    {
 
             if (i == markerOption)  {
 
@@ -993,6 +993,12 @@ void LCD::changeMenuOption(menuType_t menuType, uint8_t option, uint8_t subOptio
             expandLine(i+1, regularLine);
 
         }
+        break;
+
+        case userMenu:
+        break;
+
+        case noMenu:
         break;
 
     }
