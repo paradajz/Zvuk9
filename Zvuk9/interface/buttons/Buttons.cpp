@@ -473,9 +473,9 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             //used to "cheat" checkOctaveUpDownEnabled function
             //this will cause reset of function counters so that buttons are disabled
             //after LCD shows message that pad editing isn't allowed
-            pads.setEditMode(!pads.editModeActive());
-            checkOctaveUpDownEnabled();
-            pads.setEditMode(!pads.editModeActive());
+            //pads.setEditMode(!pads.editModeActive());
+            //checkOctaveUpDownEnabled();
+            //pads.setEditMode(!pads.editModeActive());
             lcDisplay.displayEditModeNotAllowed(noUserPreset);
 
         }
