@@ -27,15 +27,15 @@
     <BootSegment>0</BootSegment>
     <AsfFrameworkConfig>
       <framework-data>
-  <options />
-  <configurations />
-  <files />
-  <documentation help="" />
-  <offline-documentation help="" />
-  <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.21.0" />
-  </dependencies>
-</framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.21.0" />
+        </dependencies>
+      </framework-data>
     </AsfFrameworkConfig>
     <preserveEEPROM>true</preserveEEPROM>
     <ExternalProgrammingToolCommand />
@@ -62,7 +62,7 @@
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
@@ -96,7 +96,7 @@
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
@@ -364,7 +364,7 @@ vmresolved.tools.path=D:\Applications
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
@@ -398,7 +398,7 @@ vmresolved.tools.path=D:\Applications
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
@@ -741,7 +741,13 @@ vmresolved.tools.path=D:\Applications
     <Compile Include="interface\lcd\LCDstrings.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\menu\ServiceMenuStrings.h">
+    <Compile Include="interface\lcd\menu\Menu.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\menu\Menu.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\menu\MenuStrings.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\leds\LEDs.cpp">

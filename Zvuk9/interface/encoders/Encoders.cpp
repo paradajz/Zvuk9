@@ -61,6 +61,9 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
     }
 
+    //allow only program while in menu
+    if (menu.menuDisplayed() && (encoderNumber != PROGRAM_ENCODER)) return;
+
     for (int i=0; i<NUMBER_OF_PADS; i++)
     if (pads.getPadPressed(i)) {
 
