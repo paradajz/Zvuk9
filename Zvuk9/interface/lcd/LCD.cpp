@@ -902,18 +902,20 @@ bool LCD::checkClearScreen()    {
 
 void LCD::displayServiceMenu()	{
 
-	lcdLine[0] = "Service menu";
-	lcdLine[1] = ">";
-	strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[0])));
-	lcdLine[1] += nameBuffer;
-	lcdLine[2] = emptyLine;
-	lcdLine[3] = emptyLine;
+    lcdLine[0] = "Service menu";
+    lcdLine[1] = ">";
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[0])));
+    lcdLine[1] += nameBuffer;
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[1])));
+    lcdLine[2] = nameBuffer;
+    lcdLine[3] = emptyLine;
 
-	expandLine(0, regularLine);
-	expandLine(1, regularLine);
+    expandLine(0, regularLine);
+    expandLine(1, regularLine);
+    expandLine(2, regularLine);
 
-	for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-		lineChange[i] = true;
+    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+        lineChange[i] = true;
 
 }
 

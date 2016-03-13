@@ -495,29 +495,29 @@ void Pads::update(bool midiEnabled)  {
 
         if (padMovementDetected)   {
 
-            updateLastTouchedPad(midiEnabled);
+            updateLastTouchedPad();
             padMovementDetected = false;
 
         }
 
-        if (midiEnabled)   checkMIDIdata();
+        if (!editModeActivated)   checkMIDIdata();
         firstRun = true;
         setNextPad();
 
-    }   if (midiEnabled)   checkNoteBuffer();  //send notes after some delay
+    }   if (!editModeActivated)   checkNoteBuffer();  //send notes after some delay
 
     checkOctaveShift();
 
 }
 
-void Pads::updateLastTouchedPad(bool midiEnabled)   {
+void Pads::updateLastTouchedPad()   {
 
     if (padID[activePad] != previousPad)
         setFunctionLEDs(padID[activePad]);
 
     if (padID[activePad] != lastTouchedPad) {
 
-        if (!midiEnabled)
+        if (editModeActivated)
             setupPadEditMode(padID[activePad]);
 
         if (getPadPressed(lastTouchedPad)) previousPad = lastTouchedPad;

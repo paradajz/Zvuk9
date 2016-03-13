@@ -31,7 +31,7 @@ class Pads  {
 
     Pads();
     void init();
-    void update(bool midiEnabled);
+    void update(bool midiEnabled = true);
     changeOutput_t assignPadNote(uint8_t pad, uint8_t tonic);
 
     //program
@@ -215,7 +215,7 @@ class Pads  {
     bool afterTouchMIDIdataAvailable();
     bool xyMIDIdataAvailable();
     void checkNoteBuffer();
-    void updateLastTouchedPad(bool midiEnabled);
+    void updateLastTouchedPad();
     void checkMIDIdata();
 
     void generateScale(scale_t scale);

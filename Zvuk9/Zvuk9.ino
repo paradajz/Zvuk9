@@ -136,7 +136,7 @@ void setup()    {
 
 void loop()     {
 
-    pads.update(sendPadMIDI());
+    pads.update();
     buttons.update();
     encoders.update();
     lcDisplay.update();
