@@ -947,7 +947,7 @@ bool LCD::checkClearScreen()    {
 
 }
 
-void LCD::displayServiceMenu()	{
+void LCD::displayServiceMenu()  {
 
     lcdLine[0] = "Service menu";
     lcdLine[1] = ">";

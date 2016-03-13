@@ -9,40 +9,40 @@ Define custom data types.
 
 #include "interface/leds/LEDsettings.h"
 
-enum ccLimitType_t {
+typedef enum {
 
     ccLimitTypeXmin = 0x00,
     ccLimitTypeXmax = 0x01,
     ccLimitTypeYmin = 0x02,
     ccLimitTypeYmax = 0x03
 
-};
+} ccLimitType_t;
 
-enum ccType_t {
+typedef enum {
 
     ccTypeX = 0x00,
     ccTypeY = 0x01
 
-};
+} ccType_t;
 
-enum ledIntensity_t   {
+typedef enum {
 
     ledIntensityOff = 0x00,
     ledIntensityDim = HALF_INTENSITY,
     ledIntensityFull = FULL_INTENSITY
 
-};
+} ledIntensity_t;
 
-enum splitState_t {
+typedef enum {
 
     splitOff = 0x00,
     splitXY = 0x01,
     splitXYFunctions = 0x02,
     splitEnd
 
-};
+} splitState_t;
 
-enum functionsOnOff_t    {
+typedef enum {
 
     featureNotes,
     featureAftertouch,
@@ -50,26 +50,26 @@ enum functionsOnOff_t    {
     featureY,
     featureSplit,
 
-};
+} functionsOnOff_t;
 
-enum transportControl_t {
+typedef enum {
 
     transportStop,
     transportPlay,
     transportRecord
 
-};
+} transportControl_t;
 
-enum changeOutput_t {
+typedef enum {
 
     noChange,
     outputChanged,
     outOfRange,
     notAllowed
 
-};
+} changeOutput_t;
 
-enum changeType_t {
+typedef enum {
 
     noteChange,
     octaveChange,
@@ -79,79 +79,100 @@ enum changeType_t {
     curveChange,
     midiChannelChange
 
-};
+} changeType_t;
 
-enum coordinateType_t {
+typedef enum {
 
     coordinateZ,
     coordinateX,
     coordinateY
 
-};
+} coordinateType_t;
 
-enum padEditError_t   {
+typedef enum {
 
     noUserPreset,
     padNotReleased
 
-};
+} padEditError_t;
 
-enum lcdLineType_t {
+typedef enum {
 
     regularLine,
     messageLine,
     scrollLine
 
-};
+} lcdLineType_t;
 
-enum pressureType_t   {
+typedef enum {
 
     pressureVelocity,
     pressureAfterTouch
 
-};
+} pressureType_t;
 
-enum scaleType_t {
+typedef enum {
 
     fiveNoteScale = 5,
     sevenNoteScale = 7,
     userScale
 
-};
+} scaleType_t;
 
-enum tonic_t {
-
-    tonicC,
-    tonicCSharp,
-    tonicD,
-    tonicDSharp,
-    tonicE,
-    tonicF,
-    tonicFSharp,
-    tonicG,
-    tonicGSharp,
-    tonicA,
-    tonicASharp,
-    tonicB,
-    tonicInvalid
-
-};
-
-enum curveCoordinate_t  {
+typedef enum {
 
     curveCoordinateX = 0x00,
     curveCoordinateY = 0x01,
     curveCoordinateInvalid
 
-};
+} curveCoordinate_t;
 
-enum curveType_t {
+typedef enum {
 
     curveTypeLinear,
     curveTypeWideMiddle,
     curveTypeWideEnds,
     curveTypeInvalid
 
-};
+} curveType_t;
+
+typedef enum {
+
+    C,
+    C_SHARP,
+    D,
+    D_SHARP,
+    E,
+    F,
+    F_SHARP,
+    G,
+    G_SHARP,
+    A,
+    A_SHARP,
+    B,
+    MIDI_NOTES
+
+} note_t;
+
+typedef enum {
+
+    scaleNaturalMinor,
+    scaleMelodicMinor,
+    scaleHarmonicMinor,
+    scaleMajor,
+    scaleHarmonicMajor,
+    scaleMinorPentatonic,
+    scaleMajorPentatonic,
+    scaleUser
+
+} scale_t;
+
+typedef enum {
+
+    userMenu,
+    serviceMenu,
+    noMenu
+
+} menuType_t;
 
 #endif /* TYPES_H_ */

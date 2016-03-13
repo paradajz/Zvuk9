@@ -390,10 +390,10 @@ void Pads::checkOctaveShift()   {
 
 }
 
-changeOutput_t Pads::setTonic(tonic_t _tonic, bool internalChange)  {
+changeOutput_t Pads::setTonic(note_t note, bool internalChange)  {
 
     changeOutput_t result = noChange;
-    tonic_t currentScaleTonic;
+    note_t currentScaleTonic;
 
     if (internalChange) {
 
@@ -410,11 +410,11 @@ changeOutput_t Pads::setTonic(tonic_t _tonic, bool internalChange)  {
     bool changeAllowed = true;
     bool shiftDirection;
 
-    if (currentScaleTonic == tonicInvalid) return result; //pad has no notes
+    if (currentScaleTonic == MIDI_NOTES) return result; //pad has no notes
 
-    shiftDirection = (uint8_t)currentScaleTonic < (uint8_t)_tonic;
+    shiftDirection = (uint8_t)currentScaleTonic < (uint8_t)note;
 
-    changeDifference = abs((uint8_t)currentScaleTonic - (uint8_t)_tonic);
+    changeDifference = abs((uint8_t)currentScaleTonic - (uint8_t)note);
     if (!changeDifference) { result = noChange; return result; }
     changeAllowed = true;
 
@@ -425,7 +425,7 @@ changeOutput_t Pads::setTonic(tonic_t _tonic, bool internalChange)  {
 
         for (int j=0; j<NOTES_PER_PAD; j++)  {
 
-            if ((uint8_t)currentScaleTonic < (uint8_t)_tonic)      {
+            if ((uint8_t)currentScaleTonic < (uint8_t)note)      {
 
                 if (padNote[i][j] != BLANK_NOTE)
                     if ((padNote[i][j] + changeDifference) > MAX_MIDI_VALUE)
@@ -433,7 +433,7 @@ changeOutput_t Pads::setTonic(tonic_t _tonic, bool internalChange)  {
 
             }
 
-            else if ((uint8_t)currentScaleTonic > (uint8_t)_tonic) {
+            else if ((uint8_t)currentScaleTonic > (uint8_t)note) {
 
                 if (padNote[i][j] != BLANK_NOTE)
                     if ((padNote[i][j] - changeDifference) < MIN_MIDI_VALUE)
@@ -453,7 +453,7 @@ changeOutput_t Pads::setTonic(tonic_t _tonic, bool internalChange)  {
         uint8_t noteID = (activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
 
         if (isPredefinedScale(activePreset) && !internalChange)
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram), _tonic);
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram), note);
 
         for (int i=0; i<NUMBER_OF_PADS; i++)    {
 

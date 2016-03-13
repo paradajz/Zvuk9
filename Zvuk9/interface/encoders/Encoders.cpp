@@ -72,7 +72,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     switch(encoderNumber)   {
 
         case PROGRAM_ENCODER:
-        if (buttons.getButtonPressed(BUTTON_TRANSPORT_STOP))    {
+        if (buttons.getButtonState(BUTTON_TRANSPORT_STOP))    {
 
             //stop button is modifier
             //disable it on release

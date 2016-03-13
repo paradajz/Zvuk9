@@ -231,7 +231,7 @@ void Pads::generateScale(scale_t scale)    {
         //predefined scale
         uint8_t notesPerScale = getNotesPerScale(scale);
         uint8_t octave = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram)+PREDEFINED_SCALE_PARAMETERS*activePreset);
-        uint8_t tonic_ = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram)+PREDEFINED_SCALE_PARAMETERS*activePreset);
+        note_t tonic = (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram)+PREDEFINED_SCALE_PARAMETERS*activePreset);
         int8_t shift = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram)+PREDEFINED_SCALE_PARAMETERS*activePreset);
 
         #if MODE_SERIAL > 0
@@ -241,7 +241,7 @@ void Pads::generateScale(scale_t scale)    {
             Serial.print(F("/"));
             Serial.println(nameBuffer);
             Serial.print(F("Octave: "));    Serial.println(octave);
-            Serial.print(F("Tonic: "));     Serial.println(tonic_);
+            Serial.print(F("Tonic: "));     Serial.println(tonic);
             Serial.print(F("Shift: "));     Serial.println(shift);
         #endif
 
@@ -279,7 +279,7 @@ void Pads::generateScale(scale_t scale)    {
         }
 
         //now apply saved tonic
-        setTonic((tonic_t)tonic_, true); //internal change, do not write anything to eeprom
+        setTonic((note_t)tonic, true); //internal change, do not write anything to eeprom
 
         //finally, apply note shift
         if (shift < 0)  {
@@ -570,7 +570,7 @@ uint8_t Pads::getActiveOctave()    {
 
 }
 
-tonic_t Pads::getActiveTonic()    {
+note_t Pads::getActiveTonic()    {
 
     if (isUserScale(activePreset)) {
 
@@ -584,9 +584,9 @@ tonic_t Pads::getActiveTonic()    {
 
         //predefined scale tonic is written in eeprom
         int16_t tonicIndex = PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram)+PREDEFINED_SCALE_PARAMETERS*activePreset;
-        return (tonic_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, tonicIndex);
+        return (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, tonicIndex);
 
-    }   return tonicInvalid;
+    }   return MIDI_NOTES;
 
 }
 

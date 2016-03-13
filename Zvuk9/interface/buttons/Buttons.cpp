@@ -4,10 +4,15 @@
 #include "../lcd/LCD.h"
 #include "../leds/LEDs.h"
 #include "../../midi/MIDI.h"
+#include "../../hardware/reset/Reset.h"
+#include "../lcd/menu/Menu.h"
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         10
-#define DISABLE_TIMEOUT             500
+#define STOP_DISABLE_TIMEOUT        500
+#define RESET_ENABLE_TIMEOUT        3000
+
+#define SOFT_REBOOT                 1
 
 #define EDIT_MODE_COUNTER           2
 
@@ -83,6 +88,29 @@ void Buttons::init()  {
     write_I2C_reg(expanderAddress[1], gppuAddress[0], 0xFF);    //expander 2, turn on pull-ups, PORTA
     write_I2C_reg(expanderAddress[1], gppuAddress[1], 0xFF);    //expander 2, turn on pull-ups, PORTB
 
+    uint32_t currentTime = newMillis();
+
+    //read buttons for 0.1 seconds
+    do {
+
+        //read all buttons without activating event handlers
+        buttons.update(false);
+
+    }   while ((newMillis() - currentTime) < 100);
+
+    if (buttons.getButtonState(BUTTON_TRANSPORT_PLAY) && buttons.getButtonState(BUTTON_TRANSPORT_STOP)) {
+
+        //we should activate service menu now
+        #if MODE_SERIAL > 0
+            Serial.println(F("Activating user menu"));
+        #endif
+
+        menu.displayMenu(serviceMenu);
+        buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
+        buttonEnabled[BUTTON_TRANSPORT_PLAY] = false;
+
+    }
+
 }
 
 void Buttons::update(bool processingEnabled)    {
@@ -99,10 +127,10 @@ void Buttons::update(bool processingEnabled)    {
 
              if (debounced) {
 
-                if (state == getPreviousButtonState(i)) continue;
+                if (state == getButtonState(i)) continue;
 
                 //update previous button state with current one
-                setPreviousButtonState(i, state);
+                setButtonState(i, state);
                 if (processingEnabled) processButton(i, state);
 
              }
@@ -112,11 +140,11 @@ void Buttons::update(bool processingEnabled)    {
      }
 
      //we know stop button is modifier
-     if (getButtonPressed(BUTTON_TRANSPORT_STOP))   {
+     if (getButtonState(BUTTON_TRANSPORT_STOP) && buttonEnabled[BUTTON_TRANSPORT_STOP])   {
 
         //measure the time the button is pressed
         if (!stopDisableTimeout) stopDisableTimeout = newMillis();
-        else if ((newMillis() - stopDisableTimeout) > DISABLE_TIMEOUT) {
+        else if ((newMillis() - stopDisableTimeout) > STOP_DISABLE_TIMEOUT) {
 
             buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
             stopDisableTimeout = 0;
@@ -126,13 +154,38 @@ void Buttons::update(bool processingEnabled)    {
 
      }  else stopDisableTimeout = 0;
 
+     #if SOFT_REBOOT > 0
+         if (buttons.getButtonState(BUTTON_TRANSPORT_PLAY) && buttonEnabled[BUTTON_TRANSPORT_PLAY])    {
+
+            if (!resetActivationTimeout) resetActivationTimeout = newMillis();
+            else if ((newMillis() - resetActivationTimeout) > RESET_ENABLE_TIMEOUT)   {
+
+                lcDisplay.displayUserMessage(1, "Press STOP to reset");
+                leds.allLEDsOn();
+                lcDisplay.update();
+
+                do {
+
+                    buttons.update();
+
+                }   while (!getButtonState(BUTTON_TRANSPORT_STOP));
+
+                leds.allLEDsOff();
+                newDelay(50);
+                _reboot_Teensyduino_();
+
+            }
+
+         }  else resetActivationTimeout = 0;
+     #endif
+
      lastCheckTime = newMillis();
 
 }
 
-bool Buttons::getButtonPressed(uint8_t buttonNumber) {
+bool Buttons::getButtonState(uint8_t buttonNumber) {
 
-    return getPreviousButtonState(buttonNumber);
+    return bitRead(lastButtonDataPress, buttonNumber);
 
 }
 
@@ -189,8 +242,8 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
                 case BUTTON_NOTE_G:
                 case BUTTON_NOTE_A:
                 case BUTTON_NOTE_B:
-                tonic_t _tonic = getTonicFromButton(buttonNumber);
-                handleTonicEvent(_tonic);
+                note_t note = getTonicFromButton(buttonNumber);
+                handleTonicEvent(note);
                 break;
 
             }
@@ -241,7 +294,7 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
     //resume all callbacks
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
 
-        if (!buttonEnabled[i] && !getButtonPressed(i)) {
+        if (!buttonEnabled[i] && !getButtonState(i)) {
 
             buttonEnabled[i] = true;
 
@@ -251,59 +304,53 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
 
 }
 
-bool Buttons::getPreviousButtonState(uint8_t buttonNumber) {
-
-    return bitRead(lastButtonDataPress, buttonNumber);
-
-}
-
-void Buttons::setPreviousButtonState(uint8_t buttonNumber, uint8_t state) {
+void Buttons::setButtonState(uint8_t buttonNumber, uint8_t state) {
 
     bitWrite(lastButtonDataPress, buttonNumber, state);
 
 }
 
-tonic_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
+note_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
 
     switch(buttonNumber)    {
 
         case BUTTON_NOTE_C:
-        return tonicC;
+        return C;
 
         case BUTTON_NOTE_C_SHARP:
-        return tonicCSharp;
+        return C_SHARP;
 
         case BUTTON_NOTE_D:
-        return tonicD;
+        return D;
 
         case BUTTON_NOTE_D_SHARP:
-        return tonicDSharp;
+        return D_SHARP;
 
         case BUTTON_NOTE_E:
-        return tonicE;
+        return E;
 
         case BUTTON_NOTE_F:
-        return tonicF;
+        return F;
 
         case BUTTON_NOTE_F_SHARP:
-        return tonicFSharp;
+        return F_SHARP;
 
         case BUTTON_NOTE_G:
-        return tonicG;
+        return G;
 
         case BUTTON_NOTE_G_SHARP:
-        return tonicGSharp;
+        return G_SHARP;
 
         case BUTTON_NOTE_A:
-        return tonicA;
+        return A;
 
         case BUTTON_NOTE_A_SHARP:
-        return tonicASharp;
+        return A_SHARP;
 
         case BUTTON_NOTE_B:
-        return tonicB;
+        return B;
 
-    }   return tonicInvalid;   //impossible case
+    }   return MIDI_NOTES;   //impossible case
 
 }
 
@@ -463,7 +510,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
 }
 
-void Buttons::handleTonicEvent(tonic_t _tonic) {
+void Buttons::handleTonicEvent(note_t note) {
 
     if (!pads.editModeActive())   {
 
@@ -477,19 +524,19 @@ void Buttons::handleTonicEvent(tonic_t _tonic) {
 
         }
 
-        changeOutput_t result = pads.setTonic(_tonic);
+        changeOutput_t result = pads.setTonic(note);
 
         if (result == outputChanged)
             leds.displayActiveNoteLEDs();
 
-        tonic_t activeTonic = pads.getActiveTonic();
+        note_t activeTonic = pads.getActiveTonic();
         lcDisplay.displayNoteChange(result, noteChange, activeTonic);
 
         }   else {
 
         //add note to pad
         uint8_t pad = pads.getLastTouchedPad();
-        lcDisplay.displayPadEditResult(pads.assignPadNote(pad, _tonic));
+        lcDisplay.displayPadEditResult(pads.assignPadNote(pad, note));
         pads.displayActivePadNotes(pad);
         leds.displayActiveNoteLEDs(true, pad);
 
@@ -499,7 +546,7 @@ void Buttons::handleTonicEvent(tonic_t _tonic) {
 
 void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
-    if (buttons.getButtonPressed(BUTTON_OCTAVE_DOWN) && buttons.getButtonPressed(BUTTON_OCTAVE_UP))   {
+    if (buttons.getButtonState(BUTTON_OCTAVE_DOWN) && buttons.getButtonState(BUTTON_OCTAVE_UP))   {
 
         //try to enter pad edit mode
 
@@ -576,7 +623,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             break;
 
             case false:
-            if (!buttons.getButtonPressed(BUTTON_TRANSPORT_STOP))   {
+            if (!buttons.getButtonState(BUTTON_TRANSPORT_STOP))   {
 
                 //shift entire octave
 

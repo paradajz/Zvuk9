@@ -6,37 +6,7 @@
 //other scales have 7
 
 #include "Arduino.h"
-
-typedef enum {
-
-    C,
-    C_SHARP,
-    D,
-    D_SHARP,
-    E,
-    F,
-    F_SHARP,
-    G,
-    G_SHARP,
-    A,
-    A_SHARP,
-    B,
-    MIDI_NOTES
-
-} note_t;
-
-enum scale_t {
-
-    scaleNaturalMinor,
-    scaleMelodicMinor,
-    scaleHarmonicMinor,
-    scaleMajor,
-    scaleHarmonicMajor,
-    scaleMinorPentatonic,
-    scaleMajorPentatonic,
-    scaleUser
-
-};
+#include "Types.h"
 
 uint8_t getNotesPerScale(scale_t scale);
 note_t getScaleNote(scale_t scale, uint8_t note);

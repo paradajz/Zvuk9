@@ -856,10 +856,10 @@ void Pads::storePadNotes()  {
 
 }
 
-tonic_t Pads::getTonicFromNote(uint8_t note)    {
+note_t Pads::getTonicFromNote(uint8_t note)    {
 
-    if (note == BLANK_NOTE) return tonicInvalid;
-    return (tonic_t)(note % MIDI_NOTES);
+    if (note == BLANK_NOTE) return MIDI_NOTES;
+    return (note_t)(note % MIDI_NOTES);
 
 }
 
@@ -1038,7 +1038,7 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
         for (int i=0; i<noteCounter; i++) {
 
             tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
-            leds.setNoteLEDstate((tonic_t)tonicArray[i], ledIntensityFull);
+            leds.setNoteLEDstate((note_t)tonicArray[i], ledIntensityFull);
             octaveArray[i] = getOctaveFromNote(noteArray[i]);
 
         }
@@ -1074,7 +1074,7 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
                 }
 
-            }   if (!noteActive) leds.setNoteLEDstate(getTonicFromNote((tonic_t)noteArray[z]), ledIntensityDim);
+            }   if (!noteActive) leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledIntensityDim);
 
         }
         break;
@@ -1103,14 +1103,14 @@ bool Pads::checkPadsPressed()   {
 
 }
 
-bool Pads::noteActive(tonic_t _tonic) {
+bool Pads::noteActive(note_t note) {
 
     //return true if received tonic is among active notes on some pad
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
         for (int j=0; j<NOTES_PER_PAD; j++)
             if (padNote[i][j] != BLANK_NOTE)
-                if (getTonicFromNote(padNote[i][j]) == _tonic) return true;
+                if (getTonicFromNote(padNote[i][j]) == note) return true;
 
     return false;
 

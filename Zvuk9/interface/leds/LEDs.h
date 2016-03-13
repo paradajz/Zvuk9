@@ -21,10 +21,10 @@ class LEDs  {
     ledIntensity_t getLEDstate(uint8_t ledNumber);
     void setFadeSpeed(uint8_t speed);
 
-    uint8_t getLEDnumberFromTonic(tonic_t _tonic);
+    uint8_t getLEDnumberFromTonic(note_t note);
     void tonicLEDsOff();
-    void setNoteLEDstate(tonic_t _tonic, ledIntensity_t state);
-    ledIntensity_t getTonicLEDstate(tonic_t _tonic);
+    void setNoteLEDstate(note_t note, ledIntensity_t state);
+    ledIntensity_t getTonicLEDstate(note_t note);
 
     private:
 

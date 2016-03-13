@@ -68,11 +68,6 @@ void startUpAnimation() {
 void initHardware() {
 
     //do not change order of initialization!
-
-    //buttons use TWI, and we need to setup port expanders
-    //the process requires interrupts to be enabled so init buttons first
-    //and later reconfigure timers
-    buttons.init();
     cli();
 
     configuration.init();
@@ -101,6 +96,8 @@ void initHardware() {
         sei();
     #endif
 
+    buttons.init();
+
 }
 
 void setup()    {
@@ -112,28 +109,6 @@ void setup()    {
 
     initHardware();
 
-    uint32_t currentTime = newMillis();
-
-    //read buttons for 0.1 seconds
-    do {
-
-        //read all buttons without activating callbacks
-        buttons.update(false);
-
-    }   while ((newMillis() - currentTime) < 100);
-
-    if (buttons.getButtonPressed(BUTTON_TRANSPORT_PLAY) && buttons.getButtonPressed(BUTTON_TRANSPORT_STOP)) {
-
-        //we should activate service menu now
-        #if MODE_SERIAL > 0
-            Serial.println(F("Activating user menu"));
-        #endif
-
-        lcDisplay.displayServiceMenu();
-        serviceMenuActive = true;
-
-    }
-
 }
 
 void loop()     {
@@ -142,23 +117,5 @@ void loop()     {
     buttons.update();
     encoders.update();
     lcDisplay.update();
-
-    if (checkReset(buttons.getButtonPressed(BUTTON_TRANSPORT_PLAY)))    {
-
-        lcDisplay.displayUserMessage(1, "Press STOP to reset");
-        leds.allLEDsOn();
-        lcDisplay.update();
-
-        do {
-
-            buttons.update();
-
-        } while (!buttons.getButtonPressed(BUTTON_TRANSPORT_STOP));
-
-        leds.allLEDsOff();
-        newDelay(50);
-        _reboot_Teensyduino_();
-
-    }
 
 }

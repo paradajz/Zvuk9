@@ -2,11 +2,6 @@
 #include <util/delay.h>
 #include <avr/wdt.h>
 
-#define HOLD_TIME   3000
-
-bool timerStarted = false;
-uint32_t timerValue;
-
 #define WDFR 3
 
 void disable_peripherals(void)   {
@@ -53,30 +48,6 @@ void disable_peripherals(void)   {
     PORTD = 0;
     PORTE = 0;
     PORTF = 0;
-
-}
-
-
-bool checkReset(bool buttonState)   {
-
-    switch(buttonState) {
-
-        case true:
-        if (!timerStarted)  {
-
-            timerStarted = true;
-            timerValue = newMillis();
-
-        }
-        return (newMillis() - timerValue > HOLD_TIME);
-        break;
-
-        case false:
-        timerStarted = false;
-        return false;
-        break;
-
-    }
 
 }
 

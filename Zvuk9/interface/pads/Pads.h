@@ -64,12 +64,12 @@ class Pads  {
 
     void setSplit();
 
-    bool noteActive(tonic_t _tonic);
+    bool noteActive(note_t note);
 
     //note control
     changeOutput_t shiftOctave(bool direction);
     changeOutput_t shiftNote(bool direction, bool internalChange = false);
-    changeOutput_t setTonic(tonic_t _tonic, bool internalChange = false);
+    changeOutput_t setTonic(note_t note, bool internalChange = false);
     void changeActiveOctave(bool direction);
 
     //setters
@@ -85,7 +85,7 @@ class Pads  {
     bool getCCXsendEnabled(uint8_t padNumber);
     bool getCCYsendEnabled(uint8_t padNumber);
 
-    tonic_t getActiveTonic();
+    note_t getActiveTonic();
     uint8_t getActiveOctave();
     uint8_t getMIDIchannel();
 
@@ -99,7 +99,7 @@ class Pads  {
     curveType_t getPadCurve(curveCoordinate_t curve, uint8_t padNumber);
 
     //notes
-    tonic_t getTonicFromNote(uint8_t note);
+    note_t getTonicFromNote(uint8_t note);
     uint8_t getOctaveFromNote(uint8_t note);
 
     //last touched pad - 0 default
