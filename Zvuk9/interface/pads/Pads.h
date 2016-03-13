@@ -32,7 +32,7 @@ class Pads  {
     Pads();
     void init();
     void update(bool midiEnabled);
-    changeOutput_t assignPadNote(uint8_t tonic);
+    changeOutput_t assignPadNote(uint8_t pad, uint8_t tonic);
 
     //program
     bool setActiveProgram(int8_t program);

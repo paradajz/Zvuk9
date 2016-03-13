@@ -25,7 +25,8 @@ void Pads::displayActivePadNotes(uint8_t pad) {
     //this will display all active notes currently assigned to pad while in pad edit mode
 
     uint8_t tonicArray[NOTES_PER_PAD],
-            octaveArray[NOTES_PER_PAD];
+            octaveArray[NOTES_PER_PAD],
+            noteCounter = 0;
 
     #if MODE_SERIAL > 0
         Serial.println(F("Assigned notes:"));
@@ -33,8 +34,11 @@ void Pads::displayActivePadNotes(uint8_t pad) {
 
     for (int i=0; i<NOTES_PER_PAD; i++) {
 
-        tonicArray[i] = getTonicFromNote(padNote[pad][i]);
-        octaveArray[i] = getOctaveFromNote(padNote[pad][i]);
+        if (padNote[pad][i] == BLANK_NOTE) continue;
+
+        tonicArray[noteCounter] = getTonicFromNote(padNote[pad][i]);
+        octaveArray[noteCounter] = getOctaveFromNote(padNote[pad][i]);
+        noteCounter++;
 
         #if MODE_SERIAL > 0
             Serial.println(padNote[pad][i]);
@@ -42,7 +46,7 @@ void Pads::displayActivePadNotes(uint8_t pad) {
 
     }
 
-    lcDisplay.displayActivePadNotes(tonicArray, octaveArray);
+    lcDisplay.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
 
 }
 

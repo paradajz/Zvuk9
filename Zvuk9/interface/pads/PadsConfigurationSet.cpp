@@ -858,7 +858,7 @@ changeOutput_t Pads::setMIDIchannel(uint8_t channel)  {
 
 }
 
-changeOutput_t Pads::assignPadNote(uint8_t tonic)    {
+changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
 
     //used in pad edit mode (user scale)
     //add or delete note on pressed pad
@@ -871,7 +871,7 @@ changeOutput_t Pads::assignPadNote(uint8_t tonic)    {
 
     //check if calculated note is already assigned to pad
     for (int i=0; i<NOTES_PER_PAD; i++)
-    if (padNote[lastTouchedPad][i] == note) { addOrRemove = false; noteIndex = i; break; }
+        if (padNote[pad][i] == note) { addOrRemove = false; noteIndex = i; break; }
 
     uint8_t noteID = (activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
 
@@ -880,17 +880,17 @@ changeOutput_t Pads::assignPadNote(uint8_t tonic)    {
 
         //get number of assigned notes to last touched pad
         for (int i=0; i<NOTES_PER_PAD; i++)
-            if (padNote[lastTouchedPad][i] != BLANK_NOTE)
+            if (padNote[pad][i] != BLANK_NOTE)
                 noteIndex++;
 
         //pads cannot have more than NOTES_PER_PAD notes
         if (noteIndex == NOTES_PER_PAD) return outOfRange;
 
         //assign new pad note
-        padNote[lastTouchedPad][noteIndex] = note;
-        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+noteIndex+(NOTES_PER_PAD*lastTouchedPad), note);
+        padNote[pad][noteIndex] = note;
+        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+noteIndex+(NOTES_PER_PAD*pad), note);
 
-        #if MODE_SERIAL >0
+        #if MODE_SERIAL > 0
             Serial.print(F("Adding note "));
         #endif
 
@@ -899,23 +899,23 @@ changeOutput_t Pads::assignPadNote(uint8_t tonic)    {
         note = BLANK_NOTE; //else delete note (assign BLANK_NOTE)
 
         //assign new pad note
-        padNote[lastTouchedPad][noteIndex] = note;
+        padNote[pad][noteIndex] = note;
 
         //copy note array
         uint8_t tempNoteArray[NOTES_PER_PAD];
 
         for (int i=0; i<NOTES_PER_PAD; i++)
-            tempNoteArray[i] = padNote[lastTouchedPad][i];
+            tempNoteArray[i] = padNote[pad][i];
 
         //shift all notes so that BLANK_NOTE is at the end of array
         for (int i=noteIndex; i<(NOTES_PER_PAD-1); i++) {
 
-            padNote[lastTouchedPad][i] = tempNoteArray[i+1];
+            padNote[pad][i] = tempNoteArray[i+1];
 
-        }   padNote[lastTouchedPad][NOTES_PER_PAD-1] = BLANK_NOTE;
+        }   padNote[pad][NOTES_PER_PAD-1] = BLANK_NOTE;
 
         for (int i=0; i<NOTES_PER_PAD; i++)
-            configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*lastTouchedPad), padNote[lastTouchedPad][i]);
+            configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*pad), padNote[pad][i]);
 
         #if MODE_SERIAL >0
             Serial.print(F("Removing note "));
@@ -926,7 +926,7 @@ changeOutput_t Pads::assignPadNote(uint8_t tonic)    {
     #if MODE_SERIAL > 0
         Serial.print(tonic);
         Serial.print(F(" to pad "));
-        Serial.println(lastTouchedPad);
+        Serial.println(pad);
     #endif
 
     return outputChanged;

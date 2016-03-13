@@ -791,21 +791,17 @@ void LCD::displayActiveOctave(int8_t octave)   {
 
 }
 
-void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[])  {
+void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes)  {
 
     clearRow(1);
 
-    for (int i=0; i<NOTES_PER_PAD; i++) {
+    for (int i=0; i<numberOfNotes; i++) {
 
-        if (notes[i] != MIDI_OCTAVE_RANGE) {
-
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[notes[i]])));
-            if (!i) lcdLine[1] = nameBuffer;
-            else lcdLine[1] += nameBuffer;
-            lcdLine[1] += (octaves[i]-2);
-            lcdLine[1] += " ";
-
-        }
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[notes[i]])));
+        if (!i) lcdLine[1] = nameBuffer;
+        else lcdLine[1] += nameBuffer;
+        lcdLine[1] += (octaves[i]-2);
+        lcdLine[1] += " ";
 
     }
 
