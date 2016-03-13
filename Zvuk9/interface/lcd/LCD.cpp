@@ -838,10 +838,10 @@ void LCD::displayPadEditResult(changeOutput_t result)    {
 
 }
 
-void LCD::displayUserMessage(String message, bool stayOn)  {
+void LCD::displayUserMessage(uint8_t row, const char *message, bool stayOn)  {
 
-    lcdLineMessage[1] = message;
-    expandLine(1, messageLine);
+    lcdLineMessage[row] = message;
+    expandLine(row, messageLine);
 
     messageDisplayTime = newMillis();
     displayMessage = true;

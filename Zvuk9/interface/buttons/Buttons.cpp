@@ -361,7 +361,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
             lcDisplay.clearMessage();
 
-        } else {    lcDisplay.displayUserMessage("Modifier active", true);
+        } else {    lcDisplay.displayUserMessage(1, "Modifier active", true);
 
             if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
 
@@ -419,12 +419,12 @@ void Buttons::handleTonicEvent(tonic_t _tonic) {
 
     if (!pads.editModeActive())   {
 
-        //change tonic
-        //FIXME: DO NOT ALLOW THIS WHILE PADS ARE PRESSED
+        //don't allow change of tonic while pads are pressed
         for (int i=0; i<NUMBER_OF_PADS; i++)
         if (pads.getPadPressed(i))  {
 
-            //
+            lcDisplay.displayUserMessage(1, "Release pad to");
+            lcDisplay.displayUserMessage(2, "change tonic");
             return;
 
         }

@@ -145,7 +145,7 @@ void loop()     {
 
     if (checkReset(buttons.getButtonPressed(BUTTON_TRANSPORT_PLAY)))    {
 
-        lcDisplay.displayUserMessage("Press STOP to reset");
+        lcDisplay.displayUserMessage(1, "Press STOP to reset");
         leds.allLEDsOn();
         lcDisplay.update();
 

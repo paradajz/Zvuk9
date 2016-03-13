@@ -57,7 +57,7 @@ class LCD   {
     void displayMIDIchannelChange(uint8_t channel);
     void displayActiveOctave(int8_t octave);
     void displayActivePadNotes(uint8_t *notes, uint8_t *octaves, uint8_t numberOfNotes);
-    void displayUserMessage(String message, bool stayOn = false);
+    void displayUserMessage(uint8_t row, const char *message, bool stayOn = false);
     void clearMessage();
     void displayServiceMenu();
 
