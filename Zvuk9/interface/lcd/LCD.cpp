@@ -878,7 +878,15 @@ void LCD::clearMessage(bool forceClear)    {
 
             restoreMessage = true;
 
-        }   else restoreMessage = false;
+        }   else {
+
+            restoreMessage = false;
+            displayMessage = false;
+            messageActivated = false;
+            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+                lineChange[i] = true;
+
+        }
 
     }
 

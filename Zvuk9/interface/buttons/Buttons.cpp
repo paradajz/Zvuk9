@@ -199,6 +199,22 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
 
         }
 
+    }   else {
+
+        //hack!
+        //we know stop button is modifier
+        if (buttonNumber == BUTTON_TRANSPORT_STOP)  {
+
+            //in this case it's disabled
+            //check if it's released
+            if (!state) {
+
+                lcDisplay.clearMessage(true);
+
+            }
+
+        }
+
     }
 
     //resume all callbacks
@@ -571,7 +587,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     //disable it on release
                     buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
                     //clear message as well
-                    lcDisplay.clearMessage(true);
+                    //lcDisplay.clearMessage(true);
                     changeOutput_t shiftResult = pads.shiftNote(direction);
                     lcDisplay.displayNoteChange(shiftResult, noteUpOrDown, direction);
 
