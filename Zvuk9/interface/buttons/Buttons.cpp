@@ -359,9 +359,15 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
             leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
             leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
-            lcDisplay.clearMessage();
+            lcDisplay.clearMessage(true);
 
-        } else {    lcDisplay.displayUserMessage(1, "Modifier active", true);
+        } else {
+
+            #if MODE_SERIAL > 0
+                Serial.println(F("Modifier active"));
+            #endif
+
+            lcDisplay.displayUserMessage(1, "Modifier active", true);
 
             if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
 

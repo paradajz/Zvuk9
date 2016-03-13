@@ -58,7 +58,7 @@ class LCD   {
     void displayActiveOctave(int8_t octave);
     void displayActivePadNotes(uint8_t *notes, uint8_t *octaves, uint8_t numberOfNotes);
     void displayUserMessage(uint8_t row, const char *message, bool stayOn = false);
-    void clearMessage();
+    void clearMessage(bool forceClear = false);
     void displayServiceMenu();
 
     private:
@@ -78,6 +78,7 @@ class LCD   {
     int8_t scrollIndex;
     uint32_t lastRefreshTime;
     bool keepMessage;
+    bool restoreMessage;
 
     int8_t  program,
             preset;
@@ -94,7 +95,8 @@ class LCD   {
     String lcdLineMessage[NUMBER_OF_LCD_ROWS];
     String lcdLineScroll[NUMBER_OF_LCD_ROWS];
 
-    String lastLcdLine[NUMBER_OF_LCD_ROWS];
+    String lastLCDLine[NUMBER_OF_LCD_ROWS];
+    String lastLCDmessage[NUMBER_OF_LCD_ROWS];
 
     String  tempLine1,
             tempLine2;

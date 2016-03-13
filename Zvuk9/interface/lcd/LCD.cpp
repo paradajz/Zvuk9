@@ -14,6 +14,7 @@ LCD::LCD()  {
     lcdUpdating = false;
     _clearPadData = false;
     keepMessage = false;
+    restoreMessage = false;
 
     lcd_init();
 
@@ -32,8 +33,9 @@ void LCD::init()    {
        lcdLineMessage[i] = emptyLine;
        lineChange[i] = false;
        lineChangeBuffer[i] = false;
-       lastLcdLine[i].reserve(MAX_TEXT_LENGTH);
-       lastLcdLine[i] = emptyLine;
+       lastLCDLine[i].reserve(MAX_TEXT_LENGTH);
+       lastLCDmessage[i].reserve(MAX_TEXT_LENGTH);
+       lastLCDLine[i] = emptyLine;
        scrollEnabled[i] = false;
        lcdLineScroll[i].reserve(MAX_TEXT_LENGTH);
        lcdLineScroll[i] = emptyLine;
@@ -59,11 +61,11 @@ void LCD::init()    {
 
 void LCD::displayHelloMessage() {
 
-    lastLcdLine[0] = helloMessage;
+    lastLCDLine[0] = helloMessage;
 
-    for (int i=0; i<(int)lastLcdLine[0].length(); i++)  {
+    for (int i=0; i<(int)lastLCDLine[0].length(); i++)  {
 
-        lcd_putc(lastLcdLine[0][i]);
+        lcd_putc(lastLCDLine[0][i]);
         newDelay(75);
 
     } newDelay(250); lineChange[0] = true;
@@ -577,7 +579,7 @@ void LCD::update()  {
 
                 for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
 
-                    if (lcdLineMessage[i][j] != lastLcdLine[i][j])  {
+                    if (lcdLineMessage[i][j] != lastLCDLine[i][j])  {
 
                         lcd_set_cursor(j, i);
                         lcd_putc(lcdLineMessage[i][j]);
@@ -586,7 +588,7 @@ void LCD::update()  {
 
                 }
 
-                lastLcdLine[i] = lcdLineMessage[i];
+                lastLCDLine[i] = lcdLineMessage[i];
 
             }   displayMessage = false; messageActivated = true;
 
@@ -595,8 +597,23 @@ void LCD::update()  {
         if (messageActivated)   {
 
             if ((!((newMillis() - messageDisplayTime) > LCD_MESSAGE_DURATION)) || keepMessage) return;
-            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lineChange[i] = true;
 
+            if (restoreMessage) {
+
+                for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
+
+                    lcdLineMessage[i] = lastLCDmessage[i];
+
+                }
+
+                restoreMessage = false;
+                displayMessage = true;
+                keepMessage = true;
+                return;
+
+            }
+
+            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lineChange[i] = true;
             clearMessage();
 
         }
@@ -612,7 +629,7 @@ void LCD::update()  {
 
                     for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
 
-                        if (lastLcdLine[i][j] != lcdLineScroll[i][j])   {
+                        if (lastLCDLine[i][j] != lcdLineScroll[i][j])   {
 
                             lcd_set_cursor(j, i);
                             lcd_putc(lcdLineScroll[i][j]);
@@ -638,7 +655,7 @@ void LCD::update()  {
 
                     }
 
-                    lastLcdLine[i] = lcdLineScroll[i];
+                    lastLCDLine[i] = lcdLineScroll[i];
 
                 }
 
@@ -648,7 +665,7 @@ void LCD::update()  {
 
                 for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
 
-                    if (lcdLine[i][j] != lastLcdLine[i][j]) {
+                    if (lcdLine[i][j] != lastLCDLine[i][j]) {
 
                         lcd_set_cursor(j, i);
                         lcd_putc(lcdLine[i][j]);
@@ -657,7 +674,7 @@ void LCD::update()  {
 
                 }
 
-                lastLcdLine[i] = lcdLine[i];
+                lastLCDLine[i] = lcdLine[i];
 
             }
 
@@ -849,15 +866,29 @@ void LCD::displayUserMessage(uint8_t row, const char *message, bool stayOn)  {
 
 }
 
-void LCD::clearMessage()    {
+void LCD::clearMessage(bool forceClear)    {
 
+    //check if there is message that's supposed to be on
+    if (keepMessage)    {
+
+        if (!forceClear)    {
+
+            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+            lastLCDmessage[i] = lcdLineMessage[i];
+
+            restoreMessage = true;
+
+        }   else restoreMessage = false;
+
+    }
+
+    //clear all previous messages
     messageActivated = false;
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
 
         lcdLineMessage[i] = emptyLine;
 
     }
-
     keepMessage = false;
 
 }
