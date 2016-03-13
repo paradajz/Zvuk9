@@ -7,7 +7,7 @@
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         10
-#define DISABLE_TIMEOUT             750
+#define DISABLE_TIMEOUT             500
 
 #define EDIT_MODE_COUNTER           2
 
