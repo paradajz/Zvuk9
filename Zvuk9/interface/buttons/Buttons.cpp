@@ -99,19 +99,6 @@ void Buttons::update(bool processingEnabled)    {
 
              if (debounced) {
 
-                if ((i == BUTTON_TRANSPORT_STOP) && state && stopDisableTimeout)    {
-
-                    if ((newMillis() - stopDisableTimeout) > DISABLE_TIMEOUT) {
-
-                        buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
-                        stopDisableTimeout = 0;
-                        lcDisplay.displayUserMessage(1, "Modifier active", true);
-                        lcDisplay.displayUserMessage(2, "Stop disabled", true);
-
-                    }
-
-                }
-
                 if (state == getPreviousButtonState(i)) continue;
 
                 //update previous button state with current one
@@ -123,6 +110,21 @@ void Buttons::update(bool processingEnabled)    {
          }   mcpData = 0;
 
      }
+
+     //we know stop button is modifier
+     if (getButtonPressed(BUTTON_TRANSPORT_STOP))   {
+
+        //measure the time the button is pressed
+        if (!stopDisableTimeout) stopDisableTimeout = newMillis();
+        else if ((newMillis() - stopDisableTimeout) > DISABLE_TIMEOUT) {
+
+            buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
+            stopDisableTimeout = 0;
+            lcDisplay.displayUserMessage(2, "Stop disabled", true);
+
+        }
+
+     }  else stopDisableTimeout = 0;
 
      lastCheckTime = newMillis();
 
@@ -400,8 +402,6 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
         } else {
 
-            stopDisableTimeout = newMillis();
-
             #if MODE_SERIAL > 0
                 Serial.println(F("Modifier active"));
             #endif
@@ -416,6 +416,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                 leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
 
             }
+            stopDisableTimeout = newMillis();
             return;
 
         }
