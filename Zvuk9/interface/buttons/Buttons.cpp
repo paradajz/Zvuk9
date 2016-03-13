@@ -101,10 +101,11 @@ void Buttons::update(bool processingEnabled)    {
 
                 if ((i == BUTTON_TRANSPORT_STOP) && state && stopDisableTimeout)    {
 
-                    if (newMillis() - stopDisableTimeout > DISABLE_TIMEOUT) {
+                    if ((newMillis() - stopDisableTimeout) > DISABLE_TIMEOUT) {
 
                         buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
                         stopDisableTimeout = 0;
+                        lcDisplay.displayUserMessage(1, "Modifier active", true);
                         lcDisplay.displayUserMessage(2, "Stop disabled", true);
 
                     }
