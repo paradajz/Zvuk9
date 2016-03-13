@@ -11,6 +11,8 @@
 #include "../../Types.h"
 #include "../../hardware/timer/TimerObject.h"
 
+#define progmemArraySize(x) (sizeof(x) / sizeof(x[0]))
+
 #define NUMBER_OF_LCD_COLUMNS           20
 #define NUMBER_OF_LCD_ROWS              4
 
@@ -60,6 +62,7 @@ class LCD   {
     void displayUserMessage(uint8_t row, const char *message, bool stayOn = false);
     void clearMessage(bool forceClear = false);
     void displayServiceMenu();
+    void changeMenuOption(menuType_t menuType, uint8_t option, uint8_t suboption);
 
     private:
     void clearRow(uint8_t rowNumber);

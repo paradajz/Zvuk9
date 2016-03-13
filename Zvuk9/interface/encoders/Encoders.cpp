@@ -5,6 +5,7 @@
 #include "../pads/Pads.h"
 #include "../buttons/Buttons.h"
 #include "../lcd/LCD.h"
+#include "../lcd/menu/Menu.h"
 
 #define ENCODER_SPEED_1         1
 #define ENCODER_SPEED_2         5
@@ -51,7 +52,14 @@ void Encoders::update() {
 
 void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps)   {
 
-    if (pads.editModeActive()) return; //don't allow changing settings using encoders during pad edit mode
+    //don't allow changing settings using encoders during pad edit mode
+    if (pads.editModeActive()) {
+
+        lcDisplay.displayUserMessage(1, "Exit pad mode to");
+        lcDisplay.displayUserMessage(2, "edit parameters");
+        return;
+
+    }
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
     if (pads.getPadPressed(i)) {
@@ -92,22 +100,30 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
         } else {
 
-            int8_t activeProgram = pads.getActiveProgram();
+            if (menu.menuDisplayed())   {
 
-            if (direction) activeProgram++; else activeProgram--;
-            if (activeProgram == NUMBER_OF_PROGRAMS) activeProgram = 0;
-            else if (activeProgram < 0) activeProgram = (NUMBER_OF_PROGRAMS-1);
-            pads.setActiveProgram(activeProgram);
-            lcDisplay.setProgram(activeProgram+1);
+                menu.changeOption(direction);
 
-            //get last active preset on current program
-            uint8_t currentPreset = pads.getActivePreset();
+            }   else {
 
-            //preset is changed
-            leds.displayActiveNoteLEDs();
+                int8_t activeProgram = pads.getActiveProgram();
 
-            //display preset on display
-            lcDisplay.setPreset(currentPreset);
+                if (direction) activeProgram++; else activeProgram--;
+                if (activeProgram == NUMBER_OF_PROGRAMS) activeProgram = 0;
+                else if (activeProgram < 0) activeProgram = (NUMBER_OF_PROGRAMS-1);
+                pads.setActiveProgram(activeProgram);
+                lcDisplay.setProgram(activeProgram+1);
+
+                //get last active preset on current program
+                uint8_t currentPreset = pads.getActivePreset();
+
+                //preset is changed
+                leds.displayActiveNoteLEDs();
+
+                //display preset on display
+                lcDisplay.setPreset(currentPreset);
+
+            }
 
         }
         break;

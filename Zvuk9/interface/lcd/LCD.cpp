@@ -1,5 +1,5 @@
 #include "LCD.h"
-#include "menu/ServiceMenuStrings.h"
+#include "menu/MenuStrings.h"
 
 #define X_COORDINATE_START              5
 #define Y_COORDINATE_START              10
@@ -949,17 +949,53 @@ bool LCD::checkClearScreen()    {
 
 void LCD::displayServiceMenu()  {
 
-    lcdLine[0] = "Service menu";
-    lcdLine[1] = ">";
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[0])));
-    lcdLine[1] += nameBuffer;
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[1])));
-    lcdLine[2] = nameBuffer;
-    lcdLine[3] = emptyLine;
-
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(menu_types[1])));
+    lcdLine[0] = nameBuffer;
     expandLine(0, regularLine);
-    expandLine(1, regularLine);
-    expandLine(2, regularLine);
+    lineChange[0] = true;
+
+    for (int i=0; i<progmemArraySize(service_menu_options); i++)    {
+
+        (!i) ? lcdLine[i+1] = ">" : lcdLine[i+1] = " ";
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
+        lcdLine[i+1] += nameBuffer;
+        expandLine(i+1, regularLine);
+        lineChange[i+1] = true;
+
+    }
+
+}
+
+void LCD::changeMenuOption(menuType_t menuType, uint8_t option, uint8_t subOption) {
+
+    //we can display up to three options/suboptions at the time
+    uint8_t markerOption = (option > 2) ? (NUMBER_OF_LCD_ROWS-1) : option;
+
+    switch(menuType)    {
+
+        case serviceMenu:
+        for (int i=0; i<progmemArraySize(service_menu_options); i++)    {
+
+            if (i == markerOption)  {
+
+                lcdLine[i+1] = ">";
+                strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
+                lcdLine[i+1] += nameBuffer;
+
+            }   else {
+
+                strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
+                lcdLine[i+1] = " ";
+                lcdLine[i+1] += nameBuffer;
+
+            }
+
+            expandLine(i+1, regularLine);
+
+        }
+        break;
+
+    }
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
         lineChange[i] = true;

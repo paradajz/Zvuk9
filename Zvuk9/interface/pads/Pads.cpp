@@ -1,4 +1,5 @@
 #include "Pads.h"
+#include "../lcd/menu/Menu.h"
 #include <avr/cpufunc.h>
 
 #define PAD_NOTE_BUFFER_SIZE    32
@@ -500,11 +501,11 @@ void Pads::update(bool midiEnabled)  {
 
         }
 
-        if (!editModeActivated)   checkMIDIdata();
+        if (!editModeActivated && !menu.menuDisplayed())   checkMIDIdata();
         firstRun = true;
         setNextPad();
 
-    }   if (!editModeActivated)   checkNoteBuffer();  //send notes after some delay
+    }   if (!editModeActivated && !menu.menuDisplayed())   checkNoteBuffer();  //send notes after some delay
 
     checkOctaveShift();
 

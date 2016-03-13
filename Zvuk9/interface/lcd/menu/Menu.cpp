@@ -1,9 +1,12 @@
 #include "Menu.h"
+#include "MenuStrings.h"
 
 Menu::Menu()    {
 
     //default constructor
     activeMenu = noMenu;
+    activeOption = 0;
+    activeSubOption = 0;
 
 }
 
@@ -23,6 +26,23 @@ void Menu::displayMenu(menuType_t type) {
 bool Menu::menuDisplayed()  {
 
     return (activeMenu != noMenu);
+
+}
+
+void Menu::changeOption(bool direction) {
+
+    direction ? activeOption++ : activeOption--;
+
+    switch(activeMenu)  {
+
+        case serviceMenu:
+        if (activeOption < 0) activeOption = 0;
+        if (activeOption > (progmemArraySize(service_menu_options)-1)) activeOption--;
+        break;
+
+    }
+
+    lcDisplay.changeMenuOption(activeMenu, activeOption, activeSubOption);
 
 }
 

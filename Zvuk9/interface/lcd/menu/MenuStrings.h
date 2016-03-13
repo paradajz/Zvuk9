@@ -11,6 +11,10 @@
 #include <avr/pgmspace.h>
 #include "Arduino.h"
 
+//menu names
+const char PROGMEM menuType_user[] PROGMEM = "User menu";
+const char PROGMEM menuType_service[] PROGMEM = "Service menu";
+
 //service menu
 const char PROGMEM serviceMenuOption_padCalibration[] PROGMEM = "Pad calibration";
 const char PROGMEM serviceMenuOption_exit[] PROGMEM = "Exit";
@@ -18,6 +22,13 @@ const char PROGMEM serviceMenuSubOption_padCalibration_x[] PROGMEM = "Calibrate 
 const char PROGMEM serviceMenuSubOption_padCalibration_y[] PROGMEM = "Calibrate Y";
 const char PROGMEM serviceMenuSubOption_padCalibration_pressure[] PROGMEM = "Calibrate pressure";
 const char PROGMEM serviceMenuSubOption_padCalibration_flipAxis[] PROGMEM = "Flip X/Y axis";
+
+PGM_P const menu_types[] PROGMEM = {
+
+    menuType_user,
+    menuType_service
+
+};
 
 PGM_P const service_menu_options[] PROGMEM = {
 
@@ -28,10 +39,10 @@ PGM_P const service_menu_options[] PROGMEM = {
 
 PGM_P const menu_subOptions_padCalibration[] PROGMEM = {
 
-        serviceMenuSubOption_padCalibration_x,
-        serviceMenuSubOption_padCalibration_y,
-        serviceMenuSubOption_padCalibration_pressure,
-        serviceMenuSubOption_padCalibration_flipAxis
+    serviceMenuSubOption_padCalibration_x,
+    serviceMenuSubOption_padCalibration_y,
+    serviceMenuSubOption_padCalibration_pressure,
+    serviceMenuSubOption_padCalibration_flipAxis
 
 };
 

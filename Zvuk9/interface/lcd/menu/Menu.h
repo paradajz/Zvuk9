@@ -10,9 +10,12 @@ class Menu  {
     Menu();
     void displayMenu(menuType_t type);
     bool menuDisplayed();
+    void changeOption(bool direction);
 
     private:
     menuType_t activeMenu;
+    int8_t activeOption;
+    int8_t activeSubOption;
 
 };
 
