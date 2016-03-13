@@ -52,6 +52,7 @@ class Buttons   {
     uint32_t lastButtonDataPress;                           //previous button value
     uint32_t lastCheckTime;                                 //last time buttons were checked
     bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
+    uint32_t stopDisableTimeout;
 
 
 };

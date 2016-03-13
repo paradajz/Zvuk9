@@ -857,6 +857,8 @@ void LCD::displayPadEditResult(changeOutput_t result)    {
 
 void LCD::displayUserMessage(uint8_t row, const char *message, bool stayOn)  {
 
+    if (lcdLineMessage[row] == message) return; //same message
+
     lcdLineMessage[row] = message;
     expandLine(row, messageLine);
 

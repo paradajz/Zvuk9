@@ -7,6 +7,7 @@
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         10
+#define DISABLE_TIMEOUT             750
 
 #define EDIT_MODE_COUNTER           2
 
@@ -97,6 +98,18 @@ void Buttons::update(bool processingEnabled)    {
              bool debounced = buttonDebounced(i, state);
 
              if (debounced) {
+
+                if ((i == BUTTON_TRANSPORT_STOP) && state && stopDisableTimeout)    {
+
+                    if (newMillis() - stopDisableTimeout > DISABLE_TIMEOUT) {
+
+                        buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
+                        stopDisableTimeout = 0;
+                        lcDisplay.displayUserMessage(2, "Stop disabled", true);
+
+                    }
+
+                }
 
                 if (state == getPreviousButtonState(i)) continue;
 
@@ -386,11 +399,14 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
         } else {
 
+            stopDisableTimeout = newMillis();
+
             #if MODE_SERIAL > 0
                 Serial.println(F("Modifier active"));
             #endif
 
             lcDisplay.displayUserMessage(1, "Modifier active", true);
+            lcDisplay.displayUserMessage(2, "Stop enabled", true);
             leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityFull);
 
             if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
