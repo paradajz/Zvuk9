@@ -62,7 +62,8 @@ class LCD   {
     void displayUserMessage(uint8_t row, const char *message, bool stayOn = false);
     void clearMessage(bool forceClear = false);
     void displayServiceMenu();
-    void changeMenuOption(menuType_t menuType, uint8_t option, uint8_t suboption);
+    void changeMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
+    void selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
 
     private:
     void clearRow(uint8_t rowNumber);

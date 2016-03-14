@@ -15,8 +15,6 @@
 #include <util/delay.h>
 #include "midi/MIDI.h"
 
-bool serviceMenuActive = false;
-
 //define function prototypes
 void startUpAnimation();
 bool sendPadMIDI();
@@ -24,7 +22,7 @@ bool sendPadMIDI();
 //implementation
 bool sendPadMIDI()  {
 
-    return (!pads.editModeActive() && !serviceMenuActive);
+    return (!pads.editModeActive());
 
 }
 

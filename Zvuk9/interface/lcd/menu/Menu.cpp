@@ -58,4 +58,10 @@ void Menu::changeOption(bool direction) {
 
 }
 
+void Menu::selectOption()   {
+
+    lcDisplay.selectMenuOption(activeMenu, activeOption, activeSubOption);
+
+}
+
 Menu menu;

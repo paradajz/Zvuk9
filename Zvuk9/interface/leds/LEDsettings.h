@@ -7,6 +7,6 @@
 #define NUMBER_OF_LEDS              24
 
 #define FULL_INTENSITY              255
-#define HALF_INTENSITY              105
+#define HALF_INTENSITY              110
 
 #endif /* LEDSETTINGS_H_ */

@@ -1,5 +1,6 @@
 #include "LCD.h"
 #include "menu/MenuStrings.h"
+#include <util/delay.h>
 
 #define X_COORDINATE_START              5
 #define Y_COORDINATE_START              10
@@ -54,6 +55,8 @@ void LCD::init()    {
 
    ccX = -1;
    ccY = -1;
+
+   _delay_ms(100);
 
    lcd_set_cursor(0, 0);
 
@@ -573,114 +576,114 @@ void LCD::update()  {
     checkClearScreen();
     if ((newMillis() - lastLCDupdateTime < LCD_REFRESH_TIME) && !_clearPadData) return;
 
-        if (displayMessage)   {
-
-            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
-
-                for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
-
-                    if (lcdLineMessage[i][j] != lastLCDLine[i][j])  {
-
-                        lcd_set_cursor(j, i);
-                        lcd_putc(lcdLineMessage[i][j]);
-
-                    }
-
-                }
-
-                lastLCDLine[i] = lcdLineMessage[i];
-
-            }   displayMessage = false; messageActivated = true;
-
-        }
-
-        if (messageActivated)   {
-
-            if ((!((newMillis() - messageDisplayTime) > LCD_MESSAGE_DURATION)) || keepMessage) return;
-
-            if (restoreMessage) {
-
-                for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
-
-                    lcdLineMessage[i] = lastLCDmessage[i];
-
-                }
-
-                restoreMessage = false;
-                displayMessage = true;
-                keepMessage = true;
-                return;
-
-            }
-
-            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lineChange[i] = true;
-            clearMessage();
-
-        }
+    if (displayMessage)   {
 
         for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
 
-            if (scrollEnabled[i])   {
+            for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
 
-                if ((newMillis() - lastScrollTime) > LCD_SCROLL_TIME)    {
+                if (lcdLineMessage[i][j] != lastLCDLine[i][j])  {
 
-                    lcdLineScroll[i] = lcdLine[i].substring(scrollIndex, MAX_TEXT_LENGTH);
-                    expandLine(i, scrollLine);
-
-                    for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
-
-                        if (lastLCDLine[i][j] != lcdLineScroll[i][j])   {
-
-                            lcd_set_cursor(j, i);
-                            lcd_putc(lcdLineScroll[i][j]);
-
-                        }
-
-                    }
-
-                    lastScrollTime = newMillis();
-
-                    if (scrollDirection[i])    {
-
-                        if (((lcdLine[i].length()-1) - scrollIndex) > NUMBER_OF_LCD_COLUMNS) {
-
-                            scrollIndex++;
-
-                        }   else scrollDirection[i] = false;
-
-                    }   else {
-
-                        scrollIndex--;
-                        if (scrollIndex < 0) { scrollDirection[i] = true; scrollIndex = 0; }
-
-                    }
-
-                    lastLCDLine[i] = lcdLineScroll[i];
+                    lcd_set_cursor(j, i);
+                    lcd_putc(lcdLineMessage[i][j]);
 
                 }
 
             }
 
-            else if (lineChange[i])  {
+            lastLCDLine[i] = lcdLineMessage[i];
+
+        }   displayMessage = false; messageActivated = true;
+
+    }
+
+    if (messageActivated)   {
+
+        if ((!((newMillis() - messageDisplayTime) > LCD_MESSAGE_DURATION)) || keepMessage) return;
+
+        if (restoreMessage) {
+
+            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
+
+                lcdLineMessage[i] = lastLCDmessage[i];
+
+            }
+
+            restoreMessage = false;
+            displayMessage = true;
+            keepMessage = true;
+            return;
+
+        }
+
+        for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lineChange[i] = true;
+        clearMessage();
+
+    }
+
+    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
+
+        if (scrollEnabled[i])   {
+
+            if ((newMillis() - lastScrollTime) > LCD_SCROLL_TIME)    {
+
+                lcdLineScroll[i] = lcdLine[i].substring(scrollIndex, MAX_TEXT_LENGTH);
+                expandLine(i, scrollLine);
 
                 for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
 
-                    if (lcdLine[i][j] != lastLCDLine[i][j]) {
+                    if (lastLCDLine[i][j] != lcdLineScroll[i][j])   {
 
                         lcd_set_cursor(j, i);
-                        lcd_putc(lcdLine[i][j]);
+                        lcd_putc(lcdLineScroll[i][j]);
 
                     }
 
                 }
 
-                lastLCDLine[i] = lcdLine[i];
+                lastScrollTime = newMillis();
+
+                if (scrollDirection[i])    {
+
+                    if (((lcdLine[i].length()-1) - scrollIndex) > NUMBER_OF_LCD_COLUMNS) {
+
+                        scrollIndex++;
+
+                    }   else scrollDirection[i] = false;
+
+                    }   else {
+
+                    scrollIndex--;
+                    if (scrollIndex < 0) { scrollDirection[i] = true; scrollIndex = 0; }
+
+                }
+
+                lastLCDLine[i] = lcdLineScroll[i];
 
             }
 
-            lineChange[i] = false;
+        }
 
-        }   lastRefreshTime = newMillis();
+        else if (lineChange[i])  {  Serial.println("lcd change");
+
+            for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
+
+                if (lcdLine[i][j] != lastLCDLine[i][j]) {
+
+                    lcd_set_cursor(j, i);
+                    lcd_putc(lcdLine[i][j]);
+
+                }
+
+            }
+
+            lastLCDLine[i] = lcdLine[i];
+
+        }
+
+        lineChange[i] = false;
+
+    }   lastRefreshTime = newMillis();
 
 }
 
@@ -966,12 +969,12 @@ void LCD::displayServiceMenu()  {
 
 }
 
-void LCD::changeMenuOption(menuType_t menuType, uint8_t option, uint8_t subOption) {
+void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
 
     //we can display up to three options/suboptions at the time
     uint8_t markerOption = (option > 2) ? (NUMBER_OF_LCD_ROWS-1) : option;
 
-    switch(menuType)    {
+    switch(type)    {
 
         case serviceMenu:
         for (int i=0; i<(int)progmemArraySize(service_menu_options); i++)    {
@@ -1005,6 +1008,12 @@ void LCD::changeMenuOption(menuType_t menuType, uint8_t option, uint8_t subOptio
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
         lineChange[i] = true;
+
+}
+
+void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  {
+
+
 
 }
 
