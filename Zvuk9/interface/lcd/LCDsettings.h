@@ -8,4 +8,4 @@
 #define OCTAVE_NORMALIZATION            -2
 #define normalizeOctave(octave) ((octave)+(OCTAVE_NORMALIZATION))
 
-#endif /* LCDSETTINGS_H_ */
+#endif

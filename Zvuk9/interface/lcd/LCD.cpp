@@ -664,7 +664,7 @@ void LCD::update()  {
 
         }
 
-        else if (lineChange[i])  {  Serial.println("lcd change");
+        else if (lineChange[i])  {
 
             for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
 
