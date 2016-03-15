@@ -846,7 +846,7 @@ note_t Pads::getTonicFromNote(uint8_t note)    {
 uint8_t Pads::getOctaveFromNote(uint8_t note)  {
 
     if (note == BLANK_NOTE) return MIDI_OCTAVE_RANGE;
-    return note / MIDI_OCTAVE_RANGE;
+    return note / MIDI_NOTES;
 
 }
 

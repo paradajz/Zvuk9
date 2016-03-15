@@ -215,7 +215,7 @@ void Pads::getPresetParameters()    {
 
         if (padNote[0][i] != BLANK_NOTE)    {
 
-            activeOctave = (padNote[0][i]) / MIDI_OCTAVE_RANGE;
+            activeOctave = getOctaveFromNote(padNote[0][i]);
             #if MODE_SERIAL > 0
                 Serial.print(F("Active octave: "));
                 Serial.println(activeOctave);
