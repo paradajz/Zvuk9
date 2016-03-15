@@ -5,7 +5,6 @@
 #define READ_X              2
 #define READ_Y              3
 
-
 int16_t Pads::getPressure()  {
 
     static int16_t  tempPressureValueZ1 = 0,

@@ -236,6 +236,12 @@ class Pads  {
                 lastYValue[NUMBER_OF_PADS],
                 lastPressureValue[NUMBER_OF_PADS],
                 lastAfterTouchValue[NUMBER_OF_PADS];
+
+    int16_t     xAvg,
+                yAvg,
+                pressureAvg;
+
+    uint8_t     lastVelocityValue[NUMBER_OF_PADS];
     ////////////check end
 
     bool        velocityAvailable;
@@ -245,8 +251,6 @@ class Pads  {
     bool        afterTouchAvailable;
     int8_t      shiftedNote;
     bool        editModeActivated;
-
-    uint8_t     selectedMuxChannel;
 
     uint8_t     sampleCounter;
 
@@ -309,12 +313,7 @@ class Pads  {
 
     bool        switchToXYread;
 
-    uint8_t     medianRunCounterXY,
-                medianRunCounterPressure;
-
-    int16_t     xAvg,
-                yAvg,
-                pressureAvg;
+    uint8_t     medianRunCounterXY;
 
     uint32_t    padDebounceTimer[NUMBER_OF_PADS];
     bool        padDebounceTimerStarted[NUMBER_OF_PADS];
@@ -328,7 +327,6 @@ class Pads  {
 
     int8_t      previousPad;
     bool        padMovementDetected;
-    uint8_t     lastVelocityValue[NUMBER_OF_PADS];
 
     int8_t      shiftAmount;
 
