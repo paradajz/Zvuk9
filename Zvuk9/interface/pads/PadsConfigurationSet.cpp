@@ -189,7 +189,7 @@ bool Pads::setActivePreset(uint8_t preset)  {
 
 }
 
-void Pads::setSplit() {
+void Pads::updateSplit() {
 
     splitCounter++;
     if (splitCounter == splitEnd)  splitCounter = splitOff;

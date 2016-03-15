@@ -40,9 +40,8 @@ class Pads  {
     //pad edit
     void setupPadEditMode(uint8_t pad);
     void displayActivePadNotes(uint8_t pad);
-    void setNoteLEDs();
-    bool editModeActive() {return editModeActivated; }
-    void setEditMode(bool state) {editModeActivated = state; };
+    bool editModeActive();
+    void setEditMode(bool state);
     void exitPadEditMode();
 
     void notesOnOff();
@@ -62,7 +61,7 @@ class Pads  {
     bool setLowerYLimit(uint8_t pad, uint16_t limit);
     bool setUpperYLimit(uint8_t pad, uint16_t limit);
 
-    void setSplit();
+    void updateSplit();
 
     bool noteActive(note_t note);
 
@@ -233,12 +232,12 @@ class Pads  {
                 yValueSamples[NUMBER_OF_SAMPLES],
                 pressureValueSamples[NUMBER_OF_SAMPLES];
 
+    //indicate if there are new values to be sent
     bool        velocityAvailable;
     bool        xyAvailable;
     bool        xAvailable;
     bool        yAvailable;
     bool        afterTouchAvailable;
-    bool        editModeActivated;
 
     //store press states for all pads inside this variable
     uint16_t    padPressed;

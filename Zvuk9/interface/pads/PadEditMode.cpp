@@ -1,5 +1,7 @@
 #include "Pads.h"
 
+bool editModeActivated;
+
 void Pads::setupPadEditMode(uint8_t pad)    {
 
     #if MODE_SERIAL > 0
@@ -56,5 +58,17 @@ void Pads::exitPadEditMode()    {
     editModeActivated = false;
     //after exiting from pad edit mode, restore note led states
     leds.displayActiveNoteLEDs();
+
+}
+
+bool Pads::editModeActive() {
+
+    return editModeActivated;
+
+}
+
+void Pads::setEditMode(bool state)    {
+
+    editModeActivated = state;
 
 }

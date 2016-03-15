@@ -404,7 +404,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
         break;
 
         case BUTTON_ON_OFF_SPLIT:
-        pads.setSplit();
+        pads.updateSplit();
         lcdMessageType = featureSplit;
         ledNumber = LED_ON_OFF_SPLIT;
         ledState = pads.getSplitStateLEDvalue();

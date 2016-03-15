@@ -476,11 +476,11 @@ void Pads::update(bool midiEnabled)  {
 
         }
 
-        if (!editModeActivated && !menu.menuDisplayed())   checkMIDIdata();
+        if (!editModeActive() && !menu.menuDisplayed())   checkMIDIdata();
         firstRun = true;
         setNextPad();
 
-    }   if (!editModeActivated && !menu.menuDisplayed())   checkNoteBuffer();  //send notes after some delay
+    }   if (!editModeActive() && !menu.menuDisplayed())   checkNoteBuffer();  //send notes after some delay
 
     checkOctaveShift();
 
@@ -493,7 +493,7 @@ void Pads::updateLastTouchedPad()   {
 
     if (padID[activePad] != lastTouchedPad) {
 
-        if (editModeActivated)
+        if (editModeActive())
             setupPadEditMode(padID[activePad]);
 
         if (getPadPressed(lastTouchedPad)) previousPad = lastTouchedPad;
