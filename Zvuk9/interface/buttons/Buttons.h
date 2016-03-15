@@ -22,7 +22,6 @@ class Buttons   {
     Buttons();
     void init();
     void update(bool processingEnabled = true);
-    void pauseButton(uint8_t buttonNumber);
 
     //getters
     bool getButtonState(uint8_t buttonNumber);

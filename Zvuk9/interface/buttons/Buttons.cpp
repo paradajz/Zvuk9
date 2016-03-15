@@ -585,8 +585,8 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
         leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
         leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
         //stop buttons temporarily
-        buttons.pauseButton(BUTTON_OCTAVE_DOWN);
-        buttons.pauseButton(BUTTON_OCTAVE_UP);
+        buttonEnabled[BUTTON_OCTAVE_UP] = false;
+        buttonEnabled[BUTTON_OCTAVE_DOWN] = false;
 
     }   else {
 
@@ -671,12 +671,6 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
         }
 
     }
-
-}
-
-void Buttons::pauseButton(uint8_t buttonNumber) {
-
-    buttonEnabled[buttonNumber] = false;
 
 }
 
