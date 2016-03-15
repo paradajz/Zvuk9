@@ -222,21 +222,23 @@ class Pads  {
 
     void generateScale(scale_t scale);
 
+    //current midi values
     uint8_t     midiVelocity;
     uint8_t     midiX;
     uint8_t     midiY;
     bool        midiNoteOnOff;
     uint8_t     midiAfterTouch;
 
+    //last midi values
     uint8_t     lastXMIDIvalue[NUMBER_OF_PADS],
-                lastYMIDIvalue[NUMBER_OF_PADS];
-
-    int16_t     lastXValue[NUMBER_OF_PADS],
-                lastYValue[NUMBER_OF_PADS],
-                lastPressureValue[NUMBER_OF_PADS],
+                lastYMIDIvalue[NUMBER_OF_PADS],
+                lastVelocityValue[NUMBER_OF_PADS],
                 lastAfterTouchValue[NUMBER_OF_PADS];
 
-    uint8_t     lastVelocityValue[NUMBER_OF_PADS];
+    //last raw values
+    int16_t     lastXValue[NUMBER_OF_PADS],
+                lastYValue[NUMBER_OF_PADS],
+                lastPressureValue[NUMBER_OF_PADS];
 
     //median value samples get stored here (3 samples)
     int16_t     xValueSamples[NUMBER_OF_SAMPLES],
@@ -248,17 +250,25 @@ class Pads  {
     bool        xAvailable;
     bool        yAvailable;
     bool        afterTouchAvailable;
-    int8_t      shiftedNote;
     bool        editModeActivated;
 
+    //store press states for all pads inside this variable
     uint16_t    padPressed;
 
-    int8_t      midiChannel;
-
+    //used for aftertouch gesture activation
     int16_t     initialPressure[NUMBER_OF_PADS],
                 initialXvalue[NUMBER_OF_PADS],
                 initialYvalue[NUMBER_OF_PADS];
 
+    bool        afterTouchActivated[NUMBER_OF_PADS];
+
+    uint32_t    afterTouchGestureTimer[NUMBER_OF_PADS],
+                afterTouchSendTimer[NUMBER_OF_PADS];
+
+    uint8_t     afterTouchGestureCounter[NUMBER_OF_PADS],
+                lastAfterTouchGestureDirection[NUMBER_OF_PADS];
+
+    //parameters from eeprom
     int8_t      ccXPad[NUMBER_OF_PADS],
                 ccYPad[NUMBER_OF_PADS],
                 ccXminPad[NUMBER_OF_PADS],
@@ -271,14 +281,8 @@ class Pads  {
                 noteSendEnabled[NUMBER_OF_PADS],
                 aftertouchSendEnabled[NUMBER_OF_PADS];
 
-    uint8_t     splitCounter;
-    int8_t      activeOctave;
-
-    uint8_t     padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
-
-    uint8_t     lastTouchedPad;
-    int8_t      activePreset,
-                activeProgram;
+    int8_t      padCurveX[NUMBER_OF_PADS],
+                padCurveY[NUMBER_OF_PADS];
 
     int16_t     padPressureLimitLower[NUMBER_OF_PADS],
                 padPressureLimitUpper[NUMBER_OF_PADS],
@@ -288,42 +292,47 @@ class Pads  {
                 padYLimitUpper[NUMBER_OF_PADS],
                 padPressureLimitUpperAfterTouch[NUMBER_OF_PADS];
 
-    bool        afterTouchActivated[NUMBER_OF_PADS];
+    uint8_t     padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
 
-    uint32_t    afterTouchGestureTimer[NUMBER_OF_PADS];
-    uint8_t     afterTouchGestureCounter[NUMBER_OF_PADS],
-                lastAfterTouchGestureDirection[NUMBER_OF_PADS];
+    int8_t      midiChannel;
 
-    uint8_t     activePad;
-    bool        switchToNextPad;
-    uint32_t    afterTouchSendTimer[NUMBER_OF_PADS];
-    uint32_t    xSendTimer[NUMBER_OF_PADS],
+    uint8_t     splitCounter;
+
+    int8_t      activeOctave;
+
+    int8_t      activePreset,
+                activeProgram;
+
+    int8_t      noteShiftAmount;
+
+    //debouncing
+    bool        padDebounceTimerStarted[NUMBER_OF_PADS],
+                firstXYValueDelayTimerStarted[NUMBER_OF_PADS],
+                firstPressureValueDelayTimerStarted[NUMBER_OF_PADS],
+                initialXYignored[NUMBER_OF_PADS],
+                padMovementDetected;
+
+    uint32_t    padDebounceTimer[NUMBER_OF_PADS],
+                firstXYValueDelayTimer[NUMBER_OF_PADS],
+                firstPressureValueDelayTimer[NUMBER_OF_PADS],
+                xSendTimer[NUMBER_OF_PADS],
                 ySendTimer[NUMBER_OF_PADS];
 
-    bool        initialXYignored[NUMBER_OF_PADS];
-    uint8_t     sampleCounterPressure,
+    uint8_t     medianRunCounterXY,
+                sampleCounterPressure,
                 sampleCounterXY;
 
-    int8_t      padCurveX[NUMBER_OF_PADS],
-                padCurveY[NUMBER_OF_PADS];
+    //pad read control
+    uint8_t     activePad;
+    bool        switchToNextPad,
+                switchToXYread;
 
-    bool        switchToXYread;
-
-    uint8_t     medianRunCounterXY;
-
-    uint32_t    padDebounceTimer[NUMBER_OF_PADS];
-    bool        padDebounceTimerStarted[NUMBER_OF_PADS];
-
-    bool        firstXYValueDelayTimerStarted[NUMBER_OF_PADS],
-                firstPressureValueDelayTimerStarted[NUMBER_OF_PADS];
-
-    uint32_t    firstXYValueDelayTimer[NUMBER_OF_PADS],
-                firstPressureValueDelayTimer[NUMBER_OF_PADS];
-
+    //previous/last touched pad detection
+    uint8_t     lastTouchedPad;
     int8_t      previousPad;
-    bool        padMovementDetected;
 
-    int8_t      shiftAmount;
+    //used to shift octave once all pads are relased
+    int8_t      octaveShiftAmount;
 
 };
 

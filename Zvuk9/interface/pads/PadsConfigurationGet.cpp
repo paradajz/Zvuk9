@@ -198,8 +198,8 @@ void Pads::getPresetParameters()    {
         Serial.print(F("Scale: "));
     #endif
 
-    shiftAmount = 0;
-    shiftedNote = 0;
+    octaveShiftAmount = 0;
+    noteShiftAmount = 0;
 
     //clear all pad notes before assigning new ones
     for (int i=0; i<NUMBER_OF_PADS; i++)

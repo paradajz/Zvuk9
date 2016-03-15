@@ -278,13 +278,13 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
     }   else {
 
-        if (direction) shiftAmount++;
-        else shiftAmount--;
+        if (direction) octaveShiftAmount++;
+        else octaveShiftAmount--;
 
         if (isPredefinedScale(activePreset))    {
 
             //octave is ALWAYS first note on pad
-            activeOctave = getOctaveFromNote(padNote[0][0] + MIDI_NOTES*shiftAmount);
+            activeOctave = getOctaveFromNote(padNote[0][0] + MIDI_NOTES*octaveShiftAmount);
 
         }   else {
 
@@ -297,7 +297,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
                 if (padNote[0][i] != BLANK_NOTE)    {
 
-                    activeOctave = getOctaveFromNote(padNote[0][i] + MIDI_NOTES*shiftAmount);
+                    activeOctave = getOctaveFromNote(padNote[0][i] + MIDI_NOTES*octaveShiftAmount);
                     break;
 
                 }
@@ -317,11 +317,11 @@ void Pads::checkOctaveShift()   {
     //internal
     //this function will shift octave if octave needs to be shifted only when all pads are released
 
-    if (!shiftAmount) return; //nothing to shift
+    if (!octaveShiftAmount) return; //nothing to shift
 
     if (checkPadsPressed()) return; //shift only when all pads are released
 
-    bool direction = shiftAmount > 0;
+    bool direction = octaveShiftAmount > 0;
     int16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram)+PREDEFINED_SCALE_PARAMETERS*activePreset;
     int8_t currentOctave_predefinedScale = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale);
 
@@ -331,14 +331,14 @@ void Pads::checkOctaveShift()   {
 
         case true:
         //predefined scale
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, currentOctave_predefinedScale+shiftAmount);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, currentOctave_predefinedScale+octaveShiftAmount);
         for (int i=0; i<NUMBER_OF_PADS; i++)
-            direction ? padNote[i][0] += (MIDI_NOTES*abs(shiftAmount)) : padNote[i][0] -= (MIDI_NOTES*abs(shiftAmount));
+            direction ? padNote[i][0] += (MIDI_NOTES*abs(octaveShiftAmount)) : padNote[i][0] -= (MIDI_NOTES*abs(octaveShiftAmount));
         break;
 
         case false:
         //user scale
-        shiftAmount = abs(shiftAmount);
+        octaveShiftAmount = abs(octaveShiftAmount);
         uint8_t noteID = (activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
         for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
@@ -346,7 +346,7 @@ void Pads::checkOctaveShift()   {
 
                 if (padNote[i][j] != BLANK_NOTE)    {
 
-                    direction ? padNote[i][j] += (MIDI_NOTES*abs(shiftAmount)) : padNote[i][j] -= (MIDI_NOTES*abs(shiftAmount));
+                    direction ? padNote[i][j] += (MIDI_NOTES*abs(octaveShiftAmount)) : padNote[i][j] -= (MIDI_NOTES*abs(octaveShiftAmount));
                     configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), padNote[i][j]);
 
                 }
@@ -364,7 +364,7 @@ void Pads::checkOctaveShift()   {
         Serial.println(activeOctave);
     #endif
 
-    shiftAmount = 0;
+    octaveShiftAmount = 0;
 
 }
 
@@ -941,7 +941,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
             tempNoteArray[i] = padNote[i+1][0];
 
         }
-        shiftedNote++;
+        noteShiftAmount++;
         break;
 
         case false:
@@ -954,20 +954,20 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
             tempNoteArray[i+1] = padNote[i][0];
 
         }
-        shiftedNote--;
+        noteShiftAmount--;
         break;
 
     }
 
-    if (abs(shiftedNote) == (uint8_t)currentScaleType)
-        shiftedNote = 0;
+    if (abs(noteShiftAmount) == (uint8_t)currentScaleType)
+        noteShiftAmount = 0;
 
     if (!internalChange)
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*activePreset), shiftedNote);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*activePreset), noteShiftAmount);
 
     #if MODE_SERIAL
         Serial.print("Shifted note: ");
-        Serial.println(shiftedNote);
+        Serial.println(noteShiftAmount);
     #endif
 
     for (int i=0; i<NUMBER_OF_PADS; i++)

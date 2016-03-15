@@ -169,8 +169,8 @@ void Pads::initVariables()  {
     activeProgram = -1;
     activePreset = -1;
     previousPad = -1;
-    shiftAmount = 0;
-    shiftedNote = 0;
+    octaveShiftAmount = 0;
+    noteShiftAmount = 0;
 
 }
 
