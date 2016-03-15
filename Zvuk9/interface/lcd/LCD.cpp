@@ -520,7 +520,7 @@ void LCD::displayNoteChange(changeOutput_t result, changeType_t type, int8_t val
 
         }
 
-    }   else {  //octave change
+    }   else {  //octave/tonic change
 
         for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 

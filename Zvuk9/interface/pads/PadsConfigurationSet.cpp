@@ -271,8 +271,8 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
     if (!changeAllowed)    {
 
         #if MODE_SERIAL
-            Serial.print("Unable to do global shift: one or more pad notes are too ");
-            direction ? Serial.println("high.") : Serial.println("low");
+            Serial.print(F("Unable to do global shift: one or more pad notes are too "));
+            direction ? Serial.println(F("high.")) : Serial.println(F("low"));
         #endif
         result = outOfRange;
 
@@ -368,7 +368,7 @@ void Pads::checkOctaveShift()   {
 
 }
 
-changeOutput_t Pads::setTonic(note_t note, bool internalChange)  {
+changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
     changeOutput_t result = noChange;
     note_t currentScaleTonic;
@@ -390,9 +390,9 @@ changeOutput_t Pads::setTonic(note_t note, bool internalChange)  {
 
     if (currentScaleTonic == MIDI_NOTES) return result; //pad has no notes
 
-    shiftDirection = (uint8_t)currentScaleTonic < (uint8_t)note;
+    shiftDirection = (uint8_t)currentScaleTonic < (uint8_t)newTonic;
 
-    changeDifference = abs((uint8_t)currentScaleTonic - (uint8_t)note);
+    changeDifference = abs((uint8_t)currentScaleTonic - (uint8_t)newTonic);
     if (!changeDifference) { result = noChange; return result; }
     changeAllowed = true;
 
@@ -403,7 +403,7 @@ changeOutput_t Pads::setTonic(note_t note, bool internalChange)  {
 
         for (int j=0; j<NOTES_PER_PAD; j++)  {
 
-            if ((uint8_t)currentScaleTonic < (uint8_t)note)      {
+            if ((uint8_t)currentScaleTonic < (uint8_t)newTonic)      {
 
                 if (padNote[i][j] != BLANK_NOTE)
                     if ((padNote[i][j] + changeDifference) > MAX_MIDI_VALUE)
@@ -411,7 +411,7 @@ changeOutput_t Pads::setTonic(note_t note, bool internalChange)  {
 
             }
 
-            else if ((uint8_t)currentScaleTonic > (uint8_t)note) {
+            else if ((uint8_t)currentScaleTonic > (uint8_t)newTonic) {
 
                 if (padNote[i][j] != BLANK_NOTE)
                     if ((padNote[i][j] - changeDifference) < MIN_MIDI_VALUE)
@@ -431,7 +431,7 @@ changeOutput_t Pads::setTonic(note_t note, bool internalChange)  {
         uint8_t noteID = (activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
 
         if (isPredefinedScale(activePreset) && !internalChange)
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram), note);
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram), newTonic);
 
         for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
@@ -454,11 +454,20 @@ changeOutput_t Pads::setTonic(note_t note, bool internalChange)  {
 
         }
 
+        #if MODE_SERIAL > 0
+            Serial.println(F("Tonic changed, active tonic "));
+            Serial.print(newTonic);
+            Serial.print(F("/"));
+            char nameBuffer[20];
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[noteChange])));
+            Serial.println(nameBuffer);
+        #endif
+
     }   else {
 
         #if MODE_SERIAL
-            //Serial.print("Unable to change tonic: one or more pad notes are too ");
-            //(currentScaleTonic < tonic) ? Serial.println("high.") : Serial.println("low");
+            Serial.print(F("Unable to change tonic: one or more pad notes are too "));
+            shiftDirection ? Serial.println(F("high.")) : Serial.println(F("low"));
         #endif
 
         result = outOfRange;

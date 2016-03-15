@@ -530,7 +530,7 @@ void Buttons::handleTonicEvent(note_t note) {
         note_t activeTonic = pads.getActiveTonic();
         lcDisplay.displayNoteChange(result, noteChange, activeTonic);
 
-        }   else {
+    }   else {
 
         //add note to pad
         uint8_t pad = pads.getLastTouchedPad();
