@@ -222,38 +222,41 @@ class Pads  {
 
     void generateScale(scale_t scale);
 
-    uint8_t midiVelocity;
-    bool midiNoteOnOff;
-    uint8_t midiX;
-    uint8_t midiY;
-    bool velocityAvailable;
-    bool xyAvailable;
-    bool xAvailable;
-    bool yAvailable;
-    bool afterTouchAvailable;
-    uint8_t midiAfterTouch;
-    int8_t shiftedNote;
-    bool editModeActivated;
+    //wtf, check this
+    uint8_t     midiVelocity;
+    uint8_t     midiX;
+    uint8_t     midiY;
+    bool        midiNoteOnOff;
+    uint8_t     midiAfterTouch;
+
+    uint8_t     lastXMIDIvalue[NUMBER_OF_PADS],
+                lastYMIDIvalue[NUMBER_OF_PADS];
+
+    int16_t     lastXValue[NUMBER_OF_PADS],
+                lastYValue[NUMBER_OF_PADS],
+                lastPressureValue[NUMBER_OF_PADS],
+                lastAfterTouchValue[NUMBER_OF_PADS];
+    ////////////check end
+
+    bool        velocityAvailable;
+    bool        xyAvailable;
+    bool        xAvailable;
+    bool        yAvailable;
+    bool        afterTouchAvailable;
+    int8_t      shiftedNote;
+    bool        editModeActivated;
 
     uint8_t     selectedMuxChannel;
 
-    uint8_t     lastPadState[NUMBER_OF_PADS],
-                sampleCounter;
+    uint8_t     sampleCounter;
 
     uint16_t    padPressed;
 
     int8_t      midiChannel;
 
-    int16_t     lastPressureValue[NUMBER_OF_PADS],
-                lastAfterTouchValue[NUMBER_OF_PADS],
-                initialPressure[NUMBER_OF_PADS],
+    int16_t     initialPressure[NUMBER_OF_PADS],
                 initialXvalue[NUMBER_OF_PADS],
-                initialYvalue[NUMBER_OF_PADS],
-                lastXValue[NUMBER_OF_PADS],
-                lastYValue[NUMBER_OF_PADS];
-
-    uint8_t     lastXMIDIvalue[NUMBER_OF_PADS],
-                lastYMIDIvalue[NUMBER_OF_PADS];
+                initialYvalue[NUMBER_OF_PADS];
 
     int8_t      ccXPad[NUMBER_OF_PADS],
                 ccYPad[NUMBER_OF_PADS],
@@ -304,7 +307,7 @@ class Pads  {
     int8_t      padCurveX[NUMBER_OF_PADS],
                 padCurveY[NUMBER_OF_PADS];
 
-    bool switchToXYread;
+    bool        switchToXYread;
 
     uint8_t     medianRunCounterXY,
                 medianRunCounterPressure;
@@ -314,8 +317,8 @@ class Pads  {
                 pressureAvg;
 
     uint32_t    padDebounceTimer[NUMBER_OF_PADS];
-    bool padDebounceTimerStarted[NUMBER_OF_PADS];
-    uint32_t lastPadCheckTime;
+    bool        padDebounceTimerStarted[NUMBER_OF_PADS];
+    uint32_t    lastPadCheckTime;
 
     bool        firstXYValueDelayTimerStarted[NUMBER_OF_PADS],
                 firstPressureValueDelayTimerStarted[NUMBER_OF_PADS];
@@ -324,10 +327,9 @@ class Pads  {
                 firstPressureValueDelayTimer[NUMBER_OF_PADS];
 
     int8_t      previousPad;
-    bool padMovementDetected;
-    uint8_t lastVelocityValue[NUMBER_OF_PADS];
+    bool        padMovementDetected;
+    uint8_t     lastVelocityValue[NUMBER_OF_PADS];
 
-    bool        octaveShiftScheduled;
     int8_t      shiftAmount;
 
     bool        xSendEnabled[NUMBER_OF_PADS],

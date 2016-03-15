@@ -35,24 +35,11 @@ void storePadNote(uint8_t pad, uint8_t velocity, bool noteState)  {
 
     uint8_t i = note_buffer_head + 1;
     if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
-    //while (tx_buffer_tail == i) ; // wait until space in buffer
     pad_buffer[i] = pad;
     velocity_buffer[i] = velocity;
     note_state_buffer[i] = noteState;
     pad_note_timer_buffer[i] = newMillis();
     note_buffer_head = i;
-
-    //uint16_t i = (uint16_t)(buffer->head + 1) % PAD_NOTE_BUFFER_SIZE;
-//
-    //if (i != buffer->tail) {
-//
-        //buffer->padBuffer[buffer->head] = pad;
-        //buffer->velocityBuffer[buffer->head] = velocity;
-        //buffer->noteStateBuffer[buffer->head] = noteState;
-        //buffer->padNoteTimerBuffer[buffer->head] = newMillis();
-        //buffer->head = i;
-//
-    //}
 
 }
 

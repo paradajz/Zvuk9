@@ -83,10 +83,6 @@ const char PROGMEM changeType3[] PROGMEM = "CC limit ";
 const char PROGMEM changeType4[] PROGMEM = "Curve ";
 const char PROGMEM changeType5[] PROGMEM = "MIDI channel ";
 
-const char PROGMEM noChange_string[] PROGMEM = "not changed";
-const char PROGMEM outputChanged_string[] PROGMEM = "changed";
-const char PROGMEM outOfRange_string[] PROGMEM = "out of range";
-
 const char PROGMEM transportControlPlay_string[] PROGMEM = "Play";
 const char PROGMEM transportControlStop_string[] PROGMEM = "Stop";
 const char PROGMEM transportControlRecordOn_string[] PROGMEM = "Record on";
@@ -235,14 +231,6 @@ PGM_P const changeTypeArray[] PROGMEM = {
 
 };
 
-PGM_P const changeResultArray[] PROGMEM = {
-
-    noChange_string,
-    outputChanged_string,
-    outOfRange_string
-
-};
-
 PGM_P const padAmountArray[] PROGMEM = {
 
     padAmountAll_string,
@@ -251,4 +239,4 @@ PGM_P const padAmountArray[] PROGMEM = {
 
 };
 
-#endif /* LCDSTRINGS_H_ */
+#endif
