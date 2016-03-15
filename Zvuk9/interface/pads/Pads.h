@@ -222,7 +222,6 @@ class Pads  {
 
     void generateScale(scale_t scale);
 
-    //wtf, check this
     uint8_t     midiVelocity;
     uint8_t     midiX;
     uint8_t     midiY;
@@ -243,7 +242,6 @@ class Pads  {
     int16_t     xValueSamples[NUMBER_OF_SAMPLES],
                 yValueSamples[NUMBER_OF_SAMPLES],
                 pressureValueSamples[NUMBER_OF_SAMPLES];
-    ////////////check end
 
     bool        velocityAvailable;
     bool        xyAvailable;
@@ -252,8 +250,6 @@ class Pads  {
     bool        afterTouchAvailable;
     int8_t      shiftedNote;
     bool        editModeActivated;
-
-    uint8_t     sampleCounter;
 
     uint16_t    padPressed;
 
@@ -269,6 +265,11 @@ class Pads  {
                 ccXmaxPad[NUMBER_OF_PADS],
                 ccYminPad[NUMBER_OF_PADS],
                 ccYmaxPad[NUMBER_OF_PADS];
+
+    bool        xSendEnabled[NUMBER_OF_PADS],
+                ySendEnabled[NUMBER_OF_PADS],
+                noteSendEnabled[NUMBER_OF_PADS],
+                aftertouchSendEnabled[NUMBER_OF_PADS];
 
     uint8_t     splitCounter;
     int8_t      activeOctave;
@@ -323,11 +324,6 @@ class Pads  {
     bool        padMovementDetected;
 
     int8_t      shiftAmount;
-
-    bool        xSendEnabled[NUMBER_OF_PADS],
-                ySendEnabled[NUMBER_OF_PADS],
-                noteSendEnabled[NUMBER_OF_PADS],
-                aftertouchSendEnabled[NUMBER_OF_PADS];
 
 };
 
