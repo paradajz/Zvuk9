@@ -621,7 +621,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             break;
 
             case false:
-            if (!modifierActive)   {
+            if (!modifierActive || (pads.getActivePreset() > NUMBER_OF_PREDEFINED_SCALES))   {
 
                 //shift entire octave
 
@@ -641,7 +641,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
             }   else {
 
-                //shift single note
+                //shift single note, but only in predefined presets
                 if (state)    {
 
                     if (pads.getPadPressed(pads.getLastTouchedPad()))   {
