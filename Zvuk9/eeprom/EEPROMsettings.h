@@ -10,7 +10,7 @@ EEPROM addresses of parameters.
 #include <avr/eeprom.h>
 #include "UniqueID.h"
 #include "../midi/MIDI_parameters.h"
-#include "../hardware/lcd/hd44780.h"
+#include "../hardware/lcd/lcd.h"
 #include "../interface/lcd/LCDstrings.h"
 #include "../hardware/timer/TimerObject.h"
 #include "Defaults.h"

@@ -5,13 +5,12 @@
 #include "../../eeprom/EEPROMsettings.h"
 #include "../../Types.h"
 #include "../../midi/MIDI_parameters.h"
-#include "../../hardware/lcd/hd44780.h"
+#include "../../hardware/lcd/lcd.h"
 #include "LCDsettings.h"
 #include "LCDstrings.h"
 #include "../../Types.h"
 #include "../../hardware/timer/TimerObject.h"
-
-#define progmemArraySize(x) (sizeof(x) / sizeof(x[0]))
+#include "Macros.h"
 
 #define NUMBER_OF_LCD_COLUMNS           20
 #define NUMBER_OF_LCD_ROWS              4

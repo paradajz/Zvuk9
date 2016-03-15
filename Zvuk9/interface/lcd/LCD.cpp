@@ -1,6 +1,7 @@
 #include "LCD.h"
 #include "menu/MenuStrings.h"
 #include <util/delay.h>
+#include "Icons.h"
 
 #define X_COORDINATE_START              5
 #define Y_COORDINATE_START              10
@@ -17,7 +18,7 @@ LCD::LCD()  {
     keepMessage = false;
     restoreMessage = false;
 
-    lcd_init();
+    lcd_init(LCD_DISP_ON);
 
 }
 
@@ -57,14 +58,14 @@ void LCD::init()    {
    ccY = -1;
 
    _delay_ms(100);
-
-   lcd_set_cursor(0, 0);
+   initIcons();
 
 }
 
 void LCD::displayHelloMessage() {
 
     lastLCDLine[0] = helloMessage;
+    lcd_gotoxy(0,0);
 
     for (int i=0; i<(int)lastLCDLine[0].length(); i++)  {
 
@@ -408,16 +409,20 @@ void LCD::displayTransportControlMessage(transportControl_t type, bool state)  {
         if (state) strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[2])));
         else strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[3])));
         lcdLineMessage[1] = nameBuffer;
+        state ? lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportRecord, (uint8_t)transportRecord) : 
+                lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportRecord, 32);
         break;
 
         case transportPlay:
         strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[0])));
         lcdLineMessage[1] = nameBuffer;
+        lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportPlay, (uint8_t)transportPlay);
         break;
 
         case transportStop:
         strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[1])));
         lcdLineMessage[1] = nameBuffer;
+        lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportPlay, 32);
         break;
 
     }
@@ -584,7 +589,7 @@ void LCD::update()  {
 
                 if (lcdLineMessage[i][j] != lastLCDLine[i][j])  {
 
-                    lcd_set_cursor(j, i);
+                    lcd_gotoxy(j, i);
                     lcd_putc(lcdLineMessage[i][j]);
 
                 }
@@ -634,7 +639,7 @@ void LCD::update()  {
 
                     if (lastLCDLine[i][j] != lcdLineScroll[i][j])   {
 
-                        lcd_set_cursor(j, i);
+                        lcd_gotoxy(j, i);
                         lcd_putc(lcdLineScroll[i][j]);
 
                     }
@@ -670,7 +675,7 @@ void LCD::update()  {
 
                 if (lcdLine[i][j] != lastLCDLine[i][j]) {
 
-                    lcd_set_cursor(j, i);
+                    lcd_gotoxy(j, i);
                     lcd_putc(lcdLine[i][j]);
 
                 }

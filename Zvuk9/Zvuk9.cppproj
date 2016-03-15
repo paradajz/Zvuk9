@@ -675,13 +675,13 @@ vmresolved.tools.path=D:\Applications
     <Compile Include="hardware\i2c\i2c_master.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="hardware\lcd\hd44780.cpp">
+    <Compile Include="hardware\lcd\lcd_definitions.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="hardware\lcd\hd44780.h">
+    <Compile Include="hardware\lcd\lcd.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="hardware\lcd\hd44780_settings.h">
+    <Compile Include="hardware\lcd\lcd.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hardware\pins\Pins.h">
@@ -729,6 +729,9 @@ vmresolved.tools.path=D:\Applications
     <Compile Include="interface\encoders\EncoderSettings.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\lcd\Icons.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\lcd\LCD.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -739,6 +742,9 @@ vmresolved.tools.path=D:\Applications
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\LCDstrings.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\Macros.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\menu\Menu.cpp">

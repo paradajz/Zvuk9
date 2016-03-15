@@ -61,21 +61,21 @@ void EEPROMsettings::clearEEPROM()  {
 
 void EEPROMsettings::factoryReset(factoryResetType_t type)   {
 
-    lcd_set_cursor(0, 0);
+    lcd_gotoxy(0, 0);
     lcd_puts("Factory reset in");
 
     for (int i=3; i>=1; i--) {
 
-        lcd_set_cursor(17, 0);
+        lcd_gotoxy(17, 0);
         lcd_putc(i+48);   //convert int to char, +48
         _delay_ms(1000);
 
     }
 
     lcd_clrscr();
-    lcd_set_cursor(0, 0);
+    lcd_gotoxy(0, 0);
     lcd_puts("Factory reset...");
-    lcd_set_cursor(0, 1);
+    lcd_gotoxy(0, 1);
 
     switch(type)    {
 
@@ -90,7 +90,7 @@ void EEPROMsettings::factoryReset(factoryResetType_t type)   {
 
     }
 
-    lcd_set_cursor(0, 1);
+    lcd_gotoxy(0, 1);
 
     switch(type)    {
 
@@ -109,9 +109,9 @@ void EEPROMsettings::factoryReset(factoryResetType_t type)   {
 
      _delay_ms(2000);
     lcd_clrscr();
-    lcd_set_cursor(0,0);
+    lcd_gotoxy(0,0);
     lcd_puts("Factory reset");
-    lcd_set_cursor(0, 1);
+    lcd_gotoxy(0, 1);
     lcd_puts("finished!");
 
     _delay_ms(2000);
