@@ -321,11 +321,9 @@ void Pads::checkOctaveShift()   {
 
     if (checkPadsPressed()) return; //shift only when all pads are released
 
-    static uint8_t localOctaveValueEmptyPad = DEFAULT_OCTAVE;
     bool direction = shiftAmount > 0;
-    bool emptyPad = true;
-    int16_t octaveIndex = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram)+PREDEFINED_SCALE_PARAMETERS*activePreset;
-    int8_t currentOctave = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex);
+    int16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*activeProgram)+PREDEFINED_SCALE_PARAMETERS*activePreset;
+    int8_t currentOctave_predefinedScale = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale);
 
     bool predefinedScale = isPredefinedScale(activePreset);
 
@@ -333,12 +331,9 @@ void Pads::checkOctaveShift()   {
 
         case true:
         //predefined scale
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex, currentOctave+shiftAmount);
-        for (int i=0; i<NUMBER_OF_PADS; i++)    {
-
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, currentOctave_predefinedScale+shiftAmount);
+        for (int i=0; i<NUMBER_OF_PADS; i++)
             direction ? padNote[i][0] += (MIDI_NOTES*abs(shiftAmount)) : padNote[i][0] -= (MIDI_NOTES*abs(shiftAmount));
-
-        }
         break;
 
         case false:
@@ -360,29 +355,6 @@ void Pads::checkOctaveShift()   {
 
         }
         break;
-
-    }
-
-    for (int i=0; i<NOTES_PER_PAD; i++) {
-
-        if (padNote[0][i] != BLANK_NOTE) {
-
-            //local octave value is octave that gets displayed on LCD as changed octave
-            activeOctave = getOctaveFromNote(padNote[0][i]);
-            emptyPad = false;
-            break;
-
-        }
-
-    }
-
-    if (emptyPad)   {
-
-        //there are no notes on first pad
-        //in this case, increase or decrease default octave value and assign it as localOctaveValue
-
-        if (direction) localOctaveValueEmptyPad++; else localOctaveValueEmptyPad--;
-        activeOctave = localOctaveValueEmptyPad;
 
     }
 
