@@ -458,7 +458,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
             Serial.print(newTonic);
             Serial.print(F("/"));
             char nameBuffer[20];
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[noteChange])));
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[newTonic])));
             Serial.println(nameBuffer);
         #endif
 
