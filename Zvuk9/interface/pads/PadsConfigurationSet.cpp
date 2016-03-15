@@ -849,7 +849,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
     //used in pad edit mode (user scale)
     //add or delete note on pressed pad
 
-    uint8_t noteIndex = 0;
+    uint16_t noteIndex = 0;
     //calculate note to be added or removed
     uint8_t note = getActiveOctave()*MIDI_NOTES + tonic;
     //note can added or removed, assume adding by default
@@ -859,7 +859,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
     for (int i=0; i<NOTES_PER_PAD; i++)
         if (padNote[pad][i] == note) { addOrRemove = false; noteIndex = i; break; }
 
-    uint8_t noteID = (activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
+    uint16_t noteID = (activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
 
     //if it isn't, add it
     if (addOrRemove)    {
