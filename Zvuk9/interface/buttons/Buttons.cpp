@@ -658,8 +658,6 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     //stop button is modifier
                     //disable it on release
                     buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
-                    //clear message as well
-                    //lcDisplay.clearMessage(true);
                     changeOutput_t shiftResult = pads.shiftNote(direction);
                     lcDisplay.displayNoteChange(shiftResult, noteUpOrDown, direction);
 

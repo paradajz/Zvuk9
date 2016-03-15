@@ -879,7 +879,7 @@ void LCD::clearMessage(bool forceClear)    {
         if (!forceClear)    {
 
             for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-            lastLCDmessage[i] = lcdLineMessage[i];
+                lastLCDmessage[i] = lcdLineMessage[i];
 
             restoreMessage = true;
 
@@ -893,16 +893,21 @@ void LCD::clearMessage(bool forceClear)    {
 
         }
 
-    }
+    }   else if (restoreMessage && forceClear)  {
 
-    //clear all previous messages
-    messageActivated = false;
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
+        restoreMessage = false;
 
-        lcdLineMessage[i] = emptyLine;
+    }   else {
 
-    }
-    keepMessage = false;
+        //clear all previous messages
+        messageActivated = false;
+        for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
+
+            lcdLineMessage[i] = emptyLine;
+
+        }
+
+    }   keepMessage = false;
 
 }
 
