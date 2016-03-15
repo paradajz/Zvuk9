@@ -19,7 +19,7 @@
 
 //DO NOT CHANGE
 #define NUMBER_OF_SAMPLES                   3
-#define NUMBER_OF_MEDIAN_RUNS               5
+#define NUMBER_OF_MEDIAN_RUNS               5 //only for x/y, pressure is read 3 times only
 
 //multiplexer pins
 const uint8_t muxCommonPinsAnalogRead[] = { MUX_COMMON_PIN_0_INDEX, MUX_COMMON_PIN_1_INDEX, MUX_COMMON_PIN_2_INDEX, MUX_COMMON_PIN_3_INDEX };
@@ -237,11 +237,12 @@ class Pads  {
                 lastPressureValue[NUMBER_OF_PADS],
                 lastAfterTouchValue[NUMBER_OF_PADS];
 
-    int16_t     xAvg,
-                yAvg,
-                pressureAvg;
-
     uint8_t     lastVelocityValue[NUMBER_OF_PADS];
+
+    //median value samples get stored here (3 samples)
+    int16_t     xValueSamples[NUMBER_OF_SAMPLES],
+                yValueSamples[NUMBER_OF_SAMPLES],
+                pressureValueSamples[NUMBER_OF_SAMPLES];
     ////////////check end
 
     bool        velocityAvailable;
@@ -270,7 +271,6 @@ class Pads  {
                 ccYmaxPad[NUMBER_OF_PADS];
 
     uint8_t     splitCounter;
-    uint8_t     padSplitState;
     int8_t      activeOctave;
 
     uint8_t     padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
@@ -278,7 +278,6 @@ class Pads  {
     uint8_t     lastTouchedPad;
     int8_t      activePreset,
                 activeProgram;
-    uint32_t    lastSwitchTime;
 
     int16_t     padPressureLimitLower[NUMBER_OF_PADS],
                 padPressureLimitUpper[NUMBER_OF_PADS],
@@ -304,10 +303,6 @@ class Pads  {
     uint8_t     sampleCounterPressure,
                 sampleCounterXY;
 
-    int16_t     xValueSamples[NUMBER_OF_SAMPLES],
-                yValueSamples[NUMBER_OF_SAMPLES],
-                pressureValueSamples[NUMBER_OF_SAMPLES];
-
     int8_t      padCurveX[NUMBER_OF_PADS],
                 padCurveY[NUMBER_OF_PADS];
 
@@ -317,7 +312,6 @@ class Pads  {
 
     uint32_t    padDebounceTimer[NUMBER_OF_PADS];
     bool        padDebounceTimerStarted[NUMBER_OF_PADS];
-    uint32_t    lastPadCheckTime;
 
     bool        firstXYValueDelayTimerStarted[NUMBER_OF_PADS],
                 firstPressureValueDelayTimerStarted[NUMBER_OF_PADS];

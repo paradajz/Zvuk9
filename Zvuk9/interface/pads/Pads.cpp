@@ -594,6 +594,10 @@ int16_t Pads::getMedianValueZXY(coordinateType_t type)  {
 
 void Pads::checkXY()  {
 
+    //store median value in these variables NUMBER_OF_MEDIAN_RUNS times, then get avg value
+    static int16_t xAvg = 0;
+    static int16_t yAvg = 0;
+
     xAvailable = false;
     yAvailable = false;
 
