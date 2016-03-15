@@ -161,7 +161,7 @@ void LCD::updateNote(uint8_t pad, uint8_t note[], uint8_t octave[], uint8_t numb
             strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[note[i]])));
             if (!i) lcdLine[PAD_NOTE_ROW] = nameBuffer;
             else lcdLine[PAD_NOTE_ROW] += nameBuffer;
-            lcdLine[PAD_NOTE_ROW] += (octave[i]-2);
+            lcdLine[PAD_NOTE_ROW] += octave[i];
             lcdLine[PAD_NOTE_ROW] += " ";
 
         }
@@ -520,13 +520,13 @@ void LCD::displayNoteChange(changeOutput_t result, changeType_t type, int8_t val
 
         }
 
-    }   else {
+    }   else {  //octave change
 
         for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
 
         strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[type])));
         lcdLineMessage[1] = nameBuffer;
-        if (type == octaveChange) lcdLineMessage[1] += (value - 2);
+        if (type == octaveChange) lcdLineMessage[1] += value;
         else if (type == noteChange) {
 
             strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
@@ -816,7 +816,7 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numb
         strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[notes[i]])));
         if (!i) lcdLine[1] = nameBuffer;
         else lcdLine[1] += nameBuffer;
-        lcdLine[1] += (octaves[i]-2);
+        lcdLine[1] += octaves[i];
         lcdLine[1] += " ";
 
     }

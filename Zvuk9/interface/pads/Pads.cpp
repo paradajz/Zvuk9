@@ -1040,7 +1040,7 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
             tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
             leds.setNoteLEDstate((note_t)tonicArray[i], ledIntensityFull);
-            octaveArray[i] = getOctaveFromNote(noteArray[i]);
+            octaveArray[i] = normalizeOctave(getOctaveFromNote(noteArray[i]));
 
         }
 

@@ -113,6 +113,8 @@ class Pads  {
     bool setActivePreset(uint8_t preset);
 
     uint8_t getActiveProgram();
+    bool isUserScale(uint8_t scale);
+    bool isPredefinedScale(uint8_t scale);
 
     private:
 
@@ -219,8 +221,6 @@ class Pads  {
     void checkMIDIdata();
 
     void generateScale(scale_t scale);
-    bool isUserScale(uint8_t scale);
-    bool isPredefinedScale(uint8_t scale);
 
     uint8_t midiVelocity;
     bool midiNoteOnOff;
@@ -264,7 +264,7 @@ class Pads  {
 
     uint8_t     splitCounter;
     uint8_t     padSplitState;
-    int8_t      localOctaveValue;
+    int8_t      activeOctave;
 
     uint8_t     padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
 

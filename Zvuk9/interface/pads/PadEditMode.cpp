@@ -11,10 +11,10 @@ void Pads::setupPadEditMode(uint8_t pad)    {
 
     #if MODE_SERIAL > 0
         Serial.print(F("Active octave: "));
-        Serial.println(localOctaveValue);
+        Serial.println(activeOctave);
     #endif
 
-    lcDisplay.displayActiveOctave(normalizeOctave(localOctaveValue));
+    lcDisplay.displayActiveOctave(normalizeOctave(activeOctave));
     displayActivePadNotes(pad);
     leds.displayActiveNoteLEDs(true, pad);
 
@@ -37,7 +37,7 @@ void Pads::displayActivePadNotes(uint8_t pad) {
         if (padNote[pad][i] == BLANK_NOTE) continue;
 
         tonicArray[noteCounter] = getTonicFromNote(padNote[pad][i]);
-        octaveArray[noteCounter] = getOctaveFromNote(padNote[pad][i]);
+        octaveArray[noteCounter] = normalizeOctave(getOctaveFromNote(padNote[pad][i]));
         noteCounter++;
 
         #if MODE_SERIAL > 0

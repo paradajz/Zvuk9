@@ -621,7 +621,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             break;
 
             case false:
-            if (!modifierActive || (pads.getActivePreset() > NUMBER_OF_PREDEFINED_SCALES))   {
+            if (!modifierActive || pads.isUserScale(pads.getActivePreset()))   {
 
                 //shift entire octave
 
@@ -629,8 +629,8 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 if (!state)    {
 
                     changeOutput_t shiftResult = pads.shiftOctave(direction);
-                    int8_t activeOctave = pads.getActiveOctave();
-                    lcDisplay.displayNoteChange(shiftResult, octaveChange, activeOctave);
+                    uint8_t activeOctave = pads.getActiveOctave();
+                    lcDisplay.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
 
                 }   else {

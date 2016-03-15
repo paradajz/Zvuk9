@@ -221,11 +221,11 @@ void Pads::setSplit() {
 void Pads::changeActiveOctave(bool direction)   {
 
     //used in pad edit mode
-    direction ? localOctaveValue++ : localOctaveValue--;
+    direction ? activeOctave++ : activeOctave--;
 
     //overflow check
-    if (localOctaveValue >= MIDI_OCTAVE_RANGE) localOctaveValue--;
-    if (localOctaveValue < 0) localOctaveValue++;
+    if (activeOctave >= MIDI_OCTAVE_RANGE) activeOctave--;
+    if (activeOctave < 0) activeOctave++;
 
 }
 
@@ -234,7 +234,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
     //this function only checks for whether all notes can be shifted or not
     //actual shifting takes place in checkOctaveShift function when all pads are released
 
-    bool notesChanged = true;
+    bool changeAllowed = true;
     changeOutput_t result = outputChanged;
 
     //check if note/notes are too low/high if shifted
@@ -246,9 +246,9 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
                 if (padNote[i][j] != BLANK_NOTE)
                 if (padNote[i][j] < MIDI_NOTES)
-                notesChanged = false;
+                changeAllowed = false;
 
-                if (!notesChanged) break;
+                if (!changeAllowed) break;
 
             }
 
@@ -258,9 +258,9 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
                 if (padNote[i][j] != BLANK_NOTE)
                 if ((padNote[i][j] + MIDI_NOTES) > MAX_MIDI_VALUE)
-                notesChanged = false;
+                changeAllowed = false;
 
-                if (!notesChanged) break;
+                if (!changeAllowed) break;
 
             }
 
@@ -268,7 +268,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
     }
 
-    if (!notesChanged)    {
+    if (!changeAllowed)    {
 
         #if MODE_SERIAL
             Serial.print("Unable to do global shift: one or more pad notes are too ");
@@ -284,16 +284,20 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
         if (isPredefinedScale(activePreset))    {
 
             //octave is ALWAYS first note on pad
-            localOctaveValue = getOctaveFromNote(padNote[0][0] + MIDI_NOTES*shiftAmount);
+            activeOctave = getOctaveFromNote(padNote[0][0] + MIDI_NOTES*shiftAmount);
 
-        }   else {  //user scale
+        }   else {
 
-            localOctaveValue = DEFAULT_OCTAVE;
+            //user scale
+            //activeOctave in user presets is always first found note on first pad
+            //if pad has no assigned notes, active octave is DEFAULT_OCTAVE
+
+            activeOctave = DEFAULT_OCTAVE;
             for (int i=0; i<NOTES_PER_PAD; i++) {
 
                 if (padNote[0][i] != BLANK_NOTE)    {
 
-                    localOctaveValue = getOctaveFromNote(padNote[0][i]);
+                    activeOctave = getOctaveFromNote(padNote[0][i] + MIDI_NOTES*shiftAmount);
                     break;
 
                 }
@@ -364,7 +368,7 @@ void Pads::checkOctaveShift()   {
         if (padNote[0][i] != BLANK_NOTE) {
 
             //local octave value is octave that gets displayed on LCD as changed octave
-            localOctaveValue = getOctaveFromNote(padNote[0][i]);
+            activeOctave = getOctaveFromNote(padNote[0][i]);
             emptyPad = false;
             break;
 
@@ -378,12 +382,14 @@ void Pads::checkOctaveShift()   {
         //in this case, increase or decrease default octave value and assign it as localOctaveValue
 
         if (direction) localOctaveValueEmptyPad++; else localOctaveValueEmptyPad--;
-        localOctaveValue = localOctaveValueEmptyPad;
+        activeOctave = localOctaveValueEmptyPad;
 
     }
 
     #if MODE_SERIAL > 0
-        direction ? Serial.println(F("Octave up")) : Serial.println(F("Octave down"));
+        direction ? Serial.print(F("Octave up, ")) : Serial.print(F("Octave down, "));
+        Serial.print(F("active octave: "));
+        Serial.println(activeOctave);
     #endif
 
     shiftAmount = 0;

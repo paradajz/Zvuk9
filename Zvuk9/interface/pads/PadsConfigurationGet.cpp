@@ -209,13 +209,17 @@ void Pads::getPresetParameters()    {
     generateScale((scale_t)activePreset);
 
     //reset this variable first
-    localOctaveValue = DEFAULT_OCTAVE;
+    activeOctave = DEFAULT_OCTAVE;
 
     for (int i=0; i<NOTES_PER_PAD; i++) {
 
         if (padNote[0][i] != BLANK_NOTE)    {
 
-            localOctaveValue = (padNote[0][i]) / MIDI_OCTAVE_RANGE;
+            activeOctave = (padNote[0][i]) / MIDI_OCTAVE_RANGE;
+            #if MODE_SERIAL > 0
+                Serial.print(F("Active octave: "));
+                Serial.println(activeOctave);
+            #endif
             break;
 
         }
@@ -566,7 +570,7 @@ uint8_t Pads::getMIDIchannel() {
 
 uint8_t Pads::getActiveOctave()    {
 
-    return localOctaveValue;
+    return activeOctave;
 
 }
 
