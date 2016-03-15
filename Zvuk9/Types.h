@@ -35,9 +35,9 @@ typedef enum {
 
 typedef enum {
 
-    splitOff = 0x00,
-    splitXY = 0x01,
-    splitXYFunctions = 0x02,
+    splitOff,
+    splitXY,
+    splitXYFunctions,
     splitEnd
 
 } splitState_t;

@@ -82,12 +82,6 @@ void Pads::sendPadAftertouch()  {
 
 }
 
-bool Pads::afterTouchMIDIdataAvailable()    {
-
-    return afterTouchAvailable;
-
-}
-
 void Pads::checkAftertouch()  {
 
     uint8_t pad = activePad;

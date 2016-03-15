@@ -144,13 +144,8 @@ class Pads  {
     int16_t getX();
     void setupY();
     int getY();
-    void resetPadReadOrder();
     void setAnalogInput(uint8_t pin);
 
-    bool readXY();
-    void setReadXY(bool state);
-
-    bool nextPad();
     void setNextPad();
 
     bool processPressure();
@@ -160,13 +155,10 @@ class Pads  {
     int16_t getMedianValueZXY(coordinateType_t);
 
     //adc
-    void setFastADC();
     void analogReadStart();
     void enableADCinterrupt();
     int16_t getAnalogValue();
     bool analogReadInProgress();
-    uint8_t getADCpinCounter();
-    void setADCpinCounter(uint8_t value);
 
     //calibration
     uint8_t calibratePressure(uint8_t pad, int16_t pressure, pressureType_t type);
@@ -182,7 +174,7 @@ class Pads  {
     void setPadPressed(uint8_t padNumber, bool padState);
     bool pressureStable(uint8_t padNumber, uint8_t pressDetected);
 
-    //sent only if midisend is enabled
+    //sent only if midi send is enabled
     void handleNote(uint8_t pad, uint8_t velocity, bool state);
     void handleXY(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable);
     //preset
@@ -190,7 +182,6 @@ class Pads  {
 
     //notes
     void setNoteSendEnabled(uint8_t padNumber, uint8_t state);
-    void clearPadNote(uint8_t padNumber);
     uint8_t getNumberOfAssignedNotes(uint8_t padNumber);
 
     //aftertouch
@@ -213,9 +204,6 @@ class Pads  {
     void getPadParameters();
     void setFunctionLEDs(uint8_t pad);
 
-    bool pressureMIDIdataAvailable();
-    bool afterTouchMIDIdataAvailable();
-    bool xyMIDIdataAvailable();
     void checkNoteBuffer();
     void updateLastTouchedPad();
     void checkMIDIdata();
@@ -331,7 +319,7 @@ class Pads  {
     uint8_t     lastTouchedPad;
     int8_t      previousPad;
 
-    //used to shift octave once all pads are relased
+    //used to shift octave once all pads are released
     int8_t      octaveShiftAmount;
 
 };

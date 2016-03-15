@@ -198,22 +198,21 @@ void Pads::setSplit() {
     getPadParameters();
 
     #if MODE_SERIAL
-    switch(splitCounter)    {
+        switch(splitCounter)    {
 
-        case 0:
-        Serial.println(F("Split off"));
-        break;
+            case splitOff:
+            Serial.println(F("Split off"));
+            break;
 
-        case 1:
-        Serial.println(F("Split XY"));
-        break;
+            case splitXY:
+            Serial.println(F("Split XY"));
+            break;
 
-        case 2:
-        Serial.println(F("Split XY + functions"));
-        break;
+            case splitXYFunctions:
+            Serial.println(F("Split XY + functions"));
+            break;
 
-    }
-
+        }
     #endif
 
 }

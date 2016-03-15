@@ -349,7 +349,7 @@ void Pads::checkVelocity()  {
 
 void Pads::setFunctionLEDs(uint8_t pad)   {
 
-    if (splitCounter == 2)  {
+    if (splitCounter == splitXYFunctions)  {
 
         //split features
         //turn off function LEDs first
@@ -365,18 +365,6 @@ void Pads::setFunctionLEDs(uint8_t pad)   {
         leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
 
     }
-
-}
-
-bool Pads::readXY() {
-
-    return switchToXYread;
-
-}
-
-void Pads::setReadXY(bool state)    {
-
-    switchToXYread = state;
 
 }
 
@@ -868,30 +856,18 @@ uint8_t Pads::getLastTouchedPad()   {
 
 }
 
-bool Pads::pressureMIDIdataAvailable()  {
-
-    return velocityAvailable;
-
-}
-
-bool Pads::xyMIDIdataAvailable()    {
-
-    return xyAvailable;
-
-}
-
 void Pads::checkMIDIdata()   {
 
     //send X/Y immediately
-    if (xyMIDIdataAvailable())
+    if (xyAvailable)
         sendPadXY();
 
     //if notes are available, store them in buffer first
-    if (pressureMIDIdataAvailable())
+    if (velocityAvailable)
         storePadNotes();
 
     //send aftertouch immediately
-    if (afterTouchMIDIdataAvailable())
+    if (afterTouchAvailable)
         sendPadAftertouch();
 
 }
