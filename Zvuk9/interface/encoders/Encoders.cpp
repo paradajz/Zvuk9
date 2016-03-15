@@ -83,11 +83,8 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     switch(encoderNumber)   {
 
         case PROGRAM_ENCODER:
-        if (buttons.getButtonState(BUTTON_TRANSPORT_STOP))    {
+        if (buttons.modifierEnabled())    {
 
-            //stop button is modifier
-            //disable it on release
-            buttons.pauseButton(BUTTON_TRANSPORT_STOP);
             //change midi channel in case it's pressed
             uint8_t midiChannel = pads.getMIDIchannel();
 

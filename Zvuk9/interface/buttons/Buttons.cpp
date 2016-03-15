@@ -32,6 +32,7 @@ Buttons::Buttons()  {
     lastCheckTime               = 0;
     lastButtonDataPress         = 0;
     mcpData                     = 0;
+    modifierActive              = false;
 
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
 
@@ -148,7 +149,15 @@ void Buttons::update(bool processingEnabled)    {
 
             buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
             stopDisableTimeout = 0;
-            lcDisplay.displayUserMessage(2, "Stop disabled", true);
+            lcDisplay.displayUserMessage(1, "Modifer enabled", true);
+            modifierActive = true;
+            if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
+
+                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
+                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+
+            }
+            leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityFull);
 
         }
 
@@ -281,9 +290,10 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
                 //remove modifier message
                 lcDisplay.clearMessage(true);
                 //restore led states
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
+                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
                 leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
+                modifierActive = false;
 
             }
 
@@ -441,8 +451,6 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                 Serial.println(F("Transport Control Stop"));
             #endif
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
-            leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
-            leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
             leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
             //force message clear without restoring state
             lcDisplay.clearMessage(true);
@@ -453,16 +461,6 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                 Serial.println(F("Modifier active"));
             #endif
 
-            lcDisplay.displayUserMessage(1, "Modifier active", true);
-            lcDisplay.displayUserMessage(2, "Stop enabled", true);
-            leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityFull);
-
-            if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
-
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-
-            }
             stopDisableTimeout = newMillis();
             return;
 
@@ -584,8 +582,8 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
         }
 
         //restore leds
-        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
-        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
+        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
         //stop buttons temporarily
         buttons.pauseButton(BUTTON_OCTAVE_DOWN);
         buttons.pauseButton(BUTTON_OCTAVE_UP);
@@ -610,11 +608,11 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     pads.changeActiveOctave(direction);
                     lcDisplay.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
                     leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
                     break;
 
                     case true:
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
                     break;
 
                 }
@@ -623,7 +621,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             break;
 
             case false:
-            if (!buttons.getButtonState(BUTTON_TRANSPORT_STOP))   {
+            if (!modifierActive)   {
 
                 //shift entire octave
 
@@ -633,11 +631,11 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     changeOutput_t shiftResult = pads.shiftOctave(direction);
                     int8_t activeOctave = pads.getActiveOctave();
                     lcDisplay.displayNoteChange(shiftResult, octaveChange, activeOctave);
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
 
                 }   else {
 
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
 
                 }
 
@@ -653,7 +651,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     }
 
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
 
                     //stop button is modifier
                     //disable it on release
@@ -679,6 +677,12 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 void Buttons::pauseButton(uint8_t buttonNumber) {
 
     buttonEnabled[buttonNumber] = false;
+
+}
+
+bool Buttons::modifierEnabled() {
+
+    return modifierActive;
 
 }
 

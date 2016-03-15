@@ -85,8 +85,6 @@ void initHardware() {
     lcDisplay.setPreset(activePreset);
 
     leds.displayActiveNoteLEDs();
-    leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
-    leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
 
     #if START_UP_ANIMATION > 0
         startUpAnimation();

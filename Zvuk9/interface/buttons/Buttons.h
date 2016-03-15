@@ -26,6 +26,7 @@ class Buttons   {
 
     //getters
     bool getButtonState(uint8_t buttonNumber);
+    bool modifierEnabled();
 
     private:
     //callbacks
@@ -53,7 +54,7 @@ class Buttons   {
     bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
     uint32_t stopDisableTimeout;
     uint32_t resetActivationTimeout;
-
+    bool modifierActive;
 
 };
 
