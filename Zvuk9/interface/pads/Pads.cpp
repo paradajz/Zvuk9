@@ -780,7 +780,7 @@ uint8_t Pads::getNumberOfAssignedNotes(uint8_t padNumber)   {
     if (isPredefinedScale(activePreset)) return 1; //predefined presets only have one note
 
     uint8_t activatedNotesCounter = 0;
-    uint8_t noteID = (activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
+    uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
 
     for (int i=0; i<NOTES_PER_PAD; i++) {
 
