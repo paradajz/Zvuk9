@@ -43,7 +43,7 @@ void MIDI::sendControlChange(uint8_t channel, uint8_t ccNumber, uint8_t ccValue)
 
 }
 
-void MIDI::sendAfterTouch(uint8_t channel, uint8_t noteNumber, uint8_t pressure)   {
+void MIDI::sendAfterTouch(uint8_t channel, uint8_t pressure)   {
 
     #if MODE_SERIAL < 1
     hwMIDI.sendAfterTouch(pressure, channel);

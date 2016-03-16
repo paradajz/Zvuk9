@@ -931,12 +931,11 @@ void Pads::checkMIDIdata()   {
 
 void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
-    if (!noteSendEnabled[pad]) return; // no need to check
-
     switch(state)   {
 
         case true:
         //note on
+        if (!noteSendEnabled[pad]) return; // no need to check
         #if MODE_SERIAL > 0
             Serial.print(F("Pad "));
             Serial.print(pad);
@@ -989,17 +988,20 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
             if (sendOff)    {
 
-                midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
-
-                if (afterTouchActivated[pad])
-                    midi.sendAfterTouch(midiChannel, padNote[pad][i], 0);
+                if (noteSendEnabled[pad])
+                    midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
 
             }
 
         }
 
-        afterTouchActivated[pad] = false;
-        afterTouchAvailable = false;
+        if (afterTouchActivated[pad])   {
+
+            midi.sendAfterTouch(midiChannel, 0);
+            afterTouchActivated[pad] = false;
+            afterTouchAvailable =false;
+
+        }
 
         #if MODE_SERIAL > 0
             Serial.print(F("Pad "));

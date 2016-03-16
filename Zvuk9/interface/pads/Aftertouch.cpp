@@ -67,13 +67,9 @@ void Pads::sendAftertouch(uint8_t pad)  {
         Serial.print(F(" aftertouch value: "));
         Serial.println(midiAfterTouch);
     #else
-        for (int i=0; i<NOTES_PER_PAD; i++) {
-
-            if (padNote[pad][i] != BLANK_NOTE)
-            midi.sendAfterTouch(midiChannel, padNote[pad][i], midiAfterTouch);
-
-        }
+        midi.sendAfterTouch(midiChannel, midiAfterTouch);
     #endif
+
     lcDisplay.updateAfterTouch(midiAfterTouch);
 
     afterTouchAvailable = false;
