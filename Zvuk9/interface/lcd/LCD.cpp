@@ -409,20 +409,20 @@ void LCD::displayTransportControlMessage(transportControl_t type, bool state)  {
         if (state) strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[2])));
         else strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[3])));
         lcdLineMessage[1] = nameBuffer;
-        state ? lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportRecord, (uint8_t)transportRecord) : 
-                lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportRecord, 32);
+        //state ? lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportRecord, (uint8_t)transportRecord) : 
+                //lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportRecord, 32);
         break;
 
         case transportPlay:
         strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[0])));
         lcdLineMessage[1] = nameBuffer;
-        lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportPlay, (uint8_t)transportPlay);
+        //lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportPlay, (uint8_t)transportPlay);
         break;
 
         case transportStop:
         strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[1])));
         lcdLineMessage[1] = nameBuffer;
-        lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportPlay, 32);
+        //lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportPlay, 32);
         break;
 
     }
