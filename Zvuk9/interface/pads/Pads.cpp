@@ -322,7 +322,6 @@ void Pads::checkVelocity()  {
                 padMovementDetected = true;
                 lastXValue[pad] = DEFAULT_XY_VALUE;
                 lastYValue[pad] = DEFAULT_XY_VALUE;
-                //firstXYValueDelayTimerStarted[pad] = false;
                 bitWrite(padPressed, pad, false);  //set pad not pressed
                 //reset all aftertouch gestures after pad is released
                 resetAfterTouchCounters(pad);
@@ -383,10 +382,10 @@ bool Pads::processXY()  {
             //x
             #if XY_FLIP_AXIS > 0
                 setupY();
-                setAnalogInput(READ_Y);
+                setAnalogInput(readY);
             #else
                 setupX();
-                setAnalogInput(READ_X);
+                setAnalogInput(readX);
             #endif
             admuxSet = true;
 
@@ -410,10 +409,10 @@ bool Pads::processXY()  {
 
         #if XY_FLIP_AXIS > 0
             setupX();
-            setAnalogInput(READ_X);
+            setAnalogInput(readX);
         #else
             setupY();
-            setAnalogInput(READ_Y);
+            setAnalogInput(readY);
         #endif
 
         admuxSet = false;

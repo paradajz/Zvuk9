@@ -62,7 +62,7 @@
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
@@ -96,7 +96,7 @@
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
@@ -364,7 +364,7 @@ vmresolved.tools.path=D:\Applications
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
@@ -398,7 +398,7 @@ vmresolved.tools.path=D:\Applications
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>

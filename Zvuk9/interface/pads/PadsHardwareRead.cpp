@@ -17,7 +17,7 @@ int16_t Pads::getPressure()  {
     if (!readInitiated && (!firstPressurePinFinished && !secondPressurePinFinished) && firstPin)   {
 
         setupPressure();
-        setAnalogInput(READ_AFTERTOUCH_0);
+        setAnalogInput(readAftertouch0);
         analogReadStart();
         firstPin = false;
 
@@ -28,7 +28,7 @@ int16_t Pads::getPressure()  {
 
         firstPressurePinFinished = true;
         tempPressureValueZ1 = getAnalogValue();
-        setAnalogInput(READ_AFTERTOUCH_1);
+        setAnalogInput(readAftertouch1);
         analogReadStart();
         firstPin = true;
 

@@ -42,7 +42,7 @@ void Pads::setMuxInput(uint8_t muxInput)   {
 
 }
 
-void Pads::setupPressure()  {   //nije?
+void Pads::setupPressure()  {
 
     //pressure is read from x+/y+
     //set 0/5V across x-/y-

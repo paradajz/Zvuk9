@@ -42,13 +42,6 @@
 #define MUX_SELECT_PIN_3_PORT       PORTF
 #define MUX_SELECT_PIN_3_INDEX      7
 
-//arduino-style
- //mux
-#define MUX_COMMON_PIN_0            41
-#define MUX_COMMON_PIN_1            39
-#define MUX_COMMON_PIN_2            40
-#define MUX_COMMON_PIN_3            38
-
 //pads
 #define PAD_0                       2
 #define PAD_1                       1

@@ -21,17 +21,9 @@
 #define NUMBER_OF_SAMPLES                   3
 #define NUMBER_OF_MEDIAN_RUNS               5 //only for x/y, pressure is read 3 times only
 
-#define READ_AFTERTOUCH_0   0
-#define READ_AFTERTOUCH_1   1
-#define READ_X              2
-#define READ_Y              3
-
 //multiplexer pins
 const uint8_t muxCommonPinsAnalogRead[] = { MUX_COMMON_PIN_0_INDEX, MUX_COMMON_PIN_1_INDEX, MUX_COMMON_PIN_2_INDEX, MUX_COMMON_PIN_3_INDEX };
 const uint8_t padID[] = { PAD_0, PAD_1, PAD_2, PAD_3, PAD_4, PAD_5, PAD_6, PAD_7, PAD_8 };
-
-//multiplexer pins
-const uint8_t muxCommonPins[] = { MUX_COMMON_PIN_0, MUX_COMMON_PIN_1, MUX_COMMON_PIN_2, MUX_COMMON_PIN_3 };
 
 class Pads  {
 
@@ -303,7 +295,6 @@ class Pads  {
     //debouncing
     bool        padDebounceTimerStarted[NUMBER_OF_PADS],
                 firstPressureValueDelayTimerStarted[NUMBER_OF_PADS],
-                initialXYignored[NUMBER_OF_PADS],
                 padMovementDetected;
 
     uint32_t    padDebounceTimer[NUMBER_OF_PADS],
@@ -326,6 +317,16 @@ class Pads  {
 
     //used to shift octave once all pads are released
     int8_t      octaveShiftAmount;
+
+    //read order
+    typedef enum {
+
+        readAftertouch0,
+        readAftertouch1,
+        readX,
+        readY
+
+    } padReadOrder;
 
 };
 
