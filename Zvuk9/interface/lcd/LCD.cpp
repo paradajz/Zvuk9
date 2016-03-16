@@ -576,7 +576,7 @@ void LCD::displayOctaveChange(uint8_t octave)   {
 
 void LCD::update()  {
 
-    //if (bitRead(ADCSRA, ADSC)) return;  //don't mess with LCD while ADC conversion is in progress
+    if (bitRead(ADCSRA, ADSC)) return;  //don't mess with LCD while ADC conversion is in progress
 
     checkClearScreen();
     if ((newMillis() - lastLCDupdateTime < LCD_REFRESH_TIME) && !_clearPadData) return;

@@ -322,7 +322,7 @@ void Pads::checkVelocity()  {
                 padMovementDetected = true;
                 lastXValue[pad] = DEFAULT_XY_VALUE;
                 lastYValue[pad] = DEFAULT_XY_VALUE;
-                firstXYValueDelayTimerStarted[pad] = false;
+                //firstXYValueDelayTimerStarted[pad] = false;
                 bitWrite(padPressed, pad, false);  //set pad not pressed
                 //reset all aftertouch gestures after pad is released
                 resetAfterTouchCounters(pad);
@@ -373,58 +373,76 @@ bool Pads::processXY()  {
     //read x/y three times, get median value, then read x/y again until NUMBER_OF_MEDIAN_RUNS
     //get avg x/y value
 
-    uint8_t pad = padID[activePad];
-
     static int16_t xValue = -1, yValue = -1;
+    static bool admuxSet = false;
 
-    if (!firstXYValueDelayTimerStarted[pad]) {
+    if (xValue == -1) {
 
-        firstXYValueDelayTimerStarted[pad] = true;
-        firstXYValueDelayTimer[pad] = newMillis();
+        if (!admuxSet)  {
+
+            //x
+            #if XY_FLIP_AXIS > 0
+                setupY();
+                setAnalogInput(READ_Y);
+            #else
+                setupX();
+                setAnalogInput(READ_X);
+            #endif
+            admuxSet = true;
+
+            return false;
+
+        }
+
+        #if XY_FLIP_AXIS > 0
+            xValue = getY();
+        #else
+            xValue = getX();
+        #endif
+
+    }
+
+    //check if value is now available
+    if (xValue == -1) return false; //not yet
+
+    //x is read by this point
+    if (admuxSet && (xValue != -1) && (yValue == -1)) {
+
+        #if XY_FLIP_AXIS > 0
+            setupX();
+            setAnalogInput(READ_X);
+        #else
+            setupY();
+            setAnalogInput(READ_Y);
+        #endif
+
+        admuxSet = false;
         return false;
 
-    } else {
+    }
 
-        if (!(newMillis() - firstXYValueDelayTimer[pad] > PAD_X_Y_DEBOUNCE_TIME)) return false;
+    if (yValue == -1) {
 
-        //X/Y values should be more stable now
+        #if XY_FLIP_AXIS > 0
+            yValue = getX();
+        #else
+            yValue = getY();
+        #endif
 
-        if (xValue == -1) {
+    }
+    if (!((xValue != -1) && (yValue != -1))) return false;    //we don't have y yet
 
-            #if XY_FLIP_AXIS > 0
-                xValue = getY();
-            #else
-                xValue = getX();
-            #endif
+    //if we got to this point, we have x and y coordinates
+    addXYSamples(xValue, yValue);
 
-        }
+    if (!xySampled()) return false;
+    else {
 
-        if (xValue == -1) return false;
-
-        //we have x
-        if (yValue == -1) {
-
-            #if XY_FLIP_AXIS > 0
-                yValue = getX();
-            #else
-                yValue = getY();
-            #endif
-
-        }
-        if (!((xValue != -1) && (yValue != -1))) return false;    //we don't have y yet
-
-        //if we got to this point, we have x and y coordinates
-        addXYSamples(xValue, yValue);
-
-        if (!xySampled()) return false;
-        else {
-
-            xValue = -1;
-            yValue = -1;
-            sampleCounterXY = 0;
-            return true;
-
-        }
+        xValue = -1;
+        yValue = -1;
+        sampleCounterXY = 0;
+        admuxSet = false;
+        return true;
 
     }
 
@@ -458,8 +476,11 @@ void Pads::update(bool midiEnabled)  {
     } else {
 
         bool xyProcessed = processXY();
-        if (xyProcessed)
+        if (xyProcessed)    {
+
             checkXY();
+
+        }
 
     }
 

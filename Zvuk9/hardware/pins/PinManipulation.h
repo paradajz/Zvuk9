@@ -1,6 +1,8 @@
 #ifndef PINMANIPULATION_H_
 #define PINMANIPULATION_H_
 
+#include <avr/io.h>
+
 #define setOutputMacro(ddr, pin) ((ddr) |= (1 << (pin)))
 #define setInputMacro(ddr, pin) ((ddr) &= ~(1 << (pin)))
 #define setLowMacro(port, pin) ((port) &= ~(1 << (pin)))

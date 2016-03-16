@@ -1,10 +1,5 @@
 #include "Pads.h"
 
-#define READ_AFTERTOUCH_0   0
-#define READ_AFTERTOUCH_1   1
-#define READ_X              2
-#define READ_Y              3
-
 int16_t Pads::getPressure()  {
 
     static int16_t  tempPressureValueZ1 = 0,
@@ -62,16 +57,6 @@ int16_t Pads::getX()  {
 
     bool readInitiated = analogReadInProgress();
     static bool xSwitched = false;
-    static bool admuxSet = false;
-
-    if (!admuxSet)  {
-
-        setupX();
-        setAnalogInput(READ_X);
-        admuxSet = true;
-        return -1;
-
-    }
 
     if (!readInitiated && !xSwitched)   {
 
@@ -83,7 +68,6 @@ int16_t Pads::getX()  {
     else {
 
         xSwitched = false;
-        admuxSet = false;
 
         return getAnalogValue();
 
@@ -95,16 +79,6 @@ int16_t Pads::getY()  {
 
     bool readInitiated = analogReadInProgress();
     static bool ySwitched = false;
-    static bool admuxSet = false;
-
-    if (!admuxSet)  {
-
-        setupY();
-        setAnalogInput(READ_Y);
-        admuxSet = true;
-        return -1;
-
-    }
 
     if (!readInitiated && !ySwitched)   {
 
@@ -117,7 +91,6 @@ int16_t Pads::getY()  {
     else {
 
         ySwitched = false;
-        admuxSet = false;
 
         return getAnalogValue();
 
