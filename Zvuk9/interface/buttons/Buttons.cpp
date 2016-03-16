@@ -534,7 +534,7 @@ void Buttons::handleTonicEvent(note_t note) {
 
         //add note to pad
         uint8_t pad = pads.getLastTouchedPad();
-        lcDisplay.displayPadEditResult(pads.assignPadNote(pad, note));
+        pads.assignPadNote(pad, note);
         pads.displayActivePadNotes(pad);
         leds.displayActiveNoteLEDs(true, pad);
 

@@ -48,7 +48,6 @@ class LCD   {
     void displayTransportControlMessage(transportControl_t type, bool state);
     void displayHelloMessage();
     void displayEditModeNotAllowed(padEditError_t errorType);
-    void displayPadEditResult(changeOutput_t result);
 
     void displayNoteChange(changeOutput_t result, changeType_t type, int8_t value);
     void displayOctaveChange(uint8_t octave);

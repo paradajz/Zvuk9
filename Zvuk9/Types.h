@@ -65,6 +65,7 @@ typedef enum {
     noChange,
     outputChanged,
     outOfRange,
+    overflow,
     notAllowed
 
 } changeOutput_t;

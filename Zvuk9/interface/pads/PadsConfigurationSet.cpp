@@ -852,6 +852,12 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
     uint16_t noteIndex = 0;
     //calculate note to be added or removed
     uint8_t note = getActiveOctave()*MIDI_NOTES + tonic;
+    if (note > 127) {
+
+        lcDisplay.displayUserMessage(1, "Out of range");
+        return outOfRange;
+
+    }
     //note can added or removed, assume adding by default
     bool addOrRemove = true;
 
@@ -870,7 +876,13 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
                 noteIndex++;
 
         //pads cannot have more than NOTES_PER_PAD notes
-        if (noteIndex == NOTES_PER_PAD) return outOfRange;
+        if (noteIndex == NOTES_PER_PAD) {
+
+            lcDisplay.displayUserMessage(1, "Maximum number of");
+            lcDisplay.displayUserMessage(2, "notes set!");
+            return overflow;
+
+        }
 
         //assign new pad note
         padNote[pad][noteIndex] = note;

@@ -844,25 +844,6 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numb
 
 }
 
-void LCD::displayPadEditResult(changeOutput_t result)    {
-
-    if (result == outOfRange)   {
-
-        for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
-
-        lcdLineMessage[1] = "Maximum number of";
-        lcdLineMessage[2] = "notes set!";
-
-        messageDisplayTime = newMillis();
-        displayMessage = true;
-
-    }
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-        expandLine(i, messageLine);
-
-}
-
 void LCD::displayUserMessage(uint8_t row, const char *message, bool stayOn)  {
 
     if (lcdLineMessage[row] == message) return; //same message
