@@ -202,6 +202,10 @@ void LCD::updateNote(uint8_t pad, uint8_t note[], uint8_t octave[], uint8_t numb
 
 void LCD::clearPadData()    {
 
+    #if MODE_SERIAL > 0
+        Serial.println(F("Clearing pad data from LCD"));
+    #endif
+
     _clearPadData = true;
     lastPadDataClearTime = newMillis();
 

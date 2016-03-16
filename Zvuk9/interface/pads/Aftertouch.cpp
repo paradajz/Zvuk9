@@ -59,22 +59,20 @@ void Pads::resetAfterTouchCounters(uint8_t padNumber) {
 
 }
 
-void Pads::sendPadAftertouch()  {
-
-    uint8_t pad = padID[activePad];
+void Pads::sendAftertouch(uint8_t pad)  {
 
     #if MODE_SERIAL
-    Serial.print(F("Pad "));
-    Serial.print(pad);
-    Serial.print(F(" aftertouch value: "));
-    Serial.println(midiAfterTouch);
+        Serial.print(F("Pad "));
+        Serial.print(pad);
+        Serial.print(F(" aftertouch value: "));
+        Serial.println(midiAfterTouch);
     #else
-    for (int i=0; i<NOTES_PER_PAD; i++) {
+        for (int i=0; i<NOTES_PER_PAD; i++) {
 
-        if (padNote[pad][i] != BLANK_NOTE)
+            if (padNote[pad][i] != BLANK_NOTE)
             midi.sendAfterTouch(midiChannel, padNote[pad][i], midiAfterTouch);
 
-    }
+        }
     #endif
     lcDisplay.updateAfterTouch(midiAfterTouch);
 

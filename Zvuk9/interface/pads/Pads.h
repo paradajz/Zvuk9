@@ -193,9 +193,10 @@ class Pads  {
     void setCCYsendEnabled(uint8_t padNumber, uint8_t state);
 
     //MIDI send
-    void storePadNotes();
-    void sendPadAftertouch();
-    void sendPadXY();
+    void storeNotes(uint8_t pad);
+    void sendAftertouch(uint8_t pad);
+    void sendXY(uint8_t pad);
+    void sendNotes(uint8_t pad, uint8_t velocity, bool state);
 
     void checkXY();
     void checkVelocity();
@@ -203,7 +204,6 @@ class Pads  {
     void getPadParameters();
     void setFunctionLEDs(uint8_t pad);
 
-    void checkNoteBuffer();
     void updateLastTouchedPad();
     void checkMIDIdata();
 
@@ -213,7 +213,7 @@ class Pads  {
     uint8_t     midiVelocity;
     uint8_t     midiX;
     uint8_t     midiY;
-    bool        midiNoteOnOff;
+    bool        midiNoteOn;
     uint8_t     midiAfterTouch;
 
     //last midi values

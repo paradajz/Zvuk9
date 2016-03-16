@@ -21,7 +21,6 @@ uint8_t adcPinReadOrder[] = {
 
 static uint8_t pad_buffer[PAD_NOTE_BUFFER_SIZE];
 static uint8_t velocity_buffer[PAD_NOTE_BUFFER_SIZE];
-static bool note_state_buffer[PAD_NOTE_BUFFER_SIZE];
 static uint32_t pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
 static uint8_t note_buffer_head = 0;
 static uint8_t note_buffer_tail = 0;
@@ -30,18 +29,6 @@ const uint8_t debounceCompare = 0b11111100;
 
 volatile uint8_t adcPinCounter = 0;
 const uint8_t adcPinCounterMaxValue = 4;
-
-void storePadNote(uint8_t pad, uint8_t velocity, bool noteState)  {
-
-    uint8_t i = note_buffer_head + 1;
-    if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
-    pad_buffer[i] = pad;
-    velocity_buffer[i] = velocity;
-    note_state_buffer[i] = noteState;
-    pad_note_timer_buffer[i] = newMillis();
-    note_buffer_head = i;
-
-}
 
 void Pads::enableADCinterrupt()    {
 
@@ -232,7 +219,7 @@ bool Pads::pressureStable(uint8_t pad, uint8_t pressDetected)  {
         }   return (newMillis() - firstPressureValueDelayTimer[pad] > PAD_PRESS_DEBOUNCE_TIME);
 
 
-    } else {
+        } else {
 
         if (!padDebounceTimerStarted[pad])  {
 
@@ -244,6 +231,32 @@ bool Pads::pressureStable(uint8_t pad, uint8_t pressDetected)  {
         }   return (newMillis() - padDebounceTimer[pad] > PAD_RELEASE_DEBOUNCE_TIME);
 
     }
+
+    //if (pressDetected) {
+//
+        //if (!firstPressureValueDelayTimerStarted[pad])  {
+//
+            //firstPressureValueDelayTimerStarted[pad] = true;
+            //firstPressureValueDelayTimer[pad] = newMillis();
+            //return false;
+//
+        //}
+        //
+        //return (newMillis() - firstPressureValueDelayTimer[pad] > PAD_PRESS_DEBOUNCE_TIME);
+//
+//
+        //} else {
+//
+        //if (!padDebounceTimerStarted[pad])  {
+//
+            //padDebounceTimerStarted[pad] = true;
+            //firstPressureValueDelayTimerStarted[pad] = false;
+            //padDebounceTimer[pad] = newMillis();
+            //return false;
+//
+        //}   return (newMillis() - padDebounceTimer[pad] > PAD_RELEASE_DEBOUNCE_TIME);
+//
+    //}
 
 }
 
@@ -306,7 +319,7 @@ void Pads::checkVelocity()  {
                 bitWrite(padPressed, pad, true);  //set pad pressed
                 initialPressure[pad] = calibratedPressure;
                 midiVelocity = calibratedPressure;
-                midiNoteOnOff = true;
+                midiNoteOn = true;
                 velocityAvailable = true;
                 padMovementDetected = true;
 
@@ -317,7 +330,7 @@ void Pads::checkVelocity()  {
             if (bitRead(padPressed, pad))  {  //pad is already pressed
 
                 midiVelocity = calibratedPressure;
-                midiNoteOnOff = false;
+                midiNoteOn = false;
                 velocityAvailable = true;
                 padMovementDetected = true;
                 lastXValue[pad] = DEFAULT_XY_VALUE;
@@ -475,18 +488,14 @@ void Pads::update(bool midiEnabled)  {
     } else {
 
         bool xyProcessed = processXY();
-        if (xyProcessed)    {
-
+        if (xyProcessed)
             checkXY();
-
-        }
 
     }
 
     if (switchToNextPad)  {
 
         //if we got to this point, everything that can be read is read
-
         //check data to be sent
 
         if (padMovementDetected)   {
@@ -496,11 +505,13 @@ void Pads::update(bool midiEnabled)  {
 
         }
 
-        if (!editModeActive() && !menu.menuDisplayed())   checkMIDIdata();
+        if (!editModeActive() && !menu.menuDisplayed())
+            checkMIDIdata();
+
         firstRun = true;
         setNextPad();
 
-    }   if (!editModeActive() && !menu.menuDisplayed())   checkNoteBuffer();  //send notes after some delay
+    }
 
     checkOctaveShift();
 
@@ -686,9 +697,7 @@ void Pads::checkXY()  {
 
 }
 
-void Pads::sendPadXY()  {
-
-    uint8_t pad = padID[activePad];
+void Pads::sendXY(uint8_t pad)  {
 
     bool xAvailable_ = getCCXsendEnabled(pad);
     bool yAvailable_ = getCCYsendEnabled(pad);
@@ -811,48 +820,17 @@ uint8_t Pads::getNumberOfAssignedNotes(uint8_t padNumber)   {
 
 }
 
-void Pads::storePadNotes()  {
+void Pads::storeNotes(uint8_t pad)  {
 
-    uint8_t pad = padID[activePad];
-    bool resetPadLCDdata = false;
-
-    if ((previousPad != -1) && getPadPressed(previousPad) && !midiNoteOnOff)  {
-
-        resetPadLCDdata = false;
-        bool ccXsendEnabled = getCCXsendEnabled(previousPad);
-        bool ccYsendEnabled = getCCYsendEnabled(previousPad);
-        uint8_t ccXvaluePreviousPad = getPadCCvalue(ccTypeX, previousPad);
-        uint8_t ccYvaluePreviousPad = getPadCCvalue(ccTypeY, previousPad);
-        uint8_t ccXvalueActivePad = getPadCCvalue(ccTypeX, pad);
-        uint8_t ccYvalueActivePad = getPadCCvalue(ccTypeY, pad);
-
-        if ((ccXvalueActivePad == ccXvaluePreviousPad) && ccXsendEnabled)   {
-
-            midi.sendControlChange(midiChannel, ccXvaluePreviousPad, lastXMIDIvalue[previousPad]);
-
-        }   else if ((ccYvalueActivePad == ccYvaluePreviousPad) && ccYsendEnabled) {
-
-            midi.sendControlChange(midiChannel, ccYvaluePreviousPad, lastYMIDIvalue[previousPad]);
-
-        }
-
-            if (getNoteSendEnabled(previousPad))
-                handleNote(previousPad, lastVelocityValue[previousPad], true);
-
-        handleXY(previousPad, lastXValue[previousPad], lastYValue[previousPad], ccXsendEnabled, ccYsendEnabled);
-        setFunctionLEDs(previousPad);
-
-    }   else if (!midiNoteOnOff) resetPadLCDdata = true;
-
-    storePadNote(pad, midiVelocity, midiNoteOnOff);
+    //store midi note on in circular buffer
+    uint8_t i = note_buffer_head + 1;
+    if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
+    pad_buffer[i] = pad;
+    velocity_buffer[i] = midiVelocity;
+    pad_note_timer_buffer[i] = newMillis();
+    note_buffer_head = i;
 
     lastVelocityValue[pad] = midiVelocity;
-    if (resetPadLCDdata)    {
-
-        lcDisplay.clearPadData();
-
-    }
-    velocityAvailable = false;
 
 }
 
@@ -878,125 +856,166 @@ uint8_t Pads::getLastTouchedPad()   {
 
 void Pads::checkMIDIdata()   {
 
+    uint8_t pad = padID[activePad];
+
     //send X/Y immediately
     if (xyAvailable)
-        sendPadXY();
-
-    //if notes are available, store them in buffer first
-    if (velocityAvailable)
-        storePadNotes();
+        sendXY(pad);
 
     //send aftertouch immediately
     if (afterTouchAvailable)
-        sendPadAftertouch();
+        sendAftertouch(pad);
 
-}
+    if (velocityAvailable)  {
 
-void Pads::checkNoteBuffer()    {
+        switch(midiNoteOn)  {
 
-    //send all notes from pads after PAD_NOTE_SEND_DELAY
-    while (note_buffer_head != note_buffer_tail)    {
+            case true:
+            //if note on event happened, store notes in buffer first
+            storeNotes(pad);
+            break;
+
+            case false:
+            //note off event
+            //send note off
+            sendNotes(pad, 0, false);
+            break;
+
+        }   velocityAvailable = false;
+
+    }
+
+    //notes are stored in buffer and they're sent after PAD_NOTE_SEND_DELAY
+    //to avoid glide effect while sending x/y + notes
+    while (note_buffer_head != note_buffer_tail)   {
 
         uint8_t i = note_buffer_tail + 1;
         if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
 
         //check buffer until it's empty
-        uint8_t pad = pad_buffer[i];
-        uint8_t velocity = velocity_buffer[i];
-        bool noteSendEnabled = getNoteSendEnabled(pad);
-        bool noteState = note_state_buffer[i];
         uint32_t noteTime = pad_note_timer_buffer[i];
-
-        //if note is on, and there's been less than PAD_NOTE_SEND_DELAY, exit function as it checks single pad at the time
-        if (((newMillis() - noteTime) < PAD_NOTE_SEND_DELAY) && noteState) return;
-
-        #if MODE_SERIAL
-        if (noteSendEnabled)    {
-
-            if (noteState)  {
-
-                Serial.print(F("Pad "));
-                Serial.print(pad);
-                Serial.println(F(" pressed. Notes: "));
-
-            }   else {
-
-                Serial.print(F("\nPad "));
-                Serial.print(pad);
-                Serial.println(F(" off!"));
-                Serial.println();
-
-            }
-
-        }
-        #endif
-
-        if (noteSendEnabled)    {
-
-            for (int i=0; i<NOTES_PER_PAD; i++) {
-
-                if (padNote[pad][i] == BLANK_NOTE) continue;
-
-                #if MODE_SERIAL
-                    if (noteState) Serial.println(padNote[pad][i]);
-                #else
-                    if (noteState)
-                        midi.sendNoteOn(midiChannel, padNote[pad][i], velocity);
-
-                else {
-
-                    if (afterTouchActivated[pad])   {
-
-                        //send aftertouch 0 when pad is released
-                        midi.sendAfterTouch(midiChannel, padNote[pad][i], 0);
-                        afterTouchActivated[pad] = false;
-                        afterTouchAvailable = false;
-
-                    }
-
-                    bool sendOff = true;
-                    //some special considerations here
-                    for (int j=0; j<NUMBER_OF_PADS; j++)    {
-
-                        //don't check current pad
-                        if (j == pad) continue;
-
-                        //don't check released pads
-                        if (!getPadPressed(j)) continue;
-
-                        //only send note off if the same note isn't active on some other pad already
-                        if (padNote[j][i] == padNote[pad][i])    {
-
-                            sendOff = false;
-                            break; //no need to check further
-
-                        }
-
-                    }
-
-                    if (sendOff) midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
-
-                }
-                #endif
-
-            }
-
-            #if MODE_SERIAL
-            if (noteState)  {
-
-                Serial.print(F("Velocity: "));
-                Serial.println(velocity);
-
-            }
-            #endif
-
-            noteState ? handleNote(pad, velocity, true) : handleNote(pad, velocity, false);
-
-        }
-
+        //this is fifo (circular) buffer
+        //check first element in buffer
+        //if first element (note) can't pass this condition, none of the other elements can, so return
+        if ((newMillis() - noteTime) < PAD_NOTE_SEND_DELAY) return;
         note_buffer_tail = i;
 
+        sendNotes(pad_buffer[i], velocity_buffer[i], true);
+
     }
+
+    if ((previousPad != -1) && getPadPressed(previousPad) && !midiNoteOn)  {
+
+        //restore data from last touched pad (display+midi cc x/cc y)
+        bool ccXsendEnabled = getCCXsendEnabled(previousPad);
+        bool ccYsendEnabled = getCCYsendEnabled(previousPad);
+        uint8_t ccXvaluePreviousPad = getPadCCvalue(ccTypeX, previousPad);
+        uint8_t ccYvaluePreviousPad = getPadCCvalue(ccTypeY, previousPad);
+        uint8_t ccXvalueActivePad = getPadCCvalue(ccTypeX, pad);
+        uint8_t ccYvalueActivePad = getPadCCvalue(ccTypeY, pad);
+
+        if ((ccXvalueActivePad == ccXvaluePreviousPad) && ccXsendEnabled)
+            midi.sendControlChange(midiChannel, ccXvaluePreviousPad, lastXMIDIvalue[previousPad]);
+        else if ((ccYvalueActivePad == ccYvaluePreviousPad) && ccYsendEnabled)
+            midi.sendControlChange(midiChannel, ccYvaluePreviousPad, lastYMIDIvalue[previousPad]);
+
+        if (getNoteSendEnabled(previousPad))
+            handleNote(previousPad, lastVelocityValue[previousPad], true);
+
+        handleXY(previousPad, lastXValue[previousPad], lastYValue[previousPad], ccXsendEnabled, ccYsendEnabled);
+        setFunctionLEDs(previousPad);
+
+    }
+
+}
+
+void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
+
+    if (!noteSendEnabled[pad]) return; // no need to check
+
+    switch(state)   {
+
+        case true:
+        //note on
+        #if MODE_SERIAL > 0
+            Serial.print(F("Pad "));
+            Serial.print(pad);
+            Serial.println(F(" pressed. Notes: "));
+        #endif
+
+        for (int i=0; i<NOTES_PER_PAD; i++) {
+
+            if (padNote[pad][i] == BLANK_NOTE) continue;
+
+            #if MODE_SERIAL
+                Serial.println(padNote[pad][i]);
+            #else
+                midi.sendNoteOn(midiChannel, padNote[pad][i], velocity);
+            #endif
+
+        }
+
+        #if MODE_SERIAL
+            Serial.print(F("Velocity: "));
+            Serial.println(velocity);
+        #endif
+        break;
+
+        case false:
+        //note off
+        //some special considerations here
+        bool sendOff = true;
+        for (int i=0; i<NOTES_PER_PAD; i++)    {
+
+            if (padNote[pad][i] == BLANK_NOTE) continue;
+
+            for (int j=0; j<NUMBER_OF_PADS; j++) {
+
+                //don't check current pad
+                if (j == pad) continue;
+
+                //don't check released pads
+                if (!getPadPressed(j)) continue;
+
+                //only send note off if the same note isn't active on some other pad already
+                if (padNote[j][i] == padNote[pad][i])    {
+
+                    sendOff = false;
+                    break; //no need to check further
+
+                }
+
+            }
+
+            if (sendOff)    {
+
+                midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
+
+                if (afterTouchActivated[pad])
+                    midi.sendAfterTouch(midiChannel, padNote[pad][i], 0);
+
+            }
+
+        }
+
+        afterTouchActivated[pad] = false;
+        afterTouchAvailable = false;
+
+        #if MODE_SERIAL > 0
+            Serial.print(F("Pad "));
+            Serial.print(pad);
+            Serial.println(F(" released"));
+        #endif
+
+        //check if pad data on lcd needs to be cleared
+        if (!checkPadsPressed()) lcDisplay.clearPadData();
+
+        break;
+
+    }
+
+    //handle lcd and leds
+    handleNote(pad, velocity, state);
 
 }
 
