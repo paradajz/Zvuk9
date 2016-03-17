@@ -592,12 +592,13 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t start
         uint8_t charArrayIndex = 0;
         while (!text[charArrayIndex] != '\0')   {
 
-            lcdLine[row][startIndex] = text[charArrayIndex];
+            lcdLine[row][startIndex+charArrayIndex] = text[charArrayIndex];
             charArrayIndex++;
 
         }
 
     }
+
     expandLine(row, regularLine);
     lineChange[row] = true;
 
