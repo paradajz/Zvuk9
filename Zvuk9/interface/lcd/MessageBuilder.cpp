@@ -5,8 +5,8 @@
 #define X_COORDINATE_START              5
 #define Y_COORDINATE_START              10
 #define AFTERTOUCH_START                15
-#define CC_X_START                      0
-#define CC_Y_START                      9
+
+#define SPACE_CHAR                      32
 
 MessageBuilder::MessageBuilder()    {
 
@@ -38,8 +38,15 @@ void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startI
 void MessageBuilder::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
 
     //program and preset are displayed in single row
+    char_line[0] = 'P';
     string_line = "P";
     string_line += program;
+    char program_buffer[3];
+    itoa(program, program_buffer, 10);
+
+    char_line[1] = program_buffer[0];
+    if (program >= 10) char_line[2] = program_buffer[1];
+
     string_line += " ";
 
     if ((preset >= 0) && (preset < NUMBER_OF_PREDEFINED_SCALES))  {
@@ -47,7 +54,7 @@ void MessageBuilder::displayProgramAndPreset(uint8_t program, uint8_t preset)   
         strcpy_P(nameBuffer, (char*)pgm_read_word(&(presetNameArray[preset])));
         string_line += nameBuffer;
 
-        }   else {
+    }   else {
 
         string_line += "User preset ";
         string_line += (preset - NUMBER_OF_PREDEFINED_SCALES + 1);

@@ -149,7 +149,7 @@ void Buttons::update(bool processingEnabled)    {
 
             buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
             stopDisableTimeout = 0;
-            lcDisplay.displayMessage(1, "Modifer enabled", true);
+            lcDisplay.displayMessage(1, "Modifer enabled");
             modifierActive = true;
             if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
 
@@ -287,8 +287,6 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
             //check if it's released
             if (!state) {
 
-                //remove modifier message
-                lcDisplay.clearMessage(true);
                 //restore led states
                 leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
                 leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
@@ -452,8 +450,6 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             #endif
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
             leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
-            //force message clear without restoring state
-            lcDisplay.clearMessage(true);
 
         } else {
 

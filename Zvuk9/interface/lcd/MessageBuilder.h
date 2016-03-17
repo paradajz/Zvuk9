@@ -44,8 +44,8 @@ class MessageBuilder {
     private:
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite);
     String string_line;
+    char char_line[MAX_TEXT_SIZE];
     char nameBuffer[MAX_TEXT_SIZE];
-    char char_line[NUMBER_OF_LCD_COLUMNS];
 
 };
 

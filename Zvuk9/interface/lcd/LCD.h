@@ -21,13 +21,12 @@ class LCD   {
     void init();
     void update();
     void displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex, bool overwrite);
-    void displayMessage(uint8_t row, const char *message, bool stayOn = false);
-
+    void displayMessage(uint8_t row, const char *message);
     void displayHelloMessage();
-    void clearMessage(bool forceClear = false);
 
     private:
     void expandLine(uint8_t lineNumber, lcdLineType_t lineType);
+    void clearMessage();
 
     uint32_t messageDisplayTime;
     uint32_t lastScrollTime;
@@ -35,8 +34,6 @@ class LCD   {
     bool messageActivated;
     int8_t scrollIndex;
     uint32_t lastRefreshTime;
-    bool keepMessage;
-    bool restoreMessage;
 
     uint32_t lastLCDupdateTime;
 

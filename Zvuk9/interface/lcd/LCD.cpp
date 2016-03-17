@@ -12,8 +12,6 @@ LCD::LCD()  {
 
     displayMessage_var = false;
     messageDisplayTime = 0;
-    keepMessage = false;
-    restoreMessage = false;
 
     lcd_init(LCD_DISP_ON);
     _delay_ms(100);
@@ -91,22 +89,7 @@ void LCD::update()  {
 
     if (messageActivated)   {
 
-        if ((!((newMillis() - messageDisplayTime) > LCD_MESSAGE_DURATION)) || keepMessage) return;
-
-        if (restoreMessage) {
-
-            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
-
-                lcdLineMessage[i] = lastLCDmessage[i];
-
-            }
-
-            restoreMessage = false;
-            displayMessage_var = true;
-            keepMessage = true;
-            return;
-
-        }
+        if (!((newMillis() - messageDisplayTime) > LCD_MESSAGE_DURATION)) return;
 
         for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lineChange[i] = true;
         clearMessage();
@@ -216,56 +199,22 @@ void LCD::expandLine(uint8_t lineNumber, lcdLineType_t lineType)    {
 
 }
 
-void LCD::displayMessage(uint8_t row, const char *message, bool stayOn)  {
-
-    if (lcdLineMessage[row] == message) return; //same message
+void LCD::displayMessage(uint8_t row, const char *message)  {
 
     lcdLineMessage[row] = message;
     expandLine(row, messageLine);
 
     messageDisplayTime = newMillis();
     displayMessage_var = true;
-    keepMessage = stayOn;
 
 }
 
-void LCD::clearMessage(bool forceClear)    {
+void LCD::clearMessage()    {
 
-    //check if there is message that's supposed to be on
-    if (keepMessage)    {
-
-        if (!forceClear)    {
-
-            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-                lastLCDmessage[i] = lcdLineMessage[i];
-
-            restoreMessage = true;
-
-        }   else {
-
-            restoreMessage = false;
-            displayMessage_var = false;
-            messageActivated = false;
-            for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-                lineChange[i] = true;
-
-        }
-
-    }   else if (restoreMessage && forceClear)  {
-
-        restoreMessage = false;
-
-    }   else {
-
-        //clear all previous messages
-        messageActivated = false;
-        for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
-
-            lcdLineMessage[i] = emptyLine;
-
-        }
-
-    }   keepMessage = false;
+    //clear all previous messages
+    messageActivated = false;
+    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+        lcdLineMessage[i] = emptyLine;
 
 }
 
