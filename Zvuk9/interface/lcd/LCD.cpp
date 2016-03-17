@@ -28,13 +28,11 @@ void LCD::init()    {
 
    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) {
 
-       lastCharPosition[i] = 0;
        lcdLine[i].reserve(MAX_TEXT_LENGTH);
        lcdLine[i] = emptyLine;
        lcdLineMessage[i].reserve(MAX_TEXT_LENGTH);
        lcdLineMessage[i] = emptyLine;
        lineChange[i] = false;
-       lineChangeBuffer[i] = false;
        lastLCDLine[i].reserve(MAX_TEXT_LENGTH);
        lastLCDmessage[i].reserve(MAX_TEXT_LENGTH);
        lastLCDLine[i] = emptyLine;

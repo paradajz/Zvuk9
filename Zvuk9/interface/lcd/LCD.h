@@ -83,8 +83,6 @@ class LCD   {
     uint32_t lastPadDataClearTime;
     uint32_t lastLCDupdateTime;
 
-    uint8_t lastCharPosition[NUMBER_OF_LCD_ROWS];
-
     String lcdLine[NUMBER_OF_LCD_ROWS];
     String lcdLineMessage[NUMBER_OF_LCD_ROWS];
     String lcdLineScroll[NUMBER_OF_LCD_ROWS];
@@ -96,7 +94,6 @@ class LCD   {
             tempLine2;
 
     bool lineChange[NUMBER_OF_LCD_ROWS];
-    bool lineChangeBuffer[NUMBER_OF_LCD_ROWS];
     bool scrollEnabled[NUMBER_OF_LCD_ROWS];
     bool scrollDirection[NUMBER_OF_LCD_ROWS];
 
@@ -104,4 +101,4 @@ class LCD   {
 
 extern LCD lcDisplay;
 
-#endif /* LCD_H_ */
+#endif
