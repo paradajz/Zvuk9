@@ -182,10 +182,10 @@ void Pads::getPadParameters()   {
     }
 
     leds.setLEDstate(LED_ON_OFF_SPLIT, getSplitStateLEDvalue());
-    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-    leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-    leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-    leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastPressedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastPressedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastPressedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastPressedPad) ? ledIntensityFull : ledIntensityOff);
 
 }
 

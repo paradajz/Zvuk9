@@ -13,12 +13,12 @@ LCD::LCD()  {
 
     displayMessage = false;
     messageDisplayTime = 0;
-    lcdUpdating = false;
     _clearPadData = false;
     keepMessage = false;
     restoreMessage = false;
 
     lcd_init(LCD_DISP_ON);
+    _delay_ms(100);
 
 }
 
@@ -45,8 +45,6 @@ void LCD::init()    {
 
    }
 
-   program = -1;
-   preset = -1;
    lastDisplayedPad = -1;
    lastScrollTime = 0;
    scrollIndex = 0;
@@ -57,7 +55,6 @@ void LCD::init()    {
    ccX = -1;
    ccY = -1;
 
-   _delay_ms(100);
    initIcons();
 
 }
@@ -105,10 +102,7 @@ void LCD::setCCData(uint8_t pad, uint8_t x, uint8_t y)   {
 
 }
 
-void LCD::setProgramAndPreset()    {
-
-    //don't update line until we have both program and preset
-    if (!((program != -1) && (preset != -1))) return;
+void LCD::setProgramAndPreset(uint8_t program, uint8_t preset)    {
 
     clearRow(PROGRAM_PRESET_ROW);
 
@@ -131,20 +125,6 @@ void LCD::setProgramAndPreset()    {
     expandLine(PROGRAM_PRESET_ROW, regularLine);
     lineChange[PROGRAM_PRESET_ROW] = true;
     lastLCDupdateTime = newMillis();
-
-}
-
-void LCD::setProgram(uint8_t _program) {
-
-    program = _program;
-    setProgramAndPreset();
-
-}
-
-void LCD::setPreset(uint8_t _preset) {
-
-    preset = _preset;
-    setProgramAndPreset();
 
 }
 
@@ -756,7 +736,6 @@ void LCD::displayPadEditMode(uint8_t padNumber)  {
 
 void LCD::clearPadEditMode()    {
 
-    setProgramAndPreset();
     clearRow(1);
     clearRow(2);
     clearRow(3);

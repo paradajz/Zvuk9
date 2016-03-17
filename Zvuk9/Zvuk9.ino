@@ -81,8 +81,7 @@ void initHardware() {
     uint8_t activeProgram = pads.getActiveProgram();
     uint8_t activePreset = pads.getActivePreset();
 
-    lcDisplay.setProgram(activeProgram+1);
-    lcDisplay.setPreset(activePreset);
+    lcDisplay.setProgramAndPreset(activeProgram+1, activePreset);
 
     leds.displayActiveNoteLEDs();
 

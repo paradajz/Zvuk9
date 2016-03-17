@@ -112,7 +112,6 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
                 if (activeProgram == NUMBER_OF_PROGRAMS) activeProgram = 0;
                 else if (activeProgram < 0) activeProgram = (NUMBER_OF_PROGRAMS-1);
                 pads.setActiveProgram(activeProgram);
-                lcDisplay.setProgram(activeProgram+1);
 
                 //get last active preset on current program
                 uint8_t currentPreset = pads.getActivePreset();
@@ -121,7 +120,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
                 leds.displayActiveNoteLEDs();
 
                 //display preset on display
-                lcDisplay.setPreset(currentPreset);
+                lcDisplay.setProgramAndPreset(activeProgram+1, currentPreset);
 
             }
 
@@ -139,7 +138,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         leds.displayActiveNoteLEDs();
 
         //display preset on display
-        lcDisplay.setPreset(activePreset);
+        lcDisplay.setProgramAndPreset(pads.getActiveProgram()+1, activePreset);
         break;
 
         case X_CC_ENCODER:

@@ -25,6 +25,10 @@ static uint32_t pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
 static uint8_t note_buffer_head = 0;
 static uint8_t note_buffer_tail = 0;
 
+static uint8_t padTouchBuffer[NUMBER_OF_PADS];
+static uint8_t padTouchBuffer_head = 0;
+static uint8_t padTouchBuffer_tail = 0;
+
 const uint8_t debounceCompare = 0b11111100;
 
 volatile uint8_t adcPinCounter = 0;
@@ -506,6 +510,7 @@ void Pads::update(bool midiEnabled)  {
         }
 
         if (!editModeActive() && !menu.menuDisplayed())
+            //don't send midi data while in pad edit mode or menu
             checkMIDIdata();
 
         firstRun = true;
@@ -522,19 +527,19 @@ void Pads::updateLastTouchedPad()   {
     if (padID[activePad] != previousPad)
         setFunctionLEDs(padID[activePad]);
 
-    if (padID[activePad] != lastTouchedPad) {
+    if (padID[activePad] != lastPressedPad) {
 
         if (editModeActive())
             setupPadEditMode(padID[activePad]);
 
-        if (getPadPressed(lastTouchedPad)) previousPad = lastTouchedPad;
-            lastTouchedPad = padID[activePad];
+        if (getPadPressed(lastPressedPad)) previousPad = lastPressedPad;
+            lastPressedPad = padID[activePad];
 
     }
 
     if (previousPad != -1)  {
 
-        if (!getPadPressed(previousPad) && !getPadPressed(lastTouchedPad))
+        if (!getPadPressed(previousPad) && !getPadPressed(lastPressedPad))
         previousPad = -1;
 
     }
@@ -834,6 +839,16 @@ void Pads::storeNotes(uint8_t pad)  {
 
 }
 
+void updateTouchHistory(uint8_t pad)    {
+
+    //store midi note on in circular buffer
+    uint8_t i = padTouchBuffer_head + 1;
+    if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
+    padTouchBuffer[i] = pad;
+    padTouchBuffer_head = i;
+
+}
+
 note_t Pads::getTonicFromNote(uint8_t note)    {
 
     if (note == BLANK_NOTE) return MIDI_NOTES;
@@ -850,7 +865,7 @@ uint8_t Pads::getOctaveFromNote(uint8_t note)  {
 
 uint8_t Pads::getLastTouchedPad()   {
 
-    return lastTouchedPad;
+    return lastPressedPad;
 
 }
 

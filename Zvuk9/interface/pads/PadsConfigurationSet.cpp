@@ -483,7 +483,7 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
     bool globalShift = (splitCounter == 0);
     changeOutput_t result = outputChanged;
-    uint8_t startPad = globalShift ? 0 : lastTouchedPad;
+    uint8_t startPad = globalShift ? 0 : lastPressedPad;
     uint8_t compareValue = 127;
     bool compareResult;
     uint8_t changedValue = 0;
@@ -575,7 +575,7 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
 
     bool globalShift = (splitCounter == 0);
     changeOutput_t result = outputChanged;
-    uint8_t startPad = globalShift ? 0 : lastTouchedPad;
+    uint8_t startPad = globalShift ? 0 : lastPressedPad;
     uint8_t compareValue = 127;
     bool compareResult;
     uint8_t changedValue = 0;
@@ -589,7 +589,7 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
         if (direction)  compareResult = ccXmaxPad[startPad] + steps > compareValue;
         else            compareResult = ccXmaxPad[startPad] + steps < compareValue;
 
-        if (!compareResult) changedValue = ccXmaxPad[lastTouchedPad]+steps;
+        if (!compareResult) changedValue = ccXmaxPad[lastPressedPad]+steps;
         else {
 
             //result out of range
@@ -625,7 +625,7 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
         if (direction)  compareResult = ccXminPad[startPad] + steps > compareValue;
         else            compareResult = ccXminPad[startPad] + steps < compareValue;
 
-        if (!compareResult) changedValue = ccXminPad[lastTouchedPad]+steps;
+        if (!compareResult) changedValue = ccXminPad[lastPressedPad]+steps;
         else {
 
             //result out of range
@@ -661,7 +661,7 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
         if (direction)  compareResult = ccYmaxPad[startPad] + steps > compareValue;
         else            compareResult = ccYmaxPad[startPad] + steps < compareValue;
 
-        if (!compareResult) changedValue = ccYmaxPad[lastTouchedPad]+steps;
+        if (!compareResult) changedValue = ccYmaxPad[lastPressedPad]+steps;
         else {
 
             //result out of range
@@ -694,15 +694,15 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
         break;
 
         case ccLimitTypeYmin:
-        if (direction)  compareResult = ccYminPad[lastTouchedPad] + steps > compareValue;
-        else            compareResult = ccYminPad[lastTouchedPad] + steps < compareValue;
+        if (direction)  compareResult = ccYminPad[lastPressedPad] + steps > compareValue;
+        else            compareResult = ccYminPad[lastPressedPad] + steps < compareValue;
 
-        if (!compareResult) changedValue = ccYminPad[lastTouchedPad]+steps;
+        if (!compareResult) changedValue = ccYminPad[lastPressedPad]+steps;
         else {
 
             //result out of range
             //just assign compareValue if it's not already assigned
-            if (ccYminPad[lastTouchedPad] != compareValue)
+            if (ccYminPad[lastPressedPad] != compareValue)
             changedValue = compareValue;
             else { changeAllowed = false; result = noChange; }
 
@@ -739,7 +739,7 @@ changeOutput_t Pads::changeCurve(bool direction, curveCoordinate_t coordinate, i
 
     bool globalShift = (splitCounter == 0);
     changeOutput_t result = outputChanged;
-    uint8_t startPad = globalShift ? 0 : lastTouchedPad;
+    uint8_t startPad = globalShift ? 0 : lastPressedPad;
     uint8_t compareValue = NUMBER_OF_SCALES;
     bool compareResult;
     uint8_t changedValue = 0;
@@ -1009,15 +1009,15 @@ void Pads::notesOnOff()    {
 
     else {  //feature splitting is on
 
-        newNotesState = !noteSendEnabled[lastTouchedPad];
+        newNotesState = !noteSendEnabled[lastPressedPad];
 
-        setNoteSendEnabled(lastTouchedPad, newNotesState);
+        setNoteSendEnabled(lastPressedPad, newNotesState);
 
         #if MODE_SERIAL
             Serial.print(F("Notes "));
             newNotesState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.print(F(" for pad "));
-            Serial.println(lastTouchedPad);
+            Serial.println(lastPressedPad);
         #endif
 
     }
@@ -1045,15 +1045,15 @@ void Pads::xOnOff()    {
 
     else {  //feature splitting is on
 
-        newXState = !xSendEnabled[lastTouchedPad];
+        newXState = !xSendEnabled[lastPressedPad];
 
-        setCCXsendEnabled(lastTouchedPad, newXState);
+        setCCXsendEnabled(lastPressedPad, newXState);
 
         #if MODE_SERIAL
             Serial.print(F("X "));
             newXState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.print(F(" for pad "));
-            Serial.println(lastTouchedPad);
+            Serial.println(lastPressedPad);
         #endif
 
     }
@@ -1081,15 +1081,15 @@ void Pads::yOnOff()    {
 
     else {  //feature splitting is on
 
-        newYState = !ySendEnabled[lastTouchedPad];
+        newYState = !ySendEnabled[lastPressedPad];
 
-        setCCYsendEnabled(lastTouchedPad, newYState);
+        setCCYsendEnabled(lastPressedPad, newYState);
 
         #if MODE_SERIAL
             Serial.print("Y ");
             newYState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.print(F(" for pad "));
-            Serial.println(lastTouchedPad);
+            Serial.println(lastPressedPad);
         #endif
 
     }
@@ -1117,15 +1117,15 @@ void Pads::aftertouchOnOff()    {
 
     else {  //feature splitting is on
 
-        newAfterTouchState = !aftertouchSendEnabled[lastTouchedPad];
+        newAfterTouchState = !aftertouchSendEnabled[lastPressedPad];
 
-        setAfterTouchSendEnabled(lastTouchedPad, newAfterTouchState);
+        setAfterTouchSendEnabled(lastPressedPad, newAfterTouchState);
 
         #if MODE_SERIAL
             Serial.print(F("Aftertouch "));
             newAfterTouchState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.print(F(" for pad "));
-            Serial.println(lastTouchedPad);
+            Serial.println(lastPressedPad);
         #endif
 
     }

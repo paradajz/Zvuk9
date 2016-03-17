@@ -312,7 +312,8 @@ class Pads  {
                 switchToXYread;
 
     //previous/last touched pad detection
-    uint8_t     lastTouchedPad;
+    uint8_t     lastPressedPad;
+    uint8_t     lastReleasedPad;
     int8_t      previousPad;
 
     //used to shift octave once all pads are released

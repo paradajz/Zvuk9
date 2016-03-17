@@ -32,8 +32,7 @@ class LCD   {
     void init();
     void update();
 
-    void setProgram(uint8_t preset);
-    void setPreset(uint8_t program);
+    void setProgramAndPreset(uint8_t program, uint8_t preset);
     void updateNote(uint8_t pad, uint8_t *note, uint8_t *octave, uint8_t numberOfNotes, uint8_t velocity);
     void clearPadData();
     void setXYData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
@@ -67,7 +66,6 @@ class LCD   {
     void clearRow(uint8_t rowNumber);
     void expandLine(uint8_t lineNumber, lcdLineType_t lineType);
     void resetData();
-    void setProgramAndPreset();
     bool checkClearScreen();
 
     char nameBuffer[MAX_TEXT_LENGTH];
@@ -76,20 +74,14 @@ class LCD   {
     uint32_t lastScrollTime;
     bool displayMessage;
     bool messageActivated;
-    bool lcdUpdating;
     int8_t scrollIndex;
     uint32_t lastRefreshTime;
     bool keepMessage;
     bool restoreMessage;
 
-    int8_t  program,
-            preset;
-
     bool _clearPadData;
     uint32_t lastPadDataClearTime;
     uint32_t lastLCDupdateTime;
-
-    uint8_t currentPad;
 
     uint8_t lastCharPosition[NUMBER_OF_LCD_ROWS];
 
