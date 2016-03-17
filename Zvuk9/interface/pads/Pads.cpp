@@ -1025,7 +1025,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
         #endif
 
         //check if pad data on lcd needs to be cleared
-        if (!checkPadsPressed()) lcDisplay.clearPadData();
+        if (!checkPadsPressed()) messageBuilder.clearPadData();
 
         break;
 

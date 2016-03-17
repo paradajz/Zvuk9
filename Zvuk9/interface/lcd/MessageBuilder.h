@@ -6,12 +6,12 @@
 #include "LCD.h"
 #include "LCDsettings.h"
 
-#define MAX_TEXT_SIZE           (NUMBER_OF_LCD_COLUMNS*2)
+#define MAX_TEXT_SIZE       (NUMBER_OF_LCD_COLUMNS*2)
 
-#define PROGRAM_PRESET_ROW_temp 0
-#define PAD_NOTE_ROW_temp       1
-#define PAD_V_XY_AT_ROW_temp    2
-#define XY_ROW_temp             3
+#define PROGRAM_PRESET_ROW  0
+#define PAD_NOTE_ROW        1
+#define PAD_V_XY_AT_ROW     2
+#define XY_ROW              3
 
 class MessageBuilder {
 
@@ -32,9 +32,17 @@ class MessageBuilder {
     void displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes);
     void displayActiveOctave(int8_t octave);
     void displayNoteChange(changeOutput_t result, changeType_t type, int8_t value);
+    void displayEditModeNotAllowed(padEditError_t errorType);
+    void displayPadEditMode(uint8_t padNumber);
+    void displayOctaveChange(uint8_t octave);
+    void clearPadEditMode();
+    void displayServiceMenu();
+    void changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption);
+    void selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
+    void clearPadData();
 
     private:
-    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex = 0);
+    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite);
     String string_line;
     char nameBuffer[MAX_TEXT_SIZE];
     char char_line[NUMBER_OF_LCD_COLUMNS];

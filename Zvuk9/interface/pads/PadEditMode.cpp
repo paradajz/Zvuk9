@@ -9,7 +9,7 @@ void Pads::setupPadEditMode(uint8_t pad)    {
         Serial.println(pad);
     #endif
 
-    lcDisplay.displayPadEditMode(pad + 1);
+    messageBuilder.displayPadEditMode(pad + 1);
 
     #if MODE_SERIAL > 0
         Serial.print(F("Active octave: "));
@@ -54,7 +54,7 @@ void Pads::displayActivePadNotes(uint8_t pad) {
 
 void Pads::exitPadEditMode()    {
 
-    lcDisplay.clearPadEditMode();
+    messageBuilder.clearPadEditMode();
     editModeActivated = false;
     messageBuilder.displayProgramAndPreset(activeProgram+1, activePreset);
     //after exiting from pad edit mode, restore note led states

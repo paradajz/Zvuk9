@@ -15,7 +15,7 @@ void Menu::displayMenu(menuType_t type) {
     switch(type)    {
 
         case serviceMenu:
-        lcDisplay.displayServiceMenu();
+        messageBuilder.displayServiceMenu();
         activeMenu = serviceMenu;
         break;
 
@@ -54,13 +54,13 @@ void Menu::changeOption(bool direction) {
 
     }
 
-    lcDisplay.changeMenuOption(activeMenu, activeOption, activeSubOption);
+    messageBuilder.changeMenuOption(activeMenu, activeOption, activeSubOption);
 
 }
 
 void Menu::selectOption()   {
 
-    lcDisplay.selectMenuOption(activeMenu, activeOption, activeSubOption);
+    messageBuilder.selectMenuOption(activeMenu, activeOption, activeSubOption);
 
 }
 

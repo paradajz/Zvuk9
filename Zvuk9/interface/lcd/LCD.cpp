@@ -1,5 +1,4 @@
 #include "LCD.h"
-#include "menu/MenuStrings.h"
 #include <util/delay.h>
 #include "Icons.h"
 
@@ -13,7 +12,6 @@ LCD::LCD()  {
 
     displayMessage_var = false;
     messageDisplayTime = 0;
-    _clearPadData = false;
     keepMessage = false;
     restoreMessage = false;
 
@@ -46,9 +44,6 @@ void LCD::init()    {
    lastScrollTime = 0;
    scrollIndex = 0;
 
-   tempLine1.reserve(MAX_TEXT_LENGTH);
-   tempLine2.reserve(MAX_TEXT_LENGTH);
-
    initIcons();
 
 }
@@ -67,40 +62,11 @@ void LCD::displayHelloMessage() {
 
 }
 
-void LCD::clearPadData()    {
-
-    #if MODE_SERIAL > 0
-        Serial.println(F("Clearing pad data from LCD"));
-    #endif
-
-    _clearPadData = true;
-    lastPadDataClearTime = newMillis();
-
-}
-
-void LCD::clearRow(uint8_t rowNumber)   {
-
-    lcdLine[rowNumber] = emptyLine;
-
-}
-
-void LCD::displayOctaveChange(uint8_t octave)   {
-
-    clearMessage();
-
-    lcdLineMessage[1] = "Octave set to " + octave;
-
-    messageDisplayTime = newMillis();
-    displayMessage_var = true;
-
-}
-
 void LCD::update()  {
 
     if (bitRead(ADCSRA, ADSC)) return;  //don't mess with LCD while ADC conversion is in progress
 
-    checkClearScreen();
-    if ((newMillis() - lastLCDupdateTime < LCD_REFRESH_TIME) && !_clearPadData) return;
+    if ((newMillis() - lastLCDupdateTime) < LCD_REFRESH_TIME) return;
 
     if (displayMessage_var)   {
 
@@ -250,78 +216,6 @@ void LCD::expandLine(uint8_t lineNumber, lcdLineType_t lineType)    {
 
 }
 
-void LCD::displayPadEditMode(uint8_t padNumber)  {
-
-    clearRow(0);
-    clearRow(1);
-    clearRow(2);
-    clearRow(3);
-
-    lcdLine[0] = "Editing pad ";
-    lcdLine[0] += padNumber;
-    expandLine(0, regularLine);
-
-    expandLine(1, regularLine);
-    expandLine(2, regularLine);
-    expandLine(3, regularLine);
-    lineChange[0] = true;
-    lineChange[1] = true;
-    lineChange[2] = true;
-    lineChange[3] = true;
-
-}
-
-void LCD::clearPadEditMode()    {
-
-    clearRow(1);
-    clearRow(2);
-    clearRow(3);
-
-    scrollIndex = 0;
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) {
-
-        scrollDirection[i] = true;
-        scrollEnabled[i] = false;
-
-    }
-
-    lineChange[1] = true;
-    lineChange[2] = true;
-    lineChange[3] = true;
-
-}
-
-void LCD::displayEditModeNotAllowed(padEditError_t errorType)   {
-
-    uint8_t errorIndex = 0;
-
-    switch (errorType)  {
-
-        case noUserPreset:
-        errorIndex = 0;
-        break;
-
-        case padNotReleased:
-        errorIndex = 2;
-        break;
-
-    }
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(padEditErrorArray[errorIndex])));
-    lcdLineMessage[1] = nameBuffer; 
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(padEditErrorArray[errorIndex+1])));
-    lcdLineMessage[2] = nameBuffer;
-
-    expandLine(1, messageLine);
-    expandLine(2, messageLine);
-
-    messageDisplayTime = newMillis();
-    displayMessage_var = true;
-
-}
-
 void LCD::displayMessage(uint8_t row, const char *message, bool stayOn)  {
 
     if (lcdLineMessage[row] == message) return; //same message
@@ -375,119 +269,12 @@ void LCD::clearMessage(bool forceClear)    {
 
 }
 
-bool LCD::checkClearScreen()    {
+void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex, bool overwrite)    {
 
-    bool clearScreen = false;
-
-    if (_clearPadData)  {
-
-        if (lastPadDataClearTime - lastLCDupdateTime > LCD_PAD_DATA_CLEAR_DELAY) {
-
-            clearScreen = true;
-
-        }   else
-
-        if (newMillis() - lastPadDataClearTime > LCD_PAD_DATA_CLEAR_DELAY) {
-
-            clearScreen = true;
-
-        }
-
-    }
-
-    if (clearScreen)    {
-
-        clearRow(PAD_NOTE_ROW);
-        clearRow(PAD_V_XY_AT_ROW);
-        clearRow(XY_ROW);
-
-        lineChange[PAD_NOTE_ROW] = true;
-        lineChange[PAD_V_XY_AT_ROW] = true;
-        lineChange[XY_ROW] = true;
-        scrollEnabled[PAD_NOTE_ROW] = false;
-        scrollDirection[PAD_NOTE_ROW] = true;
-        scrollIndex = 0;
-        _clearPadData = false;
-
-        return true;
-
-    }   return false;
-
-}
-
-void LCD::displayServiceMenu()  {
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(menu_types[serviceMenu])));
-    lcdLine[0] = nameBuffer;
-    expandLine(0, regularLine);
-    lineChange[0] = true;
-
-    for (int i=0; i<(int16_t)progmemArraySize(service_menu_options); i++)    {
-
-        (!i) ? lcdLine[i+1] = ">" : lcdLine[i+1] = " ";
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
-        lcdLine[i+1] += nameBuffer;
-        expandLine(i+1, regularLine);
-        lineChange[i+1] = true;
-
-    }
-
-}
-
-void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
-
-    //we can display up to three options/suboptions at the time
-    uint8_t markerOption = (option > 2) ? (NUMBER_OF_LCD_ROWS-1) : option;
-
-    switch(type)    {
-
-        case serviceMenu:
-        for (int i=0; i<(int)progmemArraySize(service_menu_options); i++)    {
-
-            if (i == markerOption)  {
-
-                lcdLine[i+1] = ">";
-                strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
-                lcdLine[i+1] += nameBuffer;
-
-            }   else {
-
-                strcpy_P(nameBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
-                lcdLine[i+1] = " ";
-                lcdLine[i+1] += nameBuffer;
-
-            }
-
-            expandLine(i+1, regularLine);
-
-        }
-        break;
-
-        case userMenu:
-        break;
-
-        case noMenu:
-        break;
-
-    }
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-        lineChange[i] = true;
-
-}
-
-void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  {
-
-
-
-}
-
-void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex)    {
-
-    if (!startIndex)
+    if (overwrite)
         //overwrite current text on selected line
         lcdLine[row] = text;
-    else {  Serial.println("indexing");
+    else {
 
         //append characters
         uint8_t charArrayIndex = 0;
@@ -496,7 +283,7 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t start
             lcdLine[row][startIndex+charArrayIndex] = text[charArrayIndex];
             charArrayIndex++;
 
-        }   Serial.println(lcdLine[row]);
+        }
 
     }
 

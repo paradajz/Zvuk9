@@ -557,7 +557,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 //check if last touched pad is pressed
                 if (pads.getPadPressed(pads.getLastTouchedPad()))   {
 
-                    lcDisplay.displayEditModeNotAllowed(padNotReleased);
+                    messageBuilder.displayEditModeNotAllowed(padNotReleased);
                     pads.setEditMode(false);
 
                 }   else {
@@ -577,7 +577,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
         }   else {
 
-            lcDisplay.displayEditModeNotAllowed(noUserPreset);
+            messageBuilder.displayEditModeNotAllowed(noUserPreset);
 
         }
 
@@ -598,7 +598,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             //do not shift octaves while pad is pressed
             if (pads.getPadPressed(pads.getLastTouchedPad()))   {
 
-                lcDisplay.displayEditModeNotAllowed(padNotReleased);
+                messageBuilder.displayEditModeNotAllowed(padNotReleased);
 
             }   else {
 
@@ -646,7 +646,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     if (pads.getPadPressed(pads.getLastTouchedPad()))   {
 
-                        lcDisplay.displayEditModeNotAllowed(padNotReleased);
+                        messageBuilder.displayEditModeNotAllowed(padNotReleased);
                         return;
 
                     }
