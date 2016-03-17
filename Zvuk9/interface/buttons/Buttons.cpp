@@ -416,7 +416,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
     }
 
     leds.setLEDstate(ledNumber, ledState);
-    lcDisplay.displayOnOffMessage(lcdMessageType, pads.getSplitState(), (ledState == ledIntensityFull), lastTouchedPad+1);
+    messageBuilder.displayOnOff(lcdMessageType, pads.getSplitState(), (ledState == ledIntensityFull), lastTouchedPad+1);
 
 }
 

@@ -84,199 +84,6 @@ void LCD::clearRow(uint8_t rowNumber)   {
 
 }
 
-void LCD::displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber)  {
-
-    clearMessage();
-
-    switch(messageType) {
-
-        case featureNotes:
-        if (_splitState == splitXYFunctions) {
-
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offLocalArray[0])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onLocalArray[0])));
-            lcdLineMessage[1] = nameBuffer;
-            lcdLineMessage[2] = "pad ";
-            lcdLineMessage[2] += padNumber;
-
-        }
-
-        else {
-
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offGlobalArray[0])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onGlobalArray[0])));
-            lcdLineMessage[1] = nameBuffer;
-            lcdLineMessage[2] = "all pads";
-
-        }
-        break;
-
-        case featureAftertouch:
-        if (_splitState == splitXYFunctions) {
-
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offLocalArray[1])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onLocalArray[1])));
-            lcdLineMessage[1] = nameBuffer;
-            lcdLineMessage[2] = "pad ";
-            lcdLineMessage[2] += padNumber;
-
-        }
-
-        else {
-
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offGlobalArray[1])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onGlobalArray[1])));
-            lcdLineMessage[1] = nameBuffer;
-            lcdLineMessage[2] = "all pads";
-
-        }
-        break;
-
-        case featureX:
-        if (_splitState == splitXYFunctions) {
-
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offLocalArray[2])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onLocalArray[2])));
-            lcdLineMessage[1] = nameBuffer;
-            lcdLineMessage[2] = "pad ";
-            lcdLineMessage[2] += padNumber;
-
-        }
-
-        else {
-
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offGlobalArray[2])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onGlobalArray[2])));
-            lcdLineMessage[1] = nameBuffer;
-            lcdLineMessage[2] = "all pads";
-
-        }
-        break;
-
-        case featureY:
-        if (_splitState == splitXYFunctions) {
-
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offLocalArray[3])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onLocalArray[3])));
-            lcdLineMessage[1] = nameBuffer;
-            lcdLineMessage[2] = "pad ";
-            lcdLineMessage[2] += padNumber;
-
-        }
-
-        else {
-
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offGlobalArray[3])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onGlobalArray[3])));
-            lcdLineMessage[1] = nameBuffer;
-            lcdLineMessage[2] = "all pads";
-
-        }
-        break;
-
-        case featureSplit:
-        if (_splitState == splitOff)  {
-
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[2])));
-            lcdLineMessage[1] = nameBuffer;
-
-        }   else if (_splitState == splitXY) {
-
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[0])));
-            lcdLineMessage[1] = nameBuffer;
-
-        }   else {
-
-                strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[0])));
-                lcdLineMessage[1] = nameBuffer;
-
-                strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[1])));
-                lcdLineMessage[2] = nameBuffer;
-
-            }
-
-        break;
-
-    }
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    expandLine(i, messageLine);
-
-    messageDisplayTime = newMillis();
-    displayMessage_var = true;
-
-}
-
-void LCD::displayCCchangeMessage(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
-
-    clearMessage();
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccArray[(uint8_t)type])));
-
-    lcdLineMessage[1] = nameBuffer;
-    lcdLineMessage[1] += ccValue;
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(padAmountArray[(uint8_t)_splitState])));
-    lcdLineMessage[2] = nameBuffer;
-
-    if (!(_splitState == splitOff))
-        lcdLineMessage[2] += padNumber; //local change
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-        expandLine(i, messageLine);
-
-    messageDisplayTime = newMillis();
-    displayMessage_var = true;
-
-}
-
-void LCD::displayCClimitChangeMessage(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)  {
-
-    clearMessage();
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccLimitArray[(uint8_t)type])));
-
-    lcdLineMessage[1] = nameBuffer;
-    lcdLineMessage[1] += ccValue;
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(padAmountArray[(uint8_t)_splitState])));
-    lcdLineMessage[2] = nameBuffer;
-
-    if (!(_splitState == splitOff))
-        lcdLineMessage[2] += padNumber; //local change
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-        expandLine(i, messageLine);
-
-    messageDisplayTime = newMillis();
-    displayMessage_var = true;
-
-}
-
-void LCD::displayCurveChangeMessage(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber)  {
-
-    clearMessage();
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
-
-    lcdLineMessage[1] = nameBuffer;
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(curveNameArray[type])));
-    lcdLineMessage[1] += nameBuffer;
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(padAmountArray[(uint8_t)_splitState])));
-    lcdLineMessage[2] = nameBuffer;
-
-    if (!(_splitState == splitOff))
-        lcdLineMessage[2] += padNumber; //local change
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-        expandLine(i, messageLine);
-
-    messageDisplayTime = newMillis();
-    displayMessage_var = true;
-
-}
-
 void LCD::displayNoteChange(changeOutput_t result, changeType_t type, int8_t value) {
 
     clearMessage();
@@ -774,12 +581,24 @@ void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  
 
 }
 
-void LCD::displayText(uint8_t row, const char *text, uint8_t size, bool overWrite)    {
+void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex)    {
 
-    if (overWrite) clearRow(row);
-    lcdLine[row] = text;
+    if (!startIndex)
+        //overwrite current text on selected line
+        lcdLine[row] = text;
+    else {
+
+        //append characters
+        uint8_t charArrayIndex = 0;
+        while (!text[charArrayIndex] != '\0')   {
+
+            lcdLine[row][startIndex] = text[charArrayIndex];
+            charArrayIndex++;
+
+        }
+
+    }
     expandLine(row, regularLine);
-    Serial.print("LCD"); Serial.println(lcdLine[row]);
     lineChange[row] = true;
 
     if (size > NUMBER_OF_LCD_COLUMNS) {

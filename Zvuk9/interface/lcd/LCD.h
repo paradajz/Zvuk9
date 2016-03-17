@@ -28,15 +28,10 @@ class LCD   {
     LCD();
     void init();
     void update();
-    void displayText(uint8_t row, const char *text, uint8_t size, bool overWrite = true);
+    void displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex = 0);
     void displayMessage(uint8_t row, const char *message, bool stayOn = false);
 
     void clearPadData();
-
-    void displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber);
-    void displayCurveChangeMessage(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t curveValue, uint8_t padNumber);
-    void displayCClimitChangeMessage(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
-    void displayCCchangeMessage(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
 
     void displayHelloMessage();
     void displayEditModeNotAllowed(padEditError_t errorType);
@@ -49,7 +44,9 @@ class LCD   {
     void displayMIDIchannelChange(uint8_t channel);
     void displayActiveOctave(int8_t octave);
     void displayActivePadNotes(uint8_t *notes, uint8_t *octaves, uint8_t numberOfNotes);
+
     void clearMessage(bool forceClear = false);
+
     void displayServiceMenu();
     void changeMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
     void selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption);

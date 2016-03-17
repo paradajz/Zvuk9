@@ -762,6 +762,12 @@ vmresolved.tools.path=D:\Applications
     <Compile Include="interface\lcd\menu\Options.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\lcd\MessageBuilder.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\MessageBuilder.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\leds\LEDs.cpp">
       <SubType>compile</SubType>
     </Compile>

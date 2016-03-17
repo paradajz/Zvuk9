@@ -1,5 +1,6 @@
 #include "MessageBuilder.h"
 
+#define XY_POSITION_START               5
 #define X_COORDINATE_START              5
 #define Y_COORDINATE_START              10
 #define AFTERTOUCH_START                15
@@ -12,14 +13,14 @@ MessageBuilder::MessageBuilder()    {
 
 }
 
-void MessageBuilder::updateDisplay(uint8_t row, bool overWrite, lcdTextType type)    {
+void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex)    {
 
     string_line.toCharArray(char_line, string_line.length()+1, 0);
 
     switch(type)    {
 
         case text:
-        lcDisplay.displayText(row, char_line, string_line.length(), overWrite);
+        lcDisplay.displayText(row, char_line, string_line.length(), startIndex);
         break;
 
         case message_std:
@@ -52,7 +53,7 @@ void MessageBuilder::displayProgramAndPreset(uint8_t program, uint8_t preset)   
 
     }
 
-    updateDisplay(PROGRAM_PRESET_ROW_temp);
+    updateDisplay(PROGRAM_PRESET_ROW_temp, text);
 
 }
 
@@ -68,7 +69,7 @@ void MessageBuilder::displayNotes(uint8_t note[], uint8_t octave[], uint8_t numb
 
     }
 
-    updateDisplay(PAD_NOTE_ROW_temp);
+    updateDisplay(PAD_NOTE_ROW_temp, text);
 
 }
 
@@ -79,7 +80,7 @@ void MessageBuilder::displayVelocity(uint8_t velocity)  {
     if (velocity < 10)         string_line += "  ";
     else if (velocity < 100)   string_line += " ";
 
-    updateDisplay(PAD_V_XY_AT_ROW_temp);
+    updateDisplay(PAD_V_XY_AT_ROW_temp, text);
 
 }
 
@@ -122,7 +123,7 @@ void MessageBuilder::displayXYposition(uint8_t x, uint8_t y, bool xAvailable, bo
 
     }
 
-    updateDisplay(PAD_V_XY_AT_ROW_temp, false);
+    updateDisplay(PAD_V_XY_AT_ROW_temp, text, XY_POSITION_START);
 
 }
 
@@ -133,7 +134,7 @@ void MessageBuilder::displayAftertouch(uint8_t afterTouch)  {
     if (afterTouch < 10)       string_line += "  ";
     else if (afterTouch < 100) string_line += " ";
 
-    updateDisplay(PAD_V_XY_AT_ROW_temp, false);
+    updateDisplay(PAD_V_XY_AT_ROW_temp, text, AFTERTOUCH_START);
 
 }
 
@@ -154,7 +155,7 @@ void MessageBuilder::displayXYcc(uint8_t ccX, uint8_t ccY)   {
     string_line += nameBuffer;
     string_line += ccY;
 
-    updateDisplay(XY_ROW_temp);
+    updateDisplay(XY_ROW_temp, text);
 
 }
 
@@ -178,7 +179,139 @@ void MessageBuilder::displayTransportControl(transportControl_t type, bool state
         string_line = nameBuffer;
         break;
 
+    }   updateDisplay(1, message_std);
+
+}
+
+void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber)  {
+
+    switch(messageType) {
+
+        case featureNotes:
+        case featureAftertouch:
+        case featureX:
+        case featureY:
+        if (_splitState == splitXYFunctions) {
+
+            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offLocalArray[0])));
+            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onLocalArray[0])));
+
+            string_line = nameBuffer;
+            updateDisplay(1, message_std);
+
+            string_line = "pad ";
+            string_line += padNumber;
+            updateDisplay(2, message_std);
+
+        }
+
+        else {
+
+            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offGlobalArray[0])));
+            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onGlobalArray[0])));
+
+            string_line = nameBuffer;
+            updateDisplay(1, message_std);
+
+            string_line = "all pads";
+            updateDisplay(3, message_std);
+
+        }
+        break;
+
+        case featureSplit:
+        if (_splitState == splitOff)  {
+
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[2])));
+            string_line = nameBuffer;
+
+            updateDisplay(1, message_std);
+
+        }   else if (_splitState == splitXY) {
+
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[0])));
+            string_line = nameBuffer;
+
+            updateDisplay(1, message_std);
+
+        }   else {
+
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[0])));
+            string_line = nameBuffer;
+
+            updateDisplay(1, message_std);
+
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[1])));
+            string_line = nameBuffer;
+
+            updateDisplay(2, message_std);
+
+        }
+
+        break;
+
+        default:
+        break;
+
     }
+
+}
+
+void MessageBuilder::displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber)  {
+
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
+    string_line = nameBuffer;
+
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(curveNameArray[type])));
+    string_line += nameBuffer;
+
+    updateDisplay(1, message_std);
+
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(padAmountArray[(uint8_t)_splitState])));
+    string_line = nameBuffer;
+
+    if (!(_splitState == splitOff))
+    string_line += padNumber; //local change
+
+    updateDisplay(2, message_std);
+
+}
+
+void MessageBuilder::displayCClimitChange(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)  {
+
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccLimitArray[(uint8_t)type])));
+
+    string_line = nameBuffer;
+    string_line += ccValue;
+
+    updateDisplay(1, message_std);
+
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(padAmountArray[(uint8_t)_splitState])));
+    string_line = nameBuffer;
+
+    if (!(_splitState == splitOff))
+    string_line += padNumber; //local change
+
+    updateDisplay(2, message_std);
+
+}
+
+void MessageBuilder::displayCCchange(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
+
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccArray[(uint8_t)type])));
+
+    string_line = nameBuffer;
+    string_line += ccValue;
+
+    updateDisplay(1, message_std);
+
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(padAmountArray[(uint8_t)_splitState])));
+    string_line = nameBuffer;
+
+    if (!(_splitState == splitOff))
+    string_line += padNumber; //local change
+
+    updateDisplay(2, message_std);
 
 }
 

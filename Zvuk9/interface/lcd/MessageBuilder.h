@@ -24,9 +24,13 @@ class MessageBuilder {
     void displayAftertouch(uint8_t afterTouch);
     void displayXYcc(uint8_t ccX, uint8_t ccY);
     void displayTransportControl(transportControl_t type, bool state);
+    void displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber);
+    void displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber);
+    void displayCClimitChange(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayCCchange(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
 
     private:
-    void updateDisplay(uint8_t row, bool overWrite = true, lcdTextType type = message_std);
+    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex = 0);
     String string_line;
     char nameBuffer[MAX_TEXT_SIZE];
     char char_line[NUMBER_OF_LCD_COLUMNS];
