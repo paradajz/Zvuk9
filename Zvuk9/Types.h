@@ -176,4 +176,12 @@ typedef enum {
 
 } menuType_t;
 
-#endif /* TYPES_H_ */
+typedef enum {
+
+    text,
+    message_std,
+    message_keep
+
+} lcdTextType;
+
+#endif

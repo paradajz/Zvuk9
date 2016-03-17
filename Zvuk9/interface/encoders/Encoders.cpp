@@ -56,8 +56,8 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     //don't allow changing settings using encoders during pad edit mode
     if (pads.editModeActive()) {
 
-        lcDisplay.displayUserMessage(1, "Exit pad mode to");
-        lcDisplay.displayUserMessage(2, "edit parameters");
+        lcDisplay.displayMessage(1, "Exit pad mode to");
+        lcDisplay.displayMessage(2, "edit parameters");
         return;
 
     }
@@ -69,8 +69,8 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     if (pads.getPadPressed(i)) {
 
         //disable encoders while pads are pressed
-        lcDisplay.displayUserMessage(1, "Release pad to");
-        lcDisplay.displayUserMessage(2, "change parameters");
+        lcDisplay.displayMessage(1, "Release pad to");
+        lcDisplay.displayMessage(2, "change parameters");
         return;
 
     }

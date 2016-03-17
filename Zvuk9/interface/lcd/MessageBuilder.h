@@ -23,9 +23,10 @@ class MessageBuilder {
     void displayXYposition(uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
     void displayAftertouch(uint8_t afterTouch);
     void displayXYcc(uint8_t ccX, uint8_t ccY);
+    void displayTransportControl(transportControl_t type, bool state);
 
     private:
-    void updateDisplay(uint8_t row, bool overWrite = true);
+    void updateDisplay(uint8_t row, bool overWrite = true, lcdTextType type = message_std);
     String string_line;
     char nameBuffer[MAX_TEXT_SIZE];
     char char_line[NUMBER_OF_LCD_COLUMNS];

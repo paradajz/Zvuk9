@@ -854,7 +854,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
     uint8_t note = getActiveOctave()*MIDI_NOTES + tonic;
     if (note > 127) {
 
-        lcDisplay.displayUserMessage(1, "Out of range");
+        lcDisplay.displayMessage(1, "Out of range");
         return outOfRange;
 
     }
@@ -878,8 +878,8 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
         //pads cannot have more than NOTES_PER_PAD notes
         if (noteIndex == NOTES_PER_PAD) {
 
-            lcDisplay.displayUserMessage(1, "Maximum number of");
-            lcDisplay.displayUserMessage(2, "notes set!");
+            lcDisplay.displayMessage(1, "Maximum number of");
+            lcDisplay.displayMessage(2, "notes set!");
             return overflow;
 
         }

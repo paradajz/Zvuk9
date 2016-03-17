@@ -12,10 +12,24 @@ MessageBuilder::MessageBuilder()    {
 
 }
 
-void MessageBuilder::updateDisplay(uint8_t row, bool overWrite)    {
+void MessageBuilder::updateDisplay(uint8_t row, bool overWrite, lcdTextType type)    {
 
     string_line.toCharArray(char_line, string_line.length()+1, 0);
-    lcDisplay.displayText(row, char_line, string_line.length(), overWrite);
+
+    switch(type)    {
+
+        case text:
+        lcDisplay.displayText(row, char_line, string_line.length(), overWrite);
+        break;
+
+        case message_std:
+        lcDisplay.displayMessage(row, char_line);
+        break;
+
+        default:
+        break;
+
+    }
 
 }
 
@@ -141,6 +155,30 @@ void MessageBuilder::displayXYcc(uint8_t ccX, uint8_t ccY)   {
     string_line += ccY;
 
     updateDisplay(XY_ROW_temp);
+
+}
+
+void MessageBuilder::displayTransportControl(transportControl_t type, bool state)  {
+
+    switch(type)    {
+
+        case transportRecord:
+        if (state) strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[2])));
+        else strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[3])));
+        string_line = nameBuffer;
+        break;
+
+        case transportPlay:
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[0])));
+        string_line = nameBuffer;
+        break;
+
+        case transportStop:
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[1])));
+        string_line = nameBuffer;
+        break;
+
+    }
 
 }
 

@@ -11,7 +11,7 @@
 
 LCD::LCD()  {
 
-    displayMessage = false;
+    displayMessage_var = false;
     messageDisplayTime = 0;
     _clearPadData = false;
     keepMessage = false;
@@ -202,43 +202,7 @@ void LCD::displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitS
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    expandLine(i, messageLine);
 
     messageDisplayTime = newMillis();
-    displayMessage = true;
-
-}
-
-void LCD::displayTransportControlMessage(transportControl_t type, bool state)  {
-
-    clearMessage();
-
-    switch(type)    {
-
-        case transportRecord:
-        if (state) strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[2])));
-        else strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[3])));
-        lcdLineMessage[1] = nameBuffer;
-        //state ? lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportRecord, (uint8_t)transportRecord) : 
-                //lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportRecord, 32);
-        break;
-
-        case transportPlay:
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[0])));
-        lcdLineMessage[1] = nameBuffer;
-        //lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportPlay, (uint8_t)transportPlay);
-        break;
-
-        case transportStop:
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(transportControlChangeArray[1])));
-        lcdLineMessage[1] = nameBuffer;
-        //lcdLine[TRANSPORT_CONTROL_ICON_ROW].setCharAt(NUMBER_OF_LCD_COLUMNS-(uint8_t)transportPlay, 32);
-        break;
-
-    }
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-        expandLine(i, messageLine);
-
-    messageDisplayTime = newMillis();
-    displayMessage = true;
+    displayMessage_var = true;
 
 }
 
@@ -261,7 +225,7 @@ void LCD::displayCCchangeMessage(ccType_t type, splitState_t _splitState, uint8_
         expandLine(i, messageLine);
 
     messageDisplayTime = newMillis();
-    displayMessage = true;
+    displayMessage_var = true;
 
 }
 
@@ -284,7 +248,7 @@ void LCD::displayCClimitChangeMessage(ccLimitType_t type, splitState_t _splitSta
         expandLine(i, messageLine);
 
     messageDisplayTime = newMillis();
-    displayMessage = true;
+    displayMessage_var = true;
 
 }
 
@@ -309,7 +273,7 @@ void LCD::displayCurveChangeMessage(curveCoordinate_t coordinate, splitState_t _
         expandLine(i, messageLine);
 
     messageDisplayTime = newMillis();
-    displayMessage = true;
+    displayMessage_var = true;
 
 }
 
@@ -351,7 +315,7 @@ void LCD::displayNoteChange(changeOutput_t result, changeType_t type, int8_t val
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    expandLine(i, messageLine);
 
     messageDisplayTime = newMillis();
-    displayMessage = true;
+    displayMessage_var = true;
 
 }
 
@@ -366,7 +330,7 @@ void LCD::displayMIDIchannelChange(uint8_t channel) {
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    expandLine(i, messageLine);
 
     messageDisplayTime = newMillis();
-    displayMessage = true;
+    displayMessage_var = true;
 
 }
 
@@ -377,7 +341,7 @@ void LCD::displayOctaveChange(uint8_t octave)   {
     lcdLineMessage[1] = "Octave set to " + octave;
 
     messageDisplayTime = newMillis();
-    displayMessage = true;
+    displayMessage_var = true;
 
 }
 
@@ -388,7 +352,7 @@ void LCD::update()  {
     checkClearScreen();
     if ((newMillis() - lastLCDupdateTime < LCD_REFRESH_TIME) && !_clearPadData) return;
 
-    if (displayMessage)   {
+    if (displayMessage_var)   {
 
         for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
 
@@ -405,7 +369,7 @@ void LCD::update()  {
 
             lastLCDLine[i] = lcdLineMessage[i];
 
-        }   displayMessage = false; messageActivated = true;
+        }   displayMessage_var = false; messageActivated = true;
 
     }
 
@@ -422,7 +386,7 @@ void LCD::update()  {
             }
 
             restoreMessage = false;
-            displayMessage = true;
+            displayMessage_var = true;
             keepMessage = true;
             return;
 
@@ -604,7 +568,7 @@ void LCD::displayEditModeNotAllowed(padEditError_t errorType)   {
     expandLine(2, messageLine);
 
     messageDisplayTime = newMillis();
-    displayMessage = true;
+    displayMessage_var = true;
 
 }
 
@@ -650,7 +614,7 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numb
 
 }
 
-void LCD::displayUserMessage(uint8_t row, const char *message, bool stayOn)  {
+void LCD::displayMessage(uint8_t row, const char *message, bool stayOn)  {
 
     if (lcdLineMessage[row] == message) return; //same message
 
@@ -658,7 +622,7 @@ void LCD::displayUserMessage(uint8_t row, const char *message, bool stayOn)  {
     expandLine(row, messageLine);
 
     messageDisplayTime = newMillis();
-    displayMessage = true;
+    displayMessage_var = true;
     keepMessage = stayOn;
 
 }
@@ -678,7 +642,7 @@ void LCD::clearMessage(bool forceClear)    {
         }   else {
 
             restoreMessage = false;
-            displayMessage = false;
+            displayMessage_var = false;
             messageActivated = false;
             for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
                 lineChange[i] = true;
@@ -827,7 +791,6 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t size, bool overWrit
     }   else scrollEnabled[row] = false;
 
     lastLCDupdateTime = newMillis();
-
 
 }
 

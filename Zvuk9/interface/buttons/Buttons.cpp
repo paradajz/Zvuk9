@@ -149,7 +149,7 @@ void Buttons::update(bool processingEnabled)    {
 
             buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
             stopDisableTimeout = 0;
-            lcDisplay.displayUserMessage(1, "Modifer enabled", true);
+            lcDisplay.displayMessage(1, "Modifer enabled", true);
             modifierActive = true;
             if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
 
@@ -169,7 +169,7 @@ void Buttons::update(bool processingEnabled)    {
             if (!resetActivationTimeout) resetActivationTimeout = newMillis();
             else if ((newMillis() - resetActivationTimeout) > RESET_ENABLE_TIMEOUT)   {
 
-                lcDisplay.displayUserMessage(1, "Press STOP to reset");
+                lcDisplay.displayMessage(1, "Press STOP to reset");
                 leds.allLEDsOn();
                 lcDisplay.update();
 
@@ -504,7 +504,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
         midi.sendSysEx(sysExArray, SYS_EX_ARRAY_SIZE);
     #endif
 
-    lcDisplay.displayTransportControlMessage(type, displayState);
+    messageBuilder.displayTransportControl(type, displayState);
 
 }
 
@@ -516,8 +516,8 @@ void Buttons::handleTonicEvent(note_t note) {
         for (int i=0; i<NUMBER_OF_PADS; i++)
         if (pads.getPadPressed(i))  {
 
-            lcDisplay.displayUserMessage(1, "Release pad to");
-            lcDisplay.displayUserMessage(2, "change tonic");
+            lcDisplay.displayMessage(1, "Release pad to");
+            lcDisplay.displayMessage(2, "change tonic");
             return;
 
         }

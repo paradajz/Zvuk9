@@ -29,6 +29,7 @@ class LCD   {
     void init();
     void update();
     void displayText(uint8_t row, const char *text, uint8_t size, bool overWrite = true);
+    void displayMessage(uint8_t row, const char *message, bool stayOn = false);
 
     void clearPadData();
 
@@ -37,7 +38,6 @@ class LCD   {
     void displayCClimitChangeMessage(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
     void displayCCchangeMessage(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
 
-    void displayTransportControlMessage(transportControl_t type, bool state);
     void displayHelloMessage();
     void displayEditModeNotAllowed(padEditError_t errorType);
 
@@ -49,7 +49,6 @@ class LCD   {
     void displayMIDIchannelChange(uint8_t channel);
     void displayActiveOctave(int8_t octave);
     void displayActivePadNotes(uint8_t *notes, uint8_t *octaves, uint8_t numberOfNotes);
-    void displayUserMessage(uint8_t row, const char *message, bool stayOn = false);
     void clearMessage(bool forceClear = false);
     void displayServiceMenu();
     void changeMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
@@ -64,7 +63,7 @@ class LCD   {
 
     uint32_t messageDisplayTime;
     uint32_t lastScrollTime;
-    bool displayMessage;
+    bool displayMessage_var;
     bool messageActivated;
     int8_t scrollIndex;
     uint32_t lastRefreshTime;
