@@ -52,9 +52,6 @@ void LCD::init()    {
    tempLine1.reserve(MAX_TEXT_LENGTH);
    tempLine2.reserve(MAX_TEXT_LENGTH);
 
-   ccX = -1;
-   ccY = -1;
-
    initIcons();
 
 }
@@ -75,30 +72,23 @@ void LCD::displayHelloMessage() {
 
 void LCD::setCCData(uint8_t pad, uint8_t x, uint8_t y)   {
 
-    bool change = false;
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeX])));
+    tempLine1 = nameBuffer;
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeY])));
+    tempLine2 = nameBuffer;
 
-    if (x != ccX) { ccX = x; change = true; }
-    if (y != ccY) { ccY = y; change = true; }
+    tempLine1 += x;
+    if (x < 10)       tempLine1 += "  ";
+    else if (x < 100) tempLine1 += " ";
+    tempLine1 += " ";
 
-    if (change) {
+    tempLine2 += y;
 
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeX])));
-        tempLine1 = nameBuffer;
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeY])));
-        tempLine2 = nameBuffer;
+    lcdLine[XY_ROW] = tempLine1 + tempLine2;
+    expandLine(XY_ROW, regularLine);
+    lineChange[XY_ROW] = true;
 
-        tempLine1 += x;
-        if (x < 10)       tempLine1 += "  ";
-        else if (x < 100) tempLine1 += " ";
-        tempLine1 += " ";
-
-        tempLine2 += y;
-
-        lcdLine[XY_ROW] = tempLine1 + tempLine2;
-        expandLine(XY_ROW, regularLine);
-        lineChange[XY_ROW] = true;
-
-    }   lastLCDupdateTime = newMillis(); _clearPadData = false;
+    lastLCDupdateTime = newMillis(); _clearPadData = false;
 
 }
 
@@ -912,12 +902,9 @@ bool LCD::checkClearScreen()    {
         scrollEnabled[PAD_NOTE_ROW] = false;
         scrollDirection[PAD_NOTE_ROW] = true;
         scrollIndex = 0;
-
-        ccX = -1;
-        ccY = -1;
         lastDisplayedPad = -1;
-
         _clearPadData = false;
+
         return true;
 
     }   return false;
