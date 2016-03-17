@@ -67,66 +67,6 @@ void LCD::displayHelloMessage() {
 
 }
 
-void LCD::setCCData(uint8_t pad, uint8_t x, uint8_t y)   {
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeX])));
-    tempLine1 = nameBuffer;
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeY])));
-    tempLine2 = nameBuffer;
-
-    tempLine1 += x;
-    if (x < 10)       tempLine1 += "  ";
-    else if (x < 100) tempLine1 += " ";
-    tempLine1 += " ";
-
-    tempLine2 += y;
-
-    lcdLine[XY_ROW] = tempLine1 + tempLine2;
-    expandLine(XY_ROW, regularLine);
-    lineChange[XY_ROW] = true;
-
-    lastLCDupdateTime = newMillis(); _clearPadData = false;
-
-}
-
-void LCD::updateNote(uint8_t pad, uint8_t note[], uint8_t octave[], uint8_t numberOfNotes, uint8_t velocity)    {
-
-    clearRow(PAD_NOTE_ROW);
-
-    for (int i=0; i<numberOfNotes; i++) {
-
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[note[i]])));
-        if (!i) lcdLine[PAD_NOTE_ROW] = nameBuffer;
-        else lcdLine[PAD_NOTE_ROW] += nameBuffer;
-        lcdLine[PAD_NOTE_ROW] += octave[i];
-        lcdLine[PAD_NOTE_ROW] += " ";
-
-    }
-
-    if (lcdLine[PAD_NOTE_ROW].length() > NUMBER_OF_LCD_COLUMNS) {
-
-        scrollEnabled[PAD_NOTE_ROW] = true;
-        scrollDirection[PAD_NOTE_ROW] = true;
-        scrollIndex = 0;
-
-    }   else scrollEnabled[PAD_NOTE_ROW] = false;
-
-    expandLine(PAD_NOTE_ROW, regularLine);
-    lineChange[PAD_NOTE_ROW] = true;
-
-    tempLine1 = "v";
-    tempLine1 += velocity;
-    if (velocity < 10)         tempLine1 += "  ";
-    else if (velocity < 100)   tempLine1 += " ";
-
-    for (int i=0; i<4; i++) lcdLine[PAD_V_XY_AT_ROW][i] = tempLine1[i];
-    lineChange[PAD_V_XY_AT_ROW] = true;
-
-    lastLCDupdateTime = newMillis();
-    _clearPadData = false;
-
-}
-
 void LCD::clearPadData()    {
 
     #if MODE_SERIAL > 0
@@ -138,71 +78,9 @@ void LCD::clearPadData()    {
 
 }
 
-void LCD::updateAfterTouch(uint8_t afterTouch)  {
-
-    expandLine(PAD_V_XY_AT_ROW, regularLine);
-
-    tempLine1 = "at";
-    tempLine1 += afterTouch;
-    if (afterTouch < 10)       tempLine1 += "  ";
-    else if (afterTouch < 100) tempLine1 += " ";
-
-    for (int i=0; i<5; i++)
-        lcdLine[PAD_V_XY_AT_ROW][AFTERTOUCH_START+i] = tempLine1[i];
-
-    lineChange[PAD_V_XY_AT_ROW] = true;
-    lastLCDupdateTime = newMillis();
-    _clearPadData = false;
-
-}
-
 void LCD::clearRow(uint8_t rowNumber)   {
 
     lcdLine[rowNumber] = emptyLine;
-
-}
-
-void LCD::setXYData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable)   {
-
-    expandLine(PAD_V_XY_AT_ROW, regularLine);
-
-    tempLine1 = "x";
-    tempLine1 += x;
-    if (x < 10)         tempLine1 += "  ";
-    else if (x < 100)   tempLine1 += " ";
-
-    tempLine2 = "y";
-    tempLine2 += y;
-    if (y < 10)         tempLine2 += "  ";
-    else if (y < 100)   tempLine2 += " ";
-
-    if (xAvailable)   {
-
-        for (int i=0; i<4; i++)
-            lcdLine[PAD_V_XY_AT_ROW][X_COORDINATE_START+i] = tempLine1[i];
-
-    }   else {
-
-        for (int i=0; i<4; i++)
-            lcdLine[PAD_V_XY_AT_ROW][X_COORDINATE_START+i] = emptyLine[i];
-
-    }
-
-    if (yAvailable)   {
-
-        for (int i=0; i<4; i++)
-            lcdLine[PAD_V_XY_AT_ROW][Y_COORDINATE_START+i] = tempLine2[i];
-
-    }   else {
-
-        for (int i=0; i<4; i++)
-            lcdLine[PAD_V_XY_AT_ROW][Y_COORDINATE_START+i] = emptyLine[i];
-
-    }
-
-    lineChange[PAD_V_XY_AT_ROW] = true;
-    lastLCDupdateTime = newMillis();
-    _clearPadData = false;
 
 }
 
@@ -932,15 +810,24 @@ void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  
 
 }
 
-void LCD::displayText(uint8_t row, const char *text)    {
+void LCD::displayText(uint8_t row, const char *text, uint8_t size, bool overWrite)    {
 
-    clearRow(row);
-
+    if (overWrite) clearRow(row);
     lcdLine[row] = text;
-
     expandLine(row, regularLine);
+    Serial.print("LCD"); Serial.println(lcdLine[row]);
     lineChange[row] = true;
+
+    if (size > NUMBER_OF_LCD_COLUMNS) {
+
+        scrollEnabled[row] = true;
+        scrollDirection[row] = true;
+        scrollIndex = 0;
+
+    }   else scrollEnabled[row] = false;
+
     lastLCDupdateTime = newMillis();
+
 
 }
 

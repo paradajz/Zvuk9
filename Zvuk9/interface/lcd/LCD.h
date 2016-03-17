@@ -28,13 +28,9 @@ class LCD   {
     LCD();
     void init();
     void update();
-    void displayText(uint8_t row, const char *text);
+    void displayText(uint8_t row, const char *text, uint8_t size, bool overWrite = true);
 
-    void updateNote(uint8_t pad, uint8_t *note, uint8_t *octave, uint8_t numberOfNotes, uint8_t velocity);
     void clearPadData();
-    void setXYData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
-    void updateAfterTouch(uint8_t afterTouch);
-    void setCCData(uint8_t pad, uint8_t x, uint8_t y);
 
     void displayOnOffMessage(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber);
     void displayCurveChangeMessage(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t curveValue, uint8_t padNumber);

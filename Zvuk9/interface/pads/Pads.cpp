@@ -1067,7 +1067,8 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
         }
 
-        lcDisplay.updateNote(pad, tonicArray, octaveArray, noteCounter, velocity);
+        messageBuilder.displayNotes(tonicArray, octaveArray, noteCounter);
+        messageBuilder.displayVelocity(velocity);
         break;
 
         case false:
@@ -1110,10 +1111,10 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 void Pads::handleXY(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable)   {
 
     if (xAvailable || yAvailable)
-        lcDisplay.setXYData(pad, xPosition, yPosition, xAvailable, yAvailable);
+        messageBuilder.displayXYposition(xPosition, yPosition, xAvailable, yAvailable);
 
     //always display ccx/ccy
-    lcDisplay.setCCData(pad, ccXPad[pad], ccYPad[pad]);
+    messageBuilder.displayXYcc(ccXPad[pad], ccYPad[pad]);
 
 }
 
