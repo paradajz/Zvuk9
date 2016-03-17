@@ -6,4 +6,7 @@
 #define LCD_SCROLL_TIME                 500
 #define LCD_PAD_DATA_CLEAR_DELAY        200
 
+#define NUMBER_OF_LCD_COLUMNS           20
+#define NUMBER_OF_LCD_ROWS              4
+
 #endif

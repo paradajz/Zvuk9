@@ -89,32 +89,6 @@ void LCD::setCCData(uint8_t pad, uint8_t x, uint8_t y)   {
 
 }
 
-void LCD::setProgramAndPreset(uint8_t program, uint8_t preset)    {
-
-    clearRow(PROGRAM_PRESET_ROW);
-
-    lcdLine[PROGRAM_PRESET_ROW] = "P";
-    lcdLine[PROGRAM_PRESET_ROW] += program;
-    lcdLine[PROGRAM_PRESET_ROW] += " ";
-
-    if ((preset >= 0) && (preset < NUMBER_OF_PREDEFINED_SCALES))  {
-
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(presetNameArray[preset])));
-        lcdLine[PROGRAM_PRESET_ROW] += nameBuffer;
-
-    }   else {
-
-        lcdLine[PROGRAM_PRESET_ROW] += "User preset ";
-        lcdLine[PROGRAM_PRESET_ROW] += (preset - NUMBER_OF_PREDEFINED_SCALES + 1);
-
-    }
-
-    expandLine(PROGRAM_PRESET_ROW, regularLine);
-    lineChange[PROGRAM_PRESET_ROW] = true;
-    lastLCDupdateTime = newMillis();
-
-}
-
 void LCD::updateNote(uint8_t pad, uint8_t note[], uint8_t octave[], uint8_t numberOfNotes, uint8_t velocity)    {
 
     clearRow(PAD_NOTE_ROW);
@@ -955,6 +929,18 @@ void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
 void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  {
 
 
+
+}
+
+void LCD::displayText(uint8_t row, const char *text)    {
+
+    clearRow(row);
+
+    lcdLine[row] = text;
+
+    expandLine(row, regularLine);
+    lineChange[row] = true;
+    lastLCDupdateTime = newMillis();
 
 }
 

@@ -12,9 +12,6 @@
 #include "../../hardware/timer/TimerObject.h"
 #include "Macros.h"
 
-#define NUMBER_OF_LCD_COLUMNS           20
-#define NUMBER_OF_LCD_ROWS              4
-
 #define MAX_TEXT_LENGTH                 (NUMBER_OF_LCD_COLUMNS*2)
 
 #define PROGRAM_PRESET_ROW              0
@@ -31,8 +28,8 @@ class LCD   {
     LCD();
     void init();
     void update();
+    void displayText(uint8_t row, const char *text);
 
-    void setProgramAndPreset(uint8_t program, uint8_t preset);
     void updateNote(uint8_t pad, uint8_t *note, uint8_t *octave, uint8_t numberOfNotes, uint8_t velocity);
     void clearPadData();
     void setXYData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
@@ -65,7 +62,6 @@ class LCD   {
     private:
     void clearRow(uint8_t rowNumber);
     void expandLine(uint8_t lineNumber, lcdLineType_t lineType);
-    void resetData();
     bool checkClearScreen();
 
     char nameBuffer[MAX_TEXT_LENGTH];

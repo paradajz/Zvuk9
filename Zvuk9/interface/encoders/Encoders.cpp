@@ -6,6 +6,7 @@
 #include "../buttons/Buttons.h"
 #include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
+#include "../lcd/MessageBuilder.h"
 
 #define ENCODER_SPEED_1         1
 #define ENCODER_SPEED_2         5
@@ -120,7 +121,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
                 leds.displayActiveNoteLEDs();
 
                 //display preset on display
-                lcDisplay.setProgramAndPreset(activeProgram+1, currentPreset);
+                messageBuilder.displayProgramAndPreset(activeProgram+1, currentPreset);
 
             }
 
@@ -138,7 +139,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         leds.displayActiveNoteLEDs();
 
         //display preset on display
-        lcDisplay.setProgramAndPreset(pads.getActiveProgram()+1, activePreset);
+        messageBuilder.displayProgramAndPreset(pads.getActiveProgram()+1, activePreset);
         break;
 
         case X_CC_ENCODER:

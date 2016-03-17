@@ -56,7 +56,7 @@ void Pads::exitPadEditMode()    {
 
     lcDisplay.clearPadEditMode();
     editModeActivated = false;
-    lcDisplay.setProgramAndPreset(activeProgram+1, activePreset);
+    messageBuilder.displayProgramAndPreset(activeProgram+1, activePreset);
     //after exiting from pad edit mode, restore note led states
     leds.displayActiveNoteLEDs();
 

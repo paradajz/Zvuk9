@@ -14,6 +14,7 @@
 #include "hardware/reset/Reset.h"
 #include <util/delay.h>
 #include "midi/MIDI.h"
+#include "interface/lcd/MessageBuilder.h"
 
 //define function prototypes
 void startUpAnimation();
@@ -81,7 +82,7 @@ void initHardware() {
     uint8_t activeProgram = pads.getActiveProgram();
     uint8_t activePreset = pads.getActivePreset();
 
-    lcDisplay.setProgramAndPreset(activeProgram+1, activePreset);
+    messageBuilder.displayProgramAndPreset(activeProgram+1, activePreset);
 
     leds.displayActiveNoteLEDs();
 

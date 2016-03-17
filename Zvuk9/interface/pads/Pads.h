@@ -13,6 +13,7 @@
 #include "../../midi/MIDI.h"
 #include "../../eeprom/EEPROMsettings.h"
 #include "../lcd/LCD.h"
+#include "../lcd/MessageBuilder.h"
 #include "../leds/LEDs.h"
 
 #define NUMBER_OF_PADS                      9
