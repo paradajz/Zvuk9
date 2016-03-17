@@ -45,7 +45,6 @@ void LCD::init()    {
 
    }
 
-   lastDisplayedPad = -1;
    lastScrollTime = 0;
    scrollIndex = 0;
 
@@ -120,51 +119,37 @@ void LCD::setProgramAndPreset(uint8_t program, uint8_t preset)    {
 
 void LCD::updateNote(uint8_t pad, uint8_t note[], uint8_t octave[], uint8_t numberOfNotes, uint8_t velocity)    {
 
-    if (pad != lastDisplayedPad)    {
+    clearRow(PAD_NOTE_ROW);
 
-        //update notes only if current pad is different from last one
+    for (int i=0; i<numberOfNotes; i++) {
 
-        lastDisplayedPad = pad;
-        clearRow(PAD_NOTE_ROW);
-
-        for (int i=0; i<numberOfNotes; i++) {
-
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[note[i]])));
-            if (!i) lcdLine[PAD_NOTE_ROW] = nameBuffer;
-            else lcdLine[PAD_NOTE_ROW] += nameBuffer;
-            lcdLine[PAD_NOTE_ROW] += octave[i];
-            lcdLine[PAD_NOTE_ROW] += " ";
-
-        }
-
-        if (lcdLine[PAD_NOTE_ROW].length() > NUMBER_OF_LCD_COLUMNS) {
-
-            scrollEnabled[PAD_NOTE_ROW] = true;
-            scrollDirection[PAD_NOTE_ROW] = true;
-            scrollIndex = 0;
-
-        }   else scrollEnabled[PAD_NOTE_ROW] = false;
-
-        expandLine(PAD_NOTE_ROW, regularLine);
-        lineChange[PAD_NOTE_ROW] = true;
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[note[i]])));
+        if (!i) lcdLine[PAD_NOTE_ROW] = nameBuffer;
+        else lcdLine[PAD_NOTE_ROW] += nameBuffer;
+        lcdLine[PAD_NOTE_ROW] += octave[i];
+        lcdLine[PAD_NOTE_ROW] += " ";
 
     }
 
-    if ((pad == lastDisplayedPad) || (lastDisplayedPad == -1))  {
+    if (lcdLine[PAD_NOTE_ROW].length() > NUMBER_OF_LCD_COLUMNS) {
 
-        //update velocity only
+        scrollEnabled[PAD_NOTE_ROW] = true;
+        scrollDirection[PAD_NOTE_ROW] = true;
+        scrollIndex = 0;
 
-        tempLine1 = "v";
-        tempLine1 += velocity;
-        if (velocity < 10)         tempLine1 += "  ";
-        else if (velocity < 100)   tempLine1 += " ";
+    }   else scrollEnabled[PAD_NOTE_ROW] = false;
 
-        for (int i=0; i<4; i++) lcdLine[PAD_V_XY_AT_ROW][i] = tempLine1[i];
-        lineChange[PAD_V_XY_AT_ROW] = true;
+    expandLine(PAD_NOTE_ROW, regularLine);
+    lineChange[PAD_NOTE_ROW] = true;
 
-    }
+    tempLine1 = "v";
+    tempLine1 += velocity;
+    if (velocity < 10)         tempLine1 += "  ";
+    else if (velocity < 100)   tempLine1 += " ";
 
-    lastDisplayedPad = pad;
+    for (int i=0; i<4; i++) lcdLine[PAD_V_XY_AT_ROW][i] = tempLine1[i];
+    lineChange[PAD_V_XY_AT_ROW] = true;
+
     lastLCDupdateTime = newMillis();
     _clearPadData = false;
 
@@ -206,8 +191,6 @@ void LCD::clearRow(uint8_t rowNumber)   {
 }
 
 void LCD::setXYData(uint8_t pad, uint8_t x, uint8_t y, bool xAvailable, bool yAvailable)   {
-
-    //lastDisplayedPad = pad;
 
     expandLine(PAD_V_XY_AT_ROW, regularLine);
 
@@ -902,7 +885,6 @@ bool LCD::checkClearScreen()    {
         scrollEnabled[PAD_NOTE_ROW] = false;
         scrollDirection[PAD_NOTE_ROW] = true;
         scrollIndex = 0;
-        lastDisplayedPad = -1;
         _clearPadData = false;
 
         return true;

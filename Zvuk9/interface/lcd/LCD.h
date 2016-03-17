@@ -100,8 +100,6 @@ class LCD   {
     bool scrollEnabled[NUMBER_OF_LCD_ROWS];
     bool scrollDirection[NUMBER_OF_LCD_ROWS];
 
-    int8_t lastDisplayedPad;
-
 };
 
 extern LCD lcDisplay;
