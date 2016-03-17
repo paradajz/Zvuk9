@@ -528,7 +528,7 @@ void Buttons::handleTonicEvent(note_t note) {
             leds.displayActiveNoteLEDs();
 
         note_t activeTonic = pads.getActiveTonic();
-        lcDisplay.displayNoteChange(result, noteChange, activeTonic);
+        messageBuilder.displayNoteChange(result, noteChange, activeTonic);
 
     }   else {
 
@@ -606,7 +606,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     case false:
                     pads.changeActiveOctave(direction);
-                    lcDisplay.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
+                    messageBuilder.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
                     leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
                     break;
@@ -630,7 +630,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     changeOutput_t shiftResult = pads.shiftOctave(direction);
                     uint8_t activeOctave = pads.getActiveOctave();
-                    lcDisplay.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
+                    messageBuilder.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
 
                 }   else {
@@ -657,7 +657,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     //disable it on release
                     buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
                     changeOutput_t shiftResult = pads.shiftNote(direction);
-                    lcDisplay.displayNoteChange(shiftResult, noteUpOrDown, direction);
+                    messageBuilder.displayNoteChange(shiftResult, noteUpOrDown, direction);
 
                 }   else {
 

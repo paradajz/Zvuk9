@@ -54,7 +54,7 @@ const char PROGMEM userEditError1[] PROGMEM = "to edit pad notes";
 const char PROGMEM userEditError2[] PROGMEM = "Release pad";
 const char PROGMEM userEditError3[] PROGMEM = "to edit";
 
-const String emptyLine = "                                        ";
+const String emptyLine = "                    ";
 
 const String helloMessage = "Welcome!";
 
@@ -176,9 +176,9 @@ PGM_P const onLocalArray[] PROGMEM = {
 
 PGM_P const splitArray[] PROGMEM = {
 
+    splitOff_string,
     splitXY_string,
     splitXYFunctions_string,
-    splitOff_string
 
 };
 

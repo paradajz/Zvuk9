@@ -97,7 +97,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
             pads.setMIDIchannel(midiChannel);
 
-            lcDisplay.displayMIDIchannelChange(pads.getMIDIchannel());
+            messageBuilder.displayMIDIchannelChange(pads.getMIDIchannel());
 
         } else {
 

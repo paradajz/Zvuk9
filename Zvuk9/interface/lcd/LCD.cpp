@@ -84,63 +84,6 @@ void LCD::clearRow(uint8_t rowNumber)   {
 
 }
 
-void LCD::displayNoteChange(changeOutput_t result, changeType_t type, int8_t value) {
-
-    clearMessage();
-
-    if (type == noteUpOrDown)  {
-
-        if (result == outputChanged)
-            lcdLineMessage[1] = value ? "One note up" : "One note down";
-        else if (result == outOfRange)  {
-
-            lcdLineMessage[1] = "Out of range!";
-
-        }   else if (result == notAllowed)  {
-
-            lcdLineMessage[1] = "Switch to";
-            lcdLineMessage[2] = "predefined preset";
-
-        }
-
-    }   else {  //octave/tonic change
-
-        for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lcdLineMessage[i] = emptyLine;
-
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[type])));
-        lcdLineMessage[1] = nameBuffer;
-        if (type == octaveChange) lcdLineMessage[1] += value;
-        else if (type == noteChange) {
-
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
-            lcdLineMessage[1] += nameBuffer;
-
-        }
-
-    }
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    expandLine(i, messageLine);
-
-    messageDisplayTime = newMillis();
-    displayMessage_var = true;
-
-}
-
-void LCD::displayMIDIchannelChange(uint8_t channel) {
-
-    clearMessage();
-
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[5])));
-    lcdLineMessage[1] = nameBuffer;
-    lcdLineMessage[1] += channel;
-
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    expandLine(i, messageLine);
-
-    messageDisplayTime = newMillis();
-    displayMessage_var = true;
-
-}
-
 void LCD::displayOctaveChange(uint8_t octave)   {
 
     clearMessage();
@@ -379,48 +322,6 @@ void LCD::displayEditModeNotAllowed(padEditError_t errorType)   {
 
 }
 
-void LCD::displayActiveOctave(int8_t octave)   {
-
-    lcdLine[2] = "Active octave: ";
-    lcdLine[2] += octave;
-
-    lineChange[2] = true;
-    expandLine(2, regularLine);
-
-}
-
-void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes)  {
-
-    clearRow(1);
-
-    for (int i=0; i<numberOfNotes; i++) {
-
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[notes[i]])));
-        if (!i) lcdLine[1] = nameBuffer;
-        else lcdLine[1] += nameBuffer;
-        lcdLine[1] += octaves[i];
-        lcdLine[1] += " ";
-
-    }
-
-    if (lcdLine[PAD_NOTE_ROW].length() > NUMBER_OF_LCD_COLUMNS)   {
-
-        //scrolling logic
-        scrollEnabled[1] = true;
-
-    }   else {
-
-        scrollEnabled[1] = false;
-        scrollIndex = 0;
-        scrollDirection[1] = true;
-
-    }
-
-    lineChange[1] = true;
-    expandLine(1, regularLine);
-
-}
-
 void LCD::displayMessage(uint8_t row, const char *message, bool stayOn)  {
 
     if (lcdLineMessage[row] == message) return; //same message
@@ -586,20 +487,21 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t start
     if (!startIndex)
         //overwrite current text on selected line
         lcdLine[row] = text;
-    else {
+    else {  Serial.println("indexing");
 
         //append characters
         uint8_t charArrayIndex = 0;
-        while (!text[charArrayIndex] != '\0')   {
+        while (text[charArrayIndex] != '\0')   {
 
             lcdLine[row][startIndex+charArrayIndex] = text[charArrayIndex];
             charArrayIndex++;
 
-        }
+        }   Serial.println(lcdLine[row]);
 
     }
 
     expandLine(row, regularLine);
+
     lineChange[row] = true;
 
     if (size > NUMBER_OF_LCD_COLUMNS) {

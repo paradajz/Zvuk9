@@ -36,14 +36,9 @@ class LCD   {
     void displayHelloMessage();
     void displayEditModeNotAllowed(padEditError_t errorType);
 
-    void displayNoteChange(changeOutput_t result, changeType_t type, int8_t value);
     void displayOctaveChange(uint8_t octave);
     void displayPadEditMode(uint8_t padNumber);
     void clearPadEditMode();
-
-    void displayMIDIchannelChange(uint8_t channel);
-    void displayActiveOctave(int8_t octave);
-    void displayActivePadNotes(uint8_t *notes, uint8_t *octaves, uint8_t numberOfNotes);
 
     void clearMessage(bool forceClear = false);
 

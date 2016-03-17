@@ -28,6 +28,10 @@ class MessageBuilder {
     void displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber);
     void displayCClimitChange(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
     void displayCCchange(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayMIDIchannelChange(uint8_t channel);
+    void displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes);
+    void displayActiveOctave(int8_t octave);
+    void displayNoteChange(changeOutput_t result, changeType_t type, int8_t value);
 
     private:
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex = 0);

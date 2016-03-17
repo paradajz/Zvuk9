@@ -179,7 +179,11 @@ void MessageBuilder::displayTransportControl(transportControl_t type, bool state
         string_line = nameBuffer;
         break;
 
-    }   updateDisplay(1, message_std);
+    }
+
+    updateDisplay(1, message_std);
+    string_line = emptyLine;
+    updateDisplay(2, message_std);
 
 }
 
@@ -193,8 +197,8 @@ void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _sp
         case featureY:
         if (_splitState == splitXYFunctions) {
 
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offLocalArray[0])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onLocalArray[0])));
+            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offLocalArray[messageType])));
+            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onLocalArray[messageType])));
 
             string_line = nameBuffer;
             updateDisplay(1, message_std);
@@ -207,48 +211,40 @@ void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _sp
 
         else {
 
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offGlobalArray[0])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onGlobalArray[0])));
+            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offGlobalArray[messageType])));
+            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onGlobalArray[messageType])));
 
             string_line = nameBuffer;
             updateDisplay(1, message_std);
 
             string_line = "all pads";
-            updateDisplay(3, message_std);
+            updateDisplay(2, message_std);
 
         }
         break;
 
         case featureSplit:
-        if (_splitState == splitOff)  {
+        switch(_splitState) {
 
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[2])));
+            case splitOff:
+            case splitXY:
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[_splitState])));
             string_line = nameBuffer;
-
             updateDisplay(1, message_std);
-
-        }   else if (_splitState == splitXY) {
-
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[0])));
-            string_line = nameBuffer;
-
-            updateDisplay(1, message_std);
-
-        }   else {
-
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[0])));
-            string_line = nameBuffer;
-
-            updateDisplay(1, message_std);
-
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[1])));
-            string_line = nameBuffer;
-
+            string_line = emptyLine;
             updateDisplay(2, message_std);
+            break;
+
+            case splitXYFunctions:
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[splitXY])));
+            string_line = nameBuffer;
+            updateDisplay(1, message_std);
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[splitXYFunctions])));
+            string_line = nameBuffer;
+            updateDisplay(2, message_std);
+            break;
 
         }
-
-        break;
 
         default:
         break;
@@ -312,6 +308,93 @@ void MessageBuilder::displayCCchange(ccType_t type, splitState_t _splitState, ui
     string_line += padNumber; //local change
 
     updateDisplay(2, message_std);
+
+}
+
+void MessageBuilder::displayMIDIchannelChange(uint8_t channel) {
+
+    strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[5])));
+    string_line = nameBuffer;
+    string_line += channel;
+
+    updateDisplay(1, message_std);
+    string_line = emptyLine;
+    updateDisplay(2, message_std);
+
+}
+
+void MessageBuilder::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes)  {
+
+    for (int i=0; i<numberOfNotes; i++) {
+
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[notes[i]])));
+        if (!i) string_line = nameBuffer;
+        else string_line += nameBuffer;
+        string_line += octaves[i];
+        string_line += " ";
+
+    }
+
+    updateDisplay(1, text);
+
+}
+
+void MessageBuilder::displayActiveOctave(int8_t octave)   {
+
+    //used only in pad edit mode
+    string_line = "Active octave: ";
+    string_line += octave;
+
+    updateDisplay(2, text);
+
+}
+
+void MessageBuilder::displayNoteChange(changeOutput_t result, changeType_t type, int8_t value) {
+
+    if (type == noteUpOrDown)  {
+
+        if (result == outputChanged)    {
+
+            string_line = value ? "One note up" : "One note down";
+            updateDisplay(1, message_std);
+            string_line = emptyLine;
+            updateDisplay(2, message_std);
+
+        } else if (result == outOfRange)  {
+
+            string_line = "Out of range!";
+            updateDisplay(1, message_std);
+            string_line = emptyLine;
+            updateDisplay(2, message_std);
+
+        }   else if (result == notAllowed)  {
+
+            string_line = "Switch to";
+            updateDisplay(1, message_std);
+
+            string_line = "predefined preset";
+            updateDisplay(2, message_std);
+
+        }
+
+    }   else {  //octave/tonic change
+
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[type])));
+        string_line = nameBuffer;
+
+        if (type == octaveChange) string_line += value;
+        else if (type == noteChange) {
+
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
+            string_line += nameBuffer;
+
+        }
+
+        updateDisplay(1, message_std);
+        string_line = emptyLine;
+        updateDisplay(2, message_std);
+
+    }
 
 }
 

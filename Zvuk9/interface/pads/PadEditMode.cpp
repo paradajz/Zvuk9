@@ -16,7 +16,7 @@ void Pads::setupPadEditMode(uint8_t pad)    {
         Serial.println(activeOctave);
     #endif
 
-    lcDisplay.displayActiveOctave(normalizeOctave(activeOctave));
+    messageBuilder.displayActiveOctave(normalizeOctave(activeOctave));
     displayActivePadNotes(pad);
     leds.displayActiveNoteLEDs(true, pad);
 
@@ -48,7 +48,7 @@ void Pads::displayActivePadNotes(uint8_t pad) {
 
     }
 
-    lcDisplay.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
+    messageBuilder.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
 
 }
 
