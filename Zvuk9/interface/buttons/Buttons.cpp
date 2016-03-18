@@ -554,7 +554,6 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
         if (pads.isUserScale(pads.getActivePreset()))    {
 
-            //padEditModeResult_t result = pads.setupPadEditMode(!pads.editModeActive())
             pads.setEditMode(!pads.editModeActive());
 
             if (pads.editModeActive())  {
@@ -600,27 +599,18 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
         switch(editMode)    {
 
             case true:
-            //do not shift octaves while pad is pressed
-            if (pads.isPadPressed(pads.getLastTouchedPad()))   {
+            switch(state)   {
 
-                messageBuilder.displayEditModeNotAllowed(padNotReleased);
+                case false:
+                pads.changeActiveOctave(direction);
+                messageBuilder.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
+                leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
+                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                break;
 
-            }   else {
-
-                switch(state)   {
-
-                    case false:
-                    pads.changeActiveOctave(direction);
-                    messageBuilder.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
-                    leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-                    break;
-
-                    case true:
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-                    break;
-
-                }
+                case true:
+                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+                break;
 
             }
             break;
@@ -638,7 +628,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     messageBuilder.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
 
-                }   else {
+                    }   else {
 
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
 

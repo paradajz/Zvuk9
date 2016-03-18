@@ -348,13 +348,14 @@ void MessageBuilder::displayPadReleaseError(padReleaseError_t error)    {
         case changeTonic:
         strcpy_P(nameBuffer, changeTonic_string);
         string_line = nameBuffer;
-        updateDisplay(1, message, 0, true);
+        updateDisplay(2, message, 0, true);
         break;
 
         case enterPadEditMode:
         strcpy_P(nameBuffer, enterPadEditMode_string);
         string_line = nameBuffer;
-        updateDisplay(1, message, 0, true);
+        updateDisplay(2, message, 0, true);
+        break;
         break;
 
         default:
