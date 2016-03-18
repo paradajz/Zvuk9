@@ -38,15 +38,14 @@ void LCD::init()    {
        lastLCDmessage[i].reserve(MAX_TEXT_LENGTH);
        lastLCDmessage[i] = emptyLine;
 
-       lcdLineScroll[i].reserve(MAX_TEXT_LENGTH);
-       lcdLineScroll[i] = emptyLine;
-
        lineChange[i] = false;
        scrollEnabled[i] = false;
        scrollDirection[i] = true;
 
    }
 
+   lcdLineScroll.reserve(MAX_TEXT_LENGTH);
+   lcdLineScroll = emptyLine;
    lastScrollTime = 0;
    scrollIndex = 0;
    displayMessage_var = false;
@@ -98,15 +97,15 @@ void LCD::update()  {
 
             if ((newMillis() - lastScrollTime) > LCD_SCROLL_TIME)    {
 
-                lcdLineScroll[i] = lcdLine[i].substring(scrollIndex, MAX_TEXT_LENGTH);
+                lcdLineScroll = lcdLine[i].substring(scrollIndex, MAX_TEXT_LENGTH);
                 expandLine(i, scrollLine);
 
                 for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
 
-                    if (lastLCDLine[i][j] != lcdLineScroll[i][j])   {
+                    if (lastLCDLine[i][j] != lcdLineScroll[j])   {
 
                         lcd_gotoxy(j, i);
-                        lcd_putc(lcdLineScroll[i][j]);
+                        lcd_putc(lcdLineScroll[j]);
 
                     }
 
@@ -122,7 +121,7 @@ void LCD::update()  {
 
                     }   else scrollDirection[i] = false;
 
-                    }   else {
+                }   else {
 
                     scrollIndex--;
                     if (scrollIndex < 0) { scrollDirection[i] = true; scrollIndex = 0; }
@@ -182,13 +181,13 @@ void LCD::expandLine(uint8_t lineNumber, lcdLineType_t lineType)    {
         break;
 
         case scrollLine:
-        if (lcdLineScroll[lineNumber].length() < NUMBER_OF_LCD_COLUMNS)
+        if (lcdLineScroll.length() < NUMBER_OF_LCD_COLUMNS)
 
         do {
 
-            lcdLineScroll[lineNumber] += " ";
+            lcdLineScroll += " ";
 
-        }   while (lcdLineScroll[lineNumber].length() < NUMBER_OF_LCD_COLUMNS);
+        }   while (lcdLineScroll.length() < NUMBER_OF_LCD_COLUMNS);
         break;
 
     }

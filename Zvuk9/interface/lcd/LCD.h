@@ -36,7 +36,7 @@ class LCD   {
 
     String lcdLine[NUMBER_OF_LCD_ROWS];
     String lcdLineMessage[NUMBER_OF_LCD_ROWS];
-    String lcdLineScroll[NUMBER_OF_LCD_ROWS];
+    String lcdLineScroll;
 
     String lastLCDLine[NUMBER_OF_LCD_ROWS];
     String lastLCDmessage[NUMBER_OF_LCD_ROWS];
