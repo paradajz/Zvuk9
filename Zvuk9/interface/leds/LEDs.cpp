@@ -2,6 +2,23 @@
 #include "../../hardware/timer/TimerObject.h"
 #include "../pads/Pads.h"
 
+uint8_t intensity2value(ledIntensity_t intensity)  {
+
+    switch(intensity)   {
+
+        case ledIntensityOff:
+        return 0;
+
+        case ledIntensityDim:
+        return LED_INTENSITY_HALF;
+
+        case ledIntensityFull:
+        return LED_INTENSITY_FULL;
+
+    }
+
+}
+
 const uint8_t ledNoteArray[] = {
 
     LED_NOTE_C,
@@ -45,20 +62,20 @@ void LEDs::init()   {
 void LEDs::allLEDsOff() {
 
     for (int i=0; i<NUMBER_OF_LEDS; i++)
-        timers.setLEDstate(i, ledIntensityOff);
+        timers.setLEDstate(i, LED_INTENSITY_OFF);
 
 }
 
 void LEDs::allLEDsOn() {
 
     for (int i=0; i<NUMBER_OF_LEDS; i++)
-        timers.setLEDstate(i, ledIntensityFull);
+        timers.setLEDstate(i, LED_INTENSITY_FULL);
 
 }
 
 void LEDs::setLEDstate(uint8_t ledNumber, ledIntensity_t state)    {
 
-    timers.setLEDstate(ledNumber, state);
+    timers.setLEDstate(ledNumber, intensity2value(state));
 
 }
 
@@ -83,14 +100,14 @@ void LEDs::setFadeSpeed(uint8_t speed)  {
 void LEDs::tonicLEDsOff()   {
 
     for (int i=0; i<MIDI_NOTES; i++)
-        timers.setLEDstate(ledNoteArray[i], ledIntensityOff);
+        timers.setLEDstate(ledNoteArray[i], LED_INTENSITY_OFF);
 
 }
 
 void LEDs::setNoteLEDstate(note_t note, ledIntensity_t state)   {
 
     uint8_t ledNumber = getLEDnumberFromTonic(note);
-    timers.setLEDstate(ledNumber, state);
+    timers.setLEDstate(ledNumber, intensity2value(state));
 
 }
 

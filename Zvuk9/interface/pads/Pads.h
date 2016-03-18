@@ -66,6 +66,7 @@ class Pads  {
     bool getAfterTouchSendEnabled(uint8_t padNumber);
     bool getCCXsendEnabled(uint8_t padNumber);
     bool getCCYsendEnabled(uint8_t padNumber);
+    splitState_t getSplitState();
     //setters
     void notesOnOff();
     void aftertouchOnOff();
@@ -99,10 +100,6 @@ class Pads  {
     //midi channel
     uint8_t getMIDIchannel();
     bool setMIDIchannel(uint8_t channel);
-
-    //split
-    splitState_t getSplitState();
-    ledIntensity_t getSplitStateLEDvalue();
 
     //pad info
     uint8_t getLastTouchedPad();

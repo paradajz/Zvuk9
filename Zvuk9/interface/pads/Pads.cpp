@@ -726,26 +726,6 @@ void Pads::sendXY(uint8_t pad)  {
 
 }
 
-ledIntensity_t Pads::getSplitStateLEDvalue()    {
-
-    switch (splitCounter)   {
-
-        case 0:
-        return ledIntensityOff;
-        break;
-
-        case 1:
-        return ledIntensityDim;
-        break;
-
-        case 2:
-        return ledIntensityFull;
-        break;
-
-    }   return ledIntensityOff;
-
-}
-
 uint8_t Pads::getNumberOfAssignedNotes(uint8_t padNumber)   {
 
     if (isPredefinedScale(activePreset)) return 1; //predefined presets only have one note

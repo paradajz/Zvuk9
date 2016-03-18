@@ -27,9 +27,9 @@ typedef enum {
 
 typedef enum {
 
-    ledIntensityOff = 0x00,
-    ledIntensityDim = HALF_INTENSITY,
-    ledIntensityFull = FULL_INTENSITY
+    ledIntensityOff,
+    ledIntensityDim,
+    ledIntensityFull
 
 } ledIntensity_t;
 

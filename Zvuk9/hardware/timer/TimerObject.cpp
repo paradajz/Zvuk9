@@ -12,7 +12,7 @@
 
 //LEDs
 volatile int8_t             activeColumnInterrupt = 0;
-ledIntensity_t              ledState[NUMBER_OF_LEDS];
+uint8_t                     ledState[NUMBER_OF_LEDS];
 int16_t                     transitionCounter[NUMBER_OF_LEDS];
 volatile uint8_t            pwmSteps = DEFAULT_FADE_SPEED;
 
@@ -169,7 +169,7 @@ ISR(TIMER0_COMPA_vect)    {
         activateColumn(activeColumnInterrupt);
 
         uint8_t ledNumber;
-        ledIntensity_t ledStateSingle;
+        uint8_t ledStateSingle;
         uint8_t currentStepValue;
         bool stepDirection;
         bool stepUpdate;
@@ -240,11 +240,22 @@ ISR(TIMER3_COMPA_vect)  {
 
 ledIntensity_t TimerObject::getLEDstate(uint8_t ledNumber)  {
 
-    return ledState[ledNumber];
+    switch(ledState[ledNumber]) {
+
+        case LED_INTENSITY_FULL:
+        return ledIntensityFull;
+
+        case LED_INTENSITY_HALF:
+        return ledIntensityDim;
+
+        default:
+        return ledIntensityOff;
+
+    }
 
 }
 
-void TimerObject::setLEDstate(uint8_t ledNumber, ledIntensity_t intensity) {
+void TimerObject::setLEDstate(uint8_t ledNumber, uint8_t intensity) {
 
     ledState[ledNumber] = intensity;
 
