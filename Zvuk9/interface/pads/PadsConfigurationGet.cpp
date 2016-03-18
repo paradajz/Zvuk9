@@ -513,7 +513,7 @@ uint8_t Pads::getActivePreset()    {
 
 }
 
-curveType_t Pads::getPadCurve(curveCoordinate_t coordinate, uint8_t padNumber)    {
+curveType_t Pads::getCCcurve(curveCoordinate_t coordinate, uint8_t padNumber)    {
 
     switch(coordinate)   {
 
@@ -530,7 +530,7 @@ curveType_t Pads::getPadCurve(curveCoordinate_t coordinate, uint8_t padNumber)  
 
 }
 
-uint8_t Pads::getPadCClimitValue(ccType_t type, ccLimitType_t limitType, uint8_t padNumber)   {
+uint8_t Pads::getCClimitValue(ccType_t type, ccLimitType_t limitType, uint8_t padNumber)   {
 
     switch(type)  {
 
@@ -548,7 +548,7 @@ uint8_t Pads::getPadCClimitValue(ccType_t type, ccLimitType_t limitType, uint8_t
 
 }
 
-uint8_t Pads::getPadCCvalue(ccType_t type, uint8_t padNumber)  {
+uint8_t Pads::getCCvalue(ccType_t type, uint8_t padNumber)  {
 
     switch(type)  {
 

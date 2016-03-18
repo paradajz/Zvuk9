@@ -571,7 +571,7 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
 }
 
-changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t steps)  {
+changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t steps)  {
 
     bool globalShift = (splitCounter == 0);
     changeOutput_t result = outputChanged;
@@ -735,7 +735,7 @@ changeOutput_t Pads::changeXYlimits(bool direction, ccLimitType_t ccType, int8_t
 
 }
 
-changeOutput_t Pads::changeCurve(bool direction, curveCoordinate_t coordinate, int8_t steps)  {
+changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate, int8_t steps)  {
 
     bool globalShift = (splitCounter == 0);
     changeOutput_t result = outputChanged;
@@ -830,29 +830,27 @@ changeOutput_t Pads::changeCurve(bool direction, curveCoordinate_t coordinate, i
 
 }
 
-changeOutput_t Pads::setMIDIchannel(uint8_t channel)  {
+bool Pads::setMIDIchannel(uint8_t channel)  {
 
     if (channel != midiChannel) {
 
         midiChannel = channel;
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram, channel);
-        return outputChanged;
+        return true;
 
-    }
-
-    return noChange;
+    }   return false;
 
 }
 
-changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
+changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
 
     //used in pad edit mode (user scale)
     //add or delete note on pressed pad
 
     uint16_t noteIndex = 0;
     //calculate note to be added or removed
-    uint8_t note = getActiveOctave()*MIDI_NOTES + tonic;
-    if (note > 127) {
+    uint8_t newNote = getActiveOctave()*MIDI_NOTES + (uint8_t)note;
+    if (newNote > 127) {
 
         lcDisplay.displayMessage(1, "Out of range");
         return outOfRange;
@@ -863,7 +861,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
 
     //check if calculated note is already assigned to pad
     for (int i=0; i<NOTES_PER_PAD; i++)
-        if (padNote[pad][i] == note) { addOrRemove = false; noteIndex = i; break; }
+        if (padNote[pad][i] == newNote) { addOrRemove = false; noteIndex = i; break; }
 
     uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
 
@@ -885,8 +883,8 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
         }
 
         //assign new pad note
-        padNote[pad][noteIndex] = note;
-        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+noteIndex+(NOTES_PER_PAD*(uint16_t)pad), note);
+        padNote[pad][noteIndex] = newNote;
+        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+noteIndex+(NOTES_PER_PAD*(uint16_t)pad), newNote);
 
         #if MODE_SERIAL > 0
             Serial.print(F("Adding note "));
@@ -894,35 +892,35 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, uint8_t tonic)    {
 
     }   else {
 
-        note = BLANK_NOTE; //else delete note (assign BLANK_NOTE)
+            newNote = BLANK_NOTE; //else delete note (assign BLANK_NOTE)
 
-        //assign new pad note
-        padNote[pad][noteIndex] = note;
+            //assign new pad note
+            padNote[pad][noteIndex] = newNote;
 
-        //copy note array
-        uint8_t tempNoteArray[NOTES_PER_PAD];
+            //copy note array
+            uint8_t tempNoteArray[NOTES_PER_PAD];
 
-        for (int i=0; i<NOTES_PER_PAD; i++)
-            tempNoteArray[i] = padNote[pad][i];
+            for (int i=0; i<NOTES_PER_PAD; i++)
+                tempNoteArray[i] = padNote[pad][i];
 
-        //shift all notes so that BLANK_NOTE is at the end of array
-        for (int i=noteIndex; i<(NOTES_PER_PAD-1); i++) {
+            //shift all notes so that BLANK_NOTE is at the end of array
+            for (int i=noteIndex; i<(NOTES_PER_PAD-1); i++) {
 
-            padNote[pad][i] = tempNoteArray[i+1];
+                padNote[pad][i] = tempNoteArray[i+1];
 
-        }   padNote[pad][NOTES_PER_PAD-1] = BLANK_NOTE;
+            }   padNote[pad][NOTES_PER_PAD-1] = BLANK_NOTE;
 
-        for (int i=0; i<NOTES_PER_PAD; i++)
-            configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*(uint16_t)pad), padNote[pad][i]);
+            for (int i=0; i<NOTES_PER_PAD; i++)
+                configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*(uint16_t)pad), padNote[pad][i]);
 
-        #if MODE_SERIAL >0
-            Serial.print(F("Removing note "));
-        #endif
+            #if MODE_SERIAL >0
+                Serial.print(F("Removing note "));
+            #endif
 
     }
 
     #if MODE_SERIAL > 0
-        Serial.print(tonic);
+        Serial.print((uint8_t)note);
         Serial.print(F(" to pad "));
         Serial.println(pad);
     #endif

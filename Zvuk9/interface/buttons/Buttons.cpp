@@ -510,7 +510,7 @@ void Buttons::handleTonicEvent(note_t note) {
 
         //don't allow change of tonic while pads are pressed
         for (int i=0; i<NUMBER_OF_PADS; i++)
-        if (pads.getPadPressed(i))  {
+        if (pads.isPadPressed(i))  {
 
             lcDisplay.displayMessage(1, "Release pad to");
             lcDisplay.displayMessage(2, "change tonic");
@@ -544,14 +544,15 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
         //try to enter pad edit mode
 
-        if (pads.getActivePreset() >= NUMBER_OF_PREDEFINED_SCALES)    {
+        if (pads.isUserScale(pads.getActivePreset()))    {
 
+            //padEditModeResult_t result = pads.setupPadEditMode(!pads.editModeActive())
             pads.setEditMode(!pads.editModeActive());
 
             if (pads.editModeActive())  {
 
                 //check if last touched pad is pressed
-                if (pads.getPadPressed(pads.getLastTouchedPad()))   {
+                if (pads.isPadPressed(pads.getLastTouchedPad()))   {
 
                     messageBuilder.displayEditModeNotAllowed(padNotReleased);
                     pads.setEditMode(false);
@@ -573,7 +574,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
         }   else {
 
-            messageBuilder.displayEditModeNotAllowed(noUserPreset);
+            messageBuilder.displayEditModeNotAllowed(notUserPreset);
 
         }
 
@@ -592,7 +593,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
             case true:
             //do not shift octaves while pad is pressed
-            if (pads.getPadPressed(pads.getLastTouchedPad()))   {
+            if (pads.isPadPressed(pads.getLastTouchedPad()))   {
 
                 messageBuilder.displayEditModeNotAllowed(padNotReleased);
 
@@ -640,7 +641,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 //shift single note, but only in predefined presets
                 if (state)    {
 
-                    if (pads.getPadPressed(pads.getLastTouchedPad()))   {
+                    if (pads.isPadPressed(pads.getLastTouchedPad()))   {
 
                         messageBuilder.displayEditModeNotAllowed(padNotReleased);
                         return;

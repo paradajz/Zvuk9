@@ -30,30 +30,10 @@ const uint8_t padID[] = { PAD_0, PAD_1, PAD_2, PAD_3, PAD_4, PAD_5, PAD_6, PAD_7
 class Pads  {
 
     public:
-
+    //init
     Pads();
     void init();
     void update(bool midiEnabled = true);
-    changeOutput_t assignPadNote(uint8_t pad, uint8_t tonic);
-
-    //program
-    bool setActiveProgram(int8_t program);
-
-    //pad edit
-    void setupPadEditMode(uint8_t pad);
-    void displayActivePadNotes(uint8_t pad);
-    bool editModeActive();
-    void setEditMode(bool state);
-    void exitPadEditMode();
-
-    void notesOnOff();
-    void aftertouchOnOff();
-    void xOnOff();
-    void yOnOff();
-
-    uint8_t getPadNote(uint8_t pad, uint8_t note);
-
-    changeOutput_t changePadNote(uint8_t tonic);
 
     //calibration
     bool setLowerPressureLimit(uint8_t pad, uint16_t limit);
@@ -63,57 +43,72 @@ class Pads  {
     bool setLowerYLimit(uint8_t pad, uint16_t limit);
     bool setUpperYLimit(uint8_t pad, uint16_t limit);
 
-    void updateSplit();
+    //program/preset
+    //getters
+    uint8_t getActiveProgram();
+    uint8_t getActivePreset();
+    //setters
+    bool setActiveProgram(int8_t program);
+    bool setActivePreset(uint8_t preset);
 
-    bool noteActive(note_t note);
-
-    //note control
-    changeOutput_t shiftOctave(bool direction);
-    changeOutput_t shiftNote(bool direction, bool internalChange = false);
-    changeOutput_t setTonic(note_t note, bool internalChange = false);
+    //pad edit mode
+    void setEditMode(bool state);
+    bool editModeActive();
+    void setupPadEditMode(uint8_t pad);
+    void exitPadEditMode();
+    void displayActivePadNotes(uint8_t pad);
+    changeOutput_t assignPadNote(uint8_t pad, note_t note);
     void changeActiveOctave(bool direction);
 
-    //setters
-    changeOutput_t changeCC(bool direction, ccType_t type, int8_t steps);
-    changeOutput_t changeXYlimits(bool direction, ccLimitType_t ccType, int8_t steps);
-    changeOutput_t changeCurve(bool direction, curveCoordinate_t coordinate, int8_t steps=1);
-    changeOutput_t setMIDIchannel(uint8_t channel);
-
+    //functions on/off
     //getters
-    //features - single
     bool getNoteSendEnabled(uint8_t padNumber);
     bool getAfterTouchSendEnabled(uint8_t padNumber);
     bool getCCXsendEnabled(uint8_t padNumber);
     bool getCCYsendEnabled(uint8_t padNumber);
+    //setters
+    void notesOnOff();
+    void aftertouchOnOff();
+    void xOnOff();
+    void yOnOff();
+    void updateSplit();
 
-    note_t getActiveTonic();
+    //notes
+    //getters
     uint8_t getActiveOctave();
+    uint8_t getPadNote(uint8_t pad, uint8_t note);
+    note_t getActiveTonic();
+    bool noteActive(note_t note);
+    note_t getTonicFromNote(uint8_t note);
+    uint8_t getOctaveFromNote(uint8_t note);
+    //setters
+    changeOutput_t shiftOctave(bool direction);
+    changeOutput_t shiftNote(bool direction, bool internalChange = false);
+    changeOutput_t setTonic(note_t note, bool internalChange = false);
+
+    //CC
+    //getters
+    uint8_t getCCvalue(ccType_t type, uint8_t padNumber);
+    uint8_t getCClimitValue(ccType_t type, ccLimitType_t limitType, uint8_t padNumber);
+    curveType_t getCCcurve(curveCoordinate_t curve, uint8_t padNumber);
+    //setters
+    changeOutput_t changeCC(bool direction, ccType_t type, int8_t steps);
+    changeOutput_t changeCClimits(bool direction, ccLimitType_t ccType, int8_t steps);
+    changeOutput_t changeCCcurve(bool direction, curveCoordinate_t coordinate, int8_t steps=1);
+
+    //midi channel
     uint8_t getMIDIchannel();
+    bool setMIDIchannel(uint8_t channel);
 
     //split
     splitState_t getSplitState();
     ledIntensity_t getSplitStateLEDvalue();
 
-    //CC parameters
-    uint8_t getPadCCvalue(ccType_t type, uint8_t padNumber);
-    uint8_t getPadCClimitValue(ccType_t type, ccLimitType_t limitType, uint8_t padNumber);
-    curveType_t getPadCurve(curveCoordinate_t curve, uint8_t padNumber);
-
-    //notes
-    note_t getTonicFromNote(uint8_t note);
-    uint8_t getOctaveFromNote(uint8_t note);
-
-    //last touched pad - 0 default
+    //pad info
     uint8_t getLastTouchedPad();
+    bool isPadPressed(uint8_t padNumber);
 
-    //check if selected pad is still pressed
-    bool getPadPressed(uint8_t padNumber);
-
-    uint8_t getActivePreset();
-
-    bool setActivePreset(uint8_t preset);
-
-    uint8_t getActiveProgram();
+    //scale info
     bool isUserScale(uint8_t scale);
     bool isPredefinedScale(uint8_t scale);
 

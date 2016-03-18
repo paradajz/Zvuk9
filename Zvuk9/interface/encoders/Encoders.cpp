@@ -66,7 +66,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     if (menu.menuDisplayed() && (encoderNumber != PROGRAM_ENCODER)) return;
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
-    if (pads.getPadPressed(i)) {
+    if (pads.isPadPressed(i)) {
 
         //disable encoders while pads are pressed
         lcDisplay.displayMessage(1, "Release pad to");
@@ -144,47 +144,47 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
         case X_CC_ENCODER:
         pads.changeCC(direction, ccTypeX, steps);
-        messageBuilder.displayCCchange(ccTypeX,  _splitState, pads.getPadCCvalue(ccTypeX, lastTouchedPad), lastTouchedPad+1);
+        messageBuilder.displayCCchange(ccTypeX,  _splitState, pads.getCCvalue(ccTypeX, lastTouchedPad), lastTouchedPad+1);
         break;
 
         case Y_CC_ENCODER:
         pads.changeCC(direction, ccTypeY, steps);
-        messageBuilder.displayCCchange(ccTypeY,  _splitState, pads.getPadCCvalue(ccTypeY, lastTouchedPad), lastTouchedPad+1);
+        messageBuilder.displayCCchange(ccTypeY,  _splitState, pads.getCCvalue(ccTypeY, lastTouchedPad), lastTouchedPad+1);
         break;
 
         case X_MAX_ENCODER:
-        pads.changeXYlimits(direction, ccLimitTypeXmax, steps);
-        value = pads.getPadCClimitValue(ccTypeX, ccLimitTypeXmax, lastTouchedPad);
+        pads.changeCClimits(direction, ccLimitTypeXmax, steps);
+        value = pads.getCClimitValue(ccTypeX, ccLimitTypeXmax, lastTouchedPad);
         messageBuilder.displayCClimitChange(ccLimitTypeXmax, _splitState, value, lastTouchedPad+1);
         break;
 
         case X_MIN_ENCODER:
-        pads.changeXYlimits(direction, ccLimitTypeXmin, steps);
-        value = pads.getPadCClimitValue(ccTypeX, ccLimitTypeXmin, lastTouchedPad);
+        pads.changeCClimits(direction, ccLimitTypeXmin, steps);
+        value = pads.getCClimitValue(ccTypeX, ccLimitTypeXmin, lastTouchedPad);
         messageBuilder.displayCClimitChange(ccLimitTypeXmin, _splitState, value, lastTouchedPad+1);
         break;
 
         case Y_MAX_ENCODER:
-        pads.changeXYlimits(direction, ccLimitTypeYmax, steps);
-        value = pads.getPadCClimitValue(ccTypeY, ccLimitTypeYmax, lastTouchedPad);
+        pads.changeCClimits(direction, ccLimitTypeYmax, steps);
+        value = pads.getCClimitValue(ccTypeY, ccLimitTypeYmax, lastTouchedPad);
         messageBuilder.displayCClimitChange(ccLimitTypeYmax, _splitState, value, lastTouchedPad+1);
         break;
 
         case Y_MIN_ENCODER:
-        pads.changeXYlimits(direction, ccLimitTypeYmin, steps);
-        value = pads.getPadCClimitValue(ccTypeY, ccLimitTypeYmin, lastTouchedPad);
+        pads.changeCClimits(direction, ccLimitTypeYmin, steps);
+        value = pads.getCClimitValue(ccTypeY, ccLimitTypeYmin, lastTouchedPad);
         messageBuilder.displayCClimitChange(ccLimitTypeYmin, _splitState, value, lastTouchedPad+1);
         break;
 
         case X_CURVE_ENCODER:
-        pads.changeCurve(direction, curveCoordinateX);
-        activeCurve = pads.getPadCurve(curveCoordinateX, lastTouchedPad);
+        pads.changeCCcurve(direction, curveCoordinateX);
+        activeCurve = pads.getCCcurve(curveCoordinateX, lastTouchedPad);
         messageBuilder.displayCurveChange(curveCoordinateX, _splitState, activeCurve, lastTouchedPad+1);
         break;
 
         case Y_CURVE_ENCODER:
-        pads.changeCurve(direction, curveCoordinateY);
-        activeCurve = pads.getPadCurve(curveCoordinateY, lastTouchedPad);
+        pads.changeCCcurve(direction, curveCoordinateY);
+        activeCurve = pads.getCCcurve(curveCoordinateY, lastTouchedPad);
         messageBuilder.displayCurveChange(curveCoordinateY, _splitState, activeCurve, lastTouchedPad+1);
         break;
 

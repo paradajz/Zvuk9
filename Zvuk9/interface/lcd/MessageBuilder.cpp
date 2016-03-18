@@ -411,13 +411,13 @@ void MessageBuilder::displayNoteChange(changeOutput_t result, changeType_t type,
 
 }
 
-void MessageBuilder::displayEditModeNotAllowed(padEditError_t errorType)   {
+void MessageBuilder::displayEditModeNotAllowed(padEditModeResult_t errorType)   {
 
     uint8_t errorIndex = 0;
 
     switch (errorType)  {
 
-        case noUserPreset:
+        case notUserPreset:
         errorIndex = 0;
         break;
 

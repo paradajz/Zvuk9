@@ -138,7 +138,7 @@ uint8_t Pads::calibrateXY(uint8_t padNumber, int16_t xyValue, ccType_t type) {
 
 }
 
-bool Pads::getPadPressed(uint8_t padNumber) {
+bool Pads::isPadPressed(uint8_t padNumber) {
 
     return bitRead(padPressed, padNumber);
 
@@ -466,17 +466,17 @@ void Pads::updateLastTouchedPad()   {
 
     if (padID[activePad] != lastPressedPad) {
 
+        if (isPadPressed(lastPressedPad)) previousPad = lastPressedPad;
+            lastPressedPad = padID[activePad];
+
         if (editModeActive())
             setupPadEditMode(padID[activePad]);
-
-        if (getPadPressed(lastPressedPad)) previousPad = lastPressedPad;
-            lastPressedPad = padID[activePad];
 
     }
 
     if (previousPad != -1)  {
 
-        if (!getPadPressed(previousPad) && !getPadPressed(lastPressedPad))
+        if (!isPadPressed(previousPad) && !isPadPressed(lastPressedPad))
         previousPad = -1;
 
     }
@@ -856,15 +856,15 @@ void Pads::checkMIDIdata()   {
 
     }
 
-    if ((previousPad != -1) && getPadPressed(previousPad) && !midiNoteOn)  {
+    if ((previousPad != -1) && isPadPressed(previousPad) && !midiNoteOn)  {
 
         //restore data from last touched pad (display+midi cc x/cc y)
         bool ccXsendEnabled = getCCXsendEnabled(previousPad);
         bool ccYsendEnabled = getCCYsendEnabled(previousPad);
-        uint8_t ccXvaluePreviousPad = getPadCCvalue(ccTypeX, previousPad);
-        uint8_t ccYvaluePreviousPad = getPadCCvalue(ccTypeY, previousPad);
-        uint8_t ccXvalueActivePad = getPadCCvalue(ccTypeX, pad);
-        uint8_t ccYvalueActivePad = getPadCCvalue(ccTypeY, pad);
+        uint8_t ccXvaluePreviousPad = getCCvalue(ccTypeX, previousPad);
+        uint8_t ccYvaluePreviousPad = getCCvalue(ccTypeY, previousPad);
+        uint8_t ccXvalueActivePad = getCCvalue(ccTypeX, pad);
+        uint8_t ccYvalueActivePad = getCCvalue(ccTypeY, pad);
 
         if ((ccXvalueActivePad == ccXvaluePreviousPad) && ccXsendEnabled)
             midi.sendControlChange(midiChannel, ccXvaluePreviousPad, lastXMIDIvalue[previousPad]);
@@ -926,7 +926,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
                 if (j == pad) continue;
 
                 //don't check released pads
-                if (!getPadPressed(j)) continue;
+                if (!isPadPressed(j)) continue;
 
                 //only send note off if the same note isn't active on some other pad already
                 if (padNote[j][i] == padNote[pad][i])    {
@@ -1023,7 +1023,7 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
             for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-                if (!getPadPressed(i)) continue; //skip released pad
+                if (!isPadPressed(i)) continue; //skip released pad
                 if (i == pad) continue; //skip current pad
 
                 for (int j=0; j<NOTES_PER_PAD; j++) {
@@ -1059,7 +1059,7 @@ bool Pads::checkPadsPressed()   {
 
     //return true if any pad is pressed
     for (int i=0; i<NUMBER_OF_PADS; i++)
-        if (getPadPressed(i)) return true;
+        if (isPadPressed(i)) return true;
 
     return false;
 

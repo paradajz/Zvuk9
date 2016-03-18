@@ -92,10 +92,12 @@ typedef enum {
 
 typedef enum {
 
-    noUserPreset,
-    padNotReleased
+    notUserPreset,
+    padNotReleased,
+    padEditEnter,
+    padEditExit
 
-} padEditError_t;
+} padEditModeResult_t;
 
 typedef enum {
 
