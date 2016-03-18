@@ -48,7 +48,7 @@ void startUpAnimation() {
 
     sei();
 
-    lcDisplay.displayHelloMessage();
+    messageBuilder.displayHelloMessage();
     newDelay(600);
 
     //restore led states
@@ -78,12 +78,6 @@ void initHardware() {
     pads.init();
     encoders.init();
 
-    //setup program/preset on display
-    uint8_t activeProgram = pads.getActiveProgram();
-    uint8_t activePreset = pads.getActivePreset();
-
-    messageBuilder.displayProgramAndPreset(activeProgram+1, activePreset);
-
     leds.displayActiveNoteLEDs();
 
     #if START_UP_ANIMATION > 0
@@ -91,6 +85,15 @@ void initHardware() {
     #else
         sei();
     #endif
+
+    //clear screen
+    lcd_clrscr();
+
+    //setup program/preset on display
+    uint8_t activeProgram = pads.getActiveProgram();
+    uint8_t activePreset = pads.getActivePreset();
+
+    messageBuilder.displayProgramAndPreset(activeProgram+1, activePreset);
 
     buttons.init();
 

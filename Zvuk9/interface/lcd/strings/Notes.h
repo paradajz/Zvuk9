@@ -1,5 +1,5 @@
-#ifndef NOTES_H_
-#define NOTES_H_
+#ifndef NOTES_STRINGS_H_
+#define NOTES_STRINGS_H_
 
 #include <avr/pgmspace.h>
 
@@ -16,12 +16,12 @@ const char PROGMEM tonicA_string[] PROGMEM = "A";
 const char PROGMEM tonicASharp_string[] PROGMEM = "A#";
 const char PROGMEM tonicB_strig[] PROGMEM = "B";
 
-const char PROGMEM tonic[] PROGMEM = "Tonic ";
-const char PROGMEM octave[] PROGMEM = "Octave ";
-const char PROGMEM activeOctave[] PROGMEM = "Active octave: ";
+const char PROGMEM tonic_string[] PROGMEM = "Tonic ";
+const char PROGMEM octave_string[] PROGMEM = "Octave ";
+const char PROGMEM activeOctave_string[] PROGMEM = "Active octave: ";
 
-const char PROGMEM noteDown[] PROGMEM = "One note down";
-const char PROGMEM noteUp[] PROGMEM = "One note up";
+const char PROGMEM noteDown_string[] PROGMEM = "One note down";
+const char PROGMEM noteUp_string[] PROGMEM = "One note up";
 
 PGM_P const noteNameArray[] PROGMEM = {
 

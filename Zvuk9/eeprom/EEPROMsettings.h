@@ -25,10 +25,6 @@ EEPROM addresses of parameters.
 #define EEPROM_SIZE                             4096
 
 //parameters
-
-#define NUMBER_OF_PREDEFINED_SCALES             7
-#define NUMBER_OF_USER_SCALES                   10
-
 #define NUMBER_OF_PROGRAMS                      10
 
 typedef enum {

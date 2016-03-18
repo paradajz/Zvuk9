@@ -2,13 +2,10 @@
 #define LCD_H_
 
 #include "Arduino.h"
-#include "../../eeprom/EEPROMsettings.h"
 #include "../../Types.h"
-#include "../../midi/MIDI_parameters.h"
 #include "../../hardware/lcd/lcd.h"
 #include "LCDsettings.h"
-#include "strings/LCDstrings.h"
-#include "strings/Notes.h"
+#include "strings/Strings.h"
 #include "../../Types.h"
 #include "../../hardware/timer/TimerObject.h"
 #include "Macros.h"
@@ -23,7 +20,6 @@ class LCD   {
     void update();
     void displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex, bool overwrite);
     void displayMessage(uint8_t row, const char *message);
-    void displayHelloMessage();
 
     private:
     void expandLine(uint8_t lineNumber, lcdLineType_t lineType);

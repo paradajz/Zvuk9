@@ -1,5 +1,6 @@
 #include "Menu.h"
-#include "MenuStrings.h"
+#include "../MessageBuilder.h"
+#include "../strings/Strings.h"
 
 Menu::Menu()    {
 

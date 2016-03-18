@@ -8,5 +8,4 @@ typedef enum {
 } menuOptions;
 
 
-
-#endif /* OPTIONS_H_ */
+#endif

@@ -1,5 +1,5 @@
 #include "MessageBuilder.h"
-#include "menu/MenuStrings.h"
+#include "../../Scales.h"
 
 #define XY_POSITION_START               5
 #define X_COORDINATE_START              5
@@ -35,17 +35,31 @@ void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startI
 
 }
 
+void MessageBuilder::displayHelloMessage() {
+
+    strcpy_P(nameBuffer, welcome_string);
+
+    uint8_t charIndex = 0;
+    while (nameBuffer[charIndex] != '\0')   {
+
+        string_line = nameBuffer[charIndex];
+        //write directly to screen
+        lcd_putc(nameBuffer[charIndex]);
+        newDelay(75);
+        charIndex++;
+
+    }
+
+    newDelay(250);
+
+}
+
 void MessageBuilder::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
 
     //program and preset are displayed in single row
-    char_line[0] = 'P';
-    string_line = "P";
+    strcpy_P(nameBuffer, program_string);
+    string_line = nameBuffer;
     string_line += program;
-    char program_buffer[3];
-    itoa(program, program_buffer, 10);
-
-    char_line[1] = program_buffer[0];
-    if (program >= 10) char_line[2] = program_buffer[1];
 
     string_line += " ";
 
@@ -56,7 +70,8 @@ void MessageBuilder::displayProgramAndPreset(uint8_t program, uint8_t preset)   
 
     }   else {
 
-        string_line += "User preset ";
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(presetNameArray[NUMBER_OF_PREDEFINED_SCALES])));
+        string_line += nameBuffer;
         string_line += (preset - NUMBER_OF_PREDEFINED_SCALES + 1);
 
     }
@@ -203,15 +218,14 @@ void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _sp
         case featureAftertouch:
         case featureX:
         case featureY:
+        if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offArray[messageType])));
+        else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onArray[messageType])));
+        string_line = nameBuffer;
+        updateDisplay(1, message_std, 0, true);
         if (_splitState == splitXYFunctions) {
 
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offLocalArray[messageType])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onLocalArray[messageType])));
-
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(padAmountArray[0])));
             string_line = nameBuffer;
-            updateDisplay(1, message_std, 0, true);
-
-            string_line = "pad ";
             string_line += padNumber;
             updateDisplay(2, message_std, 0, true);
 
@@ -219,13 +233,8 @@ void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _sp
 
         else {
 
-            if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offGlobalArray[messageType])));
-            else                strcpy_P(nameBuffer, (char*)pgm_read_word(&(onGlobalArray[messageType])));
-
+            strcpy_P(nameBuffer, (char*)pgm_read_word(&(padAmountArray[1])));
             string_line = nameBuffer;
-            updateDisplay(1, message_std, 0, true);
-
-            string_line = "all pads";
             updateDisplay(2, message_std, 0, true);
 
         }
@@ -324,7 +333,7 @@ void MessageBuilder::displayCCchange(ccType_t type, splitState_t _splitState, ui
 
 void MessageBuilder::displayMIDIchannelChange(uint8_t channel) {
 
-    strcpy_P(nameBuffer, midiChannel);
+    strcpy_P(nameBuffer, midiChannel_string);
     string_line = nameBuffer;
     string_line += channel;
 
@@ -355,7 +364,7 @@ void MessageBuilder::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], u
 void MessageBuilder::displayActiveOctave(int8_t octave)   {
 
     //used only in pad edit mode
-    strcpy_P(nameBuffer, activeOctave);
+    strcpy_P(nameBuffer, activeOctave_string);
     string_line = nameBuffer;
     string_line += octave;
 
@@ -372,7 +381,7 @@ void MessageBuilder::displayNoteChange(changeOutput_t result, noteChangeType_t t
 
                 case outputChanged:
                 case noChange:
-                strcpy_P(nameBuffer, tonic);
+                strcpy_P(nameBuffer, tonic_string);
                 string_line = nameBuffer;
                 strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
                 string_line += nameBuffer;
@@ -396,7 +405,7 @@ void MessageBuilder::displayNoteChange(changeOutput_t result, noteChangeType_t t
 
         case octaveChange:
         //always display active octave, ignore out of range here
-        strcpy_P(nameBuffer, octave);
+        strcpy_P(nameBuffer, octave_string);
         string_line = nameBuffer;
         string_line += value;
         updateDisplay(1, message_std, 0, true);
@@ -408,7 +417,7 @@ void MessageBuilder::displayNoteChange(changeOutput_t result, noteChangeType_t t
         switch (result) {
 
             case outputChanged:
-            strcpy_P(nameBuffer, value ? noteUp : noteDown);
+            strcpy_P(nameBuffer, value ? noteUp_string : noteDown_string);
             string_line = nameBuffer;
             updateDisplay(1, message_std, 0, true);
             string_line = emptyLine;

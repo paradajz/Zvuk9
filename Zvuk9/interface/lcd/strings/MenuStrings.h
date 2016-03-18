@@ -1,10 +1,3 @@
-/*
- * Strings.h
- *
- *  Created on: Mar 11, 2016
- *      Author: igor
- */
-
 #ifndef MENU_SERVICEMENUSTRINGS_H_
 #define MENU_SERVICEMENUSTRINGS_H_
 
@@ -46,4 +39,4 @@ PGM_P const menu_subOptions_padCalibration[] PROGMEM = {
 
 };
 
-#endif /* MENU_SERVICEMENUSTRINGS_H_ */
+#endif

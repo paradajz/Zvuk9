@@ -17,6 +17,7 @@ class MessageBuilder {
 
     public:
     MessageBuilder();
+    void displayHelloMessage();
     void displayProgramAndPreset(uint8_t program, uint8_t preset);
     void displayNotes(uint8_t note[], uint8_t octave[], uint8_t numberOfNotes);
     void displayVelocity(uint8_t velocity);

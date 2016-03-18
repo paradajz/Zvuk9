@@ -8,6 +8,9 @@
 #include "Arduino.h"
 #include "Types.h"
 
+#define NUMBER_OF_PREDEFINED_SCALES             7
+#define NUMBER_OF_USER_SCALES                   10
+
 uint8_t getNotesPerScale(scale_t scale);
 note_t getScaleNote(scale_t scale, uint8_t note);
 

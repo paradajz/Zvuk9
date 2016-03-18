@@ -1,6 +1,6 @@
 #include "LCD.h"
 #include <util/delay.h>
-#include "Icons.h"
+//#include "Icons.h"
 
 #define X_COORDINATE_START              5
 #define Y_COORDINATE_START              10
@@ -42,21 +42,8 @@ void LCD::init()    {
    lastScrollTime = 0;
    scrollIndex = 0;
 
-   initIcons();
-
-}
-
-void LCD::displayHelloMessage() {
-
-    lastLCDLine[0] = helloMessage;
-    lcd_gotoxy(0,0);
-
-    for (int i=0; i<(int)lastLCDLine[0].length(); i++)  {
-
-        lcd_putc(lastLCDLine[0][i]);
-        newDelay(75);
-
-    } newDelay(250); lineChange[0] = true;
+   _delay_ms(100);
+   lcd_gotoxy(0,0);
 
 }
 
