@@ -54,6 +54,7 @@ void MessageBuilder::displayModifierEnabled()   {
     strcpy_P(nameBuffer, modifierEnabled_string);
     string_line = nameBuffer;
     updateDisplay(1, message, 0, true);
+
     strcpy_P(nameBuffer, emptyLine_string);
     string_line = nameBuffer;
     updateDisplay(2, message, 0, true);
@@ -65,8 +66,8 @@ void MessageBuilder::displayMIDIchannelChange(uint8_t channel) {
     strcpy_P(nameBuffer, midiChannel_string);
     string_line = nameBuffer;
     string_line += channel;
-
     updateDisplay(1, message, 0, true);
+
     strcpy_P(nameBuffer, emptyLine_string);
     string_line = nameBuffer;
     updateDisplay(2, message, 0, true);
@@ -76,17 +77,15 @@ void MessageBuilder::displayMIDIchannelChange(uint8_t channel) {
 void MessageBuilder::displayCCchange(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccArray[(uint8_t)type])));
-
     string_line = nameBuffer;
     string_line += ccValue;
-
     updateDisplay(1, message, 0, true);
 
     strcpy_P(nameBuffer, (_splitState == splitOff) ? padAmountSingle_string : padAmountAll_string);
     string_line = nameBuffer;
 
     if (!(_splitState == splitOff))
-    string_line += padNumber; //local change
+        string_line += padNumber; //local change
 
     updateDisplay(2, message, 0, true);
 
@@ -106,7 +105,7 @@ void MessageBuilder::displayCurveChange(curveCoordinate_t coordinate, splitState
     string_line = nameBuffer;
 
     if (!(_splitState == splitOff))
-    string_line += padNumber; //local change
+        string_line += padNumber; //local change
 
     updateDisplay(2, message, 0, true);
 
@@ -125,7 +124,7 @@ void MessageBuilder::displayCClimitChange(ccLimitType_t type, splitState_t _spli
     string_line = nameBuffer;
 
     if (!(_splitState == splitOff))
-    string_line += padNumber; //local change
+        string_line += padNumber; //local change
 
     updateDisplay(2, message, 0, true);
 
@@ -148,7 +147,8 @@ void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _sp
         string_line = nameBuffer;
 
         if (!(_splitState == splitOff))
-        string_line += padNumber; //local change
+            string_line += padNumber; //local change
+
         updateDisplay(2, message, 0, true);
         break;
 
@@ -280,13 +280,7 @@ void MessageBuilder::displayEditModeNotAllowed(padEditModeResult_t errorType)   
         break;
 
         case padNotReleased:
-        strcpy_P(nameBuffer, relasePad_string);
-        string_line = nameBuffer;
-        updateDisplay(1, message, 0, true);
-
-        strcpy_P(nameBuffer, enterPadEditMode_string);
-        string_line = nameBuffer;
-        updateDisplay(2, message, 0, true);
+        displayPadReleaseError(enterPadEditMode);
         break;
 
         default:
@@ -325,6 +319,62 @@ void MessageBuilder::displayTransportControl(transportControl_t type, bool state
 
 }
 
+void MessageBuilder::displayMaxNotesSet()   {
+
+    strcpy_P(nameBuffer, maxNotesSet0_string);
+    string_line = nameBuffer;
+    updateDisplay(1, message, 0, true);
+
+    strcpy_P(nameBuffer, maxNotesSet1_string);
+    string_line = nameBuffer;
+    updateDisplay(2, message, 0, true);
+
+}
+
+void MessageBuilder::displayPadReleaseError(padReleaseError_t error)    {
+
+    strcpy_P(nameBuffer, relasePad_string);
+    string_line = nameBuffer;
+    updateDisplay(1, message, 0, true);
+
+    switch(error)   {
+
+        case changeParameters:
+        strcpy_P(nameBuffer, changeParameters_string);
+        string_line = nameBuffer;
+        updateDisplay(2, message, 0, true);
+        break;
+
+        case changeTonic:
+        strcpy_P(nameBuffer, changeTonic_string);
+        string_line = nameBuffer;
+        updateDisplay(1, message, 0, true);
+        break;
+
+        case enterPadEditMode:
+        strcpy_P(nameBuffer, enterPadEditMode_string);
+        string_line = nameBuffer;
+        updateDisplay(1, message, 0, true);
+        break;
+
+        default:
+        return;
+
+    }
+
+}
+
+void MessageBuilder::displayPadEditChangeParametersError()  {
+
+    strcpy_P(nameBuffer, exitPadMode_string);
+    string_line = nameBuffer;
+    updateDisplay(1, message, 0, true);
+
+    strcpy_P(nameBuffer, changeParameters_string);
+    string_line = nameBuffer;
+    updateDisplay(2, message, 0, true);
+
+}
 
 //text
 
@@ -372,7 +422,8 @@ void MessageBuilder::displayNotes(uint8_t note[], uint8_t octave[], uint8_t numb
 
 void MessageBuilder::displayVelocity(uint8_t velocity)  {
 
-    string_line = "v";
+    strcpy_P(nameBuffer, velocity_string);
+    string_line = nameBuffer;
     string_line += velocity;
     if (velocity < 10)         string_line += "  ";
     else if (velocity < 100)   string_line += " ";
@@ -388,31 +439,41 @@ void MessageBuilder::displayXYposition(uint8_t xPosition, uint8_t yPosition, boo
 
     if (xAvailable && yAvailable)   {
 
-        string_line = "x";
+        strcpy_P(nameBuffer, x_string);
+        string_line = nameBuffer;
         string_line += xPosition;
+
         if (xPosition < 10)         string_line += "  ";
         else if (xPosition < 100)   string_line += " ";
+
         string_line += " ";
-        string_line += "y";
+
+        strcpy_P(nameBuffer, y_string);
+        string_line += nameBuffer;
         string_line += yPosition;
+
         if (yPosition < 10)         string_line += "  ";
         else if (yPosition < 100)   string_line += " ";
 
-        }   else if (!xAvailable && yAvailable) {
+    }   else if (!xAvailable && yAvailable) {
 
         strcpy_P(nameBuffer, emptyLine_string);
 
         for (int i=0; i<4; i++)
-        string_line[X_COORDINATE_START+i] = nameBuffer[0];
+            string_line[X_COORDINATE_START+i] = nameBuffer[0];
 
-        string_line += "y";
+        strcpy_P(nameBuffer, y_string);
+        string_line += nameBuffer;
+
         string_line += yPosition;
         if (yPosition < 10)         string_line += "  ";
         else if (yPosition < 100)   string_line += " ";
 
-        }   else if (xAvailable && !yAvailable) {
+    }   else if (xAvailable && !yAvailable) {
 
-        string_line = "x";
+        strcpy_P(nameBuffer, x_string);
+        string_line = nameBuffer;
+
         string_line += xPosition;
         if (xPosition < 10)         string_line += "  ";
         else if (xPosition < 100)   string_line += " ";
@@ -430,7 +491,8 @@ void MessageBuilder::displayXYposition(uint8_t xPosition, uint8_t yPosition, boo
 
 void MessageBuilder::displayAftertouch(uint8_t afterTouch)  {
 
-    string_line = "at";
+    strcpy_P(nameBuffer, aftertouch_string);
+    string_line = nameBuffer;
     string_line += afterTouch;
     if (afterTouch < 10)       string_line += "  ";
     else if (afterTouch < 100) string_line += " ";
@@ -603,50 +665,6 @@ void MessageBuilder::displayReset() {
 
 }
 
-void MessageBuilder::displayMaxNotesSet()   {
-
-    strcpy_P(nameBuffer, maxNotesSet0_string);
-    string_line = nameBuffer;
-    updateDisplay(1, message, 0, true);
-
-    strcpy_P(nameBuffer, maxNotesSet1_string);
-    string_line = nameBuffer;
-    updateDisplay(2, message, 0, true);
-
-}
-
-void MessageBuilder::displayPadReleaseError(padReleaseError_t error)    {
-
-    strcpy_P(nameBuffer, relasePad_string);
-    string_line = nameBuffer;
-    updateDisplay(1, message, 0, true);
-
-    switch(error)   {
-
-        case changeParameters:
-        strcpy_P(nameBuffer, changeParameters_string);
-        string_line = nameBuffer;
-        updateDisplay(2, message, 0, true);
-        break;
-
-        case changeTonic:
-        strcpy_P(nameBuffer, changeTonic_string);
-        string_line = nameBuffer;
-        updateDisplay(1, message, 0, true);
-        break;
-
-        case enterPadEditMode:
-        strcpy_P(nameBuffer, enterPadEditMode_string);
-        string_line = nameBuffer;
-        updateDisplay(1, message, 0, true);
-        break;
-
-        default:
-        return;
-
-    }
-
-}
 
 //lcd update
 

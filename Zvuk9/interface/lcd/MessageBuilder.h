@@ -45,6 +45,7 @@ class MessageBuilder {
     void displayOutOfRange();
     void displayMaxNotesSet();
     void displayPadReleaseError(padReleaseError_t error);
+    void displayPadEditChangeParametersError();
 
     private:
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite);

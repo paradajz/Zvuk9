@@ -56,8 +56,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     //don't allow changing settings using encoders during pad edit mode
     if (pads.editModeActive()) {
 
-        lcDisplay.displayMessage(1, "Exit pad mode to");
-        lcDisplay.displayMessage(2, "edit parameters");
+        messageBuilder.displayPadEditChangeParametersError();
         return;
 
     }
