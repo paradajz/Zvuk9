@@ -32,7 +32,6 @@ void Pads::getProgramParameters()   {
     #endif
 
     getPadParameters();
-
     //preset is contained within program, apply new parameters
     getPresetParameters();
 

@@ -324,7 +324,7 @@ void MessageBuilder::displayCCchange(ccType_t type, splitState_t _splitState, ui
 
 void MessageBuilder::displayMIDIchannelChange(uint8_t channel) {
 
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[5])));
+    strcpy_P(nameBuffer, midiChannel);
     string_line = nameBuffer;
     string_line += channel;
 
@@ -355,57 +355,81 @@ void MessageBuilder::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], u
 void MessageBuilder::displayActiveOctave(int8_t octave)   {
 
     //used only in pad edit mode
-    string_line = "Active octave: ";
+    strcpy_P(nameBuffer, activeOctave);
+    string_line = nameBuffer;
     string_line += octave;
 
     updateDisplay(2, text, 0, true);
 
 }
 
-void MessageBuilder::displayNoteChange(changeOutput_t result, changeType_t type, int8_t value) {
+void MessageBuilder::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value) {
 
-    if (type == noteUpOrDown)  {
+    switch(type)    {
 
-        if (result == outputChanged)    {
+        case tonicChange:
+            switch(result)  {
 
-            string_line = value ? "One note up" : "One note down";
+                case outputChanged:
+                case noChange:
+                strcpy_P(nameBuffer, tonic);
+                string_line = nameBuffer;
+                strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
+                string_line += nameBuffer;
+                updateDisplay(1, message_std, 0, true);
+                string_line = emptyLine;
+                updateDisplay(2, message_std, 0, true);
+                break;
+
+                case outOfRange:
+                string_line = "Out of range!";
+                updateDisplay(1, message_std, 0, true);
+                string_line = emptyLine;
+                updateDisplay(2, message_std, 0, true);
+                break;
+
+                default:
+                return;
+
+            }
+        break;
+
+        case octaveChange:
+        //always display active octave, ignore out of range here
+        strcpy_P(nameBuffer, octave);
+        string_line = nameBuffer;
+        string_line += value;
+        updateDisplay(1, message_std, 0, true);
+        string_line = emptyLine;
+        updateDisplay(2, message_std, 0, true);
+        break;
+
+        case noteShift:
+        switch (result) {
+
+            case outputChanged:
+            strcpy_P(nameBuffer, value ? noteUp : noteDown);
+            string_line = nameBuffer;
             updateDisplay(1, message_std, 0, true);
             string_line = emptyLine;
             updateDisplay(2, message_std, 0, true);
+            break;
 
-        } else if (result == outOfRange)  {
-
+            case outOfRange:
             string_line = "Out of range!";
             updateDisplay(1, message_std, 0, true);
             string_line = emptyLine;
             updateDisplay(2, message_std, 0, true);
+            break;
 
-        }   else if (result == notAllowed)  {
-
-            string_line = "Switch to";
-            updateDisplay(1, message_std, 0, true);
-
-            string_line = "predefined preset";
-            updateDisplay(2, message_std, 0, true);
+            default:
+            return;
 
         }
+        break;
 
-    }   else {  //octave/tonic change
-
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(changeTypeArray[type])));
-        string_line = nameBuffer;
-
-        if (type == octaveChange) string_line += value;
-        else if (type == noteChange) {
-
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
-            string_line += nameBuffer;
-
-        }
-
-        updateDisplay(1, message_std, 0, true);
-        string_line = emptyLine;
-        updateDisplay(2, message_std, 0, true);
+        default:
+        break;
 
     }
 

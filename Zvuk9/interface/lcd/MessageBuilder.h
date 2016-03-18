@@ -31,7 +31,7 @@ class MessageBuilder {
     void displayMIDIchannelChange(uint8_t channel);
     void displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes);
     void displayActiveOctave(int8_t octave);
-    void displayNoteChange(changeOutput_t result, changeType_t type, int8_t value);
+    void displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value);
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayPadEditMode(uint8_t padNumber);
     void displayOctaveChange(uint8_t octave);

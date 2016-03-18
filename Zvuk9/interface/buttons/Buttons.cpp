@@ -519,12 +519,21 @@ void Buttons::handleTonicEvent(note_t note) {
         }
 
         changeOutput_t result = pads.setTonic(note);
-
-        if (result == outputChanged)
-            leds.displayActiveNoteLEDs();
-
         note_t activeTonic = pads.getActiveTonic();
-        messageBuilder.displayNoteChange(result, noteChange, activeTonic);
+
+        switch(result)  {
+
+            case outputChanged:
+            leds.displayActiveNoteLEDs();
+            break;
+
+            default:
+            break;
+
+        }
+
+        //always do this
+        messageBuilder.displayNoteChange(result, tonicChange, activeTonic);
 
     }   else {
 
@@ -654,7 +663,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     //disable it on release
                     buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
                     changeOutput_t shiftResult = pads.shiftNote(direction);
-                    messageBuilder.displayNoteChange(shiftResult, noteUpOrDown, direction);
+                    messageBuilder.displayNoteChange(shiftResult, noteShift, direction);
 
                 }   else {
 

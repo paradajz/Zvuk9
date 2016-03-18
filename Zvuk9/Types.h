@@ -72,15 +72,13 @@ typedef enum {
 
 typedef enum {
 
-    noteChange,
+    tonicChange,
     octaveChange,
-    noteUpOrDown,
-    ccChange,
-    ccLimitChange,
-    curveChange,
-    midiChannelChange
+    noteShift,
+    noteAdded,
+    noteRemoved
 
-} changeType_t;
+} noteChangeType_t;
 
 typedef enum {
 
