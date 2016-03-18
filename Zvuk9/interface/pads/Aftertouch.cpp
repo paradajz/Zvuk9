@@ -1,8 +1,5 @@
 #include "Pads.h"
 
-//difference? investigate
-//end investigate
-
 bool Pads::getAfterTouchGestureActivated(uint8_t padNumber, uint8_t pressure)  {
 
     if (afterTouchGestureCounter[padNumber] == GESTURE_NUMBER_OF_CHANGES) return true;

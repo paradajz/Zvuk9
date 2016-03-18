@@ -1,6 +1,6 @@
 #include "Pads.h"
-#include "../lcd/menu/Menu.h"
 #include <avr/cpufunc.h>
+#include "../lcd/menu/Menu.h"
 
 #define PAD_NOTE_BUFFER_SIZE    32
 

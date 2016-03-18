@@ -1,11 +1,11 @@
 #include "Buttons.h"
 #include "../../hardware/i2c/i2c_master.h"
 #include "../pads/Pads.h"
-#include "../lcd/LCD.h"
+#include "../lcd/MessageBuilder.h"
+#include "../lcd/menu/Menu.h"
 #include "../leds/LEDs.h"
 #include "../../midi/MIDI.h"
 #include "../../hardware/reset/Reset.h"
-#include "../lcd/menu/Menu.h"
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         10

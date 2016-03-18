@@ -32,4 +32,4 @@ class Encoders  {
 
 extern Encoders encoders;
 
-#endif /* ENCODERS_H_ */
+#endif

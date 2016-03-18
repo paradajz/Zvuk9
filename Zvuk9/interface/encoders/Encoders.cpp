@@ -4,9 +4,8 @@
 #include "../../hardware/timer/TimerObject.h"
 #include "../pads/Pads.h"
 #include "../buttons/Buttons.h"
-#include "../lcd/LCD.h"
-#include "../lcd/menu/Menu.h"
 #include "../lcd/MessageBuilder.h"
+#include "../lcd/menu/Menu.h"
 
 #define ENCODER_SPEED_1         1
 #define ENCODER_SPEED_2         5
