@@ -126,8 +126,10 @@ void MessageBuilder::displayXYposition(uint8_t xPosition, uint8_t yPosition, boo
 
     }   else if (!xAvailable && yAvailable) {
 
+            strcpy_P(nameBuffer, emptyLine_string);
+
             for (int i=0; i<4; i++)
-                string_line[X_COORDINATE_START+i] = emptyLine[i];
+                string_line[X_COORDINATE_START+i] = nameBuffer[0];
 
             string_line += "y";
             string_line += yPosition;
@@ -141,8 +143,10 @@ void MessageBuilder::displayXYposition(uint8_t xPosition, uint8_t yPosition, boo
             if (xPosition < 10)         string_line += "  ";
             else if (xPosition < 100)   string_line += " ";
 
+            strcpy_P(nameBuffer, emptyLine_string);
+
             for (int i=0; i<4; i++)
-                string_line[Y_COORDINATE_START+i] = emptyLine[i];
+                string_line[Y_COORDINATE_START+i] = nameBuffer[0];
 
     }
 
@@ -205,7 +209,8 @@ void MessageBuilder::displayTransportControl(transportControl_t type, bool state
     }
 
     updateDisplay(1, message_std, 0, true);
-    string_line = emptyLine;
+    strcpy_P(nameBuffer, emptyLine_string);
+    string_line = nameBuffer;
     updateDisplay(2, message_std, 0, true);
 
 }
@@ -248,7 +253,8 @@ void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _sp
             strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[_splitState])));
             string_line = nameBuffer;
             updateDisplay(1, message_std, 0, true);
-            string_line = emptyLine;
+            strcpy_P(nameBuffer, emptyLine_string);
+            string_line = nameBuffer;
             updateDisplay(2, message_std, 0, true);
             break;
 
@@ -338,14 +344,20 @@ void MessageBuilder::displayMIDIchannelChange(uint8_t channel) {
     string_line += channel;
 
     updateDisplay(1, message_std, 0, true);
-    string_line = emptyLine;
+    strcpy_P(nameBuffer, emptyLine_string);
+    string_line = nameBuffer;
     updateDisplay(2, message_std, 0, true);
 
 }
 
 void MessageBuilder::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes)  {
 
-    if (!numberOfNotes) string_line = emptyLine; else
+    if (!numberOfNotes) {
+
+        strcpy_P(nameBuffer, emptyLine_string);
+        string_line = nameBuffer;
+
+    }   else
 
     for (int i=0; i<numberOfNotes; i++) {
 
@@ -386,14 +398,16 @@ void MessageBuilder::displayNoteChange(changeOutput_t result, noteChangeType_t t
                 strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
                 string_line += nameBuffer;
                 updateDisplay(1, message_std, 0, true);
-                string_line = emptyLine;
+                strcpy_P(nameBuffer, emptyLine_string);
+                string_line = nameBuffer;
                 updateDisplay(2, message_std, 0, true);
                 break;
 
                 case outOfRange:
                 string_line = "Out of range!";
                 updateDisplay(1, message_std, 0, true);
-                string_line = emptyLine;
+                strcpy_P(nameBuffer, emptyLine_string);
+                string_line = nameBuffer;
                 updateDisplay(2, message_std, 0, true);
                 break;
 
@@ -409,7 +423,8 @@ void MessageBuilder::displayNoteChange(changeOutput_t result, noteChangeType_t t
         string_line = nameBuffer;
         string_line += value;
         updateDisplay(1, message_std, 0, true);
-        string_line = emptyLine;
+        strcpy_P(nameBuffer, emptyLine_string);
+        string_line = nameBuffer;
         updateDisplay(2, message_std, 0, true);
         break;
 
@@ -420,14 +435,16 @@ void MessageBuilder::displayNoteChange(changeOutput_t result, noteChangeType_t t
             strcpy_P(nameBuffer, value ? noteUp_string : noteDown_string);
             string_line = nameBuffer;
             updateDisplay(1, message_std, 0, true);
-            string_line = emptyLine;
+            strcpy_P(nameBuffer, emptyLine_string);
+            string_line = nameBuffer;
             updateDisplay(2, message_std, 0, true);
             break;
 
             case outOfRange:
             string_line = "Out of range!";
             updateDisplay(1, message_std, 0, true);
-            string_line = emptyLine;
+            strcpy_P(nameBuffer, emptyLine_string);
+            string_line = nameBuffer;
             updateDisplay(2, message_std, 0, true);
             break;
 
@@ -477,7 +494,8 @@ void MessageBuilder::displayPadEditMode(uint8_t padNumber)  {
     string_line = "Editing pad ";
     string_line += padNumber;
     updateDisplay(0, text, 0, true);
-    string_line = emptyLine;
+    strcpy_P(nameBuffer, emptyLine_string);
+    string_line = nameBuffer;
     updateDisplay(1, text, 0, true);
     updateDisplay(2, text, 0, true);
     updateDisplay(3, text, 0, true);
@@ -488,14 +506,16 @@ void MessageBuilder::displayOctaveChange(uint8_t octave)   {
 
     string_line = "Octave set to " + octave;
     updateDisplay(1, message_std, 0, true);
-    string_line = emptyLine;
+    strcpy_P(nameBuffer, emptyLine_string);
+    string_line = nameBuffer;
     updateDisplay(2, message_std, 0, true);
 
 }
 
 void MessageBuilder::clearPadEditMode()    {
 
-    string_line = emptyLine;
+    strcpy_P(nameBuffer, emptyLine_string);
+    string_line = nameBuffer;
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
         updateDisplay(i, text, 0, true);
 
@@ -567,7 +587,8 @@ void MessageBuilder::selectMenuOption(menuType_t type, uint8_t option, uint8_t s
 void MessageBuilder::clearPadData() {
 
     //clear all rows except first one
-    string_line = emptyLine;
+    strcpy_P(nameBuffer, emptyLine_string);
+    string_line = nameBuffer;
 
     for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
         updateDisplay(i, text, 0, true);

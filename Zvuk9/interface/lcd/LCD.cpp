@@ -25,16 +25,12 @@ void LCD::init()    {
    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) {
 
        lcdLine[i].reserve(MAX_TEXT_LENGTH);
-       lcdLine[i] = emptyLine;
        lcdLineMessage[i].reserve(MAX_TEXT_LENGTH);
-       lcdLineMessage[i] = emptyLine;
        lineChange[i] = false;
        lastLCDLine[i].reserve(MAX_TEXT_LENGTH);
        lastLCDmessage[i].reserve(MAX_TEXT_LENGTH);
-       lastLCDLine[i] = emptyLine;
        scrollEnabled[i] = false;
        lcdLineScroll[i].reserve(MAX_TEXT_LENGTH);
-       lcdLineScroll[i] = emptyLine;
        scrollDirection[i] = true;
 
    }
@@ -200,8 +196,6 @@ void LCD::clearMessage()    {
 
     //clear all previous messages
     messageActivated = false;
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-        lcdLineMessage[i] = emptyLine;
 
 }
 
