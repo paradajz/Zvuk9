@@ -42,12 +42,13 @@ void LCD::init()    {
        scrollEnabled[i] = false;
        scrollDirection[i] = true;
 
+       scrollIndex[i] = 0;
+
    }
 
    lcdLineScroll.reserve(MAX_TEXT_LENGTH);
    lcdLineScroll = emptyLine;
    lastScrollTime = 0;
-   scrollIndex = 0;
    displayMessage_var = false;
 
    _delay_ms(100);
@@ -97,7 +98,7 @@ void LCD::update()  {
 
             if ((newMillis() - lastScrollTime) > LCD_SCROLL_TIME)    {
 
-                lcdLineScroll = lcdLine[i].substring(scrollIndex, MAX_TEXT_LENGTH);
+                lcdLineScroll = lcdLine[i].substring(scrollIndex[i], MAX_TEXT_LENGTH);
                 expandLine(i, scrollLine);
 
                 for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
@@ -115,16 +116,16 @@ void LCD::update()  {
 
                 if (scrollDirection[i])    {
 
-                    if (((lcdLine[i].length()-1) - scrollIndex) > NUMBER_OF_LCD_COLUMNS) {
+                    if (((lcdLine[i].length()-1) - scrollIndex[i]) > NUMBER_OF_LCD_COLUMNS) {
 
-                        scrollIndex++;
+                        scrollIndex[i]++;
 
                     }   else scrollDirection[i] = false;
 
                 }   else {
 
-                    scrollIndex--;
-                    if (scrollIndex < 0) { scrollDirection[i] = true; scrollIndex = 0; }
+                    scrollIndex[i]--;
+                    if (scrollIndex < 0) { scrollDirection[i] = true; scrollIndex[i] = 0; }
 
                 }
 
@@ -153,7 +154,7 @@ void LCD::update()  {
 
         lineChange[i] = false;
 
-    }   lastRefreshTime = newMillis();
+    }   lastLCDupdateTime = newMillis();
 
 }
 
@@ -237,7 +238,7 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t start
 
         scrollEnabled[row] = true;
         scrollDirection[row] = true;
-        scrollIndex = 0;
+        scrollIndex[row] = 0;
 
     }   else scrollEnabled[row] = false;
 
