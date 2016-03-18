@@ -81,7 +81,7 @@ void MessageBuilder::displayCCchange(ccType_t type, splitState_t _splitState, ui
     string_line += ccValue;
     updateDisplay(1, message, 0, true);
 
-    strcpy_P(nameBuffer, (_splitState == splitOff) ? padAmountSingle_string : padAmountAll_string);
+    strcpy_P(nameBuffer, (_splitState != splitOff) ? padAmountSingle_string : padAmountAll_string);
     string_line = nameBuffer;
 
     if (!(_splitState == splitOff))
@@ -101,7 +101,7 @@ void MessageBuilder::displayCurveChange(curveCoordinate_t coordinate, splitState
 
     updateDisplay(1, message, 0, true);
 
-    strcpy_P(nameBuffer, (_splitState == splitOff) ? padAmountSingle_string : padAmountAll_string);
+    strcpy_P(nameBuffer, (_splitState != splitOff) ? padAmountSingle_string : padAmountAll_string);
     string_line = nameBuffer;
 
     if (!(_splitState == splitOff))
@@ -120,7 +120,7 @@ void MessageBuilder::displayCClimitChange(ccLimitType_t type, splitState_t _spli
 
     updateDisplay(1, message, 0, true);
 
-    strcpy_P(nameBuffer, (_splitState == splitOff) ? padAmountSingle_string : padAmountAll_string);
+    strcpy_P(nameBuffer, (_splitState != splitOff) ? padAmountSingle_string : padAmountAll_string);
     string_line = nameBuffer;
 
     if (!(_splitState == splitOff))
@@ -143,7 +143,7 @@ void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _sp
         string_line = nameBuffer;
         updateDisplay(1, message, 0, true);
 
-        strcpy_P(nameBuffer, (_splitState == splitOff) ? padAmountSingle_string : padAmountAll_string);
+        strcpy_P(nameBuffer, (_splitState != splitOff) ? padAmountSingle_string : padAmountAll_string);
         string_line = nameBuffer;
 
         if (!(_splitState == splitOff))
