@@ -149,7 +149,7 @@ void Buttons::update(bool processingEnabled)    {
 
             buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
             stopDisableTimeout = 0;
-            lcDisplay.displayMessage(1, "Modifer enabled");
+            messageBuilder.displayModifierEnabled();
             modifierActive = true;
             if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
 
@@ -169,7 +169,7 @@ void Buttons::update(bool processingEnabled)    {
             if (!resetActivationTimeout) resetActivationTimeout = newMillis();
             else if ((newMillis() - resetActivationTimeout) > RESET_ENABLE_TIMEOUT)   {
 
-                lcDisplay.displayMessage(1, "Press STOP to reset");
+                messageBuilder.displayReset();
                 leds.allLEDsOn();
                 lcDisplay.update();
 
@@ -512,8 +512,7 @@ void Buttons::handleTonicEvent(note_t note) {
         for (int i=0; i<NUMBER_OF_PADS; i++)
         if (pads.isPadPressed(i))  {
 
-            lcDisplay.displayMessage(1, "Release pad to");
-            lcDisplay.displayMessage(2, "change tonic");
+            messageBuilder.displayPadReleaseError(changeTonic);
             return;
 
         }

@@ -35,12 +35,16 @@ class MessageBuilder {
     void displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value);
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayPadEditMode(uint8_t padNumber);
-    void displayOctaveChange(uint8_t octave);
     void clearPadEditMode();
     void displayServiceMenu();
     void changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption);
     void selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
     void clearPadData();
+    void displayModifierEnabled();
+    void displayReset();
+    void displayOutOfRange();
+    void displayMaxNotesSet();
+    void displayPadReleaseError(padReleaseError_t error);
 
     private:
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite);

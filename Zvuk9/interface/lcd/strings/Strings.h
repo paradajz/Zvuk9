@@ -2,7 +2,6 @@
 #define STRINGS_H_
 
 #include "Notes.h"
-#include "LCDstrings.h"
 #include "Errors.h"
 #include "MenuStrings.h"
 #include "Scales.h"

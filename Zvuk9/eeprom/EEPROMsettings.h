@@ -11,7 +11,6 @@ EEPROM addresses of parameters.
 #include "UniqueID.h"
 #include "../midi/MIDI_parameters.h"
 #include "../hardware/lcd/lcd.h"
-#include "../interface/lcd/strings/LCDstrings.h"
 #include "../hardware/timer/TimerObject.h"
 #include "Defaults.h"
 #include "../interface/pads/Pads.h"

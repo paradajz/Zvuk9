@@ -179,9 +179,16 @@ typedef enum {
 typedef enum {
 
     text,
-    message_std,
-    message_keep
+    message
 
 } lcdTextType;
+
+typedef enum {
+
+    changeParameters,
+    changeTonic,
+    enterPadEditMode
+
+} padReleaseError_t;
 
 #endif

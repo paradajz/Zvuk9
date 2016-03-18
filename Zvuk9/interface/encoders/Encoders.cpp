@@ -69,8 +69,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     if (pads.isPadPressed(i)) {
 
         //disable encoders while pads are pressed
-        lcDisplay.displayMessage(1, "Release pad to");
-        lcDisplay.displayMessage(2, "change parameters");
+        messageBuilder.displayPadReleaseError(changeParameters);
         return;
 
     }
