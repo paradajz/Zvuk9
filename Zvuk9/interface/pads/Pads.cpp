@@ -6,19 +6,6 @@
 
 #define DEFAULT_XY_VALUE        -999
 
-volatile int16_t adcValue = 0;
-volatile bool adcConversionInProgress = false;
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-uint8_t adcPinReadOrder[] = {
-
-    muxCommonPinsAnalogRead[2], //pressure, first reading, Y+
-    muxCommonPinsAnalogRead[0], //pressure, second reading, X+
-    muxCommonPinsAnalogRead[2], //y coordinate, X+
-    muxCommonPinsAnalogRead[0]  //x coordinate, Y+
-
-};
-
 static uint8_t pad_buffer[PAD_NOTE_BUFFER_SIZE];
 static uint8_t velocity_buffer[PAD_NOTE_BUFFER_SIZE];
 static uint32_t pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
@@ -33,57 +20,6 @@ const uint8_t debounceCompare = 0b11111100;
 
 volatile uint8_t adcPinCounter = 0;
 const uint8_t adcPinCounterMaxValue = 4;
-
-void Pads::enableADCinterrupt()    {
-
-    ADCSRA |= (1<<ADIE);
-
-}
-
-void Pads::analogReadStart() {
-
-    //set flag and start new analog conversion
-    adcConversionInProgress = true;
-
-    //single conversion mode
-    ADCSRA |= (1<<ADSC);
-
-}
-
-void Pads::setAnalogInput(uint8_t pin)    {
-
-    //read next analogue input
-    ADMUX = (ADMUX & 0xF0) | (adcPinReadOrder[pin] & 0x0F);
-    _NOP(); _NOP(); _NOP();
-
-}
-
-// Interrupt service routine for the ADC completion
-ISR(ADC_vect)   {
-
-    adcConversionInProgress = false;
-    adcValue = ADC;
-
-}
-
-bool Pads::analogReadInProgress()    {
-
-    cli();
-    bool temp = adcConversionInProgress;
-    sei();
-    return temp;
-
-}
-
-int16_t Pads::getAnalogValue() {
-
-    cli();
-    int16_t adcValueCopy = adcValue;
-    sei();
-
-    return adcValueCopy;
-
-}
 
 inline uint8_t mapInternal(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max) {
 
@@ -134,12 +70,9 @@ Pads::Pads()  {
 
 void Pads::init()   {
 
-    initPadPins();
+    initHardware();
     initVariables();
     getPadConfig();
-    setMuxInput(activePad);
-    analogRead(adcPinReadOrder[0]); //dummy read to init ADC
-    enableADCinterrupt();
 
 }
 
@@ -162,6 +95,14 @@ void Pads::initVariables()  {
     previousPad = -1;
     octaveShiftAmount = 0;
     noteShiftAmount = 0;
+
+}
+
+void Pads::initHardware()   {
+
+    initPadPins();
+    setMuxInput(activePad);
+    initADC(ADC_PRESCALER_128, true, ADC_V_REF_AVCC); //prescaler 128, enable interrupts
 
 }
 
@@ -399,10 +340,8 @@ bool Pads::processXY()  {
             //x
             #if XY_FLIP_AXIS > 0
                 setupY();
-                setAnalogInput(readY);
             #else
                 setupX();
-                setAnalogInput(readX);
             #endif
             admuxSet = true;
 
@@ -426,10 +365,8 @@ bool Pads::processXY()  {
 
         #if XY_FLIP_AXIS > 0
             setupX();
-            setAnalogInput(readX);
         #else
             setupY();
-            setAnalogInput(readY);
         #endif
 
         admuxSet = false;

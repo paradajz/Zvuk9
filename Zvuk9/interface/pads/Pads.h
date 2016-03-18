@@ -15,6 +15,7 @@
 #include "../lcd/LCD.h"
 #include "../lcd/MessageBuilder.h"
 #include "../leds/LEDs.h"
+#include "../../hardware/adc/ADC.h"
 
 #define NUMBER_OF_PADS                      9
 
@@ -124,7 +125,7 @@ class Pads  {
     //init
     void initPadPins();
     void initVariables();
-    void setUpADCtimer();
+    void initHardware();
 
     //EEPROM config read
     void getPadConfig();
@@ -144,7 +145,6 @@ class Pads  {
     int16_t getX();
     void setupY();
     int getY();
-    void setAnalogInput(uint8_t pin);
 
     void setNextPad();
 
@@ -153,12 +153,6 @@ class Pads  {
     void checkAftertouch();
 
     int16_t getMedianValueZXY(coordinateType_t);
-
-    //adc
-    void analogReadStart();
-    void enableADCinterrupt();
-    int16_t getAnalogValue();
-    bool analogReadInProgress();
 
     //calibration
     uint8_t calibratePressure(uint8_t pad, int16_t pressure, pressureType_t type);
@@ -319,16 +313,6 @@ class Pads  {
 
     //used to shift octave once all pads are released
     int8_t      octaveShiftAmount;
-
-    //read order
-    typedef enum {
-
-        readAftertouch0,
-        readAftertouch1,
-        readX,
-        readY
-
-    } padReadOrder;
 
 };
 

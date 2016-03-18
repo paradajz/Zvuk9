@@ -669,6 +669,12 @@ vmresolved.tools.path=D:\Applications
     <Compile Include="eeprom\UniqueID.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="hardware\adc\ADC.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hardware\adc\ADC.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="hardware\i2c\i2c_master.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -801,9 +807,6 @@ vmresolved.tools.path=D:\Applications
     <Compile Include="interface\pads\PadsHardwareControl.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\pads\PadsHardwareRead.cpp">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="interface\pads\PadXYscales.h">
       <SubType>compile</SubType>
     </Compile>
@@ -844,6 +847,7 @@ vmresolved.tools.path=D:\Applications
   <ItemGroup>
     <Folder Include="hardware\lcd\" />
     <Folder Include="hardware\i2c" />
+    <Folder Include="hardware\adc" />
     <Folder Include="hardware\pins\" />
     <Folder Include="hardware\timer" />
     <Folder Include="hardware\reset" />
