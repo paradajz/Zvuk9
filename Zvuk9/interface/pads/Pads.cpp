@@ -12,15 +12,6 @@ static uint32_t pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
 static uint8_t note_buffer_head = 0;
 static uint8_t note_buffer_tail = 0;
 
-static uint8_t padTouchBuffer[NUMBER_OF_PADS];
-static uint8_t padTouchBuffer_head = 0;
-static uint8_t padTouchBuffer_tail = 0;
-
-const uint8_t debounceCompare = 0b11111100;
-
-volatile uint8_t adcPinCounter = 0;
-const uint8_t adcPinCounterMaxValue = 4;
-
 inline uint8_t mapInternal(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max) {
 
     /*
@@ -60,7 +51,6 @@ inline uint8_t mapInternal(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t ou
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Pads::Pads()  {
 
@@ -737,16 +727,6 @@ void Pads::storeNotes(uint8_t pad)  {
     note_buffer_head = i;
 
     lastVelocityValue[pad] = midiVelocity;
-
-}
-
-void updateTouchHistory(uint8_t pad)    {
-
-    //store midi note on in circular buffer
-    uint8_t i = padTouchBuffer_head + 1;
-    if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
-    padTouchBuffer[i] = pad;
-    padTouchBuffer_head = i;
 
 }
 

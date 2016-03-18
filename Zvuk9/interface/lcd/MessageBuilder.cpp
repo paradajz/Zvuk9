@@ -425,6 +425,9 @@ void MessageBuilder::displayEditModeNotAllowed(padEditModeResult_t errorType)   
         errorIndex = 2;
         break;
 
+        default:
+        return;
+
     }
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(padEditErrorArray[errorIndex])));

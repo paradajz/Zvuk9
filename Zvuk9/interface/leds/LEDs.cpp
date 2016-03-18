@@ -15,6 +15,9 @@ uint8_t intensity2value(ledIntensity_t intensity)  {
         case ledIntensityFull:
         return LED_INTENSITY_FULL;
 
+        default:
+        return 0;
+
     }
 
 }
