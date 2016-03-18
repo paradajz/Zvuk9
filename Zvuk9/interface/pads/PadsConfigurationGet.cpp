@@ -2,7 +2,7 @@
 
 //read from eeprom
 
-void Pads::getPadConfig()   {
+void Pads::getConfiguration()   {
 
     //read pad configuration from EEPROM
     getProgramParameters();

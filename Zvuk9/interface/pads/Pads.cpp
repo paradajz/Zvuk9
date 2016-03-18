@@ -72,7 +72,7 @@ void Pads::init()   {
 
     initHardware();
     initVariables();
-    getPadConfig();
+    getConfiguration();
 
 }
 
@@ -106,7 +106,7 @@ void Pads::initHardware()   {
 
 }
 
-uint8_t Pads::calibratePressure(uint8_t pad, int16_t pressure, pressureType_t type) {
+uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, pressureType_t type) {
 
     switch(type)  {
 
@@ -124,7 +124,7 @@ uint8_t Pads::calibratePressure(uint8_t pad, int16_t pressure, pressureType_t ty
 
 }
 
-uint8_t Pads::calibrateXY(uint8_t padNumber, int16_t xyValue, ccType_t type) {
+uint8_t Pads::scaleXY(uint8_t padNumber, int16_t xyValue, ccType_t type) {
 
     switch (type)   {
 
@@ -245,9 +245,9 @@ void Pads::checkVelocity()  {
     uint8_t pad = padID[activePad];
 
     //we've taken 3 pressure samples so far, get median value
-    int16_t medianValue = getMedianValueZXY(coordinateZ);
+    int16_t medianValue = getMedianValueXYZ(coordinateZ);
     //calibrate pressure based on median value (0-1023 -> 0-127)
-    uint8_t calibratedPressure = calibratePressure(pad, medianValue, pressureVelocity);
+    uint8_t calibratedPressure = scalePressure(pad, medianValue, pressureVelocity);
 
     bool pressDetected = (calibratedPressure > 0);
 
@@ -304,7 +304,7 @@ void Pads::checkVelocity()  {
 
 }
 
-void Pads::setFunctionLEDs(uint8_t pad)   {
+void Pads::setFunctionLEDs(uint8_t padNumber)   {
 
     if (splitCounter == splitXYFunctions)  {
 
@@ -316,10 +316,10 @@ void Pads::setFunctionLEDs(uint8_t pad)   {
         leds.setLEDstate(LED_ON_OFF_Y, ledIntensityOff);
 
         //turn on feature LEDs depending on enabled features for last touched pad
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(pad) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
 
     }
 
@@ -498,11 +498,11 @@ bool Pads::xySampled() {
 
 }
 
-int16_t Pads::getMedianValueZXY(coordinateType_t type)  {
+int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
 
     int16_t medianValue = 0;
 
-    switch(type)  {
+    switch(coordinate)  {
 
         case coordinateX:
         if ((xValueSamples[0] <= xValueSamples[1]) && (xValueSamples[0] <= xValueSamples[2]))
@@ -564,8 +564,8 @@ void Pads::checkXY()  {
 
     uint8_t pad = padID[activePad];
 
-    int16_t xValue = calibrateXY(pad, getMedianValueZXY(coordinateX), ccTypeX);
-    int16_t yValue = calibrateXY(pad, getMedianValueZXY(coordinateY), ccTypeY);
+    int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), ccTypeX);
+    int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), ccTypeY);
 
     xAvg += xValue;
     yAvg += yValue;
@@ -723,22 +723,6 @@ void Pads::sendXY(uint8_t pad)  {
     }
 
     xyAvailable = false;
-
-}
-
-uint8_t Pads::getNumberOfAssignedNotes(uint8_t padNumber)   {
-
-    if (isPredefinedScale(activePreset)) return 1; //predefined presets only have one note
-
-    uint8_t activatedNotesCounter = 0;
-    uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
-
-    for (int i=0; i<NOTES_PER_PAD; i++) {
-
-        if (configuration.readParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*padNumber)) != BLANK_NOTE)
-            activatedNotesCounter++;
-
-    }   return activatedNotesCounter;
 
 }
 

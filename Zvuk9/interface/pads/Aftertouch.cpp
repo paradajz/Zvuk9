@@ -83,12 +83,12 @@ void Pads::checkAftertouch()  {
 
     if (!bitRead(padPressed, pad)) return; //don't check aftertouch if pad isn't pressed
 
-    afterTouchActivated[pad] = getAfterTouchSendEnabled(pad) && getAfterTouchGestureActivated(pad, calibratePressure(pad, pressure, pressureVelocity));
+    afterTouchActivated[pad] = getAfterTouchSendEnabled(pad) && getAfterTouchGestureActivated(pad, scalePressure(pad, pressure, pressureVelocity));
 
     //aftertouch
     if (afterTouchActivated[pad]) {
 
-        uint8_t calibratedPressureAfterTouch = calibratePressure(pad, pressure, pressureAfterTouch);
+        uint8_t calibratedPressureAfterTouch = scalePressure(pad, pressure, pressureAfterTouch);
 
         uint32_t timeDifference = newMillis() - afterTouchSendTimer[pad];
         bool afterTouchSend = false;

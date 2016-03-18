@@ -30,6 +30,7 @@ const uint8_t padID[] = { PAD_0, PAD_1, PAD_2, PAD_3, PAD_4, PAD_5, PAD_6, PAD_7
 class Pads  {
 
     public:
+
     //init
     Pads();
     void init();
@@ -111,16 +112,13 @@ class Pads  {
 
     private:
 
-    void checkOctaveShift();
-    bool checkPadsPressed();
-
     //init
     void initPadPins();
     void initVariables();
     void initHardware();
 
     //EEPROM config read
-    void getPadConfig();
+    void getConfiguration();
     void getProgramParameters();
     void getPresetParameters();
     void getPadLimits();
@@ -128,73 +126,72 @@ class Pads  {
     void getXLimits();
     void getYLimits();
     void getAfterTouchUpperPressureLimits();
+    void getPadParameters();
 
     //hardware control
     void setMuxInput(uint8_t muxInput);
+    void setNextPad();
     void setupPressure();
     int16_t getPressure();
     void setupX();
     int16_t getX();
     void setupY();
-    int getY();
+    int16_t getY();
 
-    void setNextPad();
+    //midi scaling
+    uint8_t scalePressure(uint8_t pad, int16_t pressure, pressureType_t type);
+    uint8_t scaleXY(uint8_t padNumber, int16_t xyValue, ccType_t type);
 
-    bool processPressure();
-    bool processXY();
-    void checkAftertouch();
-
-    int16_t getMedianValueZXY(coordinateType_t);
-
-    //calibration
-    uint8_t calibratePressure(uint8_t pad, int16_t pressure, pressureType_t type);
-    uint8_t calibrateXY(uint8_t padNumber, int16_t xyValue, ccType_t type);
-
-    //pad data processing
+    //data sampling/debouncing
     void addPressureSamples(uint16_t pressure);
     void addXYSamples(uint16_t xValue,  uint16_t yValue);
     bool pressureSampled();
     bool xySampled();
-
-    //pad press
-    void setPadPressed(uint8_t padNumber, bool padState);
     bool pressureStable(uint8_t padNumber, uint8_t pressDetected);
+    int16_t getMedianValueXYZ(coordinateType_t coordinate);
 
-    //sent only if midi send is enabled
+    //data processing
+    bool processPressure();
+    bool processXY();
+    void checkOctaveShift();
+
+    //data availability checks
+    void checkAftertouch();
+    void checkXY();
+    void checkVelocity();
+
+    //pad press updating/info
+    void setPadPressed(uint8_t padNumber, bool padState);
+    void updateLastTouchedPad();
+    bool checkPadsPressed();
+
+    //lcd/led handling on midi event
     void handleNote(uint8_t pad, uint8_t velocity, bool state);
     void handleXY(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable);
-    //preset
-    scaleType_t getScaleType(uint8_t scale);
 
-    //notes
+    //scale
+    scaleType_t getScaleType(uint8_t scale);
+    void generateScale(scale_t scale);
+
+    //features on/off
     void setNoteSendEnabled(uint8_t padNumber, uint8_t state);
-    uint8_t getNumberOfAssignedNotes(uint8_t padNumber);
+    void setCCXsendEnabled(uint8_t padNumber, uint8_t state);
+    void setCCYsendEnabled(uint8_t padNumber, uint8_t state);
+    void setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state);
+    void setFunctionLEDs(uint8_t padNumber);
 
     //aftertouch
     bool getAfterTouchGestureActivated(uint8_t padNumber, uint8_t calibratedPressure);
     void resetAfterTouchCounters(uint8_t padNumber);
-    void setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state);
-
-    //CC
-    void setCCXsendEnabled(uint8_t padNumber, uint8_t state);
-    void setCCYsendEnabled(uint8_t padNumber, uint8_t state);
 
     //MIDI send
-    void storeNotes(uint8_t pad);
+    void checkMIDIdata();
     void sendAftertouch(uint8_t pad);
     void sendXY(uint8_t pad);
     void sendNotes(uint8_t pad, uint8_t velocity, bool state);
 
-    void checkXY();
-    void checkVelocity();
-
-    void getPadParameters();
-    void setFunctionLEDs(uint8_t pad);
-
-    void updateLastTouchedPad();
-    void checkMIDIdata();
-
-    void generateScale(scale_t scale);
+    //note buffer
+    void storeNotes(uint8_t pad);
 
     //current midi values
     uint8_t     midiVelocity;
