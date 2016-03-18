@@ -8,8 +8,8 @@ const char PROGMEM padAmountAll_string[] = "all pads";
 
 PGM_P const padAmountArray[] PROGMEM = {
 
-    padAmountAll_string,
-    padAmountSingle_string
+    padAmountSingle_string,
+    padAmountAll_string
 
 };
 

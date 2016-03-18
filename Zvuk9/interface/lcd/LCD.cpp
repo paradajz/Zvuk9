@@ -8,6 +8,8 @@
 #define CC_X_START                      0
 #define CC_Y_START                      9
 
+const String emptyLine = "                                        ";
+
 LCD::LCD()  {
 
     displayMessage_var = false;
@@ -25,18 +27,29 @@ void LCD::init()    {
    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) {
 
        lcdLine[i].reserve(MAX_TEXT_LENGTH);
+       lcdLine[i] = emptyLine;
+
        lcdLineMessage[i].reserve(MAX_TEXT_LENGTH);
-       lineChange[i] = false;
+       lcdLineMessage[i] = emptyLine;
+
        lastLCDLine[i].reserve(MAX_TEXT_LENGTH);
+       lastLCDLine[i] = emptyLine;
+
        lastLCDmessage[i].reserve(MAX_TEXT_LENGTH);
-       scrollEnabled[i] = false;
+       lastLCDmessage[i] = emptyLine;
+
        lcdLineScroll[i].reserve(MAX_TEXT_LENGTH);
+       lcdLineScroll[i] = emptyLine;
+
+       lineChange[i] = false;
+       scrollEnabled[i] = false;
        scrollDirection[i] = true;
 
    }
 
    lastScrollTime = 0;
    scrollIndex = 0;
+   displayMessage_var = false;
 
    _delay_ms(100);
    lcd_gotoxy(0,0);
