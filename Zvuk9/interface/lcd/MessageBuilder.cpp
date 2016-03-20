@@ -16,7 +16,7 @@
 //init
 MessageBuilder::MessageBuilder()    {
 
-    string_line.reserve(MAX_TEXT_LENGTH);
+    string_line.reserve(MAX_TEXT_SIZE);
 
 }
 
@@ -670,32 +670,21 @@ void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startI
     #endif
 
     uint8_t size = string_line.length();
-    expandLine(startIndex);
-    string_line.toCharArray(char_line, string_line.length()+1, 0);
-    char_line[string_line.length()] = '\0';
+    string_line.toCharArray(char_line, size+1, 0);
+    char_line[size] = '\0';
 
     switch(type)    {
 
         case text:
-        lcDisplay.displayText(row, char_line, size, startIndex, overwrite);
+        lcDisplay.displayText(row, char_line, startIndex, overwrite);
         break;
 
         case message:
-        lcDisplay.displayMessage(row, char_line, size);
+        lcDisplay.displayMessage(row, char_line);
         break;
 
         default:
         break;
-
-    }
-
-}
-
-void MessageBuilder::expandLine(uint8_t startIndex)    {
-
-    while (string_line.length() < (NUMBER_OF_LCD_COLUMNS-startIndex))  {
-
-        string_line += " ";
 
     }
 

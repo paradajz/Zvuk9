@@ -29,7 +29,7 @@ void LCD::init()    {
     //init lcdline
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) {
 
-        for (int j=0; j<MAX_TEXT_LENGTH; j++)   {
+        for (int j=0; j<MAX_TEXT_SIZE; j++)   {
 
             lcdLine_char[i][j] = ' ';
             lcdLineMessage_char[i][j] = ' ';
@@ -37,16 +37,16 @@ void LCD::init()    {
 
         }
 
-        lcdLine_char[i][MAX_TEXT_LENGTH] = '\0';
+        lcdLine_char[i][MAX_TEXT_SIZE] = '\0';
         lcdLineMessage_char[i][NUMBER_OF_LCD_COLUMNS] = '\0';
         lastLCDLine_char[i][NUMBER_OF_LCD_COLUMNS] = '\0';
 
     }
 
     //init scroll line
-    for (int i=0; i<MAX_TEXT_LENGTH; i++)
+    for (int i=0; i<MAX_TEXT_SIZE; i++)
         lcdLineScroll_char[i] = ' ';
-    lcdLineScroll_char[MAX_TEXT_LENGTH] = '\0';
+    lcdLineScroll_char[MAX_TEXT_SIZE] = '\0';
 
    lastScrollTime = 0;
    displayMessage_var = false;
@@ -68,7 +68,7 @@ void LCD::update()  {
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
 
-        //checkScroll(i);
+        checkScroll(i);
 
         if (lineChange[i])  {
 
@@ -79,19 +79,42 @@ void LCD::update()  {
                 break;
 
                 default:
-                charPointer = lcdLine_char[i];
+                if (scrollEnabled[i]) charPointer = lcdLineScroll_char;
+                else charPointer = lcdLine_char[i];
                 break;
 
             }
 
-            for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
+            uint8_t characters = strlen(charPointer);
+            uint8_t last_characters = strlen(lastLCDLine_char[i]);
 
-                if (charPointer[j] != lastLCDLine_char[i][j])  {
+            if (characters >= NUMBER_OF_LCD_COLUMNS) characters = NUMBER_OF_LCD_COLUMNS;
+
+            for (int j=0; j<characters; j++) {
+
+                if (j < last_characters)    {
+
+                    if (charPointer[j] != lastLCDLine_char[i][j])  {
+
+                        lcd_gotoxy(j, i);
+                        lcd_putc(charPointer[j]);
+
+                    }
+
+                }   else {
 
                     lcd_gotoxy(j, i);
                     lcd_putc(charPointer[j]);
 
                 }
+
+            }
+
+            //now fill remaining columns with spaces
+            for (int j=characters; j<NUMBER_OF_LCD_COLUMNS; j++)    {
+
+                lcd_gotoxy(j, i);
+                lcd_putc(' ');
 
             }
 
@@ -152,68 +175,36 @@ messageStatus_t LCD::getMessageStatus()    {
 
 void LCD::checkScroll(uint8_t row) {
 
-    //if (scrollEnabled[row])   {
-//
-        //if ((newMillis() - lastScrollTime) > LCD_SCROLL_TIME)    {
-//
-            //lcdLineScroll = lcdLine[row].substring(scrollIndex[row], MAX_TEXT_LENGTH);
-            ////strcpy(lcdLineScroll_char, )
-//
-            //for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
-//
-                //if (lastLCDLine_char[row][j] != lcdLineScroll_char[j])   {
-//
-                    //lcd_gotoxy(j, row);
-                    //lcd_putc(lcdLineScroll_char[j]);
-//
-                //}
-//
-            //}
-//
-            //lastScrollTime = newMillis();
-//
-            //if (scrollDirection[row])    {
-//
-                //#if MODE_SERIAL > 0
-                    //Serial.println(F("Scrolling LCD line"));
-                    //Serial.print(row+1);
-                    //Serial.println(F(" left"));
-                    //Serial.print(F("Scroll index: "));
-                    //Serial.println(scrollIndex[row]);
-                //#endif
-//
-                //if (((lcdLine[row].length()-1) - scrollIndex[row]) > NUMBER_OF_LCD_COLUMNS) {
-//
-                    //scrollIndex[row]++;
-//
-                //}   else scrollDirection[row] = false;
-//
-            //}   else {
-//
-                //#if MODE_SERIAL > 0
-                    //Serial.println(F("Scrolling LCD line"));
-                    //Serial.print(row+1);
-                    //Serial.println(F(" right"));
-                    //Serial.print(F("Scroll index: "));
-                    //Serial.println(scrollIndex[row]);
-                //#endif
-//
-                //scrollIndex[row]--;
-                //if (scrollIndex[row] < 0) { scrollDirection[row] = true; scrollIndex[row] = 0; }
-//
-            //}
-//
-            //lastLCDLine[row] = lcdLineScroll;
-            //strcpy(lastLCDLine_char[row], lcdLineScroll_char);
-//
-        //}
-//
-    //}
+    if (!scrollEnabled[row]) return;
+
+    if ((newMillis() - lastScrollTime) < LCD_SCROLL_TIME) return;
+
+    //scrollIndex is validated below
+    for (int i=0; i<NUMBER_OF_LCD_COLUMNS; i++)
+        lcdLineScroll_char[i] = lcdLine_char[row][i+scrollIndex[row]];
+
+    if (scrollDirection[row])    {
+
+        if (((strlen(lcdLine_char[row])-1) - scrollIndex[row]) > NUMBER_OF_LCD_COLUMNS) {
+
+            scrollIndex[row]++;
+
+        }   else scrollDirection[row] = false;
+
+    }   else {
+
+        scrollIndex[row]--;
+        if (scrollIndex[row] < 0) { scrollDirection[row] = true; scrollIndex[row] = 0; }
+
+    }
+
+    lineChange[row] = true;
+
+    lastScrollTime = newMillis();
 
 }
 
-
-void LCD::displayMessage(uint8_t row, const char *message, uint8_t size)  {
+void LCD::displayMessage(uint8_t row, const char *message)  {
 
     strcpy(lcdLineMessage_char[row], message);
 
@@ -222,7 +213,9 @@ void LCD::displayMessage(uint8_t row, const char *message, uint8_t size)  {
 
 }
 
-void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex, bool overwrite)    {
+void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite)    {
+
+    uint8_t size = strlen(text);
 
     if (overwrite) {
 

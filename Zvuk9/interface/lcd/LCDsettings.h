@@ -9,4 +9,6 @@
 #define NUMBER_OF_LCD_COLUMNS           20
 #define NUMBER_OF_LCD_ROWS              4
 
+#define MAX_TEXT_SIZE                   (NUMBER_OF_LCD_COLUMNS+10)
+
 #endif

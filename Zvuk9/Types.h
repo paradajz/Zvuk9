@@ -7,21 +7,19 @@ Define custom data types.
 #ifndef TYPES_H_
 #define TYPES_H_
 
-#include "interface/leds/LEDsettings.h"
-
 typedef enum {
 
-    ccLimitTypeXmin = 0x00,
-    ccLimitTypeXmax = 0x01,
-    ccLimitTypeYmin = 0x02,
-    ccLimitTypeYmax = 0x03
+    ccLimitTypeXmin,
+    ccLimitTypeXmax,
+    ccLimitTypeYmin,
+    ccLimitTypeYmax
 
 } ccLimitType_t;
 
 typedef enum {
 
-    ccTypeX = 0x00,
-    ccTypeY = 0x01
+    ccTypeX,
+    ccTypeY
 
 } ccType_t;
 
@@ -99,14 +97,6 @@ typedef enum {
 
 typedef enum {
 
-    regularLine,
-    messageLine,
-    scrollLine
-
-} lcdLineType_t;
-
-typedef enum {
-
     pressureVelocity,
     pressureAfterTouch
 
@@ -122,8 +112,8 @@ typedef enum {
 
 typedef enum {
 
-    curveCoordinateX = 0x00,
-    curveCoordinateY = 0x01,
+    curveCoordinateX,
+    curveCoordinateY,
     curveCoordinateInvalid
 
 } curveCoordinate_t;

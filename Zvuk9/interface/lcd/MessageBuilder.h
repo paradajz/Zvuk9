@@ -6,8 +6,6 @@
 #include "LCD.h"
 #include "LCDsettings.h"
 
-#define MAX_TEXT_SIZE       (NUMBER_OF_LCD_COLUMNS+10)
-
 class MessageBuilder {
 
     public:
@@ -43,7 +41,6 @@ class MessageBuilder {
 
     private:
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite);
-    void expandLine(uint8_t startIndex);
     String string_line;
     char char_line[MAX_TEXT_SIZE+1];
     char nameBuffer[MAX_TEXT_SIZE+1];

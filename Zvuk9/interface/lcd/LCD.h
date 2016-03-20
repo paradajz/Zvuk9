@@ -11,16 +11,14 @@
 #include "Macros.h"
 #include "../../Debug.h"
 
-#define MAX_TEXT_LENGTH     (NUMBER_OF_LCD_COLUMNS+10)
-
 class LCD   {
 
     public:
     LCD();
     void init();
     void update();
-    void displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex, bool overwrite);
-    void displayMessage(uint8_t row, const char *message, uint8_t size);
+    void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite);
+    void displayMessage(uint8_t row, const char *message);
 
     private:
     messageStatus_t getMessageStatus();
@@ -38,10 +36,10 @@ class LCD   {
 
     int8_t scrollIndex[NUMBER_OF_LCD_ROWS];
 
-    char lcdLine_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_LENGTH+1];
-    char lcdLineMessage_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_LENGTH+1];
-    char lastLCDLine_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_LENGTH+1];
-    char lcdLineScroll_char[MAX_TEXT_LENGTH+1];
+    char lcdLine_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
+    char lcdLineMessage_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
+    char lastLCDLine_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
+    char lcdLineScroll_char[MAX_TEXT_SIZE+1];
 
 };
 
