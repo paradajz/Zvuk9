@@ -43,7 +43,7 @@ class MessageBuilder {
 
     private:
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite);
-    void expandLine();
+    void expandLine(uint8_t startIndex);
     String string_line;
     char char_line[MAX_TEXT_SIZE+1];
     char nameBuffer[MAX_TEXT_SIZE+1];

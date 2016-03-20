@@ -224,13 +224,6 @@ void LCD::displayMessage(uint8_t row, const char *message, uint8_t size)  {
 
 void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex, bool overwrite)    {
 
-    #if MODE_SERIAL > 0
-        Serial.print(F("Displaying text on LCD. Row "));
-        Serial.print(row+1);
-        Serial.print(F(", size: "));
-        Serial.println(size);
-    #endif
-
     if (overwrite) {
 
         //overwrite current text on selected line
@@ -240,7 +233,7 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t start
 
         //append characters
         uint8_t charArrayIndex = 0;
-        while (text[charArrayIndex] != '\0')   {
+        while (charArrayIndex < size)   {
 
             lcdLine_char[row][startIndex+charArrayIndex] = text[charArrayIndex];
             charArrayIndex++;

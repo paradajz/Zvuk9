@@ -669,18 +669,19 @@ void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startI
         Serial.println(row+1);
     #endif
 
-    expandLine();
+    uint8_t size = string_line.length();
+    expandLine(startIndex);
     string_line.toCharArray(char_line, string_line.length()+1, 0);
     char_line[string_line.length()] = '\0';
 
     switch(type)    {
 
         case text:
-        lcDisplay.displayText(row, char_line, string_line.length(), startIndex, overwrite);
+        lcDisplay.displayText(row, char_line, size, startIndex, overwrite);
         break;
 
         case message:
-        lcDisplay.displayMessage(row, char_line, string_line.length());
+        lcDisplay.displayMessage(row, char_line, size);
         break;
 
         default:
@@ -690,15 +691,14 @@ void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startI
 
 }
 
-void MessageBuilder::expandLine()    {
+void MessageBuilder::expandLine(uint8_t startIndex)    {
 
-    if (string_line.length() < NUMBER_OF_LCD_COLUMNS)
-
-    do {
+    while (string_line.length() < (NUMBER_OF_LCD_COLUMNS-startIndex))  {
 
         string_line += " ";
 
-    }   while (string_line.length() < NUMBER_OF_LCD_COLUMNS);
+    }
 
 }
+
 MessageBuilder messageBuilder;
