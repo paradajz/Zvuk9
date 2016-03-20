@@ -5,6 +5,8 @@
 
 #include "LCD.h"
 #include "LCDsettings.h"
+#include "Macros.h"
+#include "strings/Strings.h"
 
 class MessageBuilder {
 

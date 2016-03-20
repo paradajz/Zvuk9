@@ -3,6 +3,8 @@
 
 #include "../LCD.h"
 #include "../../../Types.h"
+#include "../Macros.h"
+#include "../strings/Strings.h"
 
 #define MAX_MENU_LEVELS     10
 #define MAX_MENU_OPTIONS    10

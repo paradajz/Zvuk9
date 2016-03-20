@@ -5,10 +5,8 @@
 #include "../../Types.h"
 #include "../../hardware/lcd/lcd.h"
 #include "LCDsettings.h"
-#include "strings/Strings.h"
 #include "../../Types.h"
 #include "../../hardware/timer/TimerObject.h"
-#include "Macros.h"
 #include "../../Debug.h"
 
 class LCD   {

@@ -64,6 +64,7 @@ void LCD::update()  {
     //get message status to determine what to print
     messageStatus_t messageStatus = getMessageStatus();
 
+    //use char pointer to point to line we're going to print
     char *charPointer;
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
@@ -85,6 +86,8 @@ void LCD::update()  {
 
             }
 
+            //this is to avoid buffer overflow when comparing current and previous
+            //lines and current is longer than previous
             uint8_t characters = strlen(charPointer);
             uint8_t last_characters = strlen(lastLCDLine_char[i]);
 
@@ -101,7 +104,7 @@ void LCD::update()  {
 
                     }
 
-                }   else {
+                }   else { //this index is longer then previous line
 
                     lcd_gotoxy(j, i);
                     lcd_putc(charPointer[j]);
@@ -118,6 +121,8 @@ void LCD::update()  {
 
             }
 
+            //lastLCDLine doesn't need to be null-terminated
+            //because of other checks
             strcpy(lastLCDLine_char[i], charPointer);
             lineChange[i] = false;
 
@@ -238,11 +243,6 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
     lineChange[row] = true;
 
     if (size > NUMBER_OF_LCD_COLUMNS) {
-
-        #if MODE_SERIAL > 0
-            Serial.print(F("Scrolling line "));
-            Serial.println(row+1);
-        #endif
 
         scrollEnabled[row] = true;
         scrollDirection[row] = true;
