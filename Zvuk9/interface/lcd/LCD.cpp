@@ -62,6 +62,37 @@ void LCD::update()  {
 
     if ((newMillis() - lastLCDupdateTime) < LCD_REFRESH_TIME) return;
 
+    checkMessage();
+
+    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
+
+        checkScroll(i);
+
+        if (lineChange[i])  {
+
+            for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
+
+                if (lcdLine[i][j] != lastLCDLine[i][j]) {
+
+                    lcd_gotoxy(j, i);
+                    lcd_putc(lcdLine[i][j]);
+
+                }
+
+            }
+
+            lastLCDLine[i] = lcdLine[i];
+
+        }
+
+        lineChange[i] = false;
+
+    }   lastLCDupdateTime = newMillis();
+
+}
+
+void LCD::checkMessage()    {
+
     if (displayMessage_var)   {
 
         for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
@@ -88,73 +119,70 @@ void LCD::update()  {
         if (!((newMillis() - messageDisplayTime) > LCD_MESSAGE_DURATION)) return;
 
         for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lineChange[i] = true;
-        clearMessage();
+        messageActivated = false;
 
     }
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
+}
 
-        if (scrollEnabled[i])   {
+void LCD::checkScroll(uint8_t row) {
 
-            if ((newMillis() - lastScrollTime) > LCD_SCROLL_TIME)    {
+    if (scrollEnabled[row])   {
 
-                lcdLineScroll = lcdLine[i].substring(scrollIndex[i], MAX_TEXT_LENGTH);
-                expandLine(i, scrollLine);
+        if ((newMillis() - lastScrollTime) > LCD_SCROLL_TIME)    {
 
-                for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
-
-                    if (lastLCDLine[i][j] != lcdLineScroll[j])   {
-
-                        lcd_gotoxy(j, i);
-                        lcd_putc(lcdLineScroll[j]);
-
-                    }
-
-                }
-
-                lastScrollTime = newMillis();
-
-                if (scrollDirection[i])    {
-
-                    if (((lcdLine[i].length()-1) - scrollIndex[i]) > NUMBER_OF_LCD_COLUMNS) {
-
-                        scrollIndex[i]++;
-
-                    }   else scrollDirection[i] = false;
-
-                }   else {
-
-                    scrollIndex[i]--;
-                    if (scrollIndex < 0) { scrollDirection[i] = true; scrollIndex[i] = 0; }
-
-                }
-
-                lastLCDLine[i] = lcdLineScroll;
-
-            }
-
-        }
-
-        else if (lineChange[i])  {
+            lcdLineScroll = lcdLine[row].substring(scrollIndex[row], MAX_TEXT_LENGTH);
+            expandLine(row, scrollLine);
 
             for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++) {
 
-                if (lcdLine[i][j] != lastLCDLine[i][j]) {
+                if (lastLCDLine[row][j] != lcdLineScroll[j])   {
 
-                    lcd_gotoxy(j, i);
-                    lcd_putc(lcdLine[i][j]);
+                    lcd_gotoxy(j, row);
+                    lcd_putc(lcdLineScroll[j]);
 
                 }
 
             }
 
-            lastLCDLine[i] = lcdLine[i];
+            lastScrollTime = newMillis();
+
+            if (scrollDirection[row])    {
+
+                #if MODE_SERIAL > 0
+                    Serial.println(F("Scrolling LCD line"));
+                    Serial.print(row+1);
+                    Serial.println(F(" left"));
+                    Serial.print(F("Scroll index: "));
+                    Serial.println(scrollIndex[row]);
+                #endif
+
+                if (((lcdLine[row].length()-1) - scrollIndex[row]) > NUMBER_OF_LCD_COLUMNS) {
+
+                    scrollIndex[row]++;
+
+                }   else scrollDirection[row] = false;
+
+            }   else {
+
+                #if MODE_SERIAL > 0
+                    Serial.println(F("Scrolling LCD line"));
+                    Serial.print(row+1);
+                    Serial.println(F(" right"));
+                    Serial.print(F("Scroll index: "));
+                    Serial.println(scrollIndex[row]);
+                #endif
+
+                scrollIndex[row]--;
+                if (scrollIndex[row] < 0) { scrollDirection[row] = true; scrollIndex[row] = 0; }
+
+            }
+
+            lastLCDLine[row] = lcdLineScroll;
 
         }
 
-        lineChange[i] = false;
-
-    }   lastLCDupdateTime = newMillis();
+    }
 
 }
 
@@ -202,13 +230,6 @@ void LCD::displayMessage(uint8_t row, const char *message)  {
 
     messageDisplayTime = newMillis();
     displayMessage_var = true;
-
-}
-
-void LCD::clearMessage()    {
-
-    //clear all previous messages
-    messageActivated = false;
 
 }
 

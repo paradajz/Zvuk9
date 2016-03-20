@@ -24,7 +24,8 @@ class LCD   {
 
     private:
     void expandLine(uint8_t lineNumber, lcdLineType_t lineType);
-    void clearMessage();
+    void checkMessage();
+    void checkScroll(uint8_t row);
 
     uint32_t messageDisplayTime;
     uint32_t lastScrollTime;
