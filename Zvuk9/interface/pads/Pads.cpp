@@ -906,7 +906,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
         #endif
 
         //check if pad data on lcd needs to be cleared
-        if (!checkPadsPressed()) messageBuilder.clearPadData();
+        if (!checkPadsPressed()) display.clearPadData();
 
         break;
 
@@ -948,8 +948,8 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
         }
 
-        messageBuilder.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
-        messageBuilder.displayVelocity(velocity);
+        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
+        display.displayVelocity(velocity);
         break;
 
         case false:
@@ -992,10 +992,10 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 void Pads::handleXY(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable)   {
 
     if (xAvailable || yAvailable)
-        messageBuilder.displayXYposition(xPosition, yPosition, xAvailable, yAvailable);
+        display.displayXYposition(xPosition, yPosition, xAvailable, yAvailable);
 
     //always display ccx/ccy
-    messageBuilder.displayXYcc(ccXPad[pad], ccYPad[pad]);
+    display.displayXYcc(ccXPad[pad], ccYPad[pad]);
 
 }
 

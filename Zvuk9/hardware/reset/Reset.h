@@ -6,4 +6,4 @@
 
 void resetTeensy();
 
-#endif /* RESET_H_ */
+#endif

@@ -852,7 +852,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
     uint8_t newNote = getActiveOctave()*MIDI_NOTES + (uint8_t)note;
     if (newNote > 127) {
 
-        messageBuilder.displayOutOfRange();
+        display.displayOutOfRange();
         return outOfRange;
 
     }
@@ -876,7 +876,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
         //pads cannot have more than NOTES_PER_PAD notes
         if (noteIndex == NOTES_PER_PAD) {
 
-            messageBuilder.displayMaxNotesSet();
+            display.displayMaxNotesSet();
             return overflow;
 
         }

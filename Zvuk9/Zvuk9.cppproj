@@ -738,7 +738,7 @@ vmresolved.tools.path=D:\Applications
     <Compile Include="interface\lcd\Icons.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\LCD.cpp">
+    <Compile Include="interface\lcd\UpdateLogic.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\LCD.h">
@@ -763,9 +763,6 @@ vmresolved.tools.path=D:\Applications
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\MessageBuilder.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="interface\lcd\MessageBuilder.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\strings\CC.h">

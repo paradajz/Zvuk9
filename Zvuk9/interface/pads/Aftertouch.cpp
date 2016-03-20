@@ -67,7 +67,7 @@ void Pads::sendAftertouch(uint8_t pad)  {
         midi.sendAfterTouch(midiChannel, midiAfterTouch);
     #endif
 
-    messageBuilder.displayAftertouch(midiAfterTouch);
+    display.displayAftertouch(midiAfterTouch);
 
     afterTouchAvailable = false;
 

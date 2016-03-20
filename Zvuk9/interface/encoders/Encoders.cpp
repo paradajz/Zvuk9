@@ -4,7 +4,7 @@
 #include "../../hardware/timer/TimerObject.h"
 #include "../pads/Pads.h"
 #include "../buttons/Buttons.h"
-#include "../lcd/MessageBuilder.h"
+#include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
 
 #define ENCODER_SPEED_1         1
@@ -55,7 +55,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     //don't allow changing settings using encoders during pad edit mode
     if (pads.editModeActive()) {
 
-        messageBuilder.displayPadEditChangeParametersError();
+        display.displayPadEditChangeParametersError();
         return;
 
     }
@@ -67,7 +67,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     if (pads.isPadPressed(i)) {
 
         //disable encoders while pads are pressed
-        messageBuilder.displayPadReleaseError(changeParameters);
+        display.displayPadReleaseError(changeParameters);
         return;
 
     }
@@ -94,7 +94,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
             pads.setMIDIchannel(midiChannel);
 
-            messageBuilder.displayMIDIchannelChange(pads.getMIDIchannel());
+            display.displayMIDIchannelChange(pads.getMIDIchannel());
 
         } else {
 
@@ -118,7 +118,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
                 leds.displayActiveNoteLEDs();
 
                 //display preset on display
-                messageBuilder.displayProgramAndPreset(activeProgram+1, currentPreset);
+                display.displayProgramAndPreset(activeProgram+1, currentPreset);
 
             }
 
@@ -136,53 +136,53 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         leds.displayActiveNoteLEDs();
 
         //display preset on display
-        messageBuilder.displayProgramAndPreset(pads.getActiveProgram()+1, activePreset);
+        display.displayProgramAndPreset(pads.getActiveProgram()+1, activePreset);
         break;
 
         case X_CC_ENCODER:
         pads.changeCC(direction, ccTypeX, steps);
-        messageBuilder.displayCCchange(ccTypeX,  _splitState, pads.getCCvalue(ccTypeX, lastTouchedPad), lastTouchedPad+1);
+        display.displayCCchange(ccTypeX,  _splitState, pads.getCCvalue(ccTypeX, lastTouchedPad), lastTouchedPad+1);
         break;
 
         case Y_CC_ENCODER:
         pads.changeCC(direction, ccTypeY, steps);
-        messageBuilder.displayCCchange(ccTypeY,  _splitState, pads.getCCvalue(ccTypeY, lastTouchedPad), lastTouchedPad+1);
+        display.displayCCchange(ccTypeY,  _splitState, pads.getCCvalue(ccTypeY, lastTouchedPad), lastTouchedPad+1);
         break;
 
         case X_MAX_ENCODER:
         pads.changeCClimits(direction, ccLimitTypeXmax, steps);
         value = pads.getCClimitValue(ccTypeX, ccLimitTypeXmax, lastTouchedPad);
-        messageBuilder.displayCClimitChange(ccLimitTypeXmax, _splitState, value, lastTouchedPad+1);
+        display.displayCClimitChange(ccLimitTypeXmax, _splitState, value, lastTouchedPad+1);
         break;
 
         case X_MIN_ENCODER:
         pads.changeCClimits(direction, ccLimitTypeXmin, steps);
         value = pads.getCClimitValue(ccTypeX, ccLimitTypeXmin, lastTouchedPad);
-        messageBuilder.displayCClimitChange(ccLimitTypeXmin, _splitState, value, lastTouchedPad+1);
+        display.displayCClimitChange(ccLimitTypeXmin, _splitState, value, lastTouchedPad+1);
         break;
 
         case Y_MAX_ENCODER:
         pads.changeCClimits(direction, ccLimitTypeYmax, steps);
         value = pads.getCClimitValue(ccTypeY, ccLimitTypeYmax, lastTouchedPad);
-        messageBuilder.displayCClimitChange(ccLimitTypeYmax, _splitState, value, lastTouchedPad+1);
+        display.displayCClimitChange(ccLimitTypeYmax, _splitState, value, lastTouchedPad+1);
         break;
 
         case Y_MIN_ENCODER:
         pads.changeCClimits(direction, ccLimitTypeYmin, steps);
         value = pads.getCClimitValue(ccTypeY, ccLimitTypeYmin, lastTouchedPad);
-        messageBuilder.displayCClimitChange(ccLimitTypeYmin, _splitState, value, lastTouchedPad+1);
+        display.displayCClimitChange(ccLimitTypeYmin, _splitState, value, lastTouchedPad+1);
         break;
 
         case X_CURVE_ENCODER:
         pads.changeCCcurve(direction, curveCoordinateX);
         activeCurve = pads.getCCcurve(curveCoordinateX, lastTouchedPad);
-        messageBuilder.displayCurveChange(curveCoordinateX, _splitState, activeCurve, lastTouchedPad+1);
+        display.displayCurveChange(curveCoordinateX, _splitState, activeCurve, lastTouchedPad+1);
         break;
 
         case Y_CURVE_ENCODER:
         pads.changeCCcurve(direction, curveCoordinateY);
         activeCurve = pads.getCCcurve(curveCoordinateY, lastTouchedPad);
-        messageBuilder.displayCurveChange(curveCoordinateY, _splitState, activeCurve, lastTouchedPad+1);
+        display.displayCurveChange(curveCoordinateY, _splitState, activeCurve, lastTouchedPad+1);
         break;
 
     }

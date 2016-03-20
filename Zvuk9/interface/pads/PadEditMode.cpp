@@ -9,14 +9,14 @@ void Pads::setupPadEditMode(uint8_t pad)    {
         Serial.println(lastPressedPad);
     #endif
 
-    messageBuilder.displayPadEditMode(lastPressedPad + 1);
+    display.displayPadEditMode(lastPressedPad + 1);
 
     #if MODE_SERIAL > 0
         Serial.print(F("Active octave: "));
         Serial.println(activeOctave);
     #endif
 
-    messageBuilder.displayActiveOctave(normalizeOctave(activeOctave));
+    display.displayActiveOctave(normalizeOctave(activeOctave));
     displayActivePadNotes(lastPressedPad);
     leds.displayActiveNoteLEDs(true, lastPressedPad);
 
@@ -48,15 +48,15 @@ void Pads::displayActivePadNotes(uint8_t pad) {
 
     }
 
-    messageBuilder.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
+    display.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
 
 }
 
 void Pads::exitPadEditMode()    {
 
-    messageBuilder.clearPadEditMode();
+    display.clearPadEditMode();
     editModeActivated = false;
-    messageBuilder.displayProgramAndPreset(activeProgram+1, activePreset);
+    display.displayProgramAndPreset(activeProgram+1, activePreset);
     //after exiting from pad edit mode, restore note led states
     leds.displayActiveNoteLEDs();
 

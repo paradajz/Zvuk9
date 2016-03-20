@@ -1,4 +1,4 @@
-#include "MessageBuilder.h"
+#include "LCD.h"
 #include "../../Scales.h"
 
 #define PROGRAM_PRESET_ROW  0
@@ -13,14 +13,7 @@
 
 #define SPACE_CHAR          32
 
-//init
-MessageBuilder::MessageBuilder()    {
-
-    string_line.reserve(MAX_TEXT_SIZE);
-
-}
-
-void MessageBuilder::displayHelloMessage() {
+void LCD::displayHelloMessage() {
 
     strcpy_P(nameBuffer, welcome_string);
 
@@ -34,6 +27,7 @@ void MessageBuilder::displayHelloMessage() {
 
     }
 
+    strcpy(lastLCDLine_char[0], nameBuffer);
     newDelay(250);
 
 }
@@ -41,7 +35,7 @@ void MessageBuilder::displayHelloMessage() {
 
 //messages
 
-void MessageBuilder::displayOutOfRange()    {
+void LCD::displayOutOfRange()    {
 
     strcpy_P(nameBuffer, outOfRange_string);
     string_line = nameBuffer;
@@ -53,7 +47,7 @@ void MessageBuilder::displayOutOfRange()    {
 
 }
 
-void MessageBuilder::displayModifierEnabled()   {
+void LCD::displayModifierEnabled()   {
 
     strcpy_P(nameBuffer, modifierEnabled_string);
     string_line = nameBuffer;
@@ -65,7 +59,7 @@ void MessageBuilder::displayModifierEnabled()   {
 
 }
 
-void MessageBuilder::displayMIDIchannelChange(uint8_t channel) {
+void LCD::displayMIDIchannelChange(uint8_t channel) {
 
     strcpy_P(nameBuffer, midiChannel_string);
     string_line = nameBuffer;
@@ -78,7 +72,7 @@ void MessageBuilder::displayMIDIchannelChange(uint8_t channel) {
 
 }
 
-void MessageBuilder::displayCCchange(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
+void LCD::displayCCchange(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccArray[(uint8_t)type])));
     string_line = nameBuffer;
@@ -95,7 +89,7 @@ void MessageBuilder::displayCCchange(ccType_t type, splitState_t _splitState, ui
 
 }
 
-void MessageBuilder::displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber)  {
+void LCD::displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber)  {
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
     string_line = nameBuffer;
@@ -115,7 +109,7 @@ void MessageBuilder::displayCurveChange(curveCoordinate_t coordinate, splitState
 
 }
 
-void MessageBuilder::displayCClimitChange(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)  {
+void LCD::displayCClimitChange(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)  {
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccLimitArray[(uint8_t)type])));
 
@@ -134,7 +128,7 @@ void MessageBuilder::displayCClimitChange(ccLimitType_t type, splitState_t _spli
 
 }
 
-void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber)  {
+void LCD::displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber)  {
 
     switch(messageType) {
 
@@ -190,7 +184,7 @@ void MessageBuilder::displayOnOff(functionsOnOff_t messageType, splitState_t _sp
 
 }
 
-void MessageBuilder::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value) {
+void LCD::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value) {
 
     switch(type)    {
 
@@ -269,7 +263,7 @@ void MessageBuilder::displayNoteChange(changeOutput_t result, noteChangeType_t t
 
 }
 
-void MessageBuilder::displayEditModeNotAllowed(padEditModeResult_t errorType)   {
+void LCD::displayEditModeNotAllowed(padEditModeResult_t errorType)   {
 
     switch (errorType)  {
 
@@ -294,7 +288,7 @@ void MessageBuilder::displayEditModeNotAllowed(padEditModeResult_t errorType)   
 
 }
 
-void MessageBuilder::displayTransportControl(transportControl_t type, bool state)  {
+void LCD::displayTransportControl(transportControl_t type, bool state)  {
 
     switch(type)    {
 
@@ -323,7 +317,7 @@ void MessageBuilder::displayTransportControl(transportControl_t type, bool state
 
 }
 
-void MessageBuilder::displayMaxNotesSet()   {
+void LCD::displayMaxNotesSet()   {
 
     strcpy_P(nameBuffer, maxNotesSet0_string);
     string_line = nameBuffer;
@@ -335,7 +329,7 @@ void MessageBuilder::displayMaxNotesSet()   {
 
 }
 
-void MessageBuilder::displayPadReleaseError(padReleaseError_t error)    {
+void LCD::displayPadReleaseError(padReleaseError_t error)    {
 
     strcpy_P(nameBuffer, relasePad_string);
     string_line = nameBuffer;
@@ -369,7 +363,7 @@ void MessageBuilder::displayPadReleaseError(padReleaseError_t error)    {
 
 }
 
-void MessageBuilder::displayPadEditChangeParametersError()  {
+void LCD::displayPadEditChangeParametersError()  {
 
     strcpy_P(nameBuffer, exitPadMode_string);
     string_line = nameBuffer;
@@ -383,7 +377,7 @@ void MessageBuilder::displayPadEditChangeParametersError()  {
 
 //text
 
-void MessageBuilder::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
+void LCD::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
 
     //program and preset are displayed in single row
     strcpy_P(nameBuffer, program_string);
@@ -409,7 +403,7 @@ void MessageBuilder::displayProgramAndPreset(uint8_t program, uint8_t preset)   
 
 }
 
-void MessageBuilder::displayVelocity(uint8_t velocity)  {
+void LCD::displayVelocity(uint8_t velocity)  {
 
     strcpy_P(nameBuffer, velocity_string);
     string_line = nameBuffer;
@@ -421,7 +415,7 @@ void MessageBuilder::displayVelocity(uint8_t velocity)  {
 
 }
 
-void MessageBuilder::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable)   {
+void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable)   {
 
     //velocity, x, y and aftertouch are all in same line
     //special care needs to be taken here
@@ -478,7 +472,7 @@ void MessageBuilder::displayXYposition(uint8_t xPosition, uint8_t yPosition, boo
 
 }
 
-void MessageBuilder::displayAftertouch(uint8_t afterTouch)  {
+void LCD::displayAftertouch(uint8_t afterTouch)  {
 
     strcpy_P(nameBuffer, aftertouch_string);
     string_line = nameBuffer;
@@ -490,7 +484,7 @@ void MessageBuilder::displayAftertouch(uint8_t afterTouch)  {
 
 }
 
-void MessageBuilder::displayXYcc(uint8_t ccX, uint8_t ccY)   {
+void LCD::displayXYcc(uint8_t ccX, uint8_t ccY)   {
 
     //ccx string
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeX])));
@@ -511,7 +505,7 @@ void MessageBuilder::displayXYcc(uint8_t ccX, uint8_t ccY)   {
 
 }
 
-void MessageBuilder::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes)  {
+void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes)  {
 
     if (!numberOfNotes) {
 
@@ -534,7 +528,7 @@ void MessageBuilder::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], u
 
 }
 
-void MessageBuilder::displayActiveOctave(int8_t octave)   {
+void LCD::displayActiveOctave(int8_t octave)   {
 
     //used only in pad edit mode
     strcpy_P(nameBuffer, activeOctave_string);
@@ -545,7 +539,7 @@ void MessageBuilder::displayActiveOctave(int8_t octave)   {
 
 }
 
-void MessageBuilder::displayPadEditMode(uint8_t padNumber)  {
+void LCD::displayPadEditMode(uint8_t padNumber)  {
 
     strcpy_P(nameBuffer, editingPad_string);
     string_line = nameBuffer;
@@ -559,7 +553,7 @@ void MessageBuilder::displayPadEditMode(uint8_t padNumber)  {
 
 }
 
-void MessageBuilder::clearPadEditMode()    {
+void LCD::clearPadEditMode()    {
 
     strcpy_P(nameBuffer, emptyLine_string);
     string_line = nameBuffer;
@@ -568,7 +562,7 @@ void MessageBuilder::clearPadEditMode()    {
 
 }
 
-void MessageBuilder::displayServiceMenu()  {
+void LCD::displayServiceMenu()  {
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(menu_types[serviceMenu])));
     string_line = nameBuffer;
@@ -585,7 +579,7 @@ void MessageBuilder::displayServiceMenu()  {
 
 }
 
-void MessageBuilder::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
+void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
 
     //we can display up to three options/suboptions at the time
     uint8_t markerOption = (option > 2) ? (NUMBER_OF_LCD_ROWS-1) : option;
@@ -624,28 +618,35 @@ void MessageBuilder::changeMenuOption(menuType_t type, uint8_t option, uint8_t s
 
 }
 
-void MessageBuilder::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  {
+void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  {
 
 
 
 }
 
-void MessageBuilder::clearPadData() {
+void LCD::clearPadData(bool forceClear) {
 
-    #if MODE_SERIAL > 0
-        Serial.println(F("Clearing pad data from LCD"));
-    #endif
+    if (!forceClear)  padClearDelay = newMillis();
+    else {
 
-    //clear all rows except first one
-    strcpy_P(nameBuffer, emptyLine_string);
-    string_line = nameBuffer;
+        #if MODE_SERIAL > 0
+            Serial.println(F("Clearing pad data from LCD"));
+        #endif
 
-    for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
-    updateDisplay(i, text, 0, true);
+        //clear all rows except first one
+        strcpy_P(nameBuffer, emptyLine_string);
+        string_line = nameBuffer;
+
+        for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
+            updateDisplay(i, text, 0, true);
+
+        padClearDelay = 0;
+
+    }
 
 }
 
-void MessageBuilder::displayReset() {
+void LCD::displayReset() {
 
     strcpy_P(nameBuffer, emptyLine_string);
     string_line = nameBuffer;
@@ -662,7 +663,7 @@ void MessageBuilder::displayReset() {
 
 //lcd update
 
-void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite)    {
+void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite)    {
 
     #if MODE_SERIAL > 0
         Serial.print(F("Updating LCD, row "));
@@ -676,11 +677,11 @@ void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startI
     switch(type)    {
 
         case text:
-        lcDisplay.displayText(row, char_line, startIndex, overwrite);
+        display.displayText(row, char_line, startIndex, overwrite);
         break;
 
         case message:
-        lcDisplay.displayMessage(row, char_line);
+        display.displayMessage(row, char_line);
         break;
 
         default:
@@ -689,5 +690,3 @@ void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startI
     }
 
 }
-
-MessageBuilder messageBuilder;

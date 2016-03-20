@@ -12,7 +12,7 @@
 #include "../../hardware/timer/TimerObject.h"
 #include "../../midi/MIDI.h"
 #include "../../eeprom/EEPROMsettings.h"
-#include "../lcd/MessageBuilder.h"
+#include "../lcd/LCD.h"
 #include "../leds/LEDs.h"
 #include "../../hardware/adc/ADC.h"
 

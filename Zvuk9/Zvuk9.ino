@@ -13,7 +13,7 @@
 #include "hardware/reset/Reset.h"
 #include <util/delay.h>
 #include "midi/MIDI.h"
-#include "interface/lcd/MessageBuilder.h"
+#include "interface/lcd/LCD.h"
 
 //define function prototypes
 void startUpAnimation();
@@ -47,7 +47,7 @@ void startUpAnimation() {
 
     sei();
 
-    messageBuilder.displayHelloMessage();
+    display.displayHelloMessage();
     newDelay(600);
 
     //restore led states
@@ -72,7 +72,7 @@ void initHardware() {
     timers.init();
 
     midi.init();
-    lcDisplay.init();
+    display.init();
     leds.init();
     pads.init();
     encoders.init();
@@ -85,14 +85,11 @@ void initHardware() {
         sei();
     #endif
 
-    //clear screen
-    lcd_clrscr();
-
     //setup program/preset on display
     uint8_t activeProgram = pads.getActiveProgram();
     uint8_t activePreset = pads.getActivePreset();
 
-    messageBuilder.displayProgramAndPreset(activeProgram+1, activePreset);
+    display.displayProgramAndPreset(activeProgram+1, activePreset);
 
     buttons.init();
 
@@ -114,6 +111,6 @@ void loop()     {
     pads.update();
     buttons.update();
     encoders.update();
-    lcDisplay.update();
+    display.update();
 
 }

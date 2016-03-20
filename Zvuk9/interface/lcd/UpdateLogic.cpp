@@ -5,6 +5,7 @@ LCD::LCD()  {
 
     displayMessage_var = false;
     messageDisplayTime = 0;
+    string_line.reserve(MAX_TEXT_SIZE);
 
     lcd_init(LCD_DISP_ON);
     _delay_ms(100);
@@ -26,7 +27,6 @@ void LCD::init()    {
     }
 
     //init char arrays
-    //init lcdline
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) {
 
         for (int j=0; j<MAX_TEXT_SIZE; j++)   {
@@ -67,66 +67,66 @@ void LCD::update()  {
     //use char pointer to point to line we're going to print
     char *charPointer;
 
+    checkPadDataClear();
+
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
 
         checkScroll(i);
 
-        if (lineChange[i])  {
+        if (!lineChange[i]) continue;
 
-            switch(messageStatus)   {
+        switch(messageStatus)   {
 
-                case showMessage:
-                charPointer = lcdLineMessage_char[i];
-                break;
+            case showMessage:
+            charPointer = lcdLineMessage_char[i];
+            break;
 
-                default:
-                if (scrollEnabled[i]) charPointer = lcdLineScroll_char;
-                else charPointer = lcdLine_char[i];
-                break;
+            default:
+            if (scrollEnabled[i])   charPointer = lcdLineScroll_char;
+            else                    charPointer = lcdLine_char[i];
+            break;
 
-            }
+        }
 
-            //this is to avoid buffer overflow when comparing current and previous
-            //lines and current is longer than previous
-            uint8_t characters = strlen(charPointer);
-            uint8_t last_characters = strlen(lastLCDLine_char[i]);
+        //this is to avoid buffer overflow when comparing current and previous
+        //lines and current is longer than previous
+        uint8_t characters = strlen(charPointer);
+        uint8_t last_characters = strlen(lastLCDLine_char[i]);
 
-            if (characters >= NUMBER_OF_LCD_COLUMNS) characters = NUMBER_OF_LCD_COLUMNS;
+        if (characters >= NUMBER_OF_LCD_COLUMNS) characters = NUMBER_OF_LCD_COLUMNS;
 
-            for (int j=0; j<characters; j++) {
+        for (int j=0; j<characters; j++) {
 
-                if (j < last_characters)    {
+            if (j < last_characters)    {
 
-                    if (charPointer[j] != lastLCDLine_char[i][j])  {
-
-                        lcd_gotoxy(j, i);
-                        lcd_putc(charPointer[j]);
-
-                    }
-
-                }   else { //this index is longer then previous line
+                if (charPointer[j] != lastLCDLine_char[i][j])  {
 
                     lcd_gotoxy(j, i);
                     lcd_putc(charPointer[j]);
 
                 }
 
-            }
-
-            //now fill remaining columns with spaces
-            for (int j=characters; j<NUMBER_OF_LCD_COLUMNS; j++)    {
+            }   else { //this index is longer then previous line, just print
 
                 lcd_gotoxy(j, i);
-                lcd_putc(' ');
+                lcd_putc(charPointer[j]);
 
             }
 
-            //lastLCDLine doesn't need to be null-terminated
-            //because of other checks
-            strcpy(lastLCDLine_char[i], charPointer);
-            lineChange[i] = false;
+        }
+
+        //now fill remaining columns with spaces
+        for (int j=characters; j<NUMBER_OF_LCD_COLUMNS; j++)    {
+
+            lcd_gotoxy(j, i);
+            lcd_putc(' ');
 
         }
+
+        //lastLCDLine doesn't need to be null-terminated
+        //because of other checks
+        strcpy(lastLCDLine_char[i], charPointer);
+        lineChange[i] = false;
 
     }
 
@@ -257,4 +257,17 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 
 }
 
-LCD lcDisplay;
+void LCD::checkPadDataClear()   {
+
+    //clear pad data with some delay to allow rapid pad press without clearing display every time
+
+    if (padClearDelay)  {
+
+        if ((newMillis() - padClearDelay) > LCD_PAD_DATA_CLEAR_DELAY)
+            clearPadData(true);
+
+    }
+
+}
+
+LCD display;

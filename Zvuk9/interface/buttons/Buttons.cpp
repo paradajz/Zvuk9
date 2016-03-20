@@ -1,7 +1,7 @@
 #include "Buttons.h"
 #include "../../hardware/i2c/i2c_master.h"
 #include "../pads/Pads.h"
-#include "../lcd/MessageBuilder.h"
+#include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
 #include "../leds/LEDs.h"
 #include "../../midi/MIDI.h"
@@ -149,7 +149,7 @@ void Buttons::update(bool processingEnabled)    {
 
             buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
             stopDisableTimeout = 0;
-            messageBuilder.displayModifierEnabled();
+            display.displayModifierEnabled();
             modifierActive = true;
             if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
 
@@ -169,9 +169,9 @@ void Buttons::update(bool processingEnabled)    {
             if (!resetActivationTimeout) resetActivationTimeout = newMillis();
             else if ((newMillis() - resetActivationTimeout) > RESET_ENABLE_TIMEOUT)   {
 
-                messageBuilder.displayReset();
+                display.displayReset();
                 leds.allLEDsOn();
-                lcDisplay.update();
+                display.update();
 
                 do {
 
@@ -414,7 +414,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
     }
 
     leds.setLEDstate(ledNumber, ledState);
-    messageBuilder.displayOnOff(lcdMessageType, pads.getSplitState(), (ledState == ledIntensityFull), lastTouchedPad+1);
+    display.displayOnOff(lcdMessageType, pads.getSplitState(), (ledState == ledIntensityFull), lastTouchedPad+1);
 
 }
 
@@ -500,7 +500,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
         midi.sendSysEx(sysExArray, SYS_EX_ARRAY_SIZE);
     #endif
 
-    messageBuilder.displayTransportControl(type, displayState);
+    display.displayTransportControl(type, displayState);
 
 }
 
@@ -512,7 +512,7 @@ void Buttons::handleTonicEvent(note_t note) {
         for (int i=0; i<NUMBER_OF_PADS; i++)
         if (pads.isPadPressed(i))  {
 
-            messageBuilder.displayPadReleaseError(changeTonic);
+            display.displayPadReleaseError(changeTonic);
             return;
 
         }
@@ -532,7 +532,7 @@ void Buttons::handleTonicEvent(note_t note) {
         }
 
         //always do this
-        messageBuilder.displayNoteChange(result, tonicChange, activeTonic);
+        display.displayNoteChange(result, tonicChange, activeTonic);
 
     }   else {
 
@@ -561,7 +561,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 //check if last touched pad is pressed
                 if (pads.isPadPressed(pads.getLastTouchedPad()))   {
 
-                    messageBuilder.displayEditModeNotAllowed(padNotReleased);
+                    display.displayEditModeNotAllowed(padNotReleased);
                     pads.setEditMode(false);
 
                 }   else {
@@ -581,7 +581,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
         }   else {
 
-            messageBuilder.displayEditModeNotAllowed(notUserPreset);
+            display.displayEditModeNotAllowed(notUserPreset);
 
         }
 
@@ -603,7 +603,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                 case false:
                 pads.changeActiveOctave(direction);
-                messageBuilder.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
+                display.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
                 leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
                 direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
                 break;
@@ -625,7 +625,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     changeOutput_t shiftResult = pads.shiftOctave(direction);
                     uint8_t activeOctave = pads.getActiveOctave();
-                    messageBuilder.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
+                    display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
 
                     }   else {
@@ -641,7 +641,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     if (pads.isPadPressed(pads.getLastTouchedPad()))   {
 
-                        messageBuilder.displayEditModeNotAllowed(padNotReleased);
+                        display.displayEditModeNotAllowed(padNotReleased);
                         return;
 
                     }
@@ -652,7 +652,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     //disable it on release
                     buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
                     changeOutput_t shiftResult = pads.shiftNote(direction);
-                    messageBuilder.displayNoteChange(shiftResult, noteShift, direction);
+                    display.displayNoteChange(shiftResult, noteShift, direction);
 
                 }   else {
 

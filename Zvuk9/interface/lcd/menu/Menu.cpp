@@ -1,5 +1,4 @@
 #include "Menu.h"
-#include "../MessageBuilder.h"
 #include "../strings/Strings.h"
 
 Menu::Menu()    {
@@ -16,7 +15,7 @@ void Menu::displayMenu(menuType_t type) {
     switch(type)    {
 
         case serviceMenu:
-        messageBuilder.displayServiceMenu();
+        display.displayServiceMenu();
         activeMenu = serviceMenu;
         break;
 
@@ -55,13 +54,13 @@ void Menu::changeOption(bool direction) {
 
     }
 
-    messageBuilder.changeMenuOption(activeMenu, activeOption, activeSubOption);
+    display.changeMenuOption(activeMenu, activeOption, activeSubOption);
 
 }
 
 void Menu::selectOption()   {
 
-    messageBuilder.selectMenuOption(activeMenu, activeOption, activeSubOption);
+    display.selectMenuOption(activeMenu, activeOption, activeSubOption);
 
 }
 
