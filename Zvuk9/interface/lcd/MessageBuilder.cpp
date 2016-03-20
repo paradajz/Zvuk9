@@ -1,12 +1,17 @@
 #include "MessageBuilder.h"
 #include "../../Scales.h"
 
-#define XY_POSITION_START               5
-#define X_COORDINATE_START              5
-#define Y_COORDINATE_START              10
-#define AFTERTOUCH_START                15
+#define PROGRAM_PRESET_ROW  0
+#define PAD_NOTE_ROW        1
+#define PAD_V_XY_AT_ROW     2
+#define XY_ROW              3
 
-#define SPACE_CHAR                      32
+#define XY_POSITION_START   5
+#define X_COORDINATE_START  5
+#define Y_COORDINATE_START  10
+#define AFTERTOUCH_START    15
+
+#define SPACE_CHAR          32
 
 //init
 MessageBuilder::MessageBuilder()    {
@@ -660,10 +665,13 @@ void MessageBuilder::displayReset() {
 void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite)    {
 
     #if MODE_SERIAL > 0
-        Serial.println(F("Updating LCD"));
+        Serial.print(F("Updating LCD, row "));
+        Serial.println(row+1);
     #endif
 
+    expandLine();
     string_line.toCharArray(char_line, string_line.length()+1, 0);
+    char_line[string_line.length()] = '\0';
 
     switch(type)    {
 
@@ -672,7 +680,7 @@ void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startI
         break;
 
         case message:
-        lcDisplay.displayMessage(row, char_line);
+        lcDisplay.displayMessage(row, char_line, string_line.length());
         break;
 
         default:
@@ -682,4 +690,15 @@ void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startI
 
 }
 
+void MessageBuilder::expandLine()    {
+
+    if (string_line.length() < NUMBER_OF_LCD_COLUMNS)
+
+    do {
+
+        string_line += " ";
+
+    }   while (string_line.length() < NUMBER_OF_LCD_COLUMNS);
+
+}
 MessageBuilder messageBuilder;

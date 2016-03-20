@@ -191,4 +191,13 @@ typedef enum {
 
 } padReleaseError_t;
 
+typedef enum {
+
+    noMessage,
+    showMessage,
+    messageDisplayed,
+    clearMessage
+
+} messageStatus_t;
+
 #endif
