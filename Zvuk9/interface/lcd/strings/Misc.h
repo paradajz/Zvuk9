@@ -13,5 +13,6 @@ const char PROGMEM welcome_string[] PROGMEM = "Welcome!";
 const char PROGMEM midiChannel_string[] PROGMEM = "MIDI channel ";
 const char PROGMEM modifierEnabled_string[] PROGMEM = "Modifier enabled";
 const char PROGMEM reset_string[] PROGMEM = "Press Stop to reset";
+const char PROGMEM editingPad_string[] PROGMEM = "Editing pad ";
 
 #endif

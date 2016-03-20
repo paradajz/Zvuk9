@@ -948,7 +948,7 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
         }
 
-        messageBuilder.displayNotes(tonicArray, octaveArray, noteCounter);
+        messageBuilder.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
         messageBuilder.displayVelocity(velocity);
         break;
 

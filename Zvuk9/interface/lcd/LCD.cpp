@@ -96,11 +96,6 @@ void LCD::update()  {
 
         if (scrollEnabled[i])   {
 
-            #if MODE_SERIAL > 0
-                Serial.print(F("Scrolling line"));
-                Serial.println(i);
-            #endif
-
             if ((newMillis() - lastScrollTime) > LCD_SCROLL_TIME)    {
 
                 lcdLineScroll = lcdLine[i].substring(scrollIndex[i], MAX_TEXT_LENGTH);
@@ -134,7 +129,7 @@ void LCD::update()  {
 
                 }
 
-                lastLCDLine[i] = lcdLineScroll[i];
+                lastLCDLine[i] = lcdLineScroll;
 
             }
 
@@ -219,6 +214,13 @@ void LCD::clearMessage()    {
 
 void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t startIndex, bool overwrite)    {
 
+    #if MODE_SERIAL > 0
+        Serial.print(F("Displaying text on LCD. Row "));
+        Serial.print(row+1);
+        Serial.print(F(", size: "));
+        Serial.println(size);
+    #endif
+
     if (overwrite)
         //overwrite current text on selected line
         lcdLine[row] = text;
@@ -235,19 +237,26 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t start
 
     }
 
-    expandLine(row, regularLine);
-
     lineChange[row] = true;
 
     if (size > NUMBER_OF_LCD_COLUMNS) {
+
+        #if MODE_SERIAL > 0
+            Serial.print(F("Scrolling line "));
+            Serial.println(row+1);
+        #endif
 
         scrollEnabled[row] = true;
         scrollDirection[row] = true;
         scrollIndex[row] = 0;
 
-    }   else scrollEnabled[row] = false;
+    }   else {
 
-    lastLCDupdateTime = newMillis();
+        expandLine(row, regularLine);
+        scrollEnabled[row] = false;
+        scrollIndex[row] = 0;
+
+    }
 
 }
 

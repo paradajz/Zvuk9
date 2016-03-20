@@ -19,7 +19,6 @@ class MessageBuilder {
     MessageBuilder();
     void displayHelloMessage();
     void displayProgramAndPreset(uint8_t program, uint8_t preset);
-    void displayNotes(uint8_t note[], uint8_t octave[], uint8_t numberOfNotes);
     void displayVelocity(uint8_t velocity);
     void displayXYposition(uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
     void displayAftertouch(uint8_t afterTouch);

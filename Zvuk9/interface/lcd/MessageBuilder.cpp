@@ -404,22 +404,6 @@ void MessageBuilder::displayProgramAndPreset(uint8_t program, uint8_t preset)   
 
 }
 
-void MessageBuilder::displayNotes(uint8_t note[], uint8_t octave[], uint8_t numberOfNotes)    {
-
-    for (int i=0; i<numberOfNotes; i++) {
-
-        strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[note[i]])));
-        if (!i) string_line = nameBuffer;
-        else string_line += nameBuffer;
-        string_line += octave[i];
-        string_line += " ";
-
-    }
-
-    updateDisplay(PAD_NOTE_ROW, text, 0, true);
-
-}
-
 void MessageBuilder::displayVelocity(uint8_t velocity)  {
 
     strcpy_P(nameBuffer, velocity_string);
@@ -558,7 +542,8 @@ void MessageBuilder::displayActiveOctave(int8_t octave)   {
 
 void MessageBuilder::displayPadEditMode(uint8_t padNumber)  {
 
-    string_line = "Editing pad ";
+    strcpy_P(nameBuffer, editingPad_string);
+    string_line = nameBuffer;
     string_line += padNumber;
     updateDisplay(0, text, 0, true);
     strcpy_P(nameBuffer, emptyLine_string);
@@ -673,6 +658,10 @@ void MessageBuilder::displayReset() {
 //lcd update
 
 void MessageBuilder::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite)    {
+
+    #if MODE_SERIAL > 0
+        Serial.println(F("Updating LCD"));
+    #endif
 
     string_line.toCharArray(char_line, string_line.length()+1, 0);
 

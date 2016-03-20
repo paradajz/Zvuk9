@@ -9,6 +9,7 @@
 #include "../../Types.h"
 #include "../../hardware/timer/TimerObject.h"
 #include "Macros.h"
+#include "../../Debug.h"
 
 #define MAX_TEXT_LENGTH                 (NUMBER_OF_LCD_COLUMNS*2)
 
