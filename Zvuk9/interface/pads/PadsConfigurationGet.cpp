@@ -635,5 +635,3 @@ uint8_t Pads::getPadNote(uint8_t pad, uint8_t note) {
     return padNote[pad][note];
 
 }
-
-//read from flash end

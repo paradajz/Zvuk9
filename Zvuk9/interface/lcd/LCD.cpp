@@ -96,6 +96,11 @@ void LCD::update()  {
 
         if (scrollEnabled[i])   {
 
+            #if MODE_SERIAL > 0
+                Serial.print(F("Scrolling line"));
+                Serial.println(i);
+            #endif
+
             if ((newMillis() - lastScrollTime) > LCD_SCROLL_TIME)    {
 
                 lcdLineScroll = lcdLine[i].substring(scrollIndex[i], MAX_TEXT_LENGTH);
@@ -234,7 +239,9 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t start
 
     lineChange[row] = true;
 
-    if (size > NUMBER_OF_LCD_COLUMNS) {
+    if (size >= NUMBER_OF_LCD_COLUMNS) {
+
+        Serial.println("scroll");
 
         scrollEnabled[row] = true;
         scrollDirection[row] = true;

@@ -22,7 +22,6 @@ void MessageBuilder::displayHelloMessage() {
     uint8_t charIndex = 0;
     while (nameBuffer[charIndex] != '\0')   {
 
-        string_line = nameBuffer[charIndex];
         //write directly to screen
         lcd_putc(nameBuffer[charIndex]);
         newDelay(75);
@@ -642,6 +641,10 @@ void MessageBuilder::selectMenuOption(menuType_t type, uint8_t option, uint8_t s
 }
 
 void MessageBuilder::clearPadData() {
+
+    #if MODE_SERIAL > 0
+        Serial.println(F("Clearing pad data from LCD"));
+    #endif
 
     //clear all rows except first one
     strcpy_P(nameBuffer, emptyLine_string);
