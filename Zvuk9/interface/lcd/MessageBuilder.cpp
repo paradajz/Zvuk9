@@ -405,6 +405,9 @@ void LCD::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
 
 void LCD::displayVelocity(uint8_t velocity)  {
 
+    //reset to avoid issues with pad data clearing
+    padClearDelay = 0;
+
     strcpy_P(nameBuffer, velocity_string);
     string_line = nameBuffer;
     string_line += velocity;
@@ -416,6 +419,9 @@ void LCD::displayVelocity(uint8_t velocity)  {
 }
 
 void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable)   {
+
+    //reset to avoid issues with pad data clearing
+    padClearDelay = 0;
 
     //velocity, x, y and aftertouch are all in same line
     //special care needs to be taken here
@@ -474,6 +480,9 @@ void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailabl
 
 void LCD::displayAftertouch(uint8_t afterTouch)  {
 
+    //reset to avoid issues with pad data clearing
+    padClearDelay = 0;
+
     strcpy_P(nameBuffer, aftertouch_string);
     string_line = nameBuffer;
     string_line += afterTouch;
@@ -485,6 +494,9 @@ void LCD::displayAftertouch(uint8_t afterTouch)  {
 }
 
 void LCD::displayXYcc(uint8_t ccX, uint8_t ccY)   {
+
+    //reset to avoid issues with pad data clearing
+    padClearDelay = 0;
 
     //ccx string
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeX])));
@@ -626,8 +638,15 @@ void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  
 
 void LCD::clearPadData(bool forceClear) {
 
-    if (!forceClear)  padClearDelay = newMillis();
-    else {
+    if (!forceClear)  {
+
+        padClearDelay = newMillis();
+        //aftertouch should always be cleared
+        string_line = "     "; //atXXX - 5 chars
+
+        updateDisplay(PAD_V_XY_AT_ROW, text, AFTERTOUCH_START, false);
+
+    } else {
 
         #if MODE_SERIAL > 0
             Serial.println(F("Clearing pad data from LCD"));
