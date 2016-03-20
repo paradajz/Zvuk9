@@ -239,9 +239,7 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t size, uint8_t start
 
     lineChange[row] = true;
 
-    if (size >= NUMBER_OF_LCD_COLUMNS) {
-
-        Serial.println("scroll");
+    if (size > NUMBER_OF_LCD_COLUMNS) {
 
         scrollEnabled[row] = true;
         scrollDirection[row] = true;
