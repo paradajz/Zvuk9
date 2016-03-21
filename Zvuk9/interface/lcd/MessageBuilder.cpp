@@ -642,7 +642,8 @@ void LCD::clearPadData(bool forceClear) {
 
         padClearDelay = newMillis();
         //aftertouch should always be cleared
-        string_line = "     "; //atXXX - 5 chars
+        strcpy_P(nameBuffer, aftertouchClear_string);
+        string_line = nameBuffer;
 
         updateDisplay(PAD_V_XY_AT_ROW, text, AFTERTOUCH_START, false);
 
