@@ -466,10 +466,8 @@ void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailabl
         if (xPosition < 10)         string_line += "  ";
         else if (xPosition < 100)   string_line += " ";
 
-        strcpy_P(nameBuffer, emptyLine_string);
-
-        for (int i=0; i<4; i++)
-            string_line[Y_COORDINATE_START+i] = nameBuffer[0];
+        strcpy_P(nameBuffer, yPositionClear_string);
+        string_line += nameBuffer;
 
     }   else if (!xAvailable && !yAvailable) {
 

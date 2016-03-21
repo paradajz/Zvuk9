@@ -467,7 +467,7 @@ void Pads::checkMIDIdata()   {
 
                 if (getNoteSendEnabled(previousPad))
                     handleNote(previousPad, lastVelocityValue[previousPad], true);
-                else display.displayActivePadNotes(0,0,0);
+                else display.displayActivePadNotes(0, 0, 0);
 
                 handleXY(previousPad, lastXValue[previousPad], lastYValue[previousPad], ccXsendEnabled, ccYsendEnabled);
                 setFunctionLEDs(previousPad);

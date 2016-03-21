@@ -93,7 +93,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
         case true:
         //note on
-        if (!noteSendEnabled[pad]) return; // no need to check
+        if (!noteSendEnabled[pad]) { display.displayActivePadNotes(0, 0, 0); return; }
         #if MODE_SERIAL > 0
             Serial.print(F("Pad "));
             Serial.print(pad);
@@ -182,7 +182,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
     uint8_t noteArray[NOTES_PER_PAD],
-    noteCounter = 0;
+            noteCounter = 0;
 
     for (int i=0; i<NOTES_PER_PAD; i++) {
 
