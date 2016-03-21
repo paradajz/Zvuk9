@@ -5,9 +5,9 @@
 #include <avr/eeprom.h>
 #include "../../Debug.h"
 #include "../../hardware/pins/Pins.h"
-#include "PadXYscales.h"
+#include "XYscales.h"
 #include "../../midi/MIDI_parameters.h"
-#include "PadsCalibration.h"
+#include "Calibration.h"
 #include "../../Types.h"
 #include "../../hardware/timer/TimerObject.h"
 #include "../../midi/MIDI.h"
@@ -24,6 +24,7 @@
 #define NUMBER_OF_MEDIAN_RUNS               5 //only for x/y, pressure is read 3 times only
 
 #define DEFAULT_XY_VALUE        -999
+#define PAD_NOTE_BUFFER_SIZE    32
 
 //multiplexer pins
 const uint8_t muxCommonPinsAnalogRead[] = { MUX_COMMON_PIN_0_INDEX, MUX_COMMON_PIN_1_INDEX, MUX_COMMON_PIN_2_INDEX, MUX_COMMON_PIN_3_INDEX };
@@ -116,7 +117,6 @@ class Pads  {
 
     //init
     void initPadPins();
-    void initVariables();
     void initHardware();
 
     //EEPROM config read
@@ -165,7 +165,7 @@ class Pads  {
     //pad press updating/info
     void setPadPressed(uint8_t padNumber, bool padState);
     void updateLastTouchedPad();
-    bool checkPadsPressed();
+    bool allPadsReleased();
 
     //lcd/led handling on midi event
     void handleNote(uint8_t pad, uint8_t velocity, bool state);
@@ -302,6 +302,17 @@ class Pads  {
 
     //used to shift octave once all pads are released
     int8_t      octaveShiftAmount;
+
+    //pad press history buffer
+    int8_t padPressHistory_buffer[NUMBER_OF_PADS];
+    uint8_t padPressHistory_counter;
+
+    //note buffer
+    uint8_t pad_buffer[PAD_NOTE_BUFFER_SIZE];
+    uint8_t velocity_buffer[PAD_NOTE_BUFFER_SIZE];
+    uint32_t pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
+    uint8_t note_buffer_head;
+    uint8_t note_buffer_tail;
 
 };
 

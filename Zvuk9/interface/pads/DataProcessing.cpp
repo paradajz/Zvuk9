@@ -411,3 +411,135 @@ void Pads::checkVelocity()  {
     if (!switchToXYread) switchToNextPad = true;
 
 }
+
+
+void Pads::checkMIDIdata()   {
+
+    uint8_t pad = padID[activePad];
+
+    //send X/Y immediately
+    if (xyAvailable)
+    sendXY(pad);
+
+    //send aftertouch immediately
+    if (afterTouchAvailable)
+    sendAftertouch(pad);
+
+    if (velocityAvailable)  {
+
+        switch(midiNoteOn)  {
+
+            case true:
+            //if note on event happened, store notes in buffer first
+            storeNotes(pad);
+            break;
+
+            case false:
+            //note off event
+            //send note off
+            sendNotes(pad, 0, false);
+            break;
+
+        }   velocityAvailable = false;
+
+    }
+
+    //notes are stored in buffer and they're sent after PAD_NOTE_SEND_DELAY
+    //to avoid glide effect while sending x/y + notes
+    while (note_buffer_head != note_buffer_tail)   {
+
+        uint8_t i = note_buffer_tail + 1;
+        if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
+
+        //check buffer until it's empty
+        uint32_t noteTime = pad_note_timer_buffer[i];
+        //this is fifo (circular) buffer
+        //check first element in buffer
+        //if first element (note) can't pass this condition, none of the other elements can, so return
+        if ((newMillis() - noteTime) < PAD_NOTE_SEND_DELAY) return;
+        note_buffer_tail = i;
+
+        sendNotes(pad_buffer[i], velocity_buffer[i], true);
+
+    }
+
+    //pad has been released
+    //restore lcd/led states from previous pad if it's pressed
+
+    uint8_t previousPad = getPadPressHistoryIndex(previousID);
+
+    if (isPadPressed(previousPad))  {
+
+        //restore data from last touched pad (display+midi cc x/cc y)
+        bool ccXsendEnabled = getCCXsendEnabled(previousPad);
+        bool ccYsendEnabled = getCCYsendEnabled(previousPad);
+        uint8_t ccXvaluePreviousPad = getCCvalue(ccTypeX, previousPad);
+        uint8_t ccYvaluePreviousPad = getCCvalue(ccTypeY, previousPad);
+        uint8_t ccXvalueActivePad = getCCvalue(ccTypeX, pad);
+        uint8_t ccYvalueActivePad = getCCvalue(ccTypeY, pad);
+
+        if ((ccXvalueActivePad == ccXvaluePreviousPad) && ccXsendEnabled)
+        midi.sendControlChange(midiChannel, ccXvaluePreviousPad, lastXMIDIvalue[previousPad]);
+        else if ((ccYvalueActivePad == ccYvaluePreviousPad) && ccYsendEnabled)
+        midi.sendControlChange(midiChannel, ccYvaluePreviousPad, lastYMIDIvalue[previousPad]);
+
+        if (getNoteSendEnabled(previousPad))
+        handleNote(previousPad, lastVelocityValue[previousPad], true);
+
+        handleXY(previousPad, lastXValue[previousPad], lastYValue[previousPad], ccXsendEnabled, ccYsendEnabled);
+        setFunctionLEDs(previousPad);
+
+    }
+
+}
+
+void Pads::updateLastTouchedPad()   {
+
+    if (padID[activePad] != getPadPressHistoryIndex(lastActiveID))    {
+
+        #if MODE_SERIAL > 0
+        Serial.print(F("Last touched pad: ")); Serial.println(getPadPressHistoryIndex(lastActiveID));
+        Serial.print(F("Current pad: ")); Serial.println(padID[activePad]);
+        #endif
+
+        setFunctionLEDs(padID[activePad]);
+        updatePressHistory(padID[activePad]);
+
+        if (editModeActive())
+        setupPadEditMode(padID[activePad]);
+
+    }
+
+}
+
+void Pads::updatePressHistory(uint8_t pad) {
+
+    //store currently pressed pad in circular buffer
+    if (padPressHistory_counter >= NUMBER_OF_PADS) padPressHistory_counter = 0; //overwrite
+    padPressHistory_buffer[padPressHistory_counter] = pad;
+
+    #if MODE_SERIAL > 0
+    Serial.println(F("Printing pad press history: "));
+    for (int i=0; i<NUMBER_OF_PADS; i++)
+    Serial.println(padPressHistory_buffer[i]);
+    Serial.print(F("Latest index: "));
+    Serial.println(padPressHistory_counter);
+    #endif
+
+    padPressHistory_counter++;
+
+}
+
+void Pads::storeNotes(uint8_t pad)  {
+
+    //store midi note on in circular buffer
+    uint8_t i = note_buffer_head + 1;
+    if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
+    pad_buffer[i] = pad;
+    velocity_buffer[i] = midiVelocity;
+    pad_note_timer_buffer[i] = newMillis();
+    note_buffer_head = i;
+
+    lastVelocityValue[pad] = midiVelocity;
+
+}
