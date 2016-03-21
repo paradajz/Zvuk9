@@ -5,6 +5,9 @@
 #include "../Types.h"
 #include "../midi/MIDI_parameters.h"
 
+//parameters
+#define NUMBER_OF_PROGRAMS                          10
+
 typedef enum {  //list of IDs for global program settings for access
 
     GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_ID,

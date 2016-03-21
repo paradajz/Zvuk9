@@ -23,9 +23,6 @@ EEPROM addresses of parameters.
 
 #define EEPROM_SIZE                             4096
 
-//parameters
-#define NUMBER_OF_PROGRAMS                      10
-
 typedef enum {
 
     BIT_PARAMETER,
