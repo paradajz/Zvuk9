@@ -437,6 +437,13 @@ void Pads::checkMIDIdata()   {
             //send note off
             sendNotes(pad, 0, false);
             //pad has been released
+            //decrease pad history counter, but only if there are some pressed pads
+            if (!allPadsReleased()) {
+
+                padPressHistory_counter--;
+                if (padPressHistory_counter < 0) padPressHistory_counter = NUMBER_OF_PADS-1;
+
+            }
             //restore lcd/led states from previous pad if it's pressed
             if (isPadPressed(previousPad))  {
 
@@ -513,6 +520,12 @@ void Pads::updatePressHistory(uint8_t pad) {
     if (padPressHistory_counter >= NUMBER_OF_PADS) padPressHistory_counter = 0; //overwrite
 
     padPressHistory_buffer[padPressHistory_counter] = pad;
+
+    #if MODE_SERIAL > 0
+        Serial.println(F("Current touch history:"));
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+            Serial.println(padPressHistory_buffer[i]);
+    #endif
 
 }
 
