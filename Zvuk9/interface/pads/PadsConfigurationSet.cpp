@@ -1002,6 +1002,28 @@ void Pads::notesOnOff()    {
             Serial.println(F(" for all pads"));
         #endif
 
+        if (!newNotesState) {
+
+            //we have turned notes off for all pads
+            //if there are pressed pads, send notes off
+            for (int i=0; i<NUMBER_OF_PADS; i++)    {
+
+                if (!isPadPressed(i)) continue; //only send note off for pressed pads
+
+                for (int j=0; j<NOTES_PER_PAD; j++) {
+
+                    if (padNote[i][j] != BLANK_NOTE)    {
+
+                        midi.sendNoteOff(DEFAULT_MIDI_CHANNEL, padNote[i][j], 0);
+
+                    }
+
+                }
+
+            }
+
+        }
+
     }
 
     else {  //feature splitting is on
