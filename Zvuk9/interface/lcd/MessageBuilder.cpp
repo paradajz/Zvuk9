@@ -685,11 +685,6 @@ void LCD::displayReset() {
 
 void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite)    {
 
-    #if MODE_SERIAL > 0
-        Serial.print(F("Updating LCD, row "));
-        Serial.println(row+1);
-    #endif
-
     uint8_t size = string_line.length();
     string_line.toCharArray(char_line, size+1, 0);
     char_line[size] = '\0';

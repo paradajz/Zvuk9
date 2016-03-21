@@ -369,7 +369,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
     uint8_t ledNumber = 0;
     functionsOnOff_t lcdMessageType;
     ledIntensity_t ledState = ledIntensityOff;
-    uint8_t lastTouchedPad = pads.getLastTouchedPad();
+    uint8_t lastTouchedPad = pads.getPadPressHistoryIndex(lastActiveID);
 
     switch (buttonNumber)    {
 
@@ -537,7 +537,7 @@ void Buttons::handleTonicEvent(note_t note) {
     }   else {
 
         //add note to pad
-        uint8_t pad = pads.getLastTouchedPad();
+        uint8_t pad = pads.getPadPressHistoryIndex(lastActiveID);
         pads.assignPadNote(pad, note);
         pads.displayActivePadNotes(pad);
         leds.displayActiveNoteLEDs(true, pad);
@@ -559,7 +559,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             if (pads.editModeActive())  {
 
                 //check if last touched pad is pressed
-                if (pads.isPadPressed(pads.getLastTouchedPad()))   {
+                if (pads.isPadPressed(pads.getPadPressHistoryIndex(lastActiveID)))   {
 
                     display.displayEditModeNotAllowed(padNotReleased);
                     pads.setEditMode(false);
@@ -573,7 +573,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                         Serial.println(F("Pad edit mode"));
                         Serial.println(F("----------------------------------------"));
                     #endif
-                    pads.setupPadEditMode(pads.getLastTouchedPad());
+                    pads.setupPadEditMode(pads.getPadPressHistoryIndex(lastActiveID));
 
                 }
 
@@ -604,7 +604,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 case false:
                 pads.changeActiveOctave(direction);
                 display.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
-                leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
+                leds.displayActiveNoteLEDs(true, pads.getPadPressHistoryIndex(lastActiveID));
                 direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
                 break;
 
@@ -639,7 +639,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 //shift single note, but only in predefined presets
                 if (state)    {
 
-                    if (pads.isPadPressed(pads.getLastTouchedPad()))   {
+                    if (pads.isPadPressed(pads.getPadPressHistoryIndex(lastActiveID)))   {
 
                         display.displayEditModeNotAllowed(padNotReleased);
                         return;

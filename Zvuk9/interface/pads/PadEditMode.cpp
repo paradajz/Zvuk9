@@ -6,10 +6,10 @@ void Pads::setupPadEditMode(uint8_t pad)    {
 
     #if MODE_SERIAL > 0
         Serial.print(F("Editing pad "));
-        Serial.println(lastPressedPad);
+        Serial.println(pad);
     #endif
 
-    display.displayPadEditMode(lastPressedPad + 1);
+    display.displayPadEditMode(pad + 1);
 
     #if MODE_SERIAL > 0
         Serial.print(F("Active octave: "));
@@ -17,8 +17,8 @@ void Pads::setupPadEditMode(uint8_t pad)    {
     #endif
 
     display.displayActiveOctave(normalizeOctave(activeOctave));
-    displayActivePadNotes(lastPressedPad);
-    leds.displayActiveNoteLEDs(true, lastPressedPad);
+    displayActivePadNotes(pad);
+    leds.displayActiveNoteLEDs(true, pad);
 
 }
 

@@ -72,7 +72,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
     }
 
-    uint8_t lastTouchedPad = pads.getLastTouchedPad();
+    uint8_t lastTouchedPad = pads.getPadPressHistoryIndex(lastActiveID);
     splitState_t _splitState = pads.getSplitState();
     curveType_t activeCurve = curveTypeInvalid;
     uint8_t value;

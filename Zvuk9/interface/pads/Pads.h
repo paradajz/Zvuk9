@@ -15,12 +15,15 @@
 #include "../lcd/LCD.h"
 #include "../leds/LEDs.h"
 #include "../../hardware/adc/ADC.h"
+#include "../lcd/menu/Menu.h"
 
 #define NUMBER_OF_PADS                      9
 
 //DO NOT CHANGE
 #define NUMBER_OF_SAMPLES                   3
 #define NUMBER_OF_MEDIAN_RUNS               5 //only for x/y, pressure is read 3 times only
+
+#define DEFAULT_XY_VALUE        -999
 
 //multiplexer pins
 const uint8_t muxCommonPinsAnalogRead[] = { MUX_COMMON_PIN_0_INDEX, MUX_COMMON_PIN_1_INDEX, MUX_COMMON_PIN_2_INDEX, MUX_COMMON_PIN_3_INDEX };
@@ -102,7 +105,7 @@ class Pads  {
     bool setMIDIchannel(uint8_t channel);
 
     //pad info
-    uint8_t getLastTouchedPad();
+    uint8_t getPadPressHistoryIndex(padHistoryID_t id);
     bool isPadPressed(uint8_t padNumber);
 
     //scale info
@@ -191,6 +194,9 @@ class Pads  {
 
     //note buffer
     void storeNotes(uint8_t pad);
+
+    //pad press history buffer
+    void updatePressHistory(uint8_t pad);
 
     //current midi values
     uint8_t     midiVelocity;
@@ -293,11 +299,6 @@ class Pads  {
     uint8_t     activePad;
     bool        switchToNextPad,
                 switchToXYread;
-
-    //previous/last touched pad detection
-    uint8_t     lastPressedPad;
-    uint8_t     lastReleasedPad;
-    int8_t      previousPad;
 
     //used to shift octave once all pads are released
     int8_t      octaveShiftAmount;

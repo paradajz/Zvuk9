@@ -51,7 +51,7 @@ void Pads::getPadParameters()   {
 
         //apply global settings to pads
         #if MODE_SERIAL > 0
-            Serial.println("All pad parameters are global - split is off");
+            Serial.println(F("All pad parameters are global - split is off"));
         #endif
 
         for (int i=0; i<NUMBER_OF_PADS; i++)    {
@@ -89,7 +89,7 @@ void Pads::getPadParameters()   {
     }   else if (splitCounter == 1) {   //split x/y
 
             #if MODE_SERIAL > 0
-                Serial.println("Pad functions are global, rest is local - split x/y is on");
+                Serial.println(F("Pad functions are global, rest is local - split x/y is on"));
             #endif
 
             for (int i=0; i<NUMBER_OF_PADS; i++)    {
@@ -138,7 +138,7 @@ void Pads::getPadParameters()   {
     }   else {  //split xy + functions
 
         #if MODE_SERIAL > 0
-            Serial.println(F("Pads have individual settings and functions - split x/y + functions"));
+            Serial.println(F("Pads have individual settings and message send states - split x/y + messages"));
         #endif
 
         //pads have individual settings and functions
@@ -180,11 +180,13 @@ void Pads::getPadParameters()   {
 
     }
 
+    uint8_t lastTouchedPad = getPadPressHistoryIndex(lastActiveID);
+
     leds.setLEDstate(LED_ON_OFF_SPLIT, (ledIntensity_t)splitCounter);
-    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastPressedPad) ? ledIntensityFull : ledIntensityOff);
-    leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastPressedPad) ? ledIntensityFull : ledIntensityOff);
-    leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastPressedPad) ? ledIntensityFull : ledIntensityOff);
-    leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastPressedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
 
 }
 

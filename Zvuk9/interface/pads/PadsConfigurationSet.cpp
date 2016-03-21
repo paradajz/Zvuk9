@@ -483,7 +483,7 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
     bool globalShift = (splitCounter == 0);
     changeOutput_t result = outputChanged;
-    uint8_t startPad = globalShift ? 0 : lastPressedPad;
+    uint8_t startPad = globalShift ? 0 : getPadPressHistoryIndex(lastActiveID);
     uint8_t compareValue = 127;
     bool compareResult;
     uint8_t changedValue = 0;
@@ -575,6 +575,7 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
 
     bool globalShift = (splitCounter == 0);
     changeOutput_t result = outputChanged;
+    uint8_t lastPressedPad = getPadPressHistoryIndex(lastActiveID);
     uint8_t startPad = globalShift ? 0 : lastPressedPad;
     uint8_t compareValue = 127;
     bool compareResult;
@@ -739,6 +740,7 @@ changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate,
 
     bool globalShift = (splitCounter == 0);
     changeOutput_t result = outputChanged;
+    uint8_t lastPressedPad = getPadPressHistoryIndex(lastActiveID);
     uint8_t startPad = globalShift ? 0 : lastPressedPad;
     uint8_t compareValue = NUMBER_OF_SCALES;
     bool compareResult;
@@ -1031,6 +1033,7 @@ void Pads::notesOnOff()    {
 
     else {  //feature splitting is on
 
+        uint8_t lastPressedPad = getPadPressHistoryIndex(lastActiveID);
         newNotesState = !noteSendEnabled[lastPressedPad];
 
         setNoteSendEnabled(lastPressedPad, newNotesState);
@@ -1067,6 +1070,7 @@ void Pads::xOnOff()    {
 
     else {  //feature splitting is on
 
+        uint8_t lastPressedPad = getPadPressHistoryIndex(lastActiveID);
         newXState = !xSendEnabled[lastPressedPad];
 
         setCCXsendEnabled(lastPressedPad, newXState);
@@ -1103,6 +1107,7 @@ void Pads::yOnOff()    {
 
     else {  //feature splitting is on
 
+        uint8_t lastPressedPad = getPadPressHistoryIndex(lastActiveID);
         newYState = !ySendEnabled[lastPressedPad];
 
         setCCYsendEnabled(lastPressedPad, newYState);
@@ -1139,6 +1144,7 @@ void Pads::aftertouchOnOff()    {
 
     else {  //feature splitting is on
 
+        uint8_t lastPressedPad = getPadPressHistoryIndex(lastActiveID);
         newAfterTouchState = !aftertouchSendEnabled[lastPressedPad];
 
         setAfterTouchSendEnabled(lastPressedPad, newAfterTouchState);

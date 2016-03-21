@@ -210,3 +210,11 @@ int16_t Pads::getY()  {
     }
 
 }
+
+void Pads::setNextPad()    {
+
+    switchToNextPad = false;
+    activePad++;
+    if (activePad == NUMBER_OF_PADS) activePad = 0;
+
+}

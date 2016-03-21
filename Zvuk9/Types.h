@@ -190,4 +190,11 @@ typedef enum {
 
 } messageStatus_t;
 
+typedef enum {
+
+    lastActiveID,
+    previousID
+
+} padHistoryID_t;
+
 #endif
