@@ -81,6 +81,9 @@ void LCD::update()  {
             charPointer = lcdLineMessage_char[i];
             break;
 
+            case messageDisplayed:
+            return; //line change + message shown = wait
+
             default:
             if (scrollEnabled[i])   charPointer = lcdLineScroll_char;
             else                    charPointer = lcdLine_char[i];

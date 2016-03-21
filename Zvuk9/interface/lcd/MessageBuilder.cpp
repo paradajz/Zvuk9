@@ -447,10 +447,8 @@ void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailabl
 
     }   else if (!xAvailable && yAvailable) {
 
-        strcpy_P(nameBuffer, emptyLine_string);
-
-        for (int i=0; i<4; i++)
-            string_line[X_COORDINATE_START+i] = nameBuffer[0];
+        strcpy_P(nameBuffer, xPositionClear_string);
+        string_line = nameBuffer;
 
         strcpy_P(nameBuffer, y_string);
         string_line += nameBuffer;
@@ -471,7 +469,13 @@ void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailabl
         strcpy_P(nameBuffer, emptyLine_string);
 
         for (int i=0; i<4; i++)
-        string_line[Y_COORDINATE_START+i] = nameBuffer[0];
+            string_line[Y_COORDINATE_START+i] = nameBuffer[0];
+
+    }   else if (!xAvailable && !yAvailable) {
+
+        //x and y are not available, clear them
+        strcpy_P(nameBuffer, xyPositionClear_string);
+        string_line = nameBuffer;
 
     }
 

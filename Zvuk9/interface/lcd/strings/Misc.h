@@ -16,5 +16,8 @@ const char PROGMEM reset_string[] PROGMEM = "Press Stop to reset";
 const char PROGMEM editingPad_string[] PROGMEM = "Editing pad ";
 const char PROGMEM aftertouchClear_string[] PROGMEM = "     ";
 const char PROGMEM velocityClear_string[] PROGMEM = "    ";
+const char PROGMEM xyPositionClear_string[] PROGMEM = "         ";
+const char PROGMEM xPositionClear_string[] PROGMEM = "     ";
+const char PROGMEM yPositionClear_string[] PROGMEM = "     ";
 
 #endif

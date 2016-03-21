@@ -253,8 +253,8 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
 void Pads::handleXY(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable)   {
 
-    if (xAvailable || yAvailable)
-    display.displayXYposition(xPosition, yPosition, xAvailable, yAvailable);
+    //if (xAvailable || yAvailable)
+        display.displayXYposition(xPosition, yPosition, xAvailable, yAvailable);
 
     //always display ccx/ccy
     display.displayXYcc(ccXPad[pad], ccYPad[pad]);
