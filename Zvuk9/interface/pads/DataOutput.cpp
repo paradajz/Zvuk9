@@ -95,9 +95,9 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
         //note on
         if (!noteSendEnabled[pad]) return; // no need to check
         #if MODE_SERIAL > 0
-        Serial.print(F("Pad "));
-        Serial.print(pad);
-        Serial.println(F(" pressed. Notes: "));
+            Serial.print(F("Pad "));
+            Serial.print(pad);
+            Serial.println(F(" pressed. Notes: "));
         #endif
 
         for (int i=0; i<NOTES_PER_PAD; i++) {
@@ -105,9 +105,9 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
             if (padNote[pad][i] == BLANK_NOTE) continue;
 
             #if MODE_SERIAL
-            Serial.println(padNote[pad][i]);
-            #else
-            midi.sendNoteOn(midiChannel, padNote[pad][i], velocity);
+                Serial.println(padNote[pad][i]);
+                #else
+                midi.sendNoteOn(midiChannel, padNote[pad][i], velocity);
             #endif
 
         }
@@ -147,7 +147,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
             if (sendOff)    {
 
                 if (noteSendEnabled[pad])
-                midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
+                    midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
 
             }
 
@@ -162,9 +162,9 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
         }
 
         #if MODE_SERIAL > 0
-        Serial.print(F("Pad "));
-        Serial.print(pad);
-        Serial.println(F(" released"));
+            Serial.print(F("Pad "));
+            Serial.print(pad);
+            Serial.println(F(" released"));
         #endif
 
         //check if pad data on lcd needs to be cleared

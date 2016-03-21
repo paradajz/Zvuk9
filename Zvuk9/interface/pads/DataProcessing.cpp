@@ -126,7 +126,8 @@ void Pads::checkXY()  {
 
         if (padCurveX[pad] != 0)  xValue = xyScale[padCurveX[pad]-1][xValue];
 
-        xAvailable = true;
+        if (!editModeActive())
+            xAvailable = true;
 
     }
 
@@ -137,14 +138,16 @@ void Pads::checkXY()  {
 
         if (padCurveY[pad] != 0)  yValue = xyScale[padCurveY[pad]-1][yValue];
 
-        yAvailable = true;
+        if (!editModeActive())
+            yAvailable = true;
 
     }
 
     if (xChanged || yChanged)   {
 
         padDebounceTimer[pad] = newMillis();
-        xyAvailable = true;
+        if (!editModeActive())
+            xyAvailable = true;
         padMovementDetected = true;
         midiX = xValue;
         midiY = yValue;
@@ -194,8 +197,8 @@ void Pads::update(bool midiEnabled)  {
         }
 
         if (!editModeActive() && !menu.menuDisplayed())
-        //don't send midi data while in pad edit mode or menu
-        checkMIDIdata();
+            //don't send midi data while in pad edit mode or menu
+            checkMIDIdata();
 
         firstRun = true;
         setNextPad();
@@ -245,9 +248,9 @@ bool Pads::processXY()  {
     if (admuxSet && (xValue != -1) && (yValue == -1)) {
 
         #if XY_FLIP_AXIS > 0
-        setupX();
+            setupX();
         #else
-        setupY();
+            setupY();
         #endif
 
         admuxSet = false;
@@ -258,9 +261,9 @@ bool Pads::processXY()  {
     if (yValue == -1) {
 
         #if XY_FLIP_AXIS > 0
-        yValue = getX();
+            yValue = getX();
         #else
-        yValue = getY();
+            yValue = getY();
         #endif
 
     }
@@ -371,7 +374,8 @@ void Pads::checkVelocity()  {
                 initialPressure[pad] = calibratedPressure;
                 midiVelocity = calibratedPressure;
                 midiNoteOn = true;
-                velocityAvailable = true;
+                if (!editModeActive())
+                    velocityAvailable = true;
                 padMovementDetected = true;
 
             }
@@ -382,7 +386,8 @@ void Pads::checkVelocity()  {
 
                 midiVelocity = calibratedPressure;
                 midiNoteOn = false;
-                velocityAvailable = true;
+                if (!editModeActive())
+                    velocityAvailable = true;
                 padMovementDetected = true;
                 lastXValue[pad] = DEFAULT_XY_VALUE;
                 lastYValue[pad] = DEFAULT_XY_VALUE;
