@@ -10,23 +10,23 @@ void Pads::sendXY(uint8_t pad)  {
         if (xAvailable)   {
 
             #if MODE_SERIAL
-            Serial.print(F("X for pad "));
-            Serial.print(pad);
-            Serial.print(F(": "));
+                Serial.print(F("X for pad "));
+                Serial.print(pad);
+                Serial.print(F(": "));
             #if XY_FLIP_VALUES > 0
-            Serial.println(127-midiX);
+                Serial.println(127-midiX);
             #else
-            Serial.println(midiX);
+                Serial.println(midiX);
             #endif
-            Serial.print(F("X CC: "));
-            Serial.println(ccXPad[pad]);
+                Serial.print(F("X CC: "));
+                Serial.println(ccXPad[pad]);
             #else
             #if XY_FLIP_VALUES > 0
-            midi.sendControlChange(midiChannel, ccXPad[pad], 127-midiX);
+                midi.sendControlChange(midiChannel, ccXPad[pad], 127-midiX);
             #else
-            midi.sendControlChange(midiChannel, ccXPad[pad], midiX);
+                midi.sendControlChange(midiChannel, ccXPad[pad], midiX);
             #endif
-            lastXMIDIvalue[pad] = midiX;
+                lastXMIDIvalue[pad] = midiX;
             #endif
 
         }
@@ -38,23 +38,23 @@ void Pads::sendXY(uint8_t pad)  {
         if (yAvailable)   {
 
             #if MODE_SERIAL
-            Serial.print(F("Y for pad "));
-            Serial.print(pad);
-            Serial.print(F(": "));
+                Serial.print(F("Y for pad "));
+                Serial.print(pad);
+                Serial.print(F(": "));
             #if XY_FLIP_VALUES > 0
-            Serial.println(midiY);
+                Serial.println(midiY);
             #else
-            Serial.println(127-midiY);
+                Serial.println(127-midiY);
             #endif
-            Serial.print(F("Y CC: "));
-            Serial.println(ccYPad[pad]);
+                Serial.print(F("Y CC: "));
+                Serial.println(ccYPad[pad]);
             #else
             #if XY_FLIP_VALUES > 0
-            midi.sendControlChange(midiChannel, ccYPad[pad], midiY);
+                midi.sendControlChange(midiChannel, ccYPad[pad], midiY);
             #else
-            midi.sendControlChange(midiChannel, ccYPad[pad], 127-midiY);
+                midi.sendControlChange(midiChannel, ccYPad[pad], 127-midiY);
             #endif
-            lastYMIDIvalue[pad] = midiY;
+                lastYMIDIvalue[pad] = midiY;
             #endif
 
         }
@@ -62,9 +62,9 @@ void Pads::sendXY(uint8_t pad)  {
     }
 
     #if XY_FLIP_VALUES > 0
-    handleXY(pad, 127-midiX, midiY, xAvailable_, yAvailable_);
+        handleXY(pad, 127-midiX, midiY, xAvailable_, yAvailable_);
     #else
-    handleXY(pad, midiX, 127-midiY, xAvailable_, yAvailable_);
+        handleXY(pad, midiX, 127-midiY, xAvailable_, yAvailable_);
     #endif
 
     //record first sent x/y values
@@ -106,15 +106,15 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
             #if MODE_SERIAL
                 Serial.println(padNote[pad][i]);
-                #else
+            #else
                 midi.sendNoteOn(midiChannel, padNote[pad][i], velocity);
             #endif
 
         }
 
         #if MODE_SERIAL
-        Serial.print(F("Velocity: "));
-        Serial.println(velocity);
+            Serial.print(F("Velocity: "));
+            Serial.println(velocity);
         #endif
         break;
 
@@ -200,7 +200,7 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
         case true:
         //note on
         uint8_t tonicArray[NOTES_PER_PAD],
-        octaveArray[NOTES_PER_PAD];
+                octaveArray[NOTES_PER_PAD];
 
         for (int i=0; i<noteCounter; i++) {
 

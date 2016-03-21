@@ -1,5 +1,6 @@
 #include "LCD.h"
 #include "../../Scales.h"
+#include "../pads/Pads.h"
 
 #define PROGRAM_PRESET_ROW  0
 #define PAD_NOTE_ROW        1
@@ -523,6 +524,15 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numb
 
         strcpy_P(nameBuffer, emptyLine_string);
         string_line = nameBuffer;
+        updateDisplay(1, text, 0, true);
+        //we should also clear velocity if we aren't in pad edit mode
+        if (!pads.editModeActive()) {
+
+            strcpy_P(nameBuffer, velocityClear_string);
+            string_line = nameBuffer;
+            updateDisplay(2, text, 0, false);
+
+        }
 
     }   else
 
@@ -533,10 +543,8 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numb
         else string_line += nameBuffer;
         string_line += octaves[i];
         string_line += " ";
-
+        updateDisplay(1, text, 0, true);
     }
-
-    updateDisplay(1, text, 0, true);
 
 }
 
