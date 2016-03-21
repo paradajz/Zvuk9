@@ -661,9 +661,11 @@ uint8_t Pads::getPadPressHistoryIndex(padHistoryID_t id)   {
         index -= 1;
         if (index < 0) index = NUMBER_OF_PADS-1;
         return padPressHistory_buffer[index];
+        break;
 
         default:
         return padPressHistory_buffer[index];
+        break;
 
     }
 

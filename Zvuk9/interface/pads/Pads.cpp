@@ -13,7 +13,7 @@ Pads::Pads()  {
         padPressHistory_buffer[i] = 0;
 
         for (int j=0; j<NOTES_PER_PAD; j++)
-        padNote[i][j] = BLANK_NOTE;
+            padNote[i][j] = BLANK_NOTE;
 
     }
 

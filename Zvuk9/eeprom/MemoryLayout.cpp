@@ -1,6 +1,5 @@
 #include "EEPROMsettings.h"
 
-
 void EEPROMsettings::createMemoryLayout() {
 
     //create memory layout

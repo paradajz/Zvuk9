@@ -304,7 +304,7 @@ class Pads  {
     int8_t      octaveShiftAmount;
 
     //pad press history buffer
-    int8_t padPressHistory_buffer[NUMBER_OF_PADS];
+    uint8_t padPressHistory_buffer[NUMBER_OF_PADS];
     uint8_t padPressHistory_counter;
 
     //note buffer

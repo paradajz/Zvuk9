@@ -115,5 +115,5 @@ void Pads::checkAftertouch()  {
         }
 
     }
-    
+
 }

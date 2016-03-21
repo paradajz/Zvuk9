@@ -649,10 +649,6 @@ void LCD::clearPadData(bool forceClear) {
 
     } else {
 
-        #if MODE_SERIAL > 0
-            Serial.println(F("Clearing pad data from LCD"));
-        #endif
-
         //clear all rows except first one
         strcpy_P(nameBuffer, emptyLine_string);
         string_line = nameBuffer;
