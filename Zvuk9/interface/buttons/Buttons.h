@@ -59,4 +59,4 @@ class Buttons   {
 
 extern Buttons buttons;
 
-#endif /* BUTTONS_H_ */
+#endif

@@ -114,5 +114,4 @@ class EEPROMsettings {
 
 extern EEPROMsettings configuration;
 
-
 #endif

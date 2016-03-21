@@ -553,6 +553,9 @@ void LCD::displayActiveOctave(int8_t octave)   {
 
 void LCD::displayPadEditMode(uint8_t padNumber)  {
 
+    //reset to avoid issues with pad data clearing
+    padClearDelay = 0;
+
     strcpy_P(nameBuffer, editingPad_string);
     string_line = nameBuffer;
     string_line += padNumber;
@@ -567,10 +570,14 @@ void LCD::displayPadEditMode(uint8_t padNumber)  {
 
 void LCD::clearPadEditMode()    {
 
+    #if MODE_SERIAL > 0
+        Serial.println(F("Clearing pad edit mode from LCD"));
+    #endif
+
     strcpy_P(nameBuffer, emptyLine_string);
     string_line = nameBuffer;
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
-    updateDisplay(i, text, 0, true);
+        updateDisplay(i, text, 0, true);
 
 }
 
