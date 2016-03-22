@@ -85,7 +85,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
         case true:
         //note on
-        if (!noteSendEnabled[pad]) return;
+        if (!noteSendEnabled[pad]) break;
         #if MODE_SERIAL > 0
             Serial.print(F("Pad "));
             Serial.print(pad);
@@ -162,6 +162,8 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
         break;
 
     }
+
+    handleNoteLEDs(pad, state);
 
 }
 

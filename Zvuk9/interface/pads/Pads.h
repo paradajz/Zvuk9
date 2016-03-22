@@ -158,13 +158,13 @@ class Pads  {
     void checkOctaveShift();
 
     //data availability checks
-    void checkAftertouch();
-    void checkXY();
-    void checkVelocity();
+    void checkAftertouch(uint8_t pad);
+    void checkXY(uint8_t pad);
+    void checkVelocity(uint8_t pad);
 
     //pad press updating/info
     void setPadPressed(uint8_t padNumber, bool padState);
-    void updateLastTouchedPad();
+    void updateLastTouchedPad(uint8_t pad);
     bool allPadsReleased();
 
     //lcd/led handling on midi event

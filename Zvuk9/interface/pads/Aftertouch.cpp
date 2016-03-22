@@ -58,6 +58,8 @@ void Pads::resetAfterTouchCounters(uint8_t padNumber) {
 
 void Pads::sendAftertouch(uint8_t pad)  {
 
+    Serial.print("at pad: "); Serial.println(pad);
+
     #if MODE_SERIAL
         Serial.print(F("Pad "));
         Serial.print(pad);
@@ -67,15 +69,12 @@ void Pads::sendAftertouch(uint8_t pad)  {
         midi.sendAfterTouch(midiChannel, lastAfterTouchValue[pad]);
     #endif
 
-    display.displayAftertouch(lastAfterTouchValue[pad], true);
-
     afterTouchAvailable = false;
 
 }
 
-void Pads::checkAftertouch()  {
+void Pads::checkAftertouch(uint8_t pad)  {
 
-    uint8_t pad = activePad;
     int16_t pressure = lastPressureValue[pad]; //latest value
 
     if (!bitRead(padPressed, pad)) return; //don't check aftertouch if pad isn't pressed

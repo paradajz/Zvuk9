@@ -60,10 +60,10 @@
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU=16000000L</Value>
+      <Value>F_CPU={build.fcpu}</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_SERIAL</Value>
-      <Value>LAYOUT_US_ENGLISH</Value>
+      <Value>{build.usbtype}</Value>
+      <Value>LAYOUT_{build.keylayout}</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -94,10 +94,10 @@
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU=16000000L</Value>
+      <Value>F_CPU={build.fcpu}</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_SERIAL</Value>
-      <Value>LAYOUT_US_ENGLISH</Value>
+      <Value>{build.usbtype}</Value>
+      <Value>LAYOUT_{build.keylayout}</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
@@ -362,10 +362,10 @@ vmresolved.tools.path=D:\Applications
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU=16000000L</Value>
+      <Value>F_CPU={build.fcpu}</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_SERIAL</Value>
-      <Value>LAYOUT_US_ENGLISH</Value>
+      <Value>{build.usbtype}</Value>
+      <Value>LAYOUT_{build.keylayout}</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -396,10 +396,10 @@ vmresolved.tools.path=D:\Applications
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU=16000000L</Value>
+      <Value>F_CPU={build.fcpu}</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_SERIAL</Value>
-      <Value>LAYOUT_US_ENGLISH</Value>
+      <Value>{build.usbtype}</Value>
+      <Value>LAYOUT_{build.keylayout}</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>

@@ -70,7 +70,7 @@ int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
 
 }
 
-void Pads::checkXY()  {
+void Pads::checkXY(uint8_t pad)  {
 
     //store median value in these variables NUMBER_OF_MEDIAN_RUNS times, then get avg value
     static int16_t xAvg = 0;
@@ -78,8 +78,6 @@ void Pads::checkXY()  {
 
     xAvailable = false;
     yAvailable = false;
-
-    uint8_t pad = padID[activePad];
 
     int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), ccTypeX);
     int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), ccTypeY);
@@ -167,14 +165,16 @@ void Pads::update(bool midiEnabled)  {
 
     if (firstRun) { setMuxInput(activePad); firstRun = false; } //only activate mux input once per pad
 
+    uint8_t pad = padID[activePad];
+
     if (!switchToXYread)    {
 
         bool pressureProcessed = processPressure();
         if (pressureProcessed)  {
 
             //all needed pressure samples are obtained
-            checkVelocity();
-            checkAftertouch();
+            checkVelocity(pad);
+            checkAftertouch(pad);
 
         }
 
@@ -182,7 +182,7 @@ void Pads::update(bool midiEnabled)  {
 
         bool xyProcessed = processXY();
         if (xyProcessed)
-            checkXY();
+            checkXY(pad);
 
     }
 
@@ -193,25 +193,24 @@ void Pads::update(bool midiEnabled)  {
 
         if (padMovementDetected)   {
 
-            updateLastTouchedPad();
+            updateLastTouchedPad(pad);
             padMovementDetected = false;
             //always update lcd
             if (!editModeActive())  {
 
-                handleNoteLCD(padID[activePad], lastVelocityValue[padID[activePad]], lastMIDInoteState[padID[activePad]]);
+                handleNoteLCD(pad, lastVelocityValue[pad], lastMIDInoteState[pad]);
 
-                if (aftertouchSendEnabled[padID[activePad]])    {
+                if (aftertouchSendEnabled[pad] && afterTouchActivated[pad])    {
 
                     if (afterTouchAvailable)
                         display.displayAftertouch(lastAfterTouchValue[padID[activePad]], true);
-                    //else no nothing
 
                 }   else display.displayAftertouch(lastAfterTouchValue[padID[activePad]], false);
 
                 #if XY_FLIP_VALUES > 0
-                    handleXYlcd(padID[activePad], 127-lastXMIDIvalue[padID[activePad]], lastYMIDIvalue[padID[activePad]], getCCXsendEnabled(padID[activePad]), getCCYsendEnabled(padID[activePad]));
+                    handleXYlcd(pad, 127-lastXMIDIvalue[pad], lastYMIDIvalue[pad], getCCXsendEnabled(pad), getCCYsendEnabled(pad));
                 #else
-                    handleXYlcd(padID[activePad], lastXMIDIvalue[padID[activePad]], 127-lastYMIDIvalue[padID[activePad]], getCCXsendEnabled(padID[activePad]), getCCYsendEnabled(padID[activePad]));
+                    handleXYlcd(pad, lastXMIDIvalue[pad], 127-lastYMIDIvalue[pad], getCCXsendEnabled(pad), getCCYsendEnabled(pad));
                 #endif
 
             }
@@ -371,9 +370,7 @@ bool Pads::processPressure() {
 
 }
 
-void Pads::checkVelocity()  {
-
-    uint8_t pad = padID[activePad];
+void Pads::checkVelocity(uint8_t pad)  {
 
     //we've taken 3 pressure samples so far, get median value
     int16_t medianValue = getMedianValueXYZ(coordinateZ);
@@ -492,7 +489,7 @@ void Pads::checkMIDIdata()   {
                     setFunctionLEDs(previousPad);
 
                     handleNoteLCD(previousPad, lastVelocityValue[previousPad], true);
-                    display.displayAftertouch(lastAfterTouchValue[previousPad], aftertouchSendEnabled[previousPad]);
+                    display.displayAftertouch(lastAfterTouchValue[previousPad], (aftertouchSendEnabled[previousPad] && afterTouchActivated[previousPad]));
 
                     #if XY_FLIP_VALUES > 0
                         handleXYlcd(previousPad, 127-lastXMIDIvalue[previousPad], lastYMIDIvalue[previousPad], ccXsendEnabled, ccYsendEnabled);
@@ -525,26 +522,25 @@ void Pads::checkMIDIdata()   {
             note_buffer_tail = i;
 
         sendNotes(pad_buffer[i], velocity_buffer[i], true);
-        handleNoteLEDs(pad_buffer[i], true);
 
     }
 
 }
 
-void Pads::updateLastTouchedPad()   {
+void Pads::updateLastTouchedPad(uint8_t pad)   {
 
-    if (padID[activePad] != getPadPressHistoryIndex(lastActiveID))    {
+    if (pad != getPadPressHistoryIndex(lastActiveID))    {
 
         #if MODE_SERIAL > 0
             Serial.print(F("Last touched pad: ")); Serial.println(getPadPressHistoryIndex(lastActiveID));
-            Serial.print(F("Current pad: ")); Serial.println(padID[activePad]);
+            Serial.print(F("Current pad: ")); Serial.println(pad);
         #endif
 
-        setFunctionLEDs(padID[activePad]);
-        updatePressHistory(padID[activePad]);
+        setFunctionLEDs(pad);
+        updatePressHistory(pad);
 
         if (editModeActive())
-        setupPadEditMode(padID[activePad]);
+            setupPadEditMode(pad);
 
     }
 
