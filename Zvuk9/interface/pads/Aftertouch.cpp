@@ -58,8 +58,6 @@ void Pads::resetAfterTouchCounters(uint8_t padNumber) {
 
 void Pads::sendAftertouch(uint8_t pad)  {
 
-    Serial.print("at pad: "); Serial.println(pad);
-
     #if MODE_SERIAL
         Serial.print(F("Pad "));
         Serial.print(pad);
