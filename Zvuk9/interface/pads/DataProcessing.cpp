@@ -157,10 +157,6 @@ void Pads::checkXY(uint8_t pad)  {
 
 void Pads::update(bool midiEnabled)  {
 
-    static bool firstRun = true;    //true when switching to another pad
-
-    if (firstRun) { setMuxInput(activePad); firstRun = false; } //only activate mux input once per pad
-
     uint8_t pad = padID[activePad];
 
     if (!switchToXYread)    {
@@ -217,8 +213,8 @@ void Pads::update(bool midiEnabled)  {
             //don't send midi data while in pad edit mode or menu
             checkMIDIdata();
 
-        firstRun = true;
         setNextPad();
+        setMuxInput(activePad);
 
     }
 
