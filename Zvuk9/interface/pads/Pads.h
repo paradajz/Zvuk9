@@ -200,14 +200,14 @@ class Pads  {
     void updatePressHistory(uint8_t pad);
 
     //current midi values
-    bool        midiNoteOn;
     uint8_t     midiAfterTouch;
 
     //last midi values
     uint8_t     lastXMIDIvalue[NUMBER_OF_PADS],
                 lastYMIDIvalue[NUMBER_OF_PADS],
                 lastVelocityValue[NUMBER_OF_PADS],
-                lastAfterTouchValue[NUMBER_OF_PADS];
+                lastAfterTouchValue[NUMBER_OF_PADS],
+                lastMIDInoteState[NUMBER_OF_PADS];
 
     //last raw values
     int16_t     lastXValue[NUMBER_OF_PADS],

@@ -198,7 +198,8 @@ void Pads::update(bool midiEnabled)  {
             //always update lcd
             if (!editModeActive())  {
 
-                handleNoteLCD(padID[activePad], lastVelocityValue[padID[activePad]], midiNoteOn);
+                Serial.println("here 2");
+                handleNoteLCD(padID[activePad], lastVelocityValue[padID[activePad]], lastMIDInoteState[padID[activePad]]);
 
                 #if XY_FLIP_VALUES > 0
                     handleXYlcd(padID[activePad], 127-lastXMIDIvalue[padID[activePad]], lastYMIDIvalue[padID[activePad]], getCCXsendEnabled(padID[activePad]), getCCYsendEnabled(padID[activePad]));
@@ -387,7 +388,7 @@ void Pads::checkVelocity()  {
                 bitWrite(padPressed, pad, true);  //set pad pressed
                 initialPressure[pad] = calibratedPressure;
                 lastVelocityValue[pad] = calibratedPressure;
-                midiNoteOn = true;
+                lastMIDInoteState[pad] = true;
                 if (!editModeActive())
                     velocityAvailable = true;
                 padMovementDetected = true;
@@ -399,7 +400,7 @@ void Pads::checkVelocity()  {
             if (bitRead(padPressed, pad))  {  //pad is already pressed
 
                 lastVelocityValue[pad] = calibratedPressure;
-                midiNoteOn = false;
+                lastMIDInoteState[pad] = false;
                 if (!editModeActive())
                     velocityAvailable = true;
                 padMovementDetected = true;
@@ -444,7 +445,7 @@ void Pads::checkMIDIdata()   {
 
     if (velocityAvailable)  {
 
-        switch(midiNoteOn)  {
+        switch(lastMIDInoteState[pad])  {
 
             case true:
             //if note on event happened, store notes in buffer first
@@ -483,6 +484,7 @@ void Pads::checkMIDIdata()   {
 
                     setFunctionLEDs(previousPad);
 
+                    Serial.println("here 1");
                     handleNoteLCD(previousPad, lastVelocityValue[previousPad], true);
 
                     #if XY_FLIP_VALUES > 0
