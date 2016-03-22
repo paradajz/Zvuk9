@@ -187,14 +187,15 @@ void Pads::update(bool midiEnabled)  {
 
             updateLastTouchedPad(pad);
             padMovementDetected = false;
+
             //always update lcd
             if (!editModeActive())  {
 
                 handleNoteLCD(pad, lastVelocityValue[pad], lastMIDInoteState[pad]);
 
-                if (aftertouchSendEnabled[pad] && afterTouchActivated[pad])    {
+                if (aftertouchType[pad] != aftertouchOff /*&& afterTouchActivated[pad]*/ && afterTouchAvailable)    {
 
-                    if (afterTouchAvailable)
+                    //if (afterTouchAvailable)
                         display.displayAftertouch(lastAfterTouchValue[padID[activePad]], true);
 
                 }   else display.displayAftertouch(lastAfterTouchValue[padID[activePad]], false);
@@ -412,7 +413,6 @@ void Pads::checkVelocity(uint8_t pad)  {
 
         }
 
-        //send aftertouch only while sensor is pressed
         if (bitRead(padPressed, pad))  {
 
             lastPressureValue[pad] = medianValue;
@@ -481,7 +481,7 @@ void Pads::checkMIDIdata()   {
                     setFunctionLEDs(previousPad);
 
                     handleNoteLCD(previousPad, lastVelocityValue[previousPad], true);
-                    display.displayAftertouch(lastAfterTouchValue[previousPad], (aftertouchSendEnabled[previousPad] && afterTouchActivated[previousPad]));
+                    display.displayAftertouch(lastAfterTouchValue[previousPad], (aftertouchType[previousPad] != aftertouchOff /*&& afterTouchActivated[previousPad]*/));
 
                     #if XY_FLIP_VALUES > 0
                         handleXYlcd(previousPad, 127-lastXMIDIvalue[previousPad], lastYMIDIvalue[previousPad], ccXsendEnabled, ccYsendEnabled);

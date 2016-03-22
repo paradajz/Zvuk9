@@ -43,12 +43,29 @@ void MIDI::sendControlChange(uint8_t channel, uint8_t ccNumber, uint8_t ccValue)
 
 }
 
-void MIDI::sendAfterTouch(uint8_t channel, uint8_t pressure)   {
+void MIDI::sendChannelAftertouch(uint8_t channel, uint8_t pressure)   {
 
     #if MODE_SERIAL < 1
-    hwMIDI.sendAfterTouch(pressure, channel);
+    hwMIDI.sendChannelAftertouch(pressure, channel);
     usbMIDI.sendAfterTouch(pressure, channel);
     #endif
+
+}
+
+void MIDI::sendPolyAftertouch(uint8_t channel, uint8_t *note, uint8_t pressure)  {
+
+     #if MODE_SERIAL < 1
+     for (int i=0; i<NOTES_PER_PAD; i++)    {
+
+        if (note[i] != BLANK_NOTE)  {
+
+            hwMIDI.sendPolyPressure(note[i], pressure, channel);
+            usbMIDI.sendPolyPressure(note[i], pressure, channel);
+
+        }
+
+     }
+     #endif
 
 }
 

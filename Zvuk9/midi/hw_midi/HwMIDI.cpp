@@ -256,7 +256,7 @@ void MIDI_Class::sendPolyPressure(byte NoteNumber,
  \param Pressure		The amount of AfterTouch to apply to all notes.
  \param Channel			The channel on which the message will be sent (1 to 16). 
  */
-void MIDI_Class::sendAfterTouch(byte Pressure,
+void MIDI_Class::sendChannelAftertouch(byte Pressure,
 								byte Channel)
 {
 	

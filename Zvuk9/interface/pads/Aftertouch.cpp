@@ -64,7 +64,17 @@ void Pads::sendAftertouch(uint8_t pad)  {
         Serial.print(F(" aftertouch value: "));
         Serial.println(lastAfterTouchValue[pad]);
     #else
-        midi.sendAfterTouch(midiChannel, lastAfterTouchValue[pad]);
+        switch(aftertouchType[pad]) {
+
+            case aftertouchChannel:
+            midi.sendChannelAftertouch(midiChannel, lastAfterTouchValue[pad]);
+            break;
+
+            case aftertouchPoly:
+            midi.sendPolyAftertouch(midiChannel, padNote[pad], lastAfterTouchValue[pad]);
+            break;
+
+        }
     #endif
 
     afterTouchAvailable = false;
@@ -77,10 +87,11 @@ void Pads::checkAftertouch(uint8_t pad)  {
 
     if (!bitRead(padPressed, pad)) return; //don't check aftertouch if pad isn't pressed
 
-    afterTouchActivated[pad] = getAfterTouchSendEnabled(pad) && getAfterTouchGestureActivated(pad, scalePressure(pad, pressure, pressureVelocity));
+    //afterTouchActivated[pad] = getAfterTouchSendEnabled(pad) && getAfterTouchGestureActivated(pad, scalePressure(pad, pressure, pressureVelocity));
+    //afterTouchActivated[pad] = getAfterTouchSendEnabled(pad) && getAfterTouchGestureActivated(pad, scalePressure(pad, pressure, pressureVelocity));
 
-    //aftertouch
-    if (afterTouchActivated[pad]) {
+        //aftertouch
+    if (getAftertouchType(pad)) {
 
         uint8_t calibratedPressureAfterTouch = scalePressure(pad, pressure, pressureAfterTouch);
 

@@ -59,7 +59,7 @@ void Pads::getPadParameters()   {
             xSendEnabled[i]                 = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ySendEnabled[i]                 = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             noteSendEnabled[i]              = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            aftertouchSendEnabled[i]        = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            aftertouchType[i]               = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccXPad[i]                       = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_X_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccYPad[i]                       = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_Y_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccXminPad[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
@@ -75,7 +75,7 @@ void Pads::getPadParameters()   {
             Serial.print(F("X send enabled: "));            Serial.println(xSendEnabled[0]);
             Serial.print(F("Y send enabled: "));            Serial.println(ySendEnabled[0]);
             Serial.print(F("Note send enabled: "));         Serial.println(noteSendEnabled[0]);
-            Serial.print(F("Aftertouch send enabled: "));   Serial.println(aftertouchSendEnabled[0]);
+            Serial.print(F("Aftertouch type: "));           Serial.println(aftertouchType[0]);
             Serial.print(F("CC X MIDI ID: "));              Serial.println(ccXPad[0]);
             Serial.print(F("CC Y MIDI ID: "));              Serial.println(ccYPad[0]);
             Serial.print(F("CC X lower limit: "));          Serial.println(ccXminPad[0]);
@@ -98,7 +98,7 @@ void Pads::getPadParameters()   {
                 xSendEnabled[i]                 = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
                 ySendEnabled[i]                 = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
                 noteSendEnabled[i]              = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-                aftertouchSendEnabled[i]        = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+                aftertouchType[i]               = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
                 //pads have individual settings
                 ccXPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
@@ -116,7 +116,7 @@ void Pads::getPadParameters()   {
                         Serial.print(F("X send enabled: "));            Serial.println(xSendEnabled[i]);
                         Serial.print(F("Y send enabled: "));            Serial.println(ySendEnabled[i]);
                         Serial.print(F("Note send enabled: "));         Serial.println(noteSendEnabled[i]);
-                        Serial.print(F("Aftertouch send enabled: "));   Serial.println(aftertouchSendEnabled[i]);
+                        Serial.print(F("Aftertouch type: "));           Serial.println(aftertouchType[i]);
 
                     }
 
@@ -147,7 +147,7 @@ void Pads::getPadParameters()   {
                 xSendEnabled[i]             = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
                 ySendEnabled[i]             = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
                 noteSendEnabled[i]          = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
-                aftertouchSendEnabled[i]    = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+                aftertouchType[i]           = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
                 ccXPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
                 ccYPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
                 ccXminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
@@ -165,7 +165,7 @@ void Pads::getPadParameters()   {
                     Serial.print(F("X send enabled: "));            Serial.println(xSendEnabled[i]);
                     Serial.print(F("Y send enabled: "));            Serial.println(ySendEnabled[i]);
                     Serial.print(F("Note send enabled: "));         Serial.println(noteSendEnabled[i]);
-                    Serial.print(F("Aftertouch send enabled: "));   Serial.println(aftertouchSendEnabled[i]);
+                    Serial.print(F("Aftertouch type: "));           Serial.println(aftertouchType[i]);
                     Serial.print(F("CC X MIDI ID: "));              Serial.println(ccXPad[i]);
                     Serial.print(F("CC Y MIDI ID: "));              Serial.println(ccYPad[i]);
                     Serial.print(F("CC X lower limit: "));          Serial.println(ccXminPad[i]);
@@ -183,7 +183,7 @@ void Pads::getPadParameters()   {
     uint8_t lastTouchedPad = getPadPressHistoryIndex(lastActiveID);
 
     leds.setLEDstate(LED_ON_OFF_SPLIT, (ledIntensity_t)splitCounter);
-    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, (ledIntensity_t)getAftertouchType(lastTouchedPad));
     leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
     leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
     leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
@@ -479,9 +479,9 @@ bool Pads::getNoteSendEnabled(uint8_t padNumber)   {
 
 }
 
-bool Pads::getAfterTouchSendEnabled(uint8_t padNumber) {
+aftertouchType_t Pads::getAftertouchType(uint8_t padNumber) {
 
-    return aftertouchSendEnabled[padNumber];
+    return (aftertouchType_t)aftertouchType[padNumber];
 
 }
 

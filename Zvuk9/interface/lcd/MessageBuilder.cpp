@@ -129,12 +129,11 @@ void LCD::displayCClimitChange(ccLimitType_t type, splitState_t _splitState, uin
 
 }
 
-void LCD::displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber)  {
+void LCD::displayChangeState(functionsOnOff_t messageType, splitState_t _splitState, uint8_t functionState, uint8_t padNumber)  {
 
     switch(messageType) {
 
         case featureNotes:
-        case featureAftertouch:
         case featureX:
         case featureY:
         if (!functionState) strcpy_P(nameBuffer, (char*)pgm_read_word(&(offArray[messageType])));
@@ -148,6 +147,15 @@ void LCD::displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, b
         if (_splitState == splitXYFunctions)
             string_line += padNumber; //local change
 
+        updateDisplay(2, message, 0, true);
+        break;
+
+        case featureAftertouch:
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(aftertouchArray[functionState])));
+        string_line = nameBuffer;
+        updateDisplay(1, message, 0, true);
+        strcpy_P(nameBuffer, emptyLine_string);
+        string_line = nameBuffer;
         updateDisplay(2, message, 0, true);
         break;
 

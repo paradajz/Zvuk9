@@ -147,7 +147,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
         if (afterTouchActivated[pad])   {
 
-            midi.sendAfterTouch(midiChannel, 0);
+            midi.sendChannelAftertouch(midiChannel, 0);
             afterTouchActivated[pad] = false;
             afterTouchAvailable =false;
 

@@ -43,9 +43,9 @@ typedef enum {
 typedef enum {
 
     featureNotes,
-    featureAftertouch,
     featureX,
     featureY,
+    featureAftertouch,
     featureSplit,
 
 } functionsOnOff_t;
@@ -196,5 +196,14 @@ typedef enum {
     previousID
 
 } padHistoryID_t;
+
+typedef enum {
+
+    aftertouchOff,
+    aftertouchChannel,
+    aftertouchPoly,
+    AFTERTOUCH_TYPES
+
+} aftertouchType_t;
 
 #endif
