@@ -13,20 +13,19 @@ void Pads::sendXY(uint8_t pad)  {
                 Serial.print(F("X for pad "));
                 Serial.print(pad);
                 Serial.print(F(": "));
-            #if XY_FLIP_VALUES > 0
-                Serial.println(127-midiX);
+                #if XY_FLIP_VALUES > 0
+                    Serial.println(127-lastXMIDIvalue[pad]);
+                #else
+                    Serial.println(lastXMIDIvalue[pad]);
+                #endif
+            Serial.print(F("X CC: "));
+            Serial.println(ccXPad[pad]);
             #else
-                Serial.println(midiX);
-            #endif
-                Serial.print(F("X CC: "));
-                Serial.println(ccXPad[pad]);
-            #else
-            #if XY_FLIP_VALUES > 0
-                midi.sendControlChange(midiChannel, ccXPad[pad], 127-midiX);
-            #else
-                midi.sendControlChange(midiChannel, ccXPad[pad], midiX);
-            #endif
-                lastXMIDIvalue[pad] = midiX;
+                #if XY_FLIP_VALUES > 0
+                    midi.sendControlChange(midiChannel, ccXPad[pad], 127-lastXMIDIvalue[pad]);
+                #else
+                    midi.sendControlChange(midiChannel, ccXPad[pad], lastXMIDIvalue[pad]);
+                #endif
             #endif
 
         }
@@ -41,44 +40,37 @@ void Pads::sendXY(uint8_t pad)  {
                 Serial.print(F("Y for pad "));
                 Serial.print(pad);
                 Serial.print(F(": "));
-            #if XY_FLIP_VALUES > 0
-                Serial.println(midiY);
+                #if XY_FLIP_VALUES > 0
+                    Serial.println(lastYMIDIvalue[pad]);
+                #else
+                    Serial.println(127-lastYMIDIvalue[pad]);
+                #endif
+            Serial.print(F("Y CC: "));
+            Serial.println(ccYPad[pad]);
             #else
-                Serial.println(127-midiY);
-            #endif
-                Serial.print(F("Y CC: "));
-                Serial.println(ccYPad[pad]);
-            #else
-            #if XY_FLIP_VALUES > 0
-                midi.sendControlChange(midiChannel, ccYPad[pad], midiY);
-            #else
-                midi.sendControlChange(midiChannel, ccYPad[pad], 127-midiY);
-            #endif
-                lastYMIDIvalue[pad] = midiY;
+                #if XY_FLIP_VALUES > 0
+                    midi.sendControlChange(midiChannel, ccYPad[pad], lastYMIDIvalue[pad]);
+                #else
+                    midi.sendControlChange(midiChannel, ccYPad[pad], 127-lastYMIDIvalue[pad]);
+                #endif
             #endif
 
         }
 
     }
 
-    #if XY_FLIP_VALUES > 0
-        handleXY(pad, 127-midiX, midiY, xAvailable_, yAvailable_);
-    #else
-        handleXY(pad, midiX, 127-midiY, xAvailable_, yAvailable_);
-    #endif
-
     //record first sent x/y values
     //if they change enough, reset aftertouch gesture counter
     if ((initialXvalue[pad] == -999) || (initialYvalue[pad] == -999))   {
 
-        initialXvalue[pad] = midiX;
-        initialYvalue[pad] = midiY;
+        initialXvalue[pad] = lastXMIDIvalue[pad];
+        initialYvalue[pad] = lastYMIDIvalue[pad];
 
         }   else {
 
         if (
-        (abs(initialXvalue[pad] - midiX) > XY_CHANGE_AFTERTOUCH_RESET) ||
-        (abs(initialYvalue[pad] - midiY) > XY_CHANGE_AFTERTOUCH_RESET)
+        (abs(initialXvalue[pad] - lastXMIDIvalue[pad]) > XY_CHANGE_AFTERTOUCH_RESET) ||
+        (abs(initialYvalue[pad] - lastYMIDIvalue[pad]) > XY_CHANGE_AFTERTOUCH_RESET)
         )  if (!afterTouchActivated[pad]) resetAfterTouchCounters(pad);
 
     }
@@ -93,7 +85,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
         case true:
         //note on
-        if (!noteSendEnabled[pad]) { display.displayActivePadNotes(0, 0, 0); return; }
+        if (!noteSendEnabled[pad]) return;
         #if MODE_SERIAL > 0
             Serial.print(F("Pad "));
             Serial.print(pad);
@@ -167,19 +159,15 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
             Serial.println(F(" released"));
         #endif
 
-        //check if pad data on lcd needs to be cleared
-        if (allPadsReleased()) display.clearPadData();
-
         break;
 
     }
 
-    //handle lcd and leds
-    handleNote(pad, velocity, state);
-
 }
 
-void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
+void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
+
+    if (!noteSendEnabled[pad]) return;
 
     uint8_t noteArray[NOTES_PER_PAD],
             noteCounter = 0;
@@ -199,19 +187,14 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
         case true:
         //note on
-        uint8_t tonicArray[NOTES_PER_PAD],
-                octaveArray[NOTES_PER_PAD];
+        uint8_t tonicArray[NOTES_PER_PAD];
 
         for (int i=0; i<noteCounter; i++) {
 
             tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
             leds.setNoteLEDstate((note_t)tonicArray[i], ledIntensityFull);
-            octaveArray[i] = normalizeOctave(getOctaveFromNote(noteArray[i]));
 
         }
-
-        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
-        display.displayVelocity(velocity);
         break;
 
         case false:
@@ -251,10 +234,54 @@ void Pads::handleNote(uint8_t pad, uint8_t velocity, bool state)  {
 
 }
 
-void Pads::handleXY(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable)   {
+void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
 
-    //if (xAvailable || yAvailable)
-        display.displayXYposition(xPosition, yPosition, xAvailable, yAvailable);
+    if (!noteSendEnabled[pad]) { display.displayActivePadNotes(0, 0, 0); return; }
+
+    uint8_t noteArray[NOTES_PER_PAD],
+            noteCounter = 0;
+
+    for (int i=0; i<NOTES_PER_PAD; i++) {
+
+        if (padNote[pad][i] != BLANK_NOTE)  {
+
+            noteArray[noteCounter] = padNote[pad][i];
+            noteCounter++;
+
+        }
+
+    }
+
+    switch(state)   {
+
+        case true:
+        //note on
+        uint8_t tonicArray[NOTES_PER_PAD],
+                octaveArray[NOTES_PER_PAD];
+
+        for (int i=0; i<noteCounter; i++) {
+
+            tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
+            octaveArray[i] = normalizeOctave(getOctaveFromNote(noteArray[i]));
+
+        }
+
+        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
+        display.displayVelocity(velocity);
+        break;
+
+        case false:
+        //note off
+        display.displayActivePadNotes(0, 0, 0);
+        break;
+
+    }
+
+}
+
+void Pads::handleXYlcd(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xEnabled, bool yEnabled)   {
+
+    display.displayXYposition(xPosition, yPosition, xAvailable, xEnabled, yAvailable, yEnabled);
 
     //always display ccx/ccy
     display.displayXYcc(ccXPad[pad], ccYPad[pad]);

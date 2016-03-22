@@ -20,7 +20,7 @@ class LCD   {
     void displayHelloMessage();
     void displayProgramAndPreset(uint8_t program, uint8_t preset);
     void displayVelocity(uint8_t velocity);
-    void displayXYposition(uint8_t x, uint8_t y, bool xAvailable, bool yAvailable);
+    void displayXYposition(uint8_t x, uint8_t y, bool xAvailable, bool xEnabled, bool yAvailable, bool yEnabled);
     void displayAftertouch(uint8_t afterTouch);
     void displayXYcc(uint8_t ccX, uint8_t ccY);
     void displayTransportControl(transportControl_t type, bool state);

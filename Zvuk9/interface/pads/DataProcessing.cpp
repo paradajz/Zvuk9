@@ -129,6 +129,8 @@ void Pads::checkXY()  {
         if (!editModeActive())
             xAvailable = true;
 
+        lastXMIDIvalue[pad] = xValue;
+
     }
 
     if (yChanged)   {
@@ -141,6 +143,8 @@ void Pads::checkXY()  {
         if (!editModeActive())
             yAvailable = true;
 
+        lastYMIDIvalue[pad] = yValue;
+
     }
 
     if (xChanged || yChanged)   {
@@ -149,8 +153,6 @@ void Pads::checkXY()  {
         if (!editModeActive())
             xyAvailable = true;
         padMovementDetected = true;
-        midiX = xValue;
-        midiY = yValue;
 
     }
 
@@ -180,7 +182,7 @@ void Pads::update(bool midiEnabled)  {
 
         bool xyProcessed = processXY();
         if (xyProcessed)
-        checkXY();
+            checkXY();
 
     }
 
@@ -193,6 +195,18 @@ void Pads::update(bool midiEnabled)  {
 
             updateLastTouchedPad();
             padMovementDetected = false;
+            //always update lcd
+            if (!editModeActive())  {
+
+                handleNoteLCD(padID[activePad], lastVelocityValue[padID[activePad]], midiNoteOn);
+
+                #if XY_FLIP_VALUES > 0
+                    handleXYlcd(padID[activePad], 127-lastXMIDIvalue[padID[activePad]], lastYMIDIvalue[padID[activePad]], getCCXsendEnabled(padID[activePad]), getCCYsendEnabled(padID[activePad]));
+                #else
+                    handleXYlcd(padID[activePad], lastXMIDIvalue[padID[activePad]], 127-lastYMIDIvalue[padID[activePad]], getCCXsendEnabled(padID[activePad]), getCCYsendEnabled(padID[activePad]));
+                #endif
+
+            }
 
         }
 
@@ -223,9 +237,9 @@ bool Pads::processXY()  {
 
             //x
             #if XY_FLIP_AXIS > 0
-            setupY();
+                setupY();
             #else
-            setupX();
+                setupX();
             #endif
             admuxSet = true;
 
@@ -234,9 +248,9 @@ bool Pads::processXY()  {
         }
 
         #if XY_FLIP_AXIS > 0
-        xValue = getY();
+            xValue = getY();
         #else
-        xValue = getX();
+            xValue = getX();
         #endif
 
     }
@@ -372,7 +386,7 @@ void Pads::checkVelocity()  {
                 //sensor is really pressed
                 bitWrite(padPressed, pad, true);  //set pad pressed
                 initialPressure[pad] = calibratedPressure;
-                midiVelocity = calibratedPressure;
+                lastVelocityValue[pad] = calibratedPressure;
                 midiNoteOn = true;
                 if (!editModeActive())
                     velocityAvailable = true;
@@ -384,7 +398,7 @@ void Pads::checkVelocity()  {
             case false:
             if (bitRead(padPressed, pad))  {  //pad is already pressed
 
-                midiVelocity = calibratedPressure;
+                lastVelocityValue[pad] = calibratedPressure;
                 midiNoteOn = false;
                 if (!editModeActive())
                     velocityAvailable = true;
@@ -448,31 +462,38 @@ void Pads::checkMIDIdata()   {
                 padPressHistory_counter--;
                 if (padPressHistory_counter < 0) padPressHistory_counter = NUMBER_OF_PADS-1;
 
-            }
-            //restore lcd/led states from previous pad if it's pressed
-            if (isPadPressed(previousPad))  {
+                //restore lcd/led states from previous pad if it's pressed
+                if (isPadPressed(previousPad))  {
 
-                //restore data from last touched pad (display+midi cc x/cc y)
-                bool ccXsendEnabled = getCCXsendEnabled(previousPad);
-                bool ccYsendEnabled = getCCYsendEnabled(previousPad);
-                uint8_t ccXvaluePreviousPad = getCCvalue(ccTypeX, previousPad);
-                uint8_t ccYvaluePreviousPad = getCCvalue(ccTypeY, previousPad);
-                uint8_t ccXvalueActivePad = getCCvalue(ccTypeX, pad);
-                uint8_t ccYvalueActivePad = getCCvalue(ccTypeY, pad);
+                    //restore data from last touched pad (function leds/midi cc x/cc y)
+                    bool ccXsendEnabled = getCCXsendEnabled(previousPad);
+                    bool ccYsendEnabled = getCCYsendEnabled(previousPad);
+                    uint8_t ccXvaluePreviousPad = getCCvalue(ccTypeX, previousPad);
+                    uint8_t ccYvaluePreviousPad = getCCvalue(ccTypeY, previousPad);
+                    uint8_t ccXvalueActivePad = getCCvalue(ccTypeX, pad);
+                    uint8_t ccYvalueActivePad = getCCvalue(ccTypeY, pad);
 
-                if ((ccXvalueActivePad == ccXvaluePreviousPad) && ccXsendEnabled)
-                    midi.sendControlChange(midiChannel, ccXvaluePreviousPad, lastXMIDIvalue[previousPad]);
-                else if ((ccYvalueActivePad == ccYvaluePreviousPad) && ccYsendEnabled)
-                    midi.sendControlChange(midiChannel, ccYvaluePreviousPad, lastYMIDIvalue[previousPad]);
+                    if ((ccXvalueActivePad == ccXvaluePreviousPad) && ccXsendEnabled)
+                        midi.sendControlChange(midiChannel, ccXvaluePreviousPad, lastXMIDIvalue[previousPad]);
+                    else if ((ccYvalueActivePad == ccYvaluePreviousPad) && ccYsendEnabled)
+                        midi.sendControlChange(midiChannel, ccYvaluePreviousPad, lastYMIDIvalue[previousPad]);
 
-                if (getNoteSendEnabled(previousPad))
-                    handleNote(previousPad, lastVelocityValue[previousPad], true);
-                else display.displayActivePadNotes(0, 0, 0);
+                    if (getNoteSendEnabled(previousPad))
+                        handleNoteLEDs(previousPad, true);
 
-                handleXY(previousPad, lastXValue[previousPad], lastYValue[previousPad], ccXsendEnabled, ccYsendEnabled);
-                setFunctionLEDs(previousPad);
+                    setFunctionLEDs(previousPad);
 
-            }
+                    handleNoteLCD(previousPad, lastVelocityValue[previousPad], true);
+
+                    #if XY_FLIP_VALUES > 0
+                        handleXYlcd(previousPad, 127-lastXMIDIvalue[previousPad], lastYMIDIvalue[previousPad], ccXsendEnabled, ccYsendEnabled);
+                    #else
+                        handleXYlcd(previousPad, lastXMIDIvalue[previousPad], 127-lastYMIDIvalue[previousPad], ccXsendEnabled, ccYsendEnabled);
+                    #endif
+
+                }
+
+            }   else display.clearPadData();
             break;
 
         }   velocityAvailable = false;
@@ -495,6 +516,7 @@ void Pads::checkMIDIdata()   {
             note_buffer_tail = i;
 
         sendNotes(pad_buffer[i], velocity_buffer[i], true);
+        handleNoteLEDs(pad_buffer[i], true);
 
     }
 
@@ -541,10 +563,8 @@ void Pads::storeNotes(uint8_t pad)  {
     uint8_t i = note_buffer_head + 1;
     if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
     pad_buffer[i] = pad;
-    velocity_buffer[i] = midiVelocity;
+    velocity_buffer[i] = lastVelocityValue[pad];
     pad_note_timer_buffer[i] = newMillis();
     note_buffer_head = i;
-
-    lastVelocityValue[pad] = midiVelocity;
 
 }

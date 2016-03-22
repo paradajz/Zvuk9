@@ -168,8 +168,9 @@ class Pads  {
     bool allPadsReleased();
 
     //lcd/led handling on midi event
-    void handleNote(uint8_t pad, uint8_t velocity, bool state);
-    void handleXY(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable);
+    void handleNoteLEDs(uint8_t pad, bool state);
+    void handleNoteLCD(uint8_t pad, uint8_t velocity, bool state);
+    void handleXYlcd(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xEnabled, bool yEnabled);
 
     //scale
     scaleType_t getScaleType(uint8_t scale);
@@ -199,9 +200,6 @@ class Pads  {
     void updatePressHistory(uint8_t pad);
 
     //current midi values
-    uint8_t     midiVelocity;
-    uint8_t     midiX;
-    uint8_t     midiY;
     bool        midiNoteOn;
     uint8_t     midiAfterTouch;
 

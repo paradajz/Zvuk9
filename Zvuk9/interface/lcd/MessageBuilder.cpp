@@ -419,7 +419,7 @@ void LCD::displayVelocity(uint8_t velocity)  {
 
 }
 
-void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool yAvailable)   {
+void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool xEnabled, bool yAvailable, bool yEnabled)   {
 
     //reset to avoid issues with pad data clearing
     padClearDelay = 0;
@@ -427,7 +427,7 @@ void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailabl
     //velocity, x, y and aftertouch are all in same line
     //special care needs to be taken here
 
-    if (xAvailable && yAvailable)   {
+    if (xEnabled && yEnabled)   {
 
         strcpy_P(nameBuffer, x_string);
         string_line = nameBuffer;
@@ -445,7 +445,7 @@ void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailabl
         if (yPosition < 10)         string_line += "  ";
         else if (yPosition < 100)   string_line += " ";
 
-    }   else if (!xAvailable && yAvailable) {
+    }   else if (!xEnabled && yEnabled) {
 
         strcpy_P(nameBuffer, xPositionClear_string);
         string_line = nameBuffer;
@@ -457,7 +457,7 @@ void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailabl
         if (yPosition < 10)         string_line += "  ";
         else if (yPosition < 100)   string_line += " ";
 
-    }   else if (xAvailable && !yAvailable) {
+    }   else if (xEnabled && !yEnabled) {
 
         strcpy_P(nameBuffer, x_string);
         string_line = nameBuffer;
@@ -469,7 +469,7 @@ void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailabl
         strcpy_P(nameBuffer, yPositionClear_string);
         string_line += nameBuffer;
 
-    }   else if (!xAvailable && !yAvailable) {
+    }   else if (!xEnabled && !yEnabled) {
 
         //x and y are not available, clear them
         strcpy_P(nameBuffer, xyPositionClear_string);
