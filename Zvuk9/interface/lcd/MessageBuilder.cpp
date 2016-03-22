@@ -492,8 +492,6 @@ void LCD::displayAftertouch(uint8_t afterTouch, bool afterTouchEnabled)  {
 
     }
 
-    Serial.print("LINE"); Serial.print(string_line); Serial.println("LINE");
-
     updateDisplay(PAD_V_XY_AT_ROW, text, AFTERTOUCH_START, false);
 
 }
