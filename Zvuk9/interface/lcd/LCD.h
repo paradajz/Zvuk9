@@ -21,7 +21,7 @@ class LCD   {
     void displayProgramAndPreset(uint8_t program, uint8_t preset);
     void displayVelocity(uint8_t velocity);
     void displayXYposition(uint8_t x, uint8_t y, bool xAvailable, bool xEnabled, bool yAvailable, bool yEnabled);
-    void displayAftertouch(uint8_t afterTouch);
+    void displayAftertouch(uint8_t afterTouch, bool aftertouchEnabled);
     void displayXYcc(uint8_t ccX, uint8_t ccY);
     void displayTransportControl(transportControl_t type, bool state);
     void displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, bool functionState, uint8_t padNumber);
@@ -38,7 +38,7 @@ class LCD   {
     void displayServiceMenu();
     void changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption);
     void selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
-    void clearPadData(bool forceClear = false);
+    void clearPadData();
     void displayModifierEnabled();
     void displayReset();
     void displayOutOfRange();
@@ -54,7 +54,6 @@ class LCD   {
     uint32_t messageDisplayTime;
     uint32_t lastScrollTime;
     uint32_t lastLCDupdateTime;
-    uint32_t padClearDelay;
 
     bool displayMessage_var;
     bool lineChange[NUMBER_OF_LCD_ROWS];
@@ -70,7 +69,6 @@ class LCD   {
     char lcdLineScroll_char[MAX_TEXT_SIZE+1];
 
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite);
-    void checkPadDataClear();
     String string_line;
     char char_line[MAX_TEXT_SIZE+1];
     char nameBuffer[MAX_TEXT_SIZE+1];

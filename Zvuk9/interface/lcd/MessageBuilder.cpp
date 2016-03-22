@@ -406,9 +406,6 @@ void LCD::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
 
 void LCD::displayVelocity(uint8_t velocity)  {
 
-    //reset to avoid issues with pad data clearing
-    padClearDelay = 0;
-
     strcpy_P(nameBuffer, velocity_string);
     string_line = nameBuffer;
     string_line += velocity;
@@ -420,9 +417,6 @@ void LCD::displayVelocity(uint8_t velocity)  {
 }
 
 void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool xEnabled, bool yAvailable, bool yEnabled)   {
-
-    //reset to avoid issues with pad data clearing
-    padClearDelay = 0;
 
     //velocity, x, y and aftertouch are all in same line
     //special care needs to be taken here
@@ -481,25 +475,28 @@ void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailabl
 
 }
 
-void LCD::displayAftertouch(uint8_t afterTouch)  {
+void LCD::displayAftertouch(uint8_t afterTouch, bool afterTouchEnabled)  {
 
-    //reset to avoid issues with pad data clearing
-    padClearDelay = 0;
+    if (afterTouchEnabled)  {
 
-    strcpy_P(nameBuffer, aftertouch_string);
-    string_line = nameBuffer;
-    string_line += afterTouch;
-    if (afterTouch < 10)       string_line += "  ";
-    else if (afterTouch < 100) string_line += " ";
+        strcpy_P(nameBuffer, aftertouch_string);
+        string_line = nameBuffer;
+        string_line += afterTouch;
+        if (afterTouch < 10)       string_line += "  ";
+        else if (afterTouch < 100) string_line += " ";
+
+    }   else {
+
+        strcpy_P(nameBuffer, aftertouchClear_string);
+        string_line = nameBuffer;
+
+    }
 
     updateDisplay(PAD_V_XY_AT_ROW, text, AFTERTOUCH_START, false);
 
 }
 
 void LCD::displayXYcc(uint8_t ccX, uint8_t ccY)   {
-
-    //reset to avoid issues with pad data clearing
-    padClearDelay = 0;
 
     //ccx string
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeX])));
@@ -562,9 +559,6 @@ void LCD::displayActiveOctave(int8_t octave)   {
 }
 
 void LCD::displayPadEditMode(uint8_t padNumber)  {
-
-    //reset to avoid issues with pad data clearing
-    padClearDelay = 0;
 
     strcpy_P(nameBuffer, editingPad_string);
     string_line = nameBuffer;
@@ -653,29 +647,14 @@ void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  
 
 }
 
-void LCD::clearPadData(bool forceClear) {
+void LCD::clearPadData() {
 
-    if (!forceClear)  {
+    //clear all rows except first one
+    strcpy_P(nameBuffer, emptyLine_string);
+    string_line = nameBuffer;
 
-        padClearDelay = newMillis();
-        //aftertouch should always be cleared
-        strcpy_P(nameBuffer, aftertouchClear_string);
-        string_line = nameBuffer;
-
-        updateDisplay(PAD_V_XY_AT_ROW, text, AFTERTOUCH_START, false);
-
-    } else {
-
-        //clear all rows except first one
-        strcpy_P(nameBuffer, emptyLine_string);
-        string_line = nameBuffer;
-
-        for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
-            updateDisplay(i, text, 0, true);
-
-        padClearDelay = 0;
-
-    }
+    for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
+        updateDisplay(i, text, 0, true);
 
 }
 

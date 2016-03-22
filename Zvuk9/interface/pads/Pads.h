@@ -199,9 +199,6 @@ class Pads  {
     //pad press history buffer
     void updatePressHistory(uint8_t pad);
 
-    //current midi values
-    uint8_t     midiAfterTouch;
-
     //last midi values
     uint8_t     lastXMIDIvalue[NUMBER_OF_PADS],
                 lastYMIDIvalue[NUMBER_OF_PADS],

@@ -198,8 +198,15 @@ void Pads::update(bool midiEnabled)  {
             //always update lcd
             if (!editModeActive())  {
 
-                Serial.println("here 2");
                 handleNoteLCD(padID[activePad], lastVelocityValue[padID[activePad]], lastMIDInoteState[padID[activePad]]);
+
+                if (aftertouchSendEnabled[padID[activePad]])    {
+
+                    if (afterTouchAvailable)
+                        display.displayAftertouch(lastAfterTouchValue[padID[activePad]], true);
+                    //else no nothing
+
+                }   else display.displayAftertouch(lastAfterTouchValue[padID[activePad]], false);
 
                 #if XY_FLIP_VALUES > 0
                     handleXYlcd(padID[activePad], 127-lastXMIDIvalue[padID[activePad]], lastYMIDIvalue[padID[activePad]], getCCXsendEnabled(padID[activePad]), getCCYsendEnabled(padID[activePad]));
@@ -484,8 +491,8 @@ void Pads::checkMIDIdata()   {
 
                     setFunctionLEDs(previousPad);
 
-                    Serial.println("here 1");
                     handleNoteLCD(previousPad, lastVelocityValue[previousPad], true);
+                    display.displayAftertouch(lastAfterTouchValue[previousPad], aftertouchSendEnabled[previousPad]);
 
                     #if XY_FLIP_VALUES > 0
                         handleXYlcd(previousPad, 127-lastXMIDIvalue[previousPad], lastYMIDIvalue[previousPad], ccXsendEnabled, ccYsendEnabled);

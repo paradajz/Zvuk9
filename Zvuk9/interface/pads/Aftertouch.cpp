@@ -62,12 +62,12 @@ void Pads::sendAftertouch(uint8_t pad)  {
         Serial.print(F("Pad "));
         Serial.print(pad);
         Serial.print(F(" aftertouch value: "));
-        Serial.println(midiAfterTouch);
+        Serial.println(lastAfterTouchValue[pad]);
     #else
-        midi.sendAfterTouch(midiChannel, midiAfterTouch);
+        midi.sendAfterTouch(midiChannel, lastAfterTouchValue[pad]);
     #endif
 
-    display.displayAftertouch(midiAfterTouch);
+    display.displayAftertouch(lastAfterTouchValue[pad], true);
 
     afterTouchAvailable = false;
 
@@ -108,8 +108,7 @@ void Pads::checkAftertouch()  {
 
             afterTouchAvailable = true;
             padMovementDetected = true;
-            midiAfterTouch = calibratedPressureAfterTouch;
-            lastAfterTouchValue[pad] = midiAfterTouch;
+            lastAfterTouchValue[pad] = calibratedPressureAfterTouch;
             afterTouchSendTimer[pad] = newMillis();
 
         }

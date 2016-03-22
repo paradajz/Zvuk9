@@ -67,7 +67,7 @@ void LCD::update()  {
     //use char pointer to point to line we're going to print
     char *charPointer;
 
-    checkPadDataClear();
+    //checkPadDataClear();
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
 
@@ -255,19 +255,6 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 
         scrollEnabled[row] = false;
         scrollIndex[row] = 0;
-
-    }
-
-}
-
-void LCD::checkPadDataClear()   {
-
-    //clear pad data with some delay to allow rapid pad press without clearing display every time
-
-    if (padClearDelay)  {
-
-        if ((newMillis() - padClearDelay) > LCD_PAD_DATA_CLEAR_DELAY)
-            clearPadData(true);
 
     }
 
