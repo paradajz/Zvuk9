@@ -8,8 +8,8 @@ Pads::Pads()  {
 
     for (int i=0; i<NUMBER_OF_PADS; i++)        {
 
-        lastXValue[i] = DEFAULT_XY_VALUE;
-        lastYValue[i] = DEFAULT_XY_VALUE;
+        lastXMIDIvalue[i] = DEFAULT_XY_VALUE;
+        lastYMIDIvalue[i] = DEFAULT_XY_VALUE;
         padPressHistory_buffer[i] = 0;
 
         for (int j=0; j<NOTES_PER_PAD; j++)

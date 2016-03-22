@@ -104,22 +104,22 @@ void Pads::checkXY(uint8_t pad)  {
 
     if ((newMillis() - xSendTimer[pad]) > XY_SEND_TIMEOUT)  {
 
-        if (abs(xValue - lastXValue[pad]) > XY_SEND_TIMEOUT_STEP) xChanged = true;
+        if (abs(xValue - lastXMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP) xChanged = true;
 
-    }   else if ((xValue != lastXValue[pad]) && ((newMillis() - xSendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
+    }   else if ((xValue != lastXMIDIvalue[pad]) && ((newMillis() - xSendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
     xChanged = true;
 
 
     if ((newMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT)  {
 
-        if (abs(yValue - lastYValue[pad]) > XY_SEND_TIMEOUT_STEP) yChanged = true;
+        if (abs(yValue - lastYMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP) yChanged = true;
 
-    }   else if ((yValue != lastYValue[pad]) && ((newMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
+    }   else if ((yValue != lastYMIDIvalue[pad]) && ((newMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
     yChanged = true;
 
     if (xChanged)   {
 
-        lastXValue[pad] = xValue;
+        lastXMIDIvalue[pad] = xValue;
         xSendTimer[pad] = newMillis();
 
         if (padCurveX[pad] != 0)  xValue = xyScale[padCurveX[pad]-1][xValue];
@@ -127,21 +127,17 @@ void Pads::checkXY(uint8_t pad)  {
         if (!editModeActive())
             xAvailable = true;
 
-        lastXMIDIvalue[pad] = xValue;
-
     }
 
     if (yChanged)   {
 
-        lastYValue[pad] = yValue;
+        lastYMIDIvalue[pad] = yValue;
         ySendTimer[pad] = newMillis();
 
         if (padCurveY[pad] != 0)  yValue = xyScale[padCurveY[pad]-1][yValue];
 
         if (!editModeActive())
             yAvailable = true;
-
-        lastYMIDIvalue[pad] = yValue;
 
     }
 
@@ -408,8 +404,8 @@ void Pads::checkVelocity(uint8_t pad)  {
                 if (!editModeActive())
                     velocityAvailable = true;
                 padMovementDetected = true;
-                lastXValue[pad] = DEFAULT_XY_VALUE;
-                lastYValue[pad] = DEFAULT_XY_VALUE;
+                lastXMIDIvalue[pad] = DEFAULT_XY_VALUE;
+                lastYMIDIvalue[pad] = DEFAULT_XY_VALUE;
                 bitWrite(padPressed, pad, false);  //set pad not pressed
                 //reset all aftertouch gestures after pad is released
                 resetAfterTouchCounters(pad);

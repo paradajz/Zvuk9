@@ -200,16 +200,15 @@ class Pads  {
     void updatePressHistory(uint8_t pad);
 
     //last midi values
-    uint8_t     lastXMIDIvalue[NUMBER_OF_PADS],
-                lastYMIDIvalue[NUMBER_OF_PADS],
-                lastVelocityValue[NUMBER_OF_PADS],
+    int16_t     lastXMIDIvalue[NUMBER_OF_PADS],
+                lastYMIDIvalue[NUMBER_OF_PADS];
+
+    uint8_t     lastVelocityValue[NUMBER_OF_PADS],
                 lastAfterTouchValue[NUMBER_OF_PADS],
                 lastMIDInoteState[NUMBER_OF_PADS];
 
     //last raw values
-    int16_t     lastXValue[NUMBER_OF_PADS],
-                lastYValue[NUMBER_OF_PADS],
-                lastPressureValue[NUMBER_OF_PADS];
+    int16_t     lastPressureValue[NUMBER_OF_PADS];
 
     //median value samples get stored here (3 samples)
     int16_t     xValueSamples[NUMBER_OF_SAMPLES],
