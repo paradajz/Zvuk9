@@ -52,11 +52,4 @@ PGM_P const ccArray[] PROGMEM = {
 
 };
 
-PGM_P const ccIDarray[] PROGMEM = {
-
-    xCCid_string,
-    yCCid_string
-
-};
-
 #endif

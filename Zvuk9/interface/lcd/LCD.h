@@ -22,7 +22,7 @@ class LCD   {
     void displayVelocity(uint8_t velocity);
     void displayXYposition(uint8_t x, uint8_t y, bool xAvailable, bool xEnabled, bool yAvailable, bool yEnabled);
     void displayAftertouch(uint8_t afterTouch, bool aftertouchEnabled);
-    void displayXYcc(uint8_t ccX, uint8_t ccY);
+    void displayXYcc(uint8_t ccX, uint8_t ccY, bool xEnabled, bool yEnabled);
     void displayTransportControl(transportControl_t type, bool state);
     void displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, uint8_t functionState, uint8_t padNumber);
     void displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber);
@@ -45,6 +45,7 @@ class LCD   {
     void displayMaxNotesSet();
     void displayPadReleaseError(padReleaseError_t error);
     void displayPadEditChangeParametersError();
+    void displayPad(uint8_t pad);
     private:
     messageStatus_t getMessageStatus();
     void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite);

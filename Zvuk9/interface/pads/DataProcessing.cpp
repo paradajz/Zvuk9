@@ -124,9 +124,6 @@ void Pads::checkXY(uint8_t pad)  {
 
         if (padCurveX[pad] != 0)  xValue = xyScale[padCurveX[pad]-1][xValue];
 
-        if (!editModeActive())
-            xAvailable = true;
-
     }
 
     if (yChanged)   {
@@ -136,17 +133,14 @@ void Pads::checkXY(uint8_t pad)  {
 
         if (padCurveY[pad] != 0)  yValue = xyScale[padCurveY[pad]-1][yValue];
 
-        if (!editModeActive())
-            yAvailable = true;
-
     }
 
     if (xChanged || yChanged)   {
 
         padDebounceTimer[pad] = newMillis();
-        if (!editModeActive())
-            xyAvailable = true;
-        padMovementDetected = true;
+
+        if (xChanged && xSendEnabled[pad] && !editModeActive()) { xAvailable = true; xyAvailable = true; padMovementDetected = true; }
+        if (yChanged && ySendEnabled[pad] && !editModeActive()) { yAvailable = true; xyAvailable = true; padMovementDetected = true; }
 
     }
 
@@ -302,6 +296,8 @@ void Pads::update(bool midiEnabled)  {
             padMovementDetected = false;
             //always update lcd
             if (!editModeActive())  {
+
+                display.displayPad(pad+1);
 
                 handleNoteLCD(pad, lastVelocityValue[pad], lastMIDInoteState[pad]);
 
@@ -515,6 +511,7 @@ void Pads::checkVelocity(uint8_t pad)  {
                 lastYMIDIvalue[pad] = DEFAULT_XY_VALUE;
                 bitWrite(padPressed, pad, false);  //set pad not pressed
                 switchToXYread = false;
+                afterTouchAvailable = false;
 
             }
             break;
@@ -569,6 +566,11 @@ void Pads::checkMIDIdata()   {
                 padPressHistory_counter--;
                 if (padPressHistory_counter < 0) padPressHistory_counter = NUMBER_OF_PADS-1;
 
+                #if MODE_SERIAL > 0
+                    Serial.print(F("Current pad is "));
+                    Serial.println(previousPad);
+                #endif
+
                 //restore lcd/led states from previous pad if it's pressed
                 if (isPadPressed(previousPad))  {
 
@@ -590,6 +592,7 @@ void Pads::checkMIDIdata()   {
 
                     setFunctionLEDs(previousPad);
 
+                    display.displayPad(previousPad+1);
                     handleNoteLCD(previousPad, lastVelocityValue[previousPad], true);
                     display.displayAftertouch(lastAfterTouchValue[previousPad], aftertouchSendEnabled[previousPad] && aftertouchActivated[previousPad]);
 
@@ -655,7 +658,7 @@ void Pads::updateLastTouchedPad(uint8_t pad)   {
 
 void Pads::updatePressHistory(uint8_t pad) {
 
-    //store currently pressed pad in circular buffer
+    //store currently pressed pad in buffer
     padPressHistory_counter++;
     if (padPressHistory_counter >= NUMBER_OF_PADS) padPressHistory_counter = 0; //overwrite
 

@@ -312,8 +312,6 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
 void Pads::handleXYlcd(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xEnabled, bool yEnabled)   {
 
     display.displayXYposition(xPosition, yPosition, xAvailable, xEnabled, yAvailable, yEnabled);
-
-    //always display ccx/ccy
-    display.displayXYcc(ccXPad[pad], ccYPad[pad]);
+    display.displayXYcc(ccXPad[pad], ccYPad[pad], xEnabled, yEnabled);
 
 }

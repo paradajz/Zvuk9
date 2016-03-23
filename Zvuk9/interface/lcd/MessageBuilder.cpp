@@ -5,12 +5,16 @@
 #define PROGRAM_PRESET_ROW  0
 #define PAD_NOTE_ROW        1
 #define PAD_V_XY_AT_ROW     2
-#define XY_ROW              3
+#define XY_CC_PAD_ROW       3
 
 #define XY_POSITION_START   5
 #define X_COORDINATE_START  5
 #define Y_COORDINATE_START  10
 #define AFTERTOUCH_START    15
+#define PAD_NUMBER_START    15
+
+#define CC_X_START          0
+#define CC_Y_START          7
 
 #define SPACE_CHAR          32
 
@@ -506,24 +510,59 @@ void LCD::displayAftertouch(uint8_t afterTouch, bool afterTouchEnabled)  {
 
 }
 
-void LCD::displayXYcc(uint8_t ccX, uint8_t ccY)   {
+void LCD::displayXYcc(uint8_t ccX, uint8_t ccY, bool xEnabled, bool yEnabled)   {
 
-    //ccx string
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeX])));
-    string_line = nameBuffer;
+    if (xEnabled && yEnabled)   {
 
-    //ccx value
-    string_line += ccX;
-    if (ccX < 10)       string_line += "  ";
-    else if (ccX < 100) string_line += " ";
-    string_line += " ";
+        strcpy_P(nameBuffer, xCCid_string);
+        string_line = nameBuffer;
+        string_line += ccX;
 
-    //ccy string
-    strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccIDarray[ccTypeY])));
-    string_line += nameBuffer;
-    string_line += ccY;
+        if (ccX < 10)         string_line += "  ";
+        else if (ccX < 100)   string_line += " ";
 
-    updateDisplay(XY_ROW, text, 0, true);
+        string_line += " ";
+
+        strcpy_P(nameBuffer, yCCid_string);
+        string_line += nameBuffer;
+        string_line += ccY;
+
+        if (ccY < 10)         string_line += "  ";
+        else if (ccY < 100)   string_line += " ";
+
+    }   else if (!xEnabled && yEnabled) {
+
+        strcpy_P(nameBuffer, xCCclear_string);
+        string_line = nameBuffer;
+
+        strcpy_P(nameBuffer, yCCid_string);
+        string_line += nameBuffer;
+
+        string_line += ccY;
+        if (ccY < 10)         string_line += "  ";
+        else if (ccY < 100)   string_line += " ";
+
+    }   else if (xEnabled && !yEnabled) {
+
+        strcpy_P(nameBuffer, xCCid_string);
+        string_line = nameBuffer;
+
+        string_line += ccX;
+        if (ccX < 10)         string_line += "  ";
+        else if (ccX < 100)   string_line += " ";
+
+        strcpy_P(nameBuffer, yCCclear_string);
+        string_line += nameBuffer;
+
+    }   else if (!xEnabled && !yEnabled) {
+
+        //ccx and ccy are not available, clear them
+        strcpy_P(nameBuffer, xyCCclear_string);
+        string_line = nameBuffer;
+
+    }
+
+    updateDisplay(XY_CC_PAD_ROW, text, 0, false);
 
 }
 
@@ -579,6 +618,16 @@ void LCD::displayPadEditMode(uint8_t padNumber)  {
     updateDisplay(1, text, 0, true);
     updateDisplay(2, text, 0, true);
     updateDisplay(3, text, 0, true);
+
+}
+
+void LCD::displayPad(uint8_t pad)   {
+
+    strcpy_P(nameBuffer, padAmountSingle_string);
+    string_line = nameBuffer;
+    string_line += pad;
+
+    updateDisplay(XY_CC_PAD_ROW, text, PAD_NUMBER_START, false);
 
 }
 
