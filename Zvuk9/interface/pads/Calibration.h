@@ -9,11 +9,7 @@
 //send x/y and then notes after this delay
 #define PAD_NOTE_SEND_DELAY                 20
 
-#define GESTURE_ACTIVATION_TIME             2000    //activation time in ms
-
 #define DEFAULT_AFTERTOUCH_PRESSURE_RATIO   100
-
-#define GESTURE_NUMBER_OF_CHANGES           4
 
 #define AFTERTOUCH_SEND_TIMEOUT             100
 #define XY_SEND_TIMEOUT                     25

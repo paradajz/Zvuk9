@@ -177,7 +177,7 @@ void Pads::checkAftertouch(uint8_t pad)  {
 
             }
 
-            }   else if ((calibratedPressureAfterTouch != lastAfterTouchValue[pad]) && (timeDifference > AFTERTOUCH_SEND_TIMEOUT_IGNORE)) {
+        }   else if ((calibratedPressureAfterTouch != lastAfterTouchValue[pad]) && (timeDifference > AFTERTOUCH_SEND_TIMEOUT_IGNORE)) {
 
             afterTouchSend = true;
 
@@ -185,52 +185,81 @@ void Pads::checkAftertouch(uint8_t pad)  {
 
         if (afterTouchSend) {
 
-            uint8_t padsPressed = 0;
+            lastAfterTouchValue[pad] = calibratedPressureAfterTouch;
 
-            switch(aftertouchType)  {
+            if (!aftertouchActivated[pad])  {
 
-                case aftertouchPoly:
-                afterTouchAvailable = true;
-                padMovementDetected = true;
-                break;
+                if (abs(calibratedPressureAfterTouch - lastVelocityValue[pad]) >= AFTERTOUCH_SEND_AFTER_DIFFERENCE)
+                    aftertouchActivated[pad] = true;
 
-                case aftertouchChannel:
-                //we need to find max pressure
-                for (int i=0; i<NUMBER_OF_PADS; i++)
-                    if (isPadPressed(i)) padsPressed++;
+            }
 
-                if (padsPressed == 1) {
+            if (aftertouchActivated[pad])   {
 
-                    maxAftertouchValue = calibratedPressureAfterTouch;
+                uint8_t padsPressed = 0;
+
+                switch(aftertouchType)  {
+
+                    case aftertouchPoly:
                     afterTouchAvailable = true;
                     padMovementDetected = true;
+                    break;
 
-                } else {
+                    case aftertouchChannel:
+                    //we need to find max pressure
+                    for (int i=0; i<NUMBER_OF_PADS; i++)
+                    if (isPadPressed(i)) padsPressed++;
 
-                    if (calibratedPressureAfterTouch > maxAftertouchValue)  {
+                    if (padsPressed == 1) {
 
                         maxAftertouchValue = calibratedPressureAfterTouch;
                         afterTouchAvailable = true;
                         padMovementDetected = true;
 
-                        #if MODE_SERIAL > 0
-                            Serial.print(F("Maximum channel aftertouch updated: "));
-                            Serial.println(maxAftertouchValue);
-                        #endif
+                    } else {    uint8_t tempMaxValue = 0;
 
-                    } else {
+                        for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-                        afterTouchAvailable = false;
-                        padMovementDetected = false;
+                            if (!isPadPressed(i)) continue;
+                            if (!aftertouchSendEnabled[i]) continue;
+                            if (!aftertouchActivated[i]) continue;
+                            if (lastAfterTouchValue[i] > tempMaxValue)
+                                tempMaxValue = lastAfterTouchValue[i];
+
+
+                        }
+
+                        if (tempMaxValue != maxAftertouchValue)  {
+
+                            maxAftertouchValue = calibratedPressureAfterTouch;
+                            afterTouchAvailable = true;
+                            padMovementDetected = true;
+
+                            #if MODE_SERIAL > 0
+                                Serial.print(F("Maximum channel aftertouch updated: "));
+                                Serial.println(maxAftertouchValue);
+                            #endif
+
+                        } else {
+
+                            afterTouchAvailable = false;
+                            padMovementDetected = false;
+
+                        }
 
                     }
+                    break;
 
                 }
-                break;
+
+            }   else {
+
+                afterTouchSend = false;
+                afterTouchAvailable = false;
+                padMovementDetected = false;
 
             }
 
-            lastAfterTouchValue[pad] = calibratedPressureAfterTouch;
             afterTouchSendTimer[pad] = newMillis();
 
         }
@@ -532,6 +561,7 @@ void Pads::checkMIDIdata()   {
             //note off event
             //send note off
             sendNotes(pad, 0, false);
+            aftertouchActivated[pad] = false;
             //pad has been released
             //decrease pad history counter, but only if there are some pressed pads
             if (!allPadsReleased()) {
@@ -561,7 +591,7 @@ void Pads::checkMIDIdata()   {
                     setFunctionLEDs(previousPad);
 
                     handleNoteLCD(previousPad, lastVelocityValue[previousPad], true);
-                    display.displayAftertouch(lastAfterTouchValue[previousPad], aftertouchSendEnabled[pad]);
+                    display.displayAftertouch(lastAfterTouchValue[previousPad], aftertouchSendEnabled[previousPad] && aftertouchActivated[previousPad]);
 
                     #if XY_FLIP_VALUES > 0
                         handleXYlcd(previousPad, 127-lastXMIDIvalue[previousPad], lastYMIDIvalue[previousPad], ccXsendEnabled, ccYsendEnabled);
