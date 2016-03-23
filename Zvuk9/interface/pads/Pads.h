@@ -265,7 +265,8 @@ class Pads  {
     //debouncing
     bool        padDebounceTimerStarted[NUMBER_OF_PADS],
                 firstPressureValueDelayTimerStarted[NUMBER_OF_PADS],
-                padMovementDetected;
+                padMovementDetected,
+                aftertouchActivated[NUMBER_OF_PADS];
 
     uint32_t    padDebounceTimer[NUMBER_OF_PADS],
                 firstPressureValueDelayTimer[NUMBER_OF_PADS],

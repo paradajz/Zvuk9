@@ -122,8 +122,25 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
             if (sendOff)    {
 
-                if (noteSendEnabled[pad])
-                    midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
+                uint8_t padNumber = 0;
+
+                switch(aftertouchType)  {
+
+                    case aftertouchPoly:
+                    if (aftertouchSendEnabled[pad])
+                        midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
+                    break;
+
+                    case aftertouchChannel:
+                    //check if aftertouch is enabled on any pads
+                    for (int i=0; i<NUMBER_OF_PADS; i++)
+                        if (aftertouchSendEnabled[i]) padNumber++;
+                    if (padNumber != 0)
+                        if (allPadsReleased())
+                            midi.sendChannelAftertouch(midiChannel, 0);
+                    break;
+
+                }
 
             }
 
