@@ -43,10 +43,11 @@ typedef enum {
 typedef enum {
 
     featureNotes,
+    featureAftertouch,
     featureX,
     featureY,
-    featureAftertouch,
     featureSplit,
+    featureAftertouchType
 
 } functionsOnOff_t;
 
@@ -199,9 +200,8 @@ typedef enum {
 
 typedef enum {
 
-    aftertouchOff,
-    aftertouchChannel,
     aftertouchPoly,
+    aftertouchChannel,
     AFTERTOUCH_TYPES
 
 } aftertouchType_t;

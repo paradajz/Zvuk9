@@ -805,9 +805,6 @@ vmresolved.tools.path=D:\Applications
     <Compile Include="interface\leds\LEDsettings.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\pads\Aftertouch.cpp">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="interface\pads\DataOutput.cpp">
       <SubType>compile</SubType>
     </Compile>

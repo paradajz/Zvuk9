@@ -67,16 +67,18 @@ class Pads  {
     //functions on/off
     //getters
     bool getNoteSendEnabled(uint8_t padNumber);
-    aftertouchType_t getAftertouchType(uint8_t padNumber);
+    bool getAfterTouchSendEnabled(uint8_t padNumber);
     bool getCCXsendEnabled(uint8_t padNumber);
     bool getCCYsendEnabled(uint8_t padNumber);
+    aftertouchType_t getAftertouchType();
     splitState_t getSplitState();
     //setters
-    void notesChangeState();
-    void aftertouchChangeState();
-    void xChangeState();
-    void yChangeState();
-    void splitChangeState();
+    void notesOnOff();
+    void aftertouchOnOff();
+    void xOnOff();
+    void yOnOff();
+    void updateSplit();
+    void changeAftertouchType();
 
     //notes
     //getters
@@ -180,12 +182,8 @@ class Pads  {
     void setNoteSendEnabled(uint8_t padNumber, uint8_t state);
     void setCCXsendEnabled(uint8_t padNumber, uint8_t state);
     void setCCYsendEnabled(uint8_t padNumber, uint8_t state);
-    void setAftertouchType(uint8_t padNumber, aftertouchType_t type);
+    void setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state);
     void setFunctionLEDs(uint8_t padNumber);
-
-    //aftertouch
-    bool getAfterTouchGestureActivated(uint8_t padNumber, uint8_t calibratedPressure);
-    void resetAfterTouchCounters(uint8_t padNumber);
 
     //MIDI send
     void checkMIDIdata();
@@ -225,19 +223,6 @@ class Pads  {
     //store press states for all pads inside this variable
     uint16_t    padPressed;
 
-    //used for aftertouch gesture activation
-    int16_t     initialPressure[NUMBER_OF_PADS],
-                initialXvalue[NUMBER_OF_PADS],
-                initialYvalue[NUMBER_OF_PADS];
-
-    bool        afterTouchActivated[NUMBER_OF_PADS];
-
-    uint32_t    afterTouchGestureTimer[NUMBER_OF_PADS],
-                afterTouchSendTimer[NUMBER_OF_PADS];
-
-    uint8_t     afterTouchGestureCounter[NUMBER_OF_PADS],
-                lastAfterTouchGestureDirection[NUMBER_OF_PADS];
-
     //parameters from eeprom
     int8_t      ccXPad[NUMBER_OF_PADS],
                 ccYPad[NUMBER_OF_PADS],
@@ -248,9 +233,8 @@ class Pads  {
 
     bool        xSendEnabled[NUMBER_OF_PADS],
                 ySendEnabled[NUMBER_OF_PADS],
-                noteSendEnabled[NUMBER_OF_PADS];
-
-    uint8_t     aftertouchType[NUMBER_OF_PADS];
+                noteSendEnabled[NUMBER_OF_PADS],
+                aftertouchSendEnabled[NUMBER_OF_PADS];
 
     int8_t      padCurveX[NUMBER_OF_PADS],
                 padCurveY[NUMBER_OF_PADS];
@@ -266,6 +250,8 @@ class Pads  {
     uint8_t     padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
 
     int8_t      midiChannel;
+    uint8_t     aftertouchType;
+    uint8_t     maxAftertouchValue;
 
     uint8_t     splitCounter;
 
@@ -284,7 +270,8 @@ class Pads  {
     uint32_t    padDebounceTimer[NUMBER_OF_PADS],
                 firstPressureValueDelayTimer[NUMBER_OF_PADS],
                 xSendTimer[NUMBER_OF_PADS],
-                ySendTimer[NUMBER_OF_PADS];
+                ySendTimer[NUMBER_OF_PADS],
+                afterTouchSendTimer[NUMBER_OF_PADS];
 
     uint8_t     medianRunCounterXY,
                 sampleCounterPressure,

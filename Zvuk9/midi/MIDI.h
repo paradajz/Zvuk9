@@ -13,7 +13,7 @@ class MIDI {
     void sendNoteOff(uint8_t channel, uint8_t note, uint8_t velocity);
     void sendControlChange(uint8_t channel, uint8_t ccNumber, uint8_t value);
     void sendChannelAftertouch(uint8_t channel, uint8_t pressure);
-    void sendPolyAftertouch(uint8_t channel, uint8_t *note, uint8_t pressure);
+    void sendKeyAftertouch(uint8_t channel, uint8_t note, uint8_t pressure);
     void sendSysEx(uint8_t *sysExArray, uint8_t size);
 
     private:

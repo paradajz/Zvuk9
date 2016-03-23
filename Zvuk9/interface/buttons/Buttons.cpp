@@ -374,35 +374,48 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
     switch (buttonNumber)    {
 
         case BUTTON_ON_OFF_NOTES:
-        pads.notesChangeState();
+        pads.notesOnOff();
         lcdMessageType = featureNotes;
         ledNumber = LED_ON_OFF_NOTES;
         if (pads.getNoteSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
-        pads.aftertouchChangeState();
-        lcdMessageType = featureAftertouch;
-        ledNumber = LED_ON_OFF_AFTERTOUCH;
-        ledState = (ledIntensity_t)pads.getAftertouchType(lastTouchedPad);
+        if (modifierActive) {
+
+            //change aftertouch type
+            lcdMessageType = featureAftertouchType;
+            pads.changeAftertouchType();
+            //split and pad number are irrelevant here
+            display.displayOnOff(lcdMessageType, splitOff, (uint8_t)pads.getAftertouchType(), 0);
+            return;
+
+        }   else {
+
+            pads.aftertouchOnOff();
+            lcdMessageType = featureAftertouch;
+            ledNumber = LED_ON_OFF_AFTERTOUCH;
+            if (pads.getAfterTouchSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+
+        }
         break;
 
         case BUTTON_ON_OFF_X:
-        pads.xChangeState();
+        pads.xOnOff();
         lcdMessageType = featureX;
         ledNumber = LED_ON_OFF_X;
         if (pads.getCCXsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
         break;
 
         case BUTTON_ON_OFF_Y:
-        pads.yChangeState();
+        pads.yOnOff();
         lcdMessageType = featureY;
         ledNumber = LED_ON_OFF_Y;
         if (pads.getCCYsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
         break;
 
         case BUTTON_ON_OFF_SPLIT:
-        pads.splitChangeState();
+        pads.updateSplit();
         lcdMessageType = featureSplit;
         ledNumber = LED_ON_OFF_SPLIT;
         ledState = (ledIntensity_t)pads.getSplitState();
@@ -414,7 +427,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
     }
 
     leds.setLEDstate(ledNumber, ledState);
-    display.displayChangeState(lcdMessageType, pads.getSplitState(), (uint8_t)ledState, lastTouchedPad+1);
+    display.displayOnOff(lcdMessageType, pads.getSplitState(), (uint8_t)ledState, lastTouchedPad+1);
 
 }
 

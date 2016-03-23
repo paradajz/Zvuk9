@@ -59,22 +59,6 @@ void Pads::sendXY(uint8_t pad)  {
 
     }
 
-    //record first sent x/y values
-    //if they change enough, reset aftertouch gesture counter
-    if ((initialXvalue[pad] == -999) || (initialYvalue[pad] == -999))   {
-
-        initialXvalue[pad] = lastXMIDIvalue[pad];
-        initialYvalue[pad] = lastYMIDIvalue[pad];
-
-        }   else {
-
-        if (
-        (abs(initialXvalue[pad] - lastXMIDIvalue[pad]) > XY_CHANGE_AFTERTOUCH_RESET) ||
-        (abs(initialYvalue[pad] - lastYMIDIvalue[pad]) > XY_CHANGE_AFTERTOUCH_RESET)
-        )  if (!afterTouchActivated[pad]) resetAfterTouchCounters(pad);
-
-    }
-
     xyAvailable = false;
 
 }
@@ -145,14 +129,6 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
         }
 
-        if (afterTouchActivated[pad])   {
-
-            midi.sendChannelAftertouch(midiChannel, 0);
-            afterTouchActivated[pad] = false;
-            afterTouchAvailable =false;
-
-        }
-
         #if MODE_SERIAL > 0
             Serial.print(F("Pad "));
             Serial.print(pad);
@@ -164,6 +140,41 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
     }
 
     handleNoteLEDs(pad, state);
+
+}
+
+void Pads::sendAftertouch(uint8_t pad)  {
+
+    switch(aftertouchType)  {
+
+        case aftertouchPoly:
+        #if MODE_SERIAL > 0
+            Serial.print(F("Sending key aftertouch, pad "));
+            Serial.print(pad);
+            Serial.print(F(": "));
+            Serial.println(lastAfterTouchValue[pad]);
+        #else
+            for (int i=0; i<NOTES_PER_PAD; i++) {
+
+                if (padNote[pad][i] != BLANK_NOTE)
+                midi.sendKeyAftertouch(midiChannel, padNote[pad][i], lastAfterTouchValue[pad]);
+
+            }
+        #endif
+        break;
+
+        case aftertouchChannel:
+        #if MODE_SERIAL > 0
+            Serial.print(F("Sending channel aftertouch: "));
+            Serial.println(maxAftertouchValue);
+        #else
+            midi.sendChannelAftertouch(midiChannel, maxAftertouchValue);
+        #endif
+        break;
+
+    }
+
+    afterTouchAvailable = false;
 
 }
 

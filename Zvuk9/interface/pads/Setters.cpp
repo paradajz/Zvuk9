@@ -66,22 +66,22 @@ void Pads::setNoteSendEnabled(uint8_t padNumber, uint8_t state)   {
 
 }
 
-void Pads::setAftertouchType(uint8_t padNumber, aftertouchType_t type) {
+void Pads::setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state) {
 
     switch(splitCounter)    {
 
         case splitOff:
         case splitXY:
         //global
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), (uint8_t)type);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
         for (int i=0; i<NUMBER_OF_PADS; i++)
-            aftertouchType[i] = (uint8_t)type;
+            aftertouchSendEnabled[i] = state;
         break;
 
         case splitXYFunctions:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), (uint8_t)type);
-        aftertouchType[padNumber] = (uint8_t)type;
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
+        aftertouchSendEnabled[padNumber] = state;
         break;
 
     }
@@ -189,7 +189,7 @@ bool Pads::setActivePreset(uint8_t preset)  {
 
 }
 
-void Pads::splitChangeState() {
+void Pads::updateSplit() {
 
     splitCounter++;
     if (splitCounter == splitEnd)  splitCounter = splitOff;
@@ -213,6 +213,31 @@ void Pads::splitChangeState() {
             break;
 
         }
+    #endif
+
+}
+
+void Pads::changeAftertouchType()   {
+
+    aftertouchType++;
+    if (aftertouchType == AFTERTOUCH_TYPES) aftertouchType = 0;
+    configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), aftertouchType);
+
+    #if MODE_SERIAL
+    switch(aftertouchType)    {
+
+        case aftertouchPoly:
+        Serial.println(F("Key aftertouch"));
+        break;
+
+        case aftertouchChannel:
+        Serial.println(F("Channel aftertouch"));
+        break;
+
+        default:
+        break;
+
+    }
     #endif
 
 }
@@ -987,7 +1012,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
 
 }
 
-void Pads::notesChangeState()    {
+void Pads::notesOnOff()    {
 
     bool newNotesState;
 
@@ -1049,7 +1074,7 @@ void Pads::notesChangeState()    {
 
 }
 
-void Pads::xChangeState()    {
+void Pads::xOnOff()    {
 
     bool newXState;
 
@@ -1086,7 +1111,7 @@ void Pads::xChangeState()    {
 
 }
 
-void Pads::yChangeState()    {
+void Pads::yOnOff()    {
 
     bool newYState;
 
@@ -1123,23 +1148,21 @@ void Pads::yChangeState()    {
 
 }
 
-void Pads::aftertouchChangeState()    {
+void Pads::aftertouchOnOff()    {
 
-    uint8_t newAftertouchType;
+    bool newAfterTouchState;
 
-    if (splitCounter != splitXYFunctions)   {   //feature splitting is off
+    if (splitCounter != 2)   {   //feature splitting is off
 
-        newAftertouchType = aftertouchType[0];
-        newAftertouchType++;
-        if (newAftertouchType == AFTERTOUCH_TYPES) newAftertouchType = 0;
+        newAfterTouchState = !aftertouchSendEnabled[0];
 
         for (int i=0; i<NUMBER_OF_PADS; i++)
-            setAftertouchType(i, (aftertouchType_t)newAftertouchType);
+            setAfterTouchSendEnabled(i, newAfterTouchState);
 
         #if MODE_SERIAL
-            Serial.print(F("Aftertouch type "));
-            Serial.print(newAftertouchType);
-            Serial.println(F(" for all pads"));
+            Serial.print(F("Aftertouch "));
+            newAfterTouchState ? Serial.print(F("on ")) : Serial.print(F("off "));
+            Serial.println(F("for all pads"));
         #endif
 
     }
@@ -1147,15 +1170,13 @@ void Pads::aftertouchChangeState()    {
     else {  //feature splitting is on
 
         uint8_t lastPressedPad = getPadPressHistoryIndex(lastActiveID);
-        newAftertouchType = aftertouchType[lastPressedPad];
-        newAftertouchType++;
-        if (newAftertouchType == AFTERTOUCH_TYPES) newAftertouchType = 0;
+        newAfterTouchState = !aftertouchSendEnabled[lastPressedPad];
 
-        setAftertouchType(lastPressedPad, (aftertouchType_t)newAftertouchType);
+        setAfterTouchSendEnabled(lastPressedPad, newAfterTouchState);
 
         #if MODE_SERIAL
-            Serial.print(F("Aftertouch type "));
-            Serial.print(newAftertouchType);
+            Serial.print(F("Aftertouch "));
+            newAfterTouchState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.print(F(" for pad "));
             Serial.println(lastPressedPad);
         #endif
@@ -1182,7 +1203,7 @@ void Pads::setFunctionLEDs(uint8_t padNumber)   {
         leds.setLEDstate(LED_ON_OFF_Y, ledIntensityOff);
 
         //turn on feature LEDs depending on enabled features for last touched pad
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAftertouchType(padNumber) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
         leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
         leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
         leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);

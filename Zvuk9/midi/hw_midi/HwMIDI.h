@@ -146,7 +146,7 @@ public:
 	void sendPitchBend(unsigned int PitchValue,byte Channel);
 	void sendPitchBend(double PitchValue,byte Channel);
 	void sendPolyPressure(byte NoteNumber,byte Pressure,byte Channel);
-	void sendChannelAftertouch(byte Pressure,byte Channel);
+	void sendAfterTouch(byte Pressure,byte Channel);
 	void sendSysEx(int length, const byte *const array,bool ArrayContainsBoundaries = false);	
 	void sendTimeCodeQuarterFrame(byte TypeNibble, byte ValuesNibble);
 	void sendTimeCodeQuarterFrame(byte data);
