@@ -7,12 +7,11 @@
 #define PAD_V_XY_AT_ROW     2
 #define XY_CC_PAD_ROW       3
 
-#define XY_POSITION_START   5
 #define X_COORDINATE_START  5
 #define Y_COORDINATE_START  10
 #define AFTERTOUCH_START    15
 #define PAD_NUMBER_START    15
-
+#define VELOCITY_START      0
 #define CC_X_START          0
 #define CC_Y_START          7
 
@@ -418,6 +417,8 @@ void LCD::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
 
 }
 
+
+
 void LCD::displayVelocity(uint8_t velocity)  {
 
     strcpy_P(nameBuffer, velocity_string);
@@ -430,139 +431,76 @@ void LCD::displayVelocity(uint8_t velocity)  {
 
 }
 
-void LCD::displayXYposition(uint8_t xPosition, uint8_t yPosition, bool xAvailable, bool xEnabled, bool yAvailable, bool yEnabled)   {
+void LCD::displayAftertouch(uint8_t afterTouch)  {
 
-    //velocity, x, y and aftertouch are all in same line
-    //special care needs to be taken here
-
-    if (xEnabled && yEnabled)   {
-
-        strcpy_P(nameBuffer, x_string);
-        string_line = nameBuffer;
-        string_line += xPosition;
-
-        if (xPosition < 10)         string_line += "  ";
-        else if (xPosition < 100)   string_line += " ";
-
-        string_line += " ";
-
-        strcpy_P(nameBuffer, y_string);
-        string_line += nameBuffer;
-        string_line += yPosition;
-
-        if (yPosition < 10)         string_line += "  ";
-        else if (yPosition < 100)   string_line += " ";
-
-    }   else if (!xEnabled && yEnabled) {
-
-        strcpy_P(nameBuffer, xPositionClear_string);
-        string_line = nameBuffer;
-
-        strcpy_P(nameBuffer, y_string);
-        string_line += nameBuffer;
-
-        string_line += yPosition;
-        if (yPosition < 10)         string_line += "  ";
-        else if (yPosition < 100)   string_line += " ";
-
-    }   else if (xEnabled && !yEnabled) {
-
-        strcpy_P(nameBuffer, x_string);
-        string_line = nameBuffer;
-
-        string_line += xPosition;
-        if (xPosition < 10)         string_line += "  ";
-        else if (xPosition < 100)   string_line += " ";
-
-        strcpy_P(nameBuffer, yPositionClear_string);
-        string_line += nameBuffer;
-
-    }   else if (!xEnabled && !yEnabled) {
-
-        //x and y are not available, clear them
-        strcpy_P(nameBuffer, xyPositionClear_string);
-        string_line = nameBuffer;
-
-    }
-
-    updateDisplay(PAD_V_XY_AT_ROW, text, XY_POSITION_START, false);
-
-}
-
-void LCD::displayAftertouch(uint8_t afterTouch, bool afterTouchEnabled)  {
-
-    if (afterTouchEnabled)  {
-
-        strcpy_P(nameBuffer, aftertouch_string);
-        string_line = nameBuffer;
-        string_line += afterTouch;
-        if (afterTouch < 10)       string_line += "  ";
-        else if (afterTouch < 100) string_line += " ";
-
-    }   else {
-
-        strcpy_P(nameBuffer, aftertouchClear_string);
-        string_line = nameBuffer;
-
-    }
+    strcpy_P(nameBuffer, aftertouch_string);
+    string_line = nameBuffer;
+    string_line += afterTouch;
+    if (afterTouch < 10)       string_line += "  ";
+    else if (afterTouch < 100) string_line += " ";
 
     updateDisplay(PAD_V_XY_AT_ROW, text, AFTERTOUCH_START, false);
 
 }
 
-void LCD::displayXYcc(uint8_t ccX, uint8_t ccY, bool xEnabled, bool yEnabled)   {
+void LCD::displayXYposition(uint8_t position, ccType_t type)   {
 
-    if (xEnabled && yEnabled)   {
+    uint8_t lcdCoordinate = 0;
 
-        strcpy_P(nameBuffer, xCCid_string);
-        string_line = nameBuffer;
-        string_line += ccX;
+    switch(type)    {
 
-        if (ccX < 10)         string_line += "  ";
-        else if (ccX < 100)   string_line += " ";
+        case ccTypeX:
+        strcpy_P(nameBuffer, x_string);
+        lcdCoordinate = X_COORDINATE_START;
+        break;
 
-        string_line += " ";
-
-        strcpy_P(nameBuffer, yCCid_string);
-        string_line += nameBuffer;
-        string_line += ccY;
-
-        if (ccY < 10)         string_line += "  ";
-        else if (ccY < 100)   string_line += " ";
-
-    }   else if (!xEnabled && yEnabled) {
-
-        strcpy_P(nameBuffer, xCCclear_string);
-        string_line = nameBuffer;
-
-        strcpy_P(nameBuffer, yCCid_string);
-        string_line += nameBuffer;
-
-        string_line += ccY;
-        if (ccY < 10)         string_line += "  ";
-        else if (ccY < 100)   string_line += " ";
-
-    }   else if (xEnabled && !yEnabled) {
-
-        strcpy_P(nameBuffer, xCCid_string);
-        string_line = nameBuffer;
-
-        string_line += ccX;
-        if (ccX < 10)         string_line += "  ";
-        else if (ccX < 100)   string_line += " ";
-
-        strcpy_P(nameBuffer, yCCclear_string);
-        string_line += nameBuffer;
-
-    }   else if (!xEnabled && !yEnabled) {
-
-        //ccx and ccy are not available, clear them
-        strcpy_P(nameBuffer, xyCCclear_string);
-        string_line = nameBuffer;
+        case ccTypeY:
+        strcpy_P(nameBuffer, y_string);
+        lcdCoordinate = Y_COORDINATE_START;
+        break;
 
     }
 
-    updateDisplay(XY_CC_PAD_ROW, text, 0, false);
+    string_line = nameBuffer;
+    string_line += position;
+
+    if (position < 10)         string_line += "  ";
+    else if (position < 100)   string_line += " ";
+
+    string_line += " ";
+
+
+    updateDisplay(PAD_V_XY_AT_ROW, text, lcdCoordinate, false);
+
+}
+
+void LCD::displayXYcc(uint8_t ccXY, ccType_t type)   {
+
+    uint8_t lcdCoordinate = 0;
+
+    switch(type)    {
+
+        case ccTypeX:
+        strcpy_P(nameBuffer, xCCid_string);
+        lcdCoordinate = CC_X_START;
+        break;
+
+        case ccTypeY:
+        strcpy_P(nameBuffer, yCCid_string);
+        lcdCoordinate = CC_Y_START;
+        break;
+
+    }
+
+    string_line = nameBuffer;
+    string_line += ccXY;
+
+    if (ccXY < 10)         string_line += "  ";
+    else if (ccXY < 100)   string_line += " ";
+
+    string_line += " ";
+
+    updateDisplay(XY_CC_PAD_ROW, text, lcdCoordinate, false);
 
 }
 
@@ -592,6 +530,63 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numb
         string_line += octaves[i];
         string_line += " ";
         updateDisplay(1, text, 0, true);
+    }
+
+}
+
+
+void LCD::clearVelocity()   {
+
+    strcpy_P(nameBuffer, velocityClear_string);
+    string_line = nameBuffer;
+
+    updateDisplay(PAD_V_XY_AT_ROW, text, VELOCITY_START, false);
+
+}
+
+void LCD::clearAftertouch() {
+
+    strcpy_P(nameBuffer, aftertouchClear_string);
+    string_line = nameBuffer;
+
+    updateDisplay(PAD_V_XY_AT_ROW, text, AFTERTOUCH_START, false);
+
+}
+
+void LCD::clearXYposition(ccType_t type)    {
+
+    strcpy_P(nameBuffer, xyPositionClear_string);
+    string_line = nameBuffer;
+
+    switch(type)    {
+
+        case ccTypeX:
+        updateDisplay(PAD_V_XY_AT_ROW, text, X_COORDINATE_START, false);
+        break;
+
+        case ccTypeY:
+        updateDisplay(PAD_V_XY_AT_ROW, text, Y_COORDINATE_START, false);
+        break;
+
+    }
+
+}
+
+void LCD::clearXYcc(ccType_t type)  {
+
+    strcpy_P(nameBuffer, xyCCclear_string);
+    string_line = nameBuffer;
+
+    switch(type)    {
+
+        case ccTypeX:
+        updateDisplay(XY_CC_PAD_ROW, text, CC_X_START, false);
+        break;
+
+        case ccTypeY:
+        updateDisplay(XY_CC_PAD_ROW, text, CC_Y_START, false);
+        break;
+
     }
 
 }
@@ -626,6 +621,15 @@ void LCD::displayPad(uint8_t pad)   {
     strcpy_P(nameBuffer, padAmountSingle_string);
     string_line = nameBuffer;
     string_line += pad;
+
+    updateDisplay(XY_CC_PAD_ROW, text, PAD_NUMBER_START, false);
+
+}
+
+void LCD::clearPad()    {
+
+    strcpy_P(nameBuffer, padClear_string);
+    string_line = nameBuffer;
 
     updateDisplay(XY_CC_PAD_ROW, text, PAD_NUMBER_START, false);
 
@@ -703,17 +707,6 @@ void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
 void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  {
 
 
-
-}
-
-void LCD::clearPadData() {
-
-    //clear all rows except first one
-    strcpy_P(nameBuffer, emptyLine_string);
-    string_line = nameBuffer;
-
-    for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
-        updateDisplay(i, text, 0, true);
 
 }
 

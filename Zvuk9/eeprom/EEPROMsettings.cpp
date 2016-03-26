@@ -5,9 +5,9 @@
 #include <util/delay.h>
 
 EEPROMsettings::EEPROMsettings()    {
-    
+
     //def const
-    
+
 }
 
 void EEPROMsettings::init() {

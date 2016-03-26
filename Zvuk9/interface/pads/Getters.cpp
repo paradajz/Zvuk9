@@ -181,7 +181,7 @@ void Pads::getPadParameters()   {
 
     }
 
-    uint8_t lastTouchedPad = getPadPressHistoryIndex(lastActiveID);
+    uint8_t lastTouchedPad = getLastTouchedPad();
 
     leds.setLEDstate(LED_ON_OFF_SPLIT, (ledIntensity_t)splitCounter);
     leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
@@ -658,23 +658,9 @@ bool Pads::noteActive(note_t note) {
 
 }
 
-uint8_t Pads::getPadPressHistoryIndex(padHistoryID_t id)   {
+int8_t Pads::getLastTouchedPad()   {
 
-    int8_t index = padPressHistory_counter;
-
-    switch(id)  {
-
-        case previousID:
-        index -= 1;
-        if (index < 0) index = NUMBER_OF_PADS-1;
-        return padPressHistory_buffer[index];
-        break;
-
-        default:
-        return padPressHistory_buffer[index];
-        break;
-
-    }
+    return padPressHistory_buffer[padPressHistory_counter];
 
 }
 

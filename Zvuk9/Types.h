@@ -193,13 +193,6 @@ typedef enum {
 
 typedef enum {
 
-    lastActiveID,
-    previousID
-
-} padHistoryID_t;
-
-typedef enum {
-
     aftertouchPoly,
     aftertouchChannel,
     AFTERTOUCH_TYPES

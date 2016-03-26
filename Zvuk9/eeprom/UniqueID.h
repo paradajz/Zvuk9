@@ -2,7 +2,7 @@
 #define UNIQUEID_H_
 
 //unique ID (used to detect if EEPROM has been formatted)
-#define EEPROM_UNIQUE_ID        26
+#define EEPROM_UNIQUE_ID        27
 
 #define UNIQUE_ID_LOCATION_0    4093
 #define UNIQUE_ID_LOCATION_1    4094

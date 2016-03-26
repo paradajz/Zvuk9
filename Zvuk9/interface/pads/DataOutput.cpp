@@ -1,75 +1,59 @@
 #include "Pads.h"
 
-void Pads::sendXY(uint8_t pad)  {
+void Pads::sendX(uint8_t pad)  {
 
-    bool xAvailable_ = getCCXsendEnabled(pad);
-    bool yAvailable_ = getCCYsendEnabled(pad);
+    #if MODE_SERIAL
+        Serial.print(F("X for pad "));
+        Serial.print(pad);
+        Serial.print(F(": "));
+        #if XY_FLIP_VALUES > 0
+            Serial.println(127-lastXMIDIvalue[pad]);
+        #else
+            Serial.println(lastXMIDIvalue[pad]);
+        #endif
+        Serial.print(F("X CC: "));
+        Serial.println(ccXPad[pad]);
+    #else
+        #if XY_FLIP_VALUES > 0
+            midi.sendControlChange(midiChannel, ccXPad[pad], 127-lastXMIDIvalue[pad]);
+        #else
+            midi.sendControlChange(midiChannel, ccXPad[pad], lastXMIDIvalue[pad]);
+        #endif
+    #endif
 
-    if (xAvailable_) {
+}
 
-        if (xAvailable)   {
+void Pads::sendY(uint8_t pad)  {
 
-            #if MODE_SERIAL
-                Serial.print(F("X for pad "));
-                Serial.print(pad);
-                Serial.print(F(": "));
-                #if XY_FLIP_VALUES > 0
-                    Serial.println(127-lastXMIDIvalue[pad]);
-                #else
-                    Serial.println(lastXMIDIvalue[pad]);
-                #endif
-            Serial.print(F("X CC: "));
-            Serial.println(ccXPad[pad]);
-            #else
-                #if XY_FLIP_VALUES > 0
-                    midi.sendControlChange(midiChannel, ccXPad[pad], 127-lastXMIDIvalue[pad]);
-                #else
-                    midi.sendControlChange(midiChannel, ccXPad[pad], lastXMIDIvalue[pad]);
-                #endif
-            #endif
-
-        }
-
-    }
-
-    if (yAvailable_) {
-
-        if (yAvailable)   {
-
-            #if MODE_SERIAL
-                Serial.print(F("Y for pad "));
-                Serial.print(pad);
-                Serial.print(F(": "));
-                #if XY_FLIP_VALUES > 0
-                    Serial.println(lastYMIDIvalue[pad]);
-                #else
-                    Serial.println(127-lastYMIDIvalue[pad]);
-                #endif
-            Serial.print(F("Y CC: "));
-            Serial.println(ccYPad[pad]);
-            #else
-                #if XY_FLIP_VALUES > 0
-                    midi.sendControlChange(midiChannel, ccYPad[pad], lastYMIDIvalue[pad]);
-                #else
-                    midi.sendControlChange(midiChannel, ccYPad[pad], 127-lastYMIDIvalue[pad]);
-                #endif
-            #endif
-
-        }
-
-    }
-
-    xyAvailable = false;
+    #if MODE_SERIAL
+        Serial.print(F("Y for pad "));
+        Serial.print(pad);
+        Serial.print(F(": "));
+        #if XY_FLIP_VALUES > 0
+            Serial.println(127-lastYMIDIvalue[pad]);
+        #else
+            Serial.println(lastYMIDIvalue[pad]);
+        #endif
+        Serial.print(F("Y CC: "));
+        Serial.println(ccYPad[pad]);
+    #else
+        #if XY_FLIP_VALUES > 0
+            midi.sendControlChange(midiChannel, ccYPad[pad], 127-lastYMIDIvalue[pad]);
+        #else
+            midi.sendControlChange(midiChannel, ccYPad[pad], lastYMIDIvalue[pad]);
+        #endif
+    #endif
 
 }
 
 void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
+    bool sendOff = true;
+
     switch(state)   {
 
         case true:
         //note on
-        if (!noteSendEnabled[pad]) break;
         #if MODE_SERIAL > 0
             Serial.print(F("Pad "));
             Serial.print(pad);
@@ -96,60 +80,37 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
         case false:
         //note off
-        //some special considerations here
-        bool sendOff = true;
-        for (int i=0; i<NOTES_PER_PAD; i++)    {
-
-            if (padNote[pad][i] == BLANK_NOTE) continue;
-
-            for (int j=0; j<NUMBER_OF_PADS; j++) {
-
-                //don't check current pad
-                if (j == pad) continue;
-
-                //don't check released pads
-                if (!isPadPressed(j)) continue;
-
-                //only send note off if the same note isn't active on some other pad already
-                if (padNote[j][i] == padNote[pad][i])    {
-
-                    sendOff = false;
-                    break; //no need to check further
-
-                }
-
-            }
-
-            if (sendOff)    {
-
-                uint8_t padNumber = 0;
-
-                switch(aftertouchType)  {
-
-                    case aftertouchPoly:
-                    if (aftertouchSendEnabled[pad])
-                        midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
-                    break;
-
-                    case aftertouchChannel:
-                    //check if aftertouch is enabled on any pads
-                    for (int i=0; i<NUMBER_OF_PADS; i++)
-                        if (aftertouchSendEnabled[i]) padNumber++;
-                    if (padNumber != 0)
-                        if (allPadsReleased())
-                            midi.sendChannelAftertouch(midiChannel, 0);
-                    break;
-
-                }
-
-            }
-
-        }
-
         #if MODE_SERIAL > 0
             Serial.print(F("Pad "));
             Serial.print(pad);
             Serial.println(F(" released"));
+        #else
+            //some special considerations here
+            for (int i=0; i<NOTES_PER_PAD; i++)    {
+
+                if (padNote[pad][i] == BLANK_NOTE) continue;
+
+                for (int j=0; j<NUMBER_OF_PADS; j++) {
+
+                    //don't check current pad
+                    if (j == pad) continue;
+
+                    //don't check released pads
+                    if (!isPadPressed(j)) continue;
+
+                    //only send note off if the same note isn't active on some other pad already
+                    if (padNote[j][i] == padNote[pad][i])    {
+
+                        sendOff = false;
+                        break; //no need to check further
+
+                    }
+
+                }
+
+                if (sendOff) midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
+
+            }
         #endif
 
         break;
@@ -161,6 +122,8 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 }
 
 void Pads::sendAftertouch(uint8_t pad)  {
+
+    uint8_t aftertouchValue = lastMIDInoteState[pad] ? lastAfterTouchValue[pad] : 0;
 
     switch(aftertouchType)  {
 
@@ -174,7 +137,7 @@ void Pads::sendAftertouch(uint8_t pad)  {
             for (int i=0; i<NOTES_PER_PAD; i++) {
 
                 if (padNote[pad][i] != BLANK_NOTE)
-                midi.sendKeyAftertouch(midiChannel, padNote[pad][i], lastAfterTouchValue[pad]);
+                    midi.sendKeyAftertouch(midiChannel, padNote[pad][i], aftertouchValue);
 
             }
         #endif
@@ -191,13 +154,9 @@ void Pads::sendAftertouch(uint8_t pad)  {
 
     }
 
-    afterTouchAvailable = false;
-
 }
 
 void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
-
-    if (!noteSendEnabled[pad]) return;
 
     uint8_t noteArray[NOTES_PER_PAD],
             noteCounter = 0;
@@ -266,8 +225,6 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
 
 void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
 
-    if (!noteSendEnabled[pad]) { display.displayActivePadNotes(0, 0, 0); return; }
-
     uint8_t noteArray[NOTES_PER_PAD],
             noteCounter = 0;
 
@@ -285,6 +242,17 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
     switch(state)   {
 
         case true:
+        if (!noteCounter || !noteSendEnabled[pad])  {
+
+            #if MODE_SERIAL > 0
+                Serial.print(F("Clearing notes for pad "));
+                Serial.println(pad);
+            #endif
+
+            display.displayActivePadNotes(0, 0, 0);
+            return;
+
+        }
         //note on
         uint8_t tonicArray[NOTES_PER_PAD],
                 octaveArray[NOTES_PER_PAD];
@@ -306,12 +274,5 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
         break;
 
     }
-
-}
-
-void Pads::handleXYlcd(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xEnabled, bool yEnabled)   {
-
-    display.displayXYposition(xPosition, yPosition, xAvailable, xEnabled, yAvailable, yEnabled);
-    display.displayXYcc(ccXPad[pad], ccYPad[pad], xEnabled, yEnabled);
 
 }

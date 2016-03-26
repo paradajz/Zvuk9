@@ -21,6 +21,10 @@ const char PROGMEM yCC_string[] PROGMEM = "Y CC=";
 const char PROGMEM xCCid_string[] PROGMEM = "ccx";
 const char PROGMEM yCCid_string[] PROGMEM = "ccy";
 
+
+const char PROGMEM xyPositionClear_string[] PROGMEM = "     ";
+const char PROGMEM xyCCclear_string[] PROGMEM = "       ";
+
 PGM_P const curveCoordinateArray[] PROGMEM = {
 
     curveCoordinateX_string,

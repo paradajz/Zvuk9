@@ -19,10 +19,17 @@ class LCD   {
     void update();
     void displayHelloMessage();
     void displayProgramAndPreset(uint8_t program, uint8_t preset);
+
     void displayVelocity(uint8_t velocity);
-    void displayXYposition(uint8_t x, uint8_t y, bool xAvailable, bool xEnabled, bool yAvailable, bool yEnabled);
-    void displayAftertouch(uint8_t afterTouch, bool aftertouchEnabled);
-    void displayXYcc(uint8_t ccX, uint8_t ccY, bool xEnabled, bool yEnabled);
+    void displayAftertouch(uint8_t afterTouch);
+    void displayXYposition(uint8_t position, ccType_t type);
+    void displayXYcc(uint8_t ccXY, ccType_t type);
+
+    void clearVelocity();
+    void clearAftertouch();
+    void clearXYposition(ccType_t type);
+    void clearXYcc(ccType_t type);
+
     void displayTransportControl(transportControl_t type, bool state);
     void displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, uint8_t functionState, uint8_t padNumber);
     void displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber);
@@ -38,7 +45,6 @@ class LCD   {
     void displayServiceMenu();
     void changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption);
     void selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
-    void clearPadData();
     void displayModifierEnabled();
     void displayReset();
     void displayOutOfRange();
@@ -46,6 +52,7 @@ class LCD   {
     void displayPadReleaseError(padReleaseError_t error);
     void displayPadEditChangeParametersError();
     void displayPad(uint8_t pad);
+    void clearPad();
     private:
     messageStatus_t getMessageStatus();
     void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite);

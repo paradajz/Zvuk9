@@ -17,13 +17,11 @@
 #include "../../hardware/adc/ADC.h"
 #include "../lcd/menu/Menu.h"
 
-#define NUMBER_OF_PADS                      9
+#define NUMBER_OF_PADS          9
 
-//DO NOT CHANGE
-#define NUMBER_OF_SAMPLES                   3
-#define NUMBER_OF_MEDIAN_RUNS               5 //only for x/y, pressure is read 3 times only
+#define NUMBER_OF_SAMPLES       3
 
-#define DEFAULT_XY_VALUE        -999
+#define DEFAULT_XY_VALUE        255
 #define PAD_NOTE_BUFFER_SIZE    32
 
 //multiplexer pins
@@ -108,7 +106,7 @@ class Pads  {
     bool setMIDIchannel(uint8_t channel);
 
     //pad info
-    uint8_t getPadPressHistoryIndex(padHistoryID_t id);
+    int8_t getLastTouchedPad();
     bool isPadPressed(uint8_t padNumber);
 
     //scale info
@@ -148,25 +146,26 @@ class Pads  {
 
     //data sampling/debouncing
     void addPressureSamples(uint16_t pressure);
-    void addXYSamples(uint16_t xValue,  uint16_t yValue);
+    void addXYSamples(uint16_t xValue, uint16_t yValue);
     bool pressureSampled();
     bool xySampled();
     bool pressureStable(uint8_t padNumber, uint8_t pressDetected);
     int16_t getMedianValueXYZ(coordinateType_t coordinate);
 
     //data processing
-    bool processPressure();
-    bool processXY();
+    bool pressureUpdated();
+    bool xyUpdated();
     void checkOctaveShift();
 
     //data availability checks
-    void checkAftertouch(uint8_t pad);
-    void checkXY(uint8_t pad);
-    void checkVelocity(uint8_t pad);
+    bool checkAftertouch(uint8_t pad);
+    bool checkX(uint8_t pad);
+    bool checkY(uint8_t pad);
+    bool checkVelocity(uint8_t pad);
 
     //pad press updating/info
     void setPadPressed(uint8_t padNumber, bool padState);
-    void updateLastTouchedPad(uint8_t pad);
+    void updateLastPressedPad(uint8_t pad, bool state);
     bool allPadsReleased();
 
     //lcd/led handling on midi event
@@ -186,9 +185,12 @@ class Pads  {
     void setFunctionLEDs(uint8_t padNumber);
 
     //MIDI send
-    void checkMIDIdata();
+    void checkMIDIdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
+    void checkNoteBuffer();
+    void checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
     void sendAftertouch(uint8_t pad);
-    void sendXY(uint8_t pad);
+    void sendX(uint8_t pad);
+    void sendY(uint8_t pad);
     void sendNotes(uint8_t pad, uint8_t velocity, bool state);
 
     //note buffer
@@ -196,9 +198,10 @@ class Pads  {
 
     //pad press history buffer
     void updatePressHistory(uint8_t pad);
+    void clearTouchHistoryPad(uint8_t pad);
 
     //last midi values
-    int16_t     lastXMIDIvalue[NUMBER_OF_PADS],
+    uint8_t     lastXMIDIvalue[NUMBER_OF_PADS],
                 lastYMIDIvalue[NUMBER_OF_PADS];
 
     uint8_t     lastVelocityValue[NUMBER_OF_PADS],
@@ -212,13 +215,6 @@ class Pads  {
     int16_t     xValueSamples[NUMBER_OF_SAMPLES],
                 yValueSamples[NUMBER_OF_SAMPLES],
                 pressureValueSamples[NUMBER_OF_SAMPLES];
-
-    //indicate if there are new values to be sent
-    bool        velocityAvailable;
-    bool        xyAvailable;
-    bool        xAvailable;
-    bool        yAvailable;
-    bool        afterTouchAvailable;
 
     //store press states for all pads inside this variable
     uint16_t    padPressed;
@@ -265,7 +261,6 @@ class Pads  {
     //debouncing
     bool        padDebounceTimerStarted[NUMBER_OF_PADS],
                 firstPressureValueDelayTimerStarted[NUMBER_OF_PADS],
-                padMovementDetected,
                 aftertouchActivated[NUMBER_OF_PADS];
 
     uint32_t    padDebounceTimer[NUMBER_OF_PADS],
@@ -288,7 +283,7 @@ class Pads  {
 
     //pad press history buffer
     uint8_t padPressHistory_buffer[NUMBER_OF_PADS];
-    uint8_t padPressHistory_counter;
+    int8_t padPressHistory_counter;
 
     //note buffer
     uint8_t pad_buffer[PAD_NOTE_BUFFER_SIZE];
