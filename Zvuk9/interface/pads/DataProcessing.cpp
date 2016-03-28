@@ -107,7 +107,7 @@ bool Pads::checkY(uint8_t pad)  {
 
         if (abs(yValue - lastYMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP) yChanged = true;
 
-    }   else if ((yValue != lastXMIDIvalue[pad]) && ((newMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
+    }   else if ((yValue != lastYMIDIvalue[pad]) && ((newMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
     yChanged = true;
 
     if (yChanged)   {
@@ -253,8 +253,9 @@ void Pads::update(bool midiEnabled)  {
             aftertouchAvailable = checkAftertouch(pad);
 
             //special case
-            if (velocityAvailable && !lastMIDInoteState[pad])
-                aftertouchAvailable = true;
+            //make sure to send aftertouch with pressure 0 on note off
+            //if (velocityAvailable && !lastMIDInoteState[pad])
+                //aftertouchAvailable = true;
 
         }
 
@@ -388,7 +389,7 @@ bool Pads::xyUpdated()  {
 
     }
 
-    if (!((xValue != -1) && (yValue == -1))) return false;    //we don't have y yet
+    if ((xValue != -1) && (yValue == -1)) return false;    //we don't have y yet
 
     //if we got to this point, we have x and y coordinates
     addXYSamples(xValue, yValue);
