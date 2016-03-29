@@ -299,7 +299,7 @@ void Pads::update(bool midiEnabled)  {
             checkMIDIdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
             checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
-            if (!lastMIDInoteState[pad])    {
+            if (!lastMIDInoteState[pad] && velocityAvailable)    {
 
                 //pad has been released
                 //first, check if there are other pads which are pressed
@@ -307,9 +307,19 @@ void Pads::update(bool midiEnabled)  {
 
                     uint8_t padIndex = getLastTouchedPad();
 
-                    //there are
-                    checkLCDdata(padIndex, true, aftertouchActivated[padIndex], xSendEnabled[padIndex], ySendEnabled[padIndex]);
-                    setFunctionLEDs(padIndex);
+                    if (padIndex != pad)    {
+
+                        #if MODE_SERIAL > 0
+                            Serial.println(F("Restoring LCD state"));
+                            Serial.print(F("Pad: ")); Serial.println(pad);
+                            Serial.print(F("Last pad: ")); Serial.println(padIndex);
+                        #endif
+
+                        //there are
+                        checkLCDdata(padIndex, true, aftertouchActivated[padIndex], true, true);
+                        setFunctionLEDs(padIndex);
+
+                    }
 
                 }
 
