@@ -1049,9 +1049,6 @@ void Pads::notesOnOff()    {
 
             }
 
-            //now, clear active notes on display
-            display.displayActivePadNotes(0,0,0);
-
         }
 
     }
