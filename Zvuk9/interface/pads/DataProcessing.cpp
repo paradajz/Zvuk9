@@ -254,8 +254,8 @@ void Pads::update(bool midiEnabled)  {
 
             //special case
             //make sure to send aftertouch with pressure 0 on note off
-            //if (velocityAvailable && !lastMIDInoteState[pad])
-                //aftertouchAvailable = true;
+            if (velocityAvailable && !lastMIDInoteState[pad])
+                aftertouchAvailable = true;
 
         }
 
@@ -299,21 +299,21 @@ void Pads::update(bool midiEnabled)  {
             checkMIDIdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
             checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
-            //if (!lastMIDInoteState[pad])    {
-//
-                ////pad has been released
-                ////first, check if there are other pads which are pressed
-                //if (!allPadsReleased()) {
-//
-                    //uint8_t padIndex = getLastTouchedPad();
-//
-                    ////there are
-                    //checkLCDdata(padIndex, true, aftertouchActivated[padIndex], xSendEnabled[padIndex], ySendEnabled[padIndex]);
-                    //setFunctionLEDs(padIndex);
-//
-                //}
-//
-            //}
+            if (!lastMIDInoteState[pad])    {
+
+                //pad has been released
+                //first, check if there are other pads which are pressed
+                if (!allPadsReleased()) {
+
+                    uint8_t padIndex = getLastTouchedPad();
+
+                    //there are
+                    checkLCDdata(padIndex, true, aftertouchActivated[padIndex], xSendEnabled[padIndex], ySendEnabled[padIndex]);
+                    setFunctionLEDs(padIndex);
+
+                }
+
+            }
 
         }
 

@@ -282,15 +282,15 @@ class Pads  {
     int8_t      octaveShiftAmount;
 
     //pad press history buffer
-    uint8_t padPressHistory_buffer[NUMBER_OF_PADS];
-    int8_t padPressHistory_counter;
+    uint8_t     padPressHistory_buffer[NUMBER_OF_PADS];
+    int8_t      padPressHistory_counter;
 
     //note buffer
-    uint8_t pad_buffer[PAD_NOTE_BUFFER_SIZE];
-    uint8_t velocity_buffer[PAD_NOTE_BUFFER_SIZE];
-    uint32_t pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
-    uint8_t note_buffer_head;
-    uint8_t note_buffer_tail;
+    uint8_t     pad_buffer[PAD_NOTE_BUFFER_SIZE];
+    uint8_t     velocity_buffer[PAD_NOTE_BUFFER_SIZE];
+    uint32_t    pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
+    uint8_t     note_buffer_head;
+    uint8_t     note_buffer_tail;
 
 };
 

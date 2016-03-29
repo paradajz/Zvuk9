@@ -17,14 +17,6 @@
 
 //define function prototypes
 void startUpAnimation();
-bool sendPadMIDI();
-
-//implementation
-bool sendPadMIDI()  {
-
-    return (!pads.editModeActive());
-
-}
 
 void startUpAnimation() {
 
