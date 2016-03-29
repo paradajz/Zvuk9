@@ -60,10 +60,10 @@
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU={build.fcpu}</Value>
+      <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>{build.usbtype}</Value>
-      <Value>LAYOUT_{build.keylayout}</Value>
+      <Value>USB_MIDI</Value>
+      <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -94,10 +94,10 @@
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU={build.fcpu}</Value>
+      <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>{build.usbtype}</Value>
-      <Value>LAYOUT_{build.keylayout}</Value>
+      <Value>USB_MIDI</Value>
+      <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
@@ -365,10 +365,10 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU={build.fcpu}</Value>
+      <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>{build.usbtype}</Value>
-      <Value>LAYOUT_{build.keylayout}</Value>
+      <Value>USB_MIDI</Value>
+      <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -399,10 +399,10 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU={build.fcpu}</Value>
+      <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>{build.usbtype}</Value>
-      <Value>LAYOUT_{build.keylayout}</Value>
+      <Value>USB_MIDI</Value>
+      <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>

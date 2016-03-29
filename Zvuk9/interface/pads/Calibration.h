@@ -14,7 +14,7 @@
 #define AFTERTOUCH_SEND_TIMEOUT             100
 #define XY_SEND_TIMEOUT                     30
 
-#define XY_SEND_TIMEOUT_IGNORE              20  //ignore xy reading change below this timeout
+#define XY_SEND_TIMEOUT_IGNORE              10  //ignore xy reading change below this timeout
 #define AFTERTOUCH_SEND_TIMEOUT_IGNORE      3   //ignore aftertouch reading change below this timeout
 
 #define XY_SEND_TIMEOUT_STEP                4
