@@ -790,8 +790,6 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
             Serial.println(padPressHistory_buffer[i]);
     #endif
 
-    display.displayPad(getLastTouchedPad()+1);
-
 }
 
 void Pads::storeNotes(uint8_t pad)  {
