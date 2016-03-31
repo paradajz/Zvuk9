@@ -10,7 +10,7 @@
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         10
 #define STOP_DISABLE_TIMEOUT        500
-#define RESET_ENABLE_TIMEOUT        3000
+#define RESET_ENABLE_TIMEOUT        4000
 
 #define SOFT_REBOOT                 1
 
@@ -168,16 +168,6 @@ void Buttons::update(bool processingEnabled)    {
 
             if (!resetActivationTimeout) resetActivationTimeout = newMillis();
             else if ((newMillis() - resetActivationTimeout) > RESET_ENABLE_TIMEOUT)   {
-
-                display.displayReset();
-                leds.allLEDsOn();
-                display.update();
-
-                do {
-
-                    buttons.update();
-
-                }   while (!getButtonState(BUTTON_TRANSPORT_STOP));
 
                 leds.allLEDsOff();
                 newDelay(50);

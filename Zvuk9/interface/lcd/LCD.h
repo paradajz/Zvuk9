@@ -46,7 +46,6 @@ class LCD   {
     void changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption);
     void selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
     void displayModifierEnabled();
-    void displayReset();
     void displayOutOfRange();
     void displayMaxNotesSet();
     void displayPadReleaseError(padReleaseError_t error);

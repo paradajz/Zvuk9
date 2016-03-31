@@ -710,20 +710,6 @@ void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  
 
 }
 
-void LCD::displayReset() {
-
-    strcpy_P(nameBuffer, emptyLine_string);
-    string_line = nameBuffer;
-    updateDisplay(1, text, 0, true);
-    updateDisplay(2, text, 0, true);
-    updateDisplay(3, text, 0, true);
-
-    strcpy_P(nameBuffer, reset_string);
-    string_line = nameBuffer;
-    updateDisplay(0, text, 0, true);
-
-}
-
 
 //lcd update
 
