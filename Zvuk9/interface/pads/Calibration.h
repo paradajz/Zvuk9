@@ -20,7 +20,7 @@
 #define XY_SEND_TIMEOUT_STEP                4
 #define AFTERTOUCH_SEND_TIMEOUT_STEP        2
 
-#define AFTERTOUCH_SEND_AFTER_DIFFERENCE    50  //0-127 //difference initial pressure needs to exceed to send aftertouch
+#define AFTERTOUCH_SEND_AFTER_DIFFERENCE    5  //0-127 //difference initial pressure needs to exceed to send aftertouch
 
 #define XY_CHANGE_AFTERTOUCH_RESET          5   //if x/y change by this value, reset aftertouch gesture counter
 
