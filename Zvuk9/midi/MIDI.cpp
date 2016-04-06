@@ -11,7 +11,8 @@ MIDI::MIDI()    {
 
 void MIDI::init() {
 
-    hwMIDI.init(DEFAULT_MIDI_CHANNEL);
+    //enable only midi out
+    hwMIDI.init(DEFAULT_MIDI_CHANNEL, false, true);
     //usb midi started automatically
 
 }
