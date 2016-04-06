@@ -62,7 +62,7 @@
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
@@ -96,7 +96,7 @@
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
@@ -367,7 +367,7 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
@@ -401,7 +401,7 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
       <Value>TEENSYDUINO=127</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
+      <Value>USB_SERIAL</Value>
       <Value>LAYOUT_US_ENGLISH</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
@@ -840,10 +840,10 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
     <Compile Include="interface\pads\Scaling.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="midi\hw_midi\HwMIDI.cpp">
+    <Compile Include="midi\hw_midi\hw_MIDI.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="midi\hw_midi\HwMIDI.h">
+    <Compile Include="midi\hw_midi\hw_MIDI.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="midi\MIDI.cpp">

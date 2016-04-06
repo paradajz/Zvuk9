@@ -1,6 +1,6 @@
 #include "MIDI.h"
 #include "MIDI_parameters.h"
-#include "hw_midi/HwMIDI.h"
+#include "hw_midi/hw_MIDI.h"
 #include "../Debug.h"
 
 MIDI::MIDI()    {
@@ -11,7 +11,7 @@ MIDI::MIDI()    {
 
 void MIDI::init() {
 
-    hwMIDI.begin(DEFAULT_MIDI_CHANNEL);
+    hwMIDI.init(DEFAULT_MIDI_CHANNEL);
     //usb midi started automatically
 
 }

@@ -17,7 +17,10 @@
 
 #define DEFAULT_MIDI_CHANNEL                1
 
-//number of bytes in system exclusive message
+//number of bytes in system exclusive message for transport control
 #define SYS_EX_ARRAY_SIZE           6
 
-#endif /* MIDI_PARAMETERS_H_ */
+//max sysex array size
+#define MIDI_SYSEX_ARRAY_SIZE       80
+
+#endif
