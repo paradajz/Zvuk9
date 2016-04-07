@@ -21,7 +21,7 @@
 
 #define NUMBER_OF_SAMPLES       3
 
-#define DEFAULT_XY_VALUE        255
+#define DEFAULT_XY_AT_VALUE     255
 #define PAD_NOTE_BUFFER_SIZE    32
 
 //multiplexer pins
@@ -127,7 +127,7 @@ class Pads  {
     void getPressureLimits();
     void getXLimits();
     void getYLimits();
-    void getAfterTouchUpperPressureLimits();
+    void getAftertouchLimits();
     void getPadParameters();
 
     //hardware control
@@ -205,7 +205,7 @@ class Pads  {
                 lastYMIDIvalue[NUMBER_OF_PADS];
 
     uint8_t     lastVelocityValue[NUMBER_OF_PADS],
-                lastAfterTouchValue[NUMBER_OF_PADS],
+                lastAftertouchValue[NUMBER_OF_PADS],
                 lastMIDInoteState[NUMBER_OF_PADS];
 
     //last raw values
@@ -241,7 +241,8 @@ class Pads  {
                 padXLimitUpper[NUMBER_OF_PADS],
                 padYLimitLower[NUMBER_OF_PADS],
                 padYLimitUpper[NUMBER_OF_PADS],
-                padPressureLimitUpperAfterTouch[NUMBER_OF_PADS];
+                padAftertouchLimitLower[NUMBER_OF_PADS],
+                padAftertouchLimitUpper[NUMBER_OF_PADS];
 
     uint8_t     padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
 
@@ -267,7 +268,8 @@ class Pads  {
                 firstPressureValueDelayTimer[NUMBER_OF_PADS],
                 xSendTimer[NUMBER_OF_PADS],
                 ySendTimer[NUMBER_OF_PADS],
-                afterTouchSendTimer[NUMBER_OF_PADS];
+                afterTouchSendTimer[NUMBER_OF_PADS],
+                aftertouchActivationDelay[NUMBER_OF_PADS];
 
     uint8_t     medianRunCounterXY,
                 sampleCounterPressure,

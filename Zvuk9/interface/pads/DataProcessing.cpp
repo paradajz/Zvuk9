@@ -124,7 +124,6 @@ bool Pads::checkY(uint8_t pad)  {
 
 }
 
-
 bool Pads::checkAftertouch(uint8_t pad)  {
 
     int16_t pressure = lastPressureValue[pad]; //latest value
@@ -136,20 +135,28 @@ bool Pads::checkAftertouch(uint8_t pad)  {
     //aftertouch
     if (getAfterTouchSendEnabled(pad)) {
 
-        uint8_t calibratedPressureAfterTouch = scalePressure(pad, pressure, pressureAfterTouch);
+        if (lastMIDInoteState[pad]) {
+
+            //when pad is just pressed, wait a bit for pressure to stabilize
+            if ((newMillis() - aftertouchActivationDelay[pad]) < AFTERTOUCH_INITIAL_VALUE_DELAY) return false;
+
+        }
+
+        uint8_t calibratedPressureAfterTouch = scalePressure(pad, pressure, pressureAftertouch);
+        if (!calibratedPressureAfterTouch) return 0; //don't allow aftertouch 0
 
         uint32_t timeDifference = newMillis() - afterTouchSendTimer[pad];
         bool afterTouchSend = false;
 
         if (timeDifference > AFTERTOUCH_SEND_TIMEOUT)  {
 
-            if (abs(calibratedPressureAfterTouch - lastAfterTouchValue[pad]) > AFTERTOUCH_SEND_TIMEOUT_STEP)    {
+            if (abs(calibratedPressureAfterTouch - lastAftertouchValue[pad]) > AFTERTOUCH_SEND_TIMEOUT_STEP)    {
 
                 afterTouchSend = true;
 
             }
 
-        }   else if ((calibratedPressureAfterTouch != lastAfterTouchValue[pad]) && (timeDifference > AFTERTOUCH_SEND_TIMEOUT_IGNORE)) {
+        }   else if ((calibratedPressureAfterTouch != lastAftertouchValue[pad]) && (timeDifference > AFTERTOUCH_SEND_TIMEOUT_IGNORE)) {
 
             afterTouchSend = true;
 
@@ -157,11 +164,10 @@ bool Pads::checkAftertouch(uint8_t pad)  {
 
         if (afterTouchSend) {
 
-            lastAfterTouchValue[pad] = calibratedPressureAfterTouch;
+            lastAftertouchValue[pad] = calibratedPressureAfterTouch;
 
             if (!aftertouchActivated[pad])  {
 
-                if (abs(calibratedPressureAfterTouch - lastVelocityValue[pad]) >= AFTERTOUCH_SEND_AFTER_DIFFERENCE)
                     aftertouchActivated[pad] = true;
 
             }
@@ -193,8 +199,8 @@ bool Pads::checkAftertouch(uint8_t pad)  {
                             if (!isPadPressed(i)) continue;
                             if (!aftertouchSendEnabled[i]) continue;
                             if (!aftertouchActivated[i]) continue;
-                            if (lastAfterTouchValue[i] > tempMaxValue)
-                                tempMaxValue = lastAfterTouchValue[i];
+                            if (lastAftertouchValue[i] > tempMaxValue)
+                                tempMaxValue = lastAftertouchValue[i];
 
 
                         }
@@ -505,6 +511,7 @@ bool Pads::checkVelocity(uint8_t pad)  {
                 bitWrite(padPressed, pad, true);  //set pad pressed
                 lastVelocityValue[pad] = calibratedPressure;
                 lastMIDInoteState[pad] = true;
+                aftertouchActivationDelay[pad] = newMillis();
                 returnValue = true;
 
             }
@@ -516,8 +523,9 @@ bool Pads::checkVelocity(uint8_t pad)  {
                 lastVelocityValue[pad] = calibratedPressure;
                 lastMIDInoteState[pad] = false;
                 returnValue = true;
-                lastXMIDIvalue[pad] = DEFAULT_XY_VALUE;
-                lastYMIDIvalue[pad] = DEFAULT_XY_VALUE;
+                lastXMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
+                lastYMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
+                lastAftertouchValue[pad] = DEFAULT_XY_AT_VALUE;
                 bitWrite(padPressed, pad, false);  //set pad not pressed
                 switchToXYread = false;
 
@@ -642,7 +650,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
         if (aftertouchAvailable)    {
 
             if (aftertouchSendEnabled[pad])
-                display.displayAftertouch(lastAfterTouchValue[pad]);
+                display.displayAftertouch(lastAftertouchValue[pad]);
             else display.clearAftertouch();
 
         }

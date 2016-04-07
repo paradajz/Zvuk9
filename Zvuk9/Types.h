@@ -99,7 +99,7 @@ typedef enum {
 typedef enum {
 
     pressureVelocity,
-    pressureAfterTouch
+    pressureAftertouch
 
 } pressureType_t;
 

@@ -5,8 +5,8 @@ uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, pressureType_t type) 
 
     switch(type)  {
 
-        case pressureAfterTouch:
-        return map(constrain(pressure, padPressureLimitLower[pad], padPressureLimitUpperAfterTouch[pad]), padPressureLimitLower[pad], padPressureLimitUpperAfterTouch[pad], 0, 127);
+        case pressureAftertouch:
+        return map(constrain(pressure, padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad]), padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad], 0, 127);
         break;
 
         case pressureVelocity:

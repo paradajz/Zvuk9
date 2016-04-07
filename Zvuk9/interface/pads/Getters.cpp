@@ -353,7 +353,7 @@ void Pads::getPadLimits()   {
     getPressureLimits();
     getXLimits();
     getYLimits();
-    getAfterTouchUpperPressureLimits();
+    getAftertouchLimits();
 
 }
 
@@ -447,16 +447,33 @@ void Pads::getYLimits()  {
 
 }
 
-//read from eeprom end
+void Pads::getAftertouchLimits()    {
 
-//read from flash
-
-void Pads::getAfterTouchUpperPressureLimits()    {
+    #if MODE_SERIAL > 0
+        Serial.println(F("----------------------------------------"));
+        Serial.println(F("Printing out aftertouch limits for pads"));
+        Serial.println(F("----------------------------------------"));
+    #endif
 
     for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-        int32_t afterTouchPressure = padPressureLimitUpper[i] + (int32_t)(((padPressureLimitUpper[i] - padPressureLimitLower[i]) * (int32_t)100) * (uint32_t)DEFAULT_AFTERTOUCH_PRESSURE_RATIO) / 10000;
-        padPressureLimitUpperAfterTouch[i] = afterTouchPressure;
+        int32_t lowerLimit = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
+        int32_t upperLimit = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_UPPER) / 10000;
+        padAftertouchLimitLower[i] = lowerLimit;
+        padAftertouchLimitUpper[i] = upperLimit;
+
+        #if MODE_SERIAL > 0
+            Serial.print(F("Lower aftertouch limit for pad "));
+            Serial.print(i);
+            Serial.print(F(": "));
+            Serial.println(padAftertouchLimitLower[i]);
+
+            Serial.print(F("Upper aftertouch limit for pad "));
+            Serial.print(i);
+            Serial.print(F(": "));
+            Serial.println(padAftertouchLimitUpper[i]);
+            Serial.println();
+        #endif
 
     }
 
@@ -663,7 +680,6 @@ int8_t Pads::getLastTouchedPad()   {
     return padPressHistory_buffer[padPressHistory_counter];
 
 }
-
 
 note_t Pads::getTonicFromNote(uint8_t note)    {
 

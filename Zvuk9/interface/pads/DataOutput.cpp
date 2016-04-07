@@ -123,7 +123,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
 void Pads::sendAftertouch(uint8_t pad)  {
 
-    uint8_t aftertouchValue = lastMIDInoteState[pad] ? lastAfterTouchValue[pad] : 0;
+    uint8_t aftertouchValue = lastMIDInoteState[pad] ? lastAftertouchValue[pad] : 0;
 
     switch(aftertouchType)  {
 
@@ -132,7 +132,7 @@ void Pads::sendAftertouch(uint8_t pad)  {
             Serial.print(F("Sending key aftertouch, pad "));
             Serial.print(pad);
             Serial.print(F(": "));
-            Serial.println(lastAfterTouchValue[pad]);
+            Serial.println(lastAftertouchValue[pad]);
         #else
             for (int i=0; i<NOTES_PER_PAD; i++) {
 
