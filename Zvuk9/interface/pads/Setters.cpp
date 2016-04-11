@@ -197,7 +197,7 @@ void Pads::updateSplit() {
     configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitCounter);
     getPadParameters();
 
-    #if MODE_SERIAL
+    #if MODE_SERIAL > 0
         switch(splitCounter)    {
 
             case splitOff:
@@ -223,7 +223,7 @@ void Pads::changeAftertouchType()   {
     if (aftertouchType == AFTERTOUCH_TYPES) aftertouchType = 0;
     configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), aftertouchType);
 
-    #if MODE_SERIAL
+    #if MODE_SERIAL > 0
     switch(aftertouchType)    {
 
         case aftertouchPoly:
@@ -294,7 +294,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
     if (!changeAllowed)    {
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("Unable to do global shift: one or more pad notes are too "));
             direction ? Serial.println(F("high.")) : Serial.println(F("low"));
         #endif
@@ -482,14 +482,11 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
             Serial.println(F("Tonic changed, active tonic "));
             Serial.print(newTonic);
             Serial.print(F("/"));
-            char nameBuffer[20];
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(noteNameArray[newTonic])));
-            Serial.println(nameBuffer);
         #endif
 
     }   else {
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("Unable to change tonic: one or more pad notes are too "));
             shiftDirection ? Serial.println(F("high.")) : Serial.println(F("low"));
         #endif
@@ -879,7 +876,9 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
     uint8_t newNote = getActiveOctave()*MIDI_NOTES + (uint8_t)note;
     if (newNote > 127) {
 
-        display.displayOutOfRange();
+        #ifdef MODULE_LCD
+            display.displayOutOfRange();
+        #endif
         return outOfRange;
 
     }
@@ -903,7 +902,9 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
         //pads cannot have more than NOTES_PER_PAD notes
         if (noteIndex == NOTES_PER_PAD) {
 
+            #ifdef MODULE_LCD
             display.displayMaxNotesSet();
+            #endif
             return overflow;
 
         }
@@ -939,7 +940,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
             for (int i=0; i<NOTES_PER_PAD; i++)
                 configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*(uint16_t)pad), padNote[pad][i]);
 
-            #if MODE_SERIAL >0
+            #if MODE_SERIAL > 0
                 Serial.print(F("Removing note "));
             #endif
 
@@ -1000,7 +1001,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
     if (!internalChange)
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset), noteShiftAmount);
 
-    #if MODE_SERIAL
+    #if MODE_SERIAL > 0
         Serial.print("Shifted note: ");
         Serial.println(noteShiftAmount);
     #endif
@@ -1023,7 +1024,7 @@ void Pads::notesOnOff()    {
         for (int i=0; i<NUMBER_OF_PADS; i++)
             setNoteSendEnabled(i, newNotesState);
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("Notes "));
             newNotesState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.println(F(" for all pads"));
@@ -1051,7 +1052,7 @@ void Pads::notesOnOff()    {
 
         setNoteSendEnabled(lastPressedPad, newNotesState);
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("Notes "));
             newNotesState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.print(F(" for pad "));
@@ -1083,7 +1084,7 @@ void Pads::xOnOff()    {
         for (int i=0; i<NUMBER_OF_PADS; i++)
             setCCXsendEnabled(i, newXState);
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("X "));
             newXState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.println(F(" for all pads"));
@@ -1098,7 +1099,7 @@ void Pads::xOnOff()    {
 
         setCCXsendEnabled(lastPressedPad, newXState);
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("X "));
             newXState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.print(F(" for pad "));
@@ -1120,7 +1121,7 @@ void Pads::yOnOff()    {
         for (int i=0; i<NUMBER_OF_PADS; i++)
             setCCYsendEnabled(i, newYState);
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print("Y ");
             newYState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.println(F(" for all pads"));
@@ -1135,7 +1136,7 @@ void Pads::yOnOff()    {
 
         setCCYsendEnabled(lastPressedPad, newYState);
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print("Y ");
             newYState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.print(F(" for pad "));
@@ -1157,7 +1158,7 @@ void Pads::aftertouchOnOff()    {
         for (int i=0; i<NUMBER_OF_PADS; i++)
             setAfterTouchSendEnabled(i, newAfterTouchState);
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("Aftertouch "));
             newAfterTouchState ? Serial.print(F("on ")) : Serial.print(F("off "));
             Serial.println(F("for all pads"));
@@ -1172,7 +1173,7 @@ void Pads::aftertouchOnOff()    {
 
         setAfterTouchSendEnabled(lastPressedPad, newAfterTouchState);
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("Aftertouch "));
             newAfterTouchState ? Serial.print(F("on")) : Serial.print(F("off"));
             Serial.print(F(" for pad "));
@@ -1191,21 +1192,23 @@ void Pads::setPadPressed(uint8_t padNumber, bool padState) {
 
 void Pads::setFunctionLEDs(uint8_t padNumber)   {
 
-    if (splitCounter == splitXYFunctions)  {
+    #ifdef MODULE_LEDS
+        if (splitCounter == splitXYFunctions)  {
 
-        //split features
-        //turn off function LEDs first
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_NOTES, ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_X, ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_Y, ledIntensityOff);
+            //split features
+            //turn off function LEDs first
+            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledIntensityOff);
+            leds.setLEDstate(LED_ON_OFF_NOTES, ledIntensityOff);
+            leds.setLEDstate(LED_ON_OFF_X, ledIntensityOff);
+            leds.setLEDstate(LED_ON_OFF_Y, ledIntensityOff);
 
-        //turn on feature LEDs depending on enabled features for last touched pad
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
+            //turn on feature LEDs depending on enabled features for last touched pad
+            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
+            leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
+            leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
+            leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
 
-    }
+        }
+    #endif
 
 }

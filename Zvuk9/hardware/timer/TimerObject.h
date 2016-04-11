@@ -2,6 +2,7 @@
 #define TIMEROBJECT_H_
 
 #include "Arduino.h"
+#include "../../Modules.h"
 #include "../pins/Pins.h"
 #include "../../Types.h"
 

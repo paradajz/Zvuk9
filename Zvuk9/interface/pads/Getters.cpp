@@ -23,7 +23,7 @@ void Pads::getProgramParameters()   {
     midiChannel = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, (uint16_t)GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
     aftertouchType = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, (uint16_t)GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
-    #if MODE_SERIAL
+    #if MODE_SERIAL > 0
         Serial.print(F("Active program: "));
         Serial.println(activeProgram+1);
         Serial.print(F("Active preset: "));
@@ -72,7 +72,7 @@ void Pads::getPadParameters()   {
 
         }
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("X send enabled: "));            Serial.println(xSendEnabled[0]);
             Serial.print(F("Y send enabled: "));            Serial.println(ySendEnabled[0]);
             Serial.print(F("Note send enabled: "));         Serial.println(noteSendEnabled[0]);
@@ -111,7 +111,7 @@ void Pads::getPadParameters()   {
                 padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
                 padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
 
-                #if MODE_SERIAL
+                #if MODE_SERIAL > 0
                     if (!i) {
 
                         Serial.print(F("X send enabled: "));            Serial.println(xSendEnabled[i]);
@@ -158,8 +158,7 @@ void Pads::getPadParameters()   {
                 padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
                 padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
 
-                #if MODE_SERIAL
-
+                #if MODE_SERIAL > 0
                     Serial.print(F("Pad "));
                     Serial.println(i+1);
 
@@ -183,11 +182,13 @@ void Pads::getPadParameters()   {
 
     uint8_t lastTouchedPad = getLastTouchedPad();
 
-    leds.setLEDstate(LED_ON_OFF_SPLIT, (ledIntensity_t)splitCounter);
-    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-    leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-    leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-    leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    #ifdef MODULE_LEDS
+        leds.setLEDstate(LED_ON_OFF_SPLIT, (ledIntensity_t)splitCounter);
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+    #endif
 
 }
 
@@ -241,11 +242,7 @@ void Pads::generateScale(scale_t scale)    {
         int8_t shift = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
 
         #if MODE_SERIAL > 0
-            char nameBuffer[20];
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(presetNameArray[(uint8_t)scale])));
             Serial.print((uint8_t)scale);
-            Serial.print(F("/"));
-            Serial.println(nameBuffer);
             Serial.print(F("Octave: "));    Serial.println(octave);
             Serial.print(F("Tonic: "));     Serial.println(tonic);
             Serial.print(F("Shift: "));     Serial.println(shift);
@@ -324,7 +321,7 @@ void Pads::generateScale(scale_t scale)    {
 
     }
 
-    #if MODE_SERIAL
+    #if MODE_SERIAL > 0
         Serial.println(F("----------------------------------------"));
         Serial.println(F("Printing out notes for pads"));
         Serial.println(F("----------------------------------------"));

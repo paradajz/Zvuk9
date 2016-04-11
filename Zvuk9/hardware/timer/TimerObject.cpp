@@ -6,23 +6,23 @@
 #define NUMBER_OF_LED_COLUMNS       8
 #define NUMBER_OF_LED_ROWS          3
 
-#define PIN_TO_BASEREG(pin)             (portInputRegister(digitalPinToPort(pin)))
-#define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
-#define DIRECT_PIN_READ(base, mask)     (((*(base)) & (mask)) ? 1 : 0)
+#define PIN_TO_BASEREG(pin)         (portInputRegister(digitalPinToPort(pin)))
+#define PIN_TO_BITMASK(pin)         (digitalPinToBitMask(pin))
+#define DIRECT_PIN_READ(base, mask) (((*(base)) & (mask)) ? 1 : 0)
 
 //LEDs
-volatile int8_t             activeColumnInterrupt = 0;
-uint8_t                     ledState[NUMBER_OF_LEDS];
-int16_t                     transitionCounter[NUMBER_OF_LEDS];
-volatile uint8_t            pwmSteps = DEFAULT_FADE_SPEED;
+volatile int8_t                     activeColumnInterrupt = 0;
+uint8_t                             ledState[NUMBER_OF_LEDS];
+int16_t                             transitionCounter[NUMBER_OF_LEDS];
+volatile uint8_t                    pwmSteps = DEFAULT_FADE_SPEED;
 
 //encoders
-volatile int8_t             encoderMoving[NUMBER_OF_ENCODERS];
-volatile uint8_t*           pin1_register[NUMBER_OF_ENCODERS];
-volatile uint8_t*           pin2_register[NUMBER_OF_ENCODERS];
-uint8_t                     pin1_bitmask[NUMBER_OF_ENCODERS];
-uint8_t                     pin2_bitmask[NUMBER_OF_ENCODERS];
-uint16_t encoderData[NUMBER_OF_ENCODERS];
+volatile int8_t                     encoderMoving[NUMBER_OF_ENCODERS];
+volatile uint8_t*                   pin1_register[NUMBER_OF_ENCODERS];
+volatile uint8_t*                   pin2_register[NUMBER_OF_ENCODERS];
+uint8_t                             pin1_bitmask[NUMBER_OF_ENCODERS];
+uint8_t                             pin2_bitmask[NUMBER_OF_ENCODERS];
+uint16_t                            encoderData[NUMBER_OF_ENCODERS];
 
 //timer1 testing
 volatile uint32_t rTime_ms;
@@ -161,54 +161,56 @@ ISR(TIMER0_COMPA_vect)    {
 
     if (ledUpdateCounter == 2)  {
 
-        ledUpdateCounter = 0;
+        #ifdef MODULE_LEDS
+            ledUpdateCounter = 0;
 
-        //LEDs
-        ledRowsOff();
-        if (activeColumnInterrupt == NUMBER_OF_LED_COLUMNS) activeColumnInterrupt = 0;
-        activateColumn(activeColumnInterrupt);
+            //LEDs
+            ledRowsOff();
+            if (activeColumnInterrupt == NUMBER_OF_LED_COLUMNS) activeColumnInterrupt = 0;
+            activateColumn(activeColumnInterrupt);
 
-        uint8_t ledNumber;
-        uint8_t ledStateSingle;
-        uint8_t currentStepValue;
-        bool stepDirection;
-        bool stepUpdate;
+            uint8_t ledNumber;
+            uint8_t ledStateSingle;
+            uint8_t currentStepValue;
+            bool stepDirection;
+            bool stepUpdate;
 
-        for (int i=0; i<NUMBER_OF_LED_ROWS; i++)  {
+            for (int i=0; i<NUMBER_OF_LED_ROWS; i++)  {
 
-            ledNumber = activeColumnInterrupt+i*NUMBER_OF_LED_COLUMNS;
-            ledStateSingle = ledState[ledNumber];
-            currentStepValue = transitionCounter[ledNumber];
-            stepUpdate = currentStepValue != ledStateSingle;
+                ledNumber = activeColumnInterrupt+i*NUMBER_OF_LED_COLUMNS;
+                ledStateSingle = ledState[ledNumber];
+                currentStepValue = transitionCounter[ledNumber];
+                stepUpdate = currentStepValue != ledStateSingle;
 
-            if (currentStepValue)
-                ledRowOn(i, currentStepValue);
+                if (currentStepValue)
+                    ledRowOn(i, currentStepValue);
 
-            if (stepUpdate) {
+                if (stepUpdate) {
 
-                stepDirection = currentStepValue < ledStateSingle;
+                    stepDirection = currentStepValue < ledStateSingle;
 
-                switch(stepDirection)   {
+                    switch(stepDirection)   {
 
-                    case true:
-                    transitionCounter[ledNumber] += pwmSteps;
-                    if (transitionCounter[ledNumber] > ledStateSingle)
-                        transitionCounter[ledNumber] = ledStateSingle;
-                    break;
+                        case true:
+                        transitionCounter[ledNumber] += pwmSteps;
+                        if (transitionCounter[ledNumber] > ledStateSingle)
+                            transitionCounter[ledNumber] = ledStateSingle;
+                        break;
 
-                    case false:
-                    transitionCounter[ledNumber] -= pwmSteps;
-                    if (transitionCounter[ledNumber] < ledStateSingle)
-                        transitionCounter[ledNumber] = ledStateSingle;
-                    break;
+                        case false:
+                        transitionCounter[ledNumber] -= pwmSteps;
+                        if (transitionCounter[ledNumber] < ledStateSingle)
+                            transitionCounter[ledNumber] = ledStateSingle;
+                        break;
+
+                    }
 
                 }
 
             }
 
-        }
-
-        activeColumnInterrupt++;
+            activeColumnInterrupt++;
+        #endif
 
     }
 
@@ -230,11 +232,13 @@ ISR(TIMER0_COMPA_vect)    {
 
 ISR(TIMER3_COMPA_vect)  {
 
-    static uint8_t encoderCounter = 0;
-    updateEncoder(encoderCounter);
-    encoderCounter++;
-    if (encoderCounter == NUMBER_OF_ENCODERS)
-    encoderCounter = 0;
+    #ifdef MODULE_ENCODERS
+        static uint8_t encoderCounter = 0;
+        updateEncoder(encoderCounter);
+        encoderCounter++;
+        if (encoderCounter == NUMBER_OF_ENCODERS)
+        encoderCounter = 0;
+    #endif
 
 }
 

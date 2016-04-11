@@ -7,4 +7,4 @@
 #define normalizeOctave(octave) ((octave)+(OCTAVE_NORMALIZATION))
 
 
-#endif /* MACROS_H_ */
+#endif

@@ -42,6 +42,11 @@ const uint8_t ledNoteArray[] = {
 LEDs::LEDs()    {
 
     //default constructor
+
+}
+
+void LEDs::init()   {
+
     setOutputMacro(LED_ROW_1_DDR, LED_ROW_1_PIN_INDEX);
     setOutputMacro(LED_ROW_2_DDR, LED_ROW_2_PIN_INDEX);
     setOutputMacro(LED_ROW_3_DDR, LED_ROW_3_PIN_INDEX);
@@ -53,12 +58,6 @@ LEDs::LEDs()    {
     setOutputMacro(DECODER_OUT_1_DDR, DECODER_OUT_1_PIN_INDEX);
     setOutputMacro(DECODER_OUT_2_DDR, DECODER_OUT_2_PIN_INDEX);
     setOutputMacro(DECODER_OUT_3_DDR, DECODER_OUT_3_PIN_INDEX);
-
-}
-
-void LEDs::init()   {
-
-    //
 
 }
 

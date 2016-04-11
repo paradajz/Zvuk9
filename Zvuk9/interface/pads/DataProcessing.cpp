@@ -309,8 +309,11 @@ void Pads::update(bool midiEnabled)  {
         }
 
         //check data to be sent
-
+        #ifdef MODULE_LCD
         if (!editModeActive() && !menu.menuDisplayed()) {
+        #else
+        if (!editModeActive()) {
+        #endif
 
             //don't send or show midi data while in pad edit mode or menu
             checkMIDIdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
@@ -327,8 +330,11 @@ void Pads::update(bool midiEnabled)  {
 
             }   else {
 
-                if (pad == getLastTouchedPad())
+                if (pad == getLastTouchedPad()) {
+
                     checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+
+                }
 
             }
 
@@ -617,64 +623,74 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
     if (isPadPressed(pad))  {
 
         //show X
-        if (xAvailable) {
+        #ifdef MODULE_LCD
+            if (xAvailable) {
 
-            if (xSendEnabled[pad])  {
+                if (xSendEnabled[pad])  {
 
-                display.displayXYposition(lastXMIDIvalue[pad], ccTypeX);
-                display.displayXYcc(ccXPad[pad], ccTypeX);
+                    display.displayXYposition(lastXMIDIvalue[pad], ccTypeX);
+                    display.displayXYcc(ccXPad[pad], ccTypeX);
 
-            }   else {
+                }   else {
 
-                display.clearXYposition(ccTypeX);
-                display.clearXYcc(ccTypeX);
+                    display.clearXYposition(ccTypeX);
+                    display.clearXYcc(ccTypeX);
 
-            }
-
-        }
-
-        if (yAvailable) {
-
-            if (ySendEnabled[pad])  {
-
-                display.displayXYposition(lastYMIDIvalue[pad], ccTypeY);
-                display.displayXYcc(ccYPad[pad], ccTypeY);
-
-            }   else {
-
-                display.clearXYposition(ccTypeY);
-                display.clearXYcc(ccTypeY);
+                }
 
             }
+        #endif
 
-        }
+        #ifdef MODULE_LCD
+            if (yAvailable) {
+
+                if (ySendEnabled[pad])  {
+
+                    display.displayXYposition(lastYMIDIvalue[pad], ccTypeY);
+                    display.displayXYcc(ccYPad[pad], ccTypeY);
+
+                }   else {
+
+                    display.clearXYposition(ccTypeY);
+                    display.clearXYcc(ccTypeY);
+
+                }
+
+            }
+        #endif
 
         //show aftertouch
-        if (aftertouchAvailable)    {
+        #ifdef MODULE_LCD
+            if (aftertouchAvailable)    {
 
-            if (aftertouchSendEnabled[pad] && aftertouchActivated[pad])
-                display.displayAftertouch(lastAftertouchValue[pad]);
-            else display.clearAftertouch();
+                if (aftertouchSendEnabled[pad] && aftertouchActivated[pad])
+                    display.displayAftertouch(lastAftertouchValue[pad]);
+                else display.clearAftertouch();
 
-        }
+            }
+        #endif
 
         if (velocityAvailable)  {
 
-            display.displayPad(pad+1);
+            #ifdef MODULE_LCD
+                display.displayPad(pad+1);
+            #endif
             handleNoteLCD(pad, lastVelocityValue[pad], lastMIDInoteState[pad]);
 
         }
 
     }   else if (allPadsReleased()) {
 
-            display.displayActivePadNotes(0, 0, 0);
-            display.clearVelocity();
-            display.clearAftertouch();
-            display.clearXYcc(ccTypeX);
-            display.clearXYcc(ccTypeY);
-            display.clearXYposition(ccTypeX);
-            display.clearXYposition(ccTypeY);
-            display.clearPad();
+            #ifdef MODULE_LCD
+                display.displayActivePadNotes(0, 0, 0);
+                display.clearVelocity();
+                display.clearAftertouch();
+                display.clearXYcc(ccTypeX);
+                display.clearXYcc(ccTypeY);
+                display.clearXYposition(ccTypeX);
+                display.clearXYposition(ccTypeY);
+                display.clearPad();
+            #endif
 
     }
 

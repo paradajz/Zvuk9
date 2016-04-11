@@ -7,12 +7,12 @@ LCD::LCD()  {
     messageDisplayTime = 0;
     string_line.reserve(MAX_TEXT_SIZE);
 
-    lcd_init(LCD_DISP_ON);
-    _delay_ms(100);
-
 }
 
 void LCD::init()    {
+
+    lcd_init(LCD_DISP_ON);
+    _delay_ms(150);
 
     lcd_clrscr();
 

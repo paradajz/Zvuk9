@@ -2,6 +2,7 @@
 #define PADS_H
 
 #include "Arduino.h"
+#include "../../Modules.h"
 #include <avr/eeprom.h>
 #include "../../Debug.h"
 #include "../../hardware/pins/Pins.h"
@@ -9,13 +10,20 @@
 #include "../../midi/MIDI_parameters.h"
 #include "Calibration.h"
 #include "../../Types.h"
-#include "../../hardware/timer/TimerObject.h"
-#include "../../midi/MIDI.h"
-#include "../../eeprom/EEPROMsettings.h"
-#include "../lcd/LCD.h"
-#include "../leds/LEDs.h"
 #include "../../hardware/adc/ADC.h"
+#include "../../eeprom/EEPROMsettings.h"
+#include "../../midi/MIDI.h"
+#include "../lcd/Macros.h"
+#include "../../hardware/timer/TimerObject.h"
+
+#ifdef MODULE_LEDS
+#include "../leds/LEDs.h"
+#endif
+
+#ifdef MODULE_LCD
+#include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
+#endif
 
 #define NUMBER_OF_PADS          9
 
@@ -271,8 +279,7 @@ class Pads  {
                 afterTouchSendTimer[NUMBER_OF_PADS],
                 aftertouchActivationDelay[NUMBER_OF_PADS];
 
-    uint8_t     medianRunCounterXY,
-                sampleCounterPressure,
+    uint8_t     sampleCounterPressure,
                 sampleCounterXY;
 
     //pad read control

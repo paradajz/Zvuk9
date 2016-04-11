@@ -1,6 +1,5 @@
 #include "Pads.h"
 
-
 uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, pressureType_t type) {
 
     switch(type)  {

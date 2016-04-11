@@ -2,7 +2,7 @@
 
 void Pads::sendX(uint8_t pad)  {
 
-    #if MODE_SERIAL
+    #if MODE_SERIAL > 0
         Serial.print(F("X for pad "));
         Serial.print(pad);
         Serial.print(F(": "));
@@ -25,7 +25,7 @@ void Pads::sendX(uint8_t pad)  {
 
 void Pads::sendY(uint8_t pad)  {
 
-    #if MODE_SERIAL
+    #if MODE_SERIAL > 0
         Serial.print(F("Y for pad "));
         Serial.print(pad);
         Serial.print(F(": "));
@@ -64,7 +64,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
             if (padNote[pad][i] == BLANK_NOTE) continue;
 
-            #if MODE_SERIAL
+            #if MODE_SERIAL > 0
                 Serial.println(padNote[pad][i]);
             #else
                 midi.sendNoteOn(midiChannel, padNote[pad][i], velocity);
@@ -72,7 +72,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
         }
 
-        #if MODE_SERIAL
+        #if MODE_SERIAL > 0
             Serial.print(F("Velocity: "));
             Serial.println(velocity);
         #endif
@@ -193,7 +193,9 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
         for (int i=0; i<noteCounter; i++) {
 
             tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
-            leds.setNoteLEDstate((note_t)tonicArray[i], ledIntensityFull);
+            #ifdef MODULE_LEDS
+                leds.setNoteLEDstate((note_t)tonicArray[i], ledIntensityFull);
+            #endif
 
         }
         break;
@@ -226,7 +228,13 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
 
                 }
 
-            }   if (!noteActive) leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledIntensityDim);
+            }   if (!noteActive)    {
+
+                    #ifdef MODULE_LEDS
+                        leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledIntensityDim);
+                    #endif
+
+            }
 
         }
         break;
@@ -261,7 +269,9 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
                 Serial.println(pad);
             #endif
 
-            display.displayActivePadNotes(0, 0, 0);
+            #ifdef MODULE_LCD
+                display.displayActivePadNotes(0, 0, 0);
+            #endif
             return;
 
         }
@@ -276,13 +286,17 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
 
         }
 
+        #ifdef MODULE_LCD
         display.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
         display.displayVelocity(velocity);
+        #endif
         break;
 
         case false:
         //note off
+        #ifdef MODULE_LCD
         display.displayActivePadNotes(0, 0, 0);
+        #endif
         break;
 
     }

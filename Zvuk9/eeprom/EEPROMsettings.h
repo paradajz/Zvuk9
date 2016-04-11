@@ -8,10 +8,14 @@ EEPROM addresses of parameters.
 #include <stdio.h> 
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
+#include "../Modules.h"
 #include "UniqueID.h"
-#include "../midi/MIDI_parameters.h"
+#include "../Debug.h"
+
+#ifdef MODULE_LCD
 #include "../hardware/lcd/lcd.h"
-#include "../hardware/timer/TimerObject.h"
+#endif
+
 #include "Defaults.h"
 #include "../interface/pads/Pads.h"
 #include "../Scales.h"

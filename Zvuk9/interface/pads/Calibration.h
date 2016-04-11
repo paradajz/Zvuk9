@@ -1,7 +1,7 @@
 #ifndef PADSCALIBRATION_H_
 #define PADSCALIBRATION_H_
 
-#include "hardware/pins/Pins.h"
+#include "../../hardware/pins/Pins.h"
 
 //don't check velocity for PAD_PRESS_DEBOUNCE_TIMEms after pad has just been pressed
 #define PAD_PRESS_DEBOUNCE_TIME             10

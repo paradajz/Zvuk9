@@ -3,6 +3,7 @@
 
 #include "EEPROMsettings.h"
 #include <util/delay.h>
+#include "../midi/MIDI_parameters.h"
 
 EEPROMsettings::EEPROMsettings()    {
 
@@ -61,26 +62,30 @@ void EEPROMsettings::clearEEPROM()  {
 
 void EEPROMsettings::factoryReset(factoryResetType_t type)   {
 
-    lcd_gotoxy(0, 0);
-    lcd_puts("Factory reset in");
+    #ifdef MODULE_LCD
+        lcd_gotoxy(0, 0);
+        lcd_puts("Factory reset in");
 
-    for (int i=3; i>=1; i--) {
+        for (int i=3; i>=1; i--) {
 
-        lcd_gotoxy(17, 0);
-        lcd_putc(i+48);   //convert int to char, +48
-        _delay_ms(1000);
+            lcd_gotoxy(17, 0);
+            lcd_putc(i+48);   //convert int to char, +48
+            _delay_ms(1000);
 
-    }
+        }
 
-    lcd_clrscr();
-    lcd_gotoxy(0, 0);
-    lcd_puts("Factory reset...");
-    lcd_gotoxy(0, 1);
+        lcd_clrscr();
+        lcd_gotoxy(0, 0);
+        lcd_puts("Factory reset...");
+        lcd_gotoxy(0, 1);
+    #endif
 
     switch(type)    {
 
         case FACTORY_RESET_WIPE_RESTORE:
+        #ifdef MODULE_LCD
         lcd_puts("Wiping memory");
+        #endif
         clearEEPROM();
         break;
 
@@ -90,31 +95,39 @@ void EEPROMsettings::factoryReset(factoryResetType_t type)   {
 
     }
 
-    lcd_gotoxy(0, 1);
+    #ifdef MODULE_LCD
+        lcd_gotoxy(0, 1);
+    #endif
 
     switch(type)    {
 
         case FACTORY_RESET_WIPE_RESTORE:
         case FACTORY_RESET_RESTORE_FULL:
-        lcd_puts("Full restore");
+        #ifdef MODULE_LCD
+            lcd_puts("Full restore");
+        #endif
         initSettings(false);
         break;
 
         case FACTORY_RESET_RESTORE_PARTIAL:
-        lcd_puts("Partial restore");
+        #ifdef MODULE_LCD
+            lcd_puts("Partial restore");
+        #endif
         initSettings(true);
         break;
 
     }
 
-     _delay_ms(2000);
-    lcd_clrscr();
-    lcd_gotoxy(0,0);
-    lcd_puts("Factory reset");
-    lcd_gotoxy(0, 1);
-    lcd_puts("finished!");
+    #ifdef MODULE_LCD
+         _delay_ms(2000);
+         lcd_clrscr();
+         lcd_gotoxy(0,0);
+         lcd_puts("Factory reset");
+         lcd_gotoxy(0, 1);
+         lcd_puts("finished!");
 
-    _delay_ms(2000);
+         _delay_ms(2000);
+    #endif
 
 }
 

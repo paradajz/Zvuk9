@@ -2,6 +2,7 @@
 #define LCD_H_
 
 #include "Arduino.h"
+#include "../../Modules.h"
 #include "../../Types.h"
 #include "../../hardware/lcd/lcd.h"
 #include "LCDsettings.h"

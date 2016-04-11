@@ -9,10 +9,11 @@ Button control using two MPC23017 expanders.
 
 #include "Arduino.h"
 #include "../../Debug.h"
+#include "../../Modules.h"
+
 #include "../../hardware/pins/Pins.h"
 #include "../../midi/MIDI_parameters.h"
 #include "../../Types.h"
-#include "../../hardware/timer/TimerObject.h"
 
 #define MAX_NUMBER_OF_BUTTONS   32
 

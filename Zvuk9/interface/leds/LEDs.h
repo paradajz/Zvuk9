@@ -2,6 +2,7 @@
 #define LEDS_H_
 
 #include "Arduino.h"
+#include "../../Modules.h"
 #include "../../hardware/pins/Pins.h"
 #include "../../Types.h"
 #include "LEDsettings.h"

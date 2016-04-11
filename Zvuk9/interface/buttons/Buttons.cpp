@@ -1,9 +1,16 @@
 #include "Buttons.h"
 #include "../../hardware/i2c/i2c_master.h"
 #include "../pads/Pads.h"
+
+#ifdef MODULE_LCD
 #include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
+#endif
+
+#ifdef MODULE_LEDS
 #include "../leds/LEDs.h"
+#endif
+
 #include "../../midi/MIDI.h"
 #include "../../hardware/reset/Reset.h"
 
@@ -106,7 +113,10 @@ void Buttons::init()  {
             Serial.println(F("Activating user menu"));
         #endif
 
-        menu.displayMenu(serviceMenu);
+        #ifdef MODULE_LCD
+            menu.displayMenu(serviceMenu);
+        #endif
+
         buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
         buttonEnabled[BUTTON_TRANSPORT_PLAY] = false;
 
@@ -149,15 +159,19 @@ void Buttons::update(bool processingEnabled)    {
 
             buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
             stopDisableTimeout = 0;
+            #ifdef MODULE_LCD
             display.displayModifierEnabled();
+            #endif
             modifierActive = true;
-            if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
 
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+            #ifdef MODULE_LEDS
+                if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
 
-            }
-            leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityFull);
+                    leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
+                    leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+
+                } leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityFull);
+            #endif
 
         }
 
@@ -169,7 +183,9 @@ void Buttons::update(bool processingEnabled)    {
             if (!resetActivationTimeout) resetActivationTimeout = newMillis();
             else if ((newMillis() - resetActivationTimeout) > RESET_ENABLE_TIMEOUT)   {
 
+                #ifdef MODULE_LEDS
                 leds.allLEDsOff();
+                #endif
                 newDelay(50);
                 _reboot_Teensyduino_();
 
@@ -278,9 +294,11 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
             if (!state) {
 
                 //restore led states
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-                leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
+                #ifdef MODULE_LEDS
+                    leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
+                    leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
+                #endif
                 modifierActive = false;
 
             }
@@ -377,7 +395,9 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
             lcdMessageType = featureAftertouchType;
             pads.changeAftertouchType();
             //split and pad number are irrelevant here
+            #ifdef MODULE_LCD
             display.displayOnOff(lcdMessageType, splitOff, (uint8_t)pads.getAftertouchType(), 0);
+            #endif
             return;
 
         }   else {
@@ -416,8 +436,13 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
 
     }
 
-    leds.setLEDstate(ledNumber, ledState);
-    display.displayOnOff(lcdMessageType, pads.getSplitState(), (uint8_t)ledState, lastTouchedPad+1);
+    #ifdef MODULE_LEDS
+        leds.setLEDstate(ledNumber, ledState);
+    #endif
+
+    #ifdef MODULE_LCD
+        display.displayOnOff(lcdMessageType, pads.getSplitState(), (uint8_t)ledState, lastTouchedPad+1);
+    #endif
 
 }
 
@@ -437,7 +462,9 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             #if MODE_SERIAL > 0
                 Serial.println(F("Transport Control Play"));
             #endif
+            #ifdef MODULE_LEDS
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityFull);
+            #endif
 
         } else return;
 
@@ -451,8 +478,10 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             #if MODE_SERIAL > 0
                 Serial.println(F("Transport Control Stop"));
             #endif
-            leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
-            leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
+            #ifdef MODULE_LEDS
+                leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
+                leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
+            #endif
 
         } else {
 
@@ -469,29 +498,31 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
         case BUTTON_TRANSPORT_RECORD:
         if (state) {
 
-            ledIntensity_t recordState = leds.getLEDstate(LED_TRANSPORT_RECORD);
-            if (recordState == ledIntensityFull) {
+            #ifdef MODULE_LEDS
+                ledIntensity_t recordState = leds.getLEDstate(LED_TRANSPORT_RECORD);
+                if (recordState == ledIntensityFull) {
 
-                sysExArray[4] = 0x07;
-                recordState = ledIntensityOff;
-                #if MODE_SERIAL > 0
+                    sysExArray[4] = 0x07;
+                    recordState = ledIntensityOff;
+                    #if MODE_SERIAL > 0
                     Serial.println(F("Transport Control Record Stop"));
-                #endif
-                displayState = false;
+                    #endif
+                    displayState = false;
 
-                }   else if (recordState == ledIntensityOff) {
+                    }   else if (recordState == ledIntensityOff) {
 
-                sysExArray[4] = 0x06;
-                recordState = ledIntensityFull;
-                #if MODE_SERIAL > 0
+                    sysExArray[4] = 0x06;
+                    recordState = ledIntensityFull;
+                    #if MODE_SERIAL > 0
                     Serial.println(F("Transport Control Record Start"));
-                #endif
-                displayState = true;
+                    #endif
+                    displayState = true;
 
-            }
+                }
 
-            type = transportRecord;
-            leds.setLEDstate(LED_TRANSPORT_RECORD, recordState);
+                type = transportRecord;
+                leds.setLEDstate(LED_TRANSPORT_RECORD, recordState);
+            #endif
 
         } else return;
 
@@ -503,7 +534,9 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
         midi.sendSysEx(sysExArray, SYS_EX_ARRAY_SIZE);
     #endif
 
-    display.displayTransportControl(type, displayState);
+    #ifdef MODULE_LCD
+        display.displayTransportControl(type, displayState);
+    #endif
 
 }
 
@@ -515,7 +548,9 @@ void Buttons::handleTonicEvent(note_t note) {
         for (int i=0; i<NUMBER_OF_PADS; i++)
         if (pads.isPadPressed(i))  {
 
-            display.displayPadReleaseError(changeTonic);
+            #ifdef MODULE_LCD
+                display.displayPadReleaseError(changeTonic);
+            #endif
             return;
 
         }
@@ -526,7 +561,9 @@ void Buttons::handleTonicEvent(note_t note) {
         switch(result)  {
 
             case outputChanged:
-            leds.displayActiveNoteLEDs();
+            #ifdef MODULE_LEDS
+                leds.displayActiveNoteLEDs();
+            #endif
             break;
 
             default:
@@ -535,7 +572,9 @@ void Buttons::handleTonicEvent(note_t note) {
         }
 
         //always do this
-        display.displayNoteChange(result, tonicChange, activeTonic);
+        #ifdef MODULE_LCD
+            display.displayNoteChange(result, tonicChange, activeTonic);
+        #endif
 
     }   else {
 
@@ -543,7 +582,9 @@ void Buttons::handleTonicEvent(note_t note) {
         uint8_t pad = pads.getLastTouchedPad();
         pads.assignPadNote(pad, note);
         pads.displayActivePadNotes(pad);
-        leds.displayActiveNoteLEDs(true, pad);
+        #ifdef MODULE_LEDS
+            leds.displayActiveNoteLEDs(true, pad);
+        #endif
 
     }
 
@@ -564,7 +605,9 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 //check if last touched pad is pressed
                 if (pads.isPadPressed(pads.getLastTouchedPad()))   {
 
-                    display.displayEditModeNotAllowed(padNotReleased);
+                    #ifdef MODULE_LCD
+                        display.displayEditModeNotAllowed(padNotReleased);
+                    #endif
                     pads.setEditMode(false);
 
                 }   else {
@@ -584,13 +627,17 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
         }   else {
 
-            display.displayEditModeNotAllowed(notUserPreset);
+            #ifdef MODULE_LCD
+                display.displayEditModeNotAllowed(notUserPreset);
+            #endif
 
         }
 
         //restore leds
-        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
+        #ifdef MODULE_LEDS
+            leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+            leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
+        #endif
         //stop buttons temporarily
         buttonEnabled[BUTTON_OCTAVE_UP] = false;
         buttonEnabled[BUTTON_OCTAVE_DOWN] = false;
@@ -606,13 +653,19 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                 case false:
                 pads.changeActiveOctave(direction);
-                display.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
-                leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
-                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                #ifdef MODULE_LCD
+                    display.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
+                #endif
+                #ifdef MODULE_LEDS
+                    leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                #endif
                 break;
 
                 case true:
-                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+                #ifdef MODULE_LEDS
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+                #endif
                 break;
 
             }
@@ -628,12 +681,18 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     changeOutput_t shiftResult = pads.shiftOctave(direction);
                     uint8_t activeOctave = pads.getActiveOctave();
-                    display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    #ifdef MODULE_LCD
+                        display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
+                    #endif
+                    #ifdef MODULE_LEDS
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    #endif
 
                     }   else {
 
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    #ifdef MODULE_LEDS
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    #endif
 
                 }
 
@@ -644,22 +703,31 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     if (pads.isPadPressed(pads.getLastTouchedPad()))   {
 
-                        display.displayEditModeNotAllowed(padNotReleased);
+                        #ifdef MODULE_LCD
+                            display.displayEditModeNotAllowed(padNotReleased);
+                        #endif
+
                         return;
 
                     }
 
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    #ifdef MODULE_LEDS
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    #endif
 
                     //stop button is modifier
                     //disable it on release
                     buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
                     changeOutput_t shiftResult = pads.shiftNote(direction);
-                    display.displayNoteChange(shiftResult, noteShift, direction);
+                    #ifdef MODULE_LCD
+                        display.displayNoteChange(shiftResult, noteShift, direction);
+                    #endif
 
                 }   else {
 
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+                    #ifdef MODULE_LEDS
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+                    #endif
 
                 }
 

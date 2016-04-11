@@ -1,6 +1,5 @@
 #include "Scales.h"
 
-
 uint8_t getNotesPerScale(scale_t scale)    {
 
     switch(scale)   {
