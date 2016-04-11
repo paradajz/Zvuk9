@@ -15,7 +15,8 @@
 #define AFTERTOUCH_PRESSURE_RATIO_LOWER     30
 
 //upper aftertouch scale = upper pressure scale + AFTERTOUCH_PRESSURE_RATIO_UPPER%
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER     100
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER     70
+
 //change aftertouch step difference after this timeout
 #define AFTERTOUCH_SEND_TIMEOUT             100
 //ignore aftertouch reading change below this timeout

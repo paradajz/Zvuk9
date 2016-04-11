@@ -68,6 +68,8 @@
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
+      <Value></Value>
+      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/hardware/include</Value>
       <Value>D:/Dropbox/Documents/Arduino/libraries</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/wmx0gwyp.vtg/Micro Platforms/default/debuggers</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries</Value>
@@ -102,6 +104,8 @@
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
+      <Value></Value>
+      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/hardware/include</Value>
       <Value>D:/Dropbox/Documents/Arduino/libraries</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/wmx0gwyp.vtg/Micro Platforms/default/debuggers</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries</Value>
@@ -365,14 +369,15 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU=16000000L</Value>
+      <Value>F_CPU={build.fcpu}</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
-      <Value>LAYOUT_US_ENGLISH</Value>
+      <Value>{build.usbtype}</Value>
+      <Value>LAYOUT_{build.keylayout}</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
+      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/hardware/include</Value>
       <Value>D:/Dropbox/Documents/Arduino/libraries</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/wmx0gwyp.vtg/Micro Platforms/default/debuggers</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries</Value>
@@ -399,14 +404,15 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
       <Value>printf=iprintf</Value>
       <Value>__TEENSY__</Value>
       <Value>TEENSYDUINO=127</Value>
-      <Value>F_CPU=16000000L</Value>
+      <Value>F_CPU={build.fcpu}</Value>
       <Value>ARDUINO_ARCH_AVR</Value>
-      <Value>USB_MIDI</Value>
-      <Value>LAYOUT_US_ENGLISH</Value>
+      <Value>{build.usbtype}</Value>
+      <Value>LAYOUT_{build.keylayout}</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
+      <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/hardware/include</Value>
       <Value>D:/Dropbox/Documents/Arduino/libraries</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/wmx0gwyp.vtg/Micro Platforms/default/debuggers</Value>
       <Value>D:/Applications/Arduino167_zvuk9_mod/hardware/teensy/avr/libraries</Value>

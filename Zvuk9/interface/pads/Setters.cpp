@@ -1035,17 +1035,8 @@ void Pads::notesOnOff()    {
             //if there are pressed pads, send notes off
             for (int i=0; i<NUMBER_OF_PADS; i++)    {
 
-                if (!isPadPressed(i)) continue; //only send note off for pressed pads
-
-                for (int j=0; j<NOTES_PER_PAD; j++) {
-
-                    if (padNote[i][j] != BLANK_NOTE)    {
-
-                        midi.sendNoteOff(DEFAULT_MIDI_CHANNEL, padNote[i][j], 0);
-
-                    }
-
-                }
+                if (!isPadPressed(i)) continue; //only send note off for released pads
+                sendNotes(i, 0, false);
 
             }
 
@@ -1066,6 +1057,16 @@ void Pads::notesOnOff()    {
             Serial.print(F(" for pad "));
             Serial.println(lastPressedPad);
         #endif
+
+        if (!newNotesState) {
+
+            uint8_t pressedPads = 0;
+            for (int i=0; i<NUMBER_OF_PADS; i++)
+                if (isPadPressed(i)) pressedPads++;
+
+            sendNotes(getLastTouchedPad(), 0, false);
+
+        }
 
     }
 

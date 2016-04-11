@@ -48,7 +48,7 @@ void Pads::sendY(uint8_t pad)  {
 
 void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
-    bool sendOff = true;
+    bool sendOff;
 
     switch(state)   {
 
@@ -83,10 +83,12 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
         #if MODE_SERIAL > 0
             Serial.print(F("Pad "));
             Serial.print(pad);
-            Serial.println(F(" released"));
-        #else
+            Serial.println(F(" released. Notes: "));
+        #endif
             //some special considerations here
             for (int i=0; i<NOTES_PER_PAD; i++)    {
+
+                sendOff = true;
 
                 if (padNote[pad][i] == BLANK_NOTE) continue;
 
@@ -98,6 +100,9 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
                     //don't check released pads
                     if (!isPadPressed(j)) continue;
 
+                    //don't check pad if noteSend is disabled
+                    if (!noteSendEnabled[j]) continue;
+
                     //only send note off if the same note isn't active on some other pad already
                     if (padNote[j][i] == padNote[pad][i])    {
 
@@ -108,10 +113,17 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
                 }
 
-                if (sendOff) midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
+                if (sendOff)    {
+
+                    #if MODE_SERIAL > 0
+                        Serial.println(padNote[pad][i]);
+                    #else
+                        midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
+                    #endif
+
+                }
 
             }
-        #endif
 
         break;
 
@@ -245,7 +257,7 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
         if (!noteCounter || !noteSendEnabled[pad])  {
 
             #if MODE_SERIAL > 0
-                Serial.print(F("Clearing notes for pad "));
+                Serial.print(F("Clearing notes on LCD for pad "));
                 Serial.println(pad);
             #endif
 

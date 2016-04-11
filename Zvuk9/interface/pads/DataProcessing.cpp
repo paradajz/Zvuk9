@@ -168,7 +168,7 @@ bool Pads::checkAftertouch(uint8_t pad)  {
 
             if (!aftertouchActivated[pad])  {
 
-                    aftertouchActivated[pad] = true;
+                aftertouchActivated[pad] = true;
 
             }
 
@@ -602,8 +602,11 @@ void Pads::checkNoteBuffer()    {
         if ((newMillis() - noteTime) < PAD_NOTE_SEND_DELAY) return;
         note_buffer_tail = i;
 
-        if (noteSendEnabled[pad_buffer[i]])
+        if (noteSendEnabled[pad_buffer[i]]) {
+
             sendNotes(pad_buffer[i], velocity_buffer[i], true);
+
+        }
 
     }
 
@@ -727,13 +730,13 @@ void Pads::updatePressHistory(uint8_t pad) {
 
     }
 
-    #if MODE_SERIAL > 0
-        Serial.print(F("Inserting pad "));
-        Serial.print(pad);
-        Serial.println(F(" to pad press history. New buffer:"));
-        for (int i=0; i<NUMBER_OF_PADS; i++)
-            Serial.println(padPressHistory_buffer[i]);
-    #endif
+    //#if MODE_SERIAL > 0
+        //Serial.print(F("Inserting pad "));
+        //Serial.print(pad);
+        //Serial.println(F(" to pad press history. New buffer:"));
+        //for (int i=0; i<NUMBER_OF_PADS; i++)
+            //Serial.println(padPressHistory_buffer[i]);
+    //#endif
 
 }
 
@@ -752,13 +755,13 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
         padPressHistory_buffer[0] = pad;
         padPressHistory_counter = 0;
 
-        #if MODE_SERIAL > 0
-            Serial.println(F("No more pressed pads. Current buffer:"));
-            for (int i=0; i<NUMBER_OF_PADS; i++)
-                Serial.println(padPressHistory_buffer[i]);
-            Serial.print(F("Current padPressHistoryCounter: "));
-            Serial.println(padPressHistory_counter);
-        #endif
+        //#if MODE_SERIAL > 0
+            //Serial.println(F("No more pressed pads. Current buffer:"));
+            //for (int i=0; i<NUMBER_OF_PADS; i++)
+                //Serial.println(padPressHistory_buffer[i]);
+            //Serial.print(F("Current padPressHistoryCounter: "));
+            //Serial.println(padPressHistory_counter);
+        //#endif
 
         return;
 
@@ -789,23 +792,23 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
     padPressHistory_counter--;
     if (padPressHistory_counter < 0) padPressHistory_counter = 0;
 
-    #if MODE_SERIAL > 0
-        Serial.print(F("Clearing pad "));
-        Serial.print(pad);
-        Serial.println(F(" from history"));
-        Serial.println(F("New history buffer:"));
-        for (int i=0; i<NUMBER_OF_PADS; i++)
-            Serial.println(padPressHistory_buffer[i]);
-    #endif
+    //#if MODE_SERIAL > 0
+        //Serial.print(F("Clearing pad "));
+        //Serial.print(pad);
+        //Serial.println(F(" from history"));
+        //Serial.println(F("New history buffer:"));
+        //for (int i=0; i<NUMBER_OF_PADS; i++)
+            //Serial.println(padPressHistory_buffer[i]);
+    //#endif
 
 }
 
 void Pads::storeNotes(uint8_t pad)  {
 
-    #if MODE_SERIAL > 0
-        Serial.print(F("Storing notes in buffer for pad "));
-        Serial.println(pad);
-    #endif
+    //#if MODE_SERIAL > 0
+        //Serial.print(F("Storing notes in buffer for pad "));
+        //Serial.println(pad);
+    //#endif
 
     //store midi note on in circular buffer
     uint8_t i = note_buffer_head + 1;

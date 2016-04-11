@@ -667,9 +667,10 @@ bool Pads::noteActive(note_t note) {
     //return true if received tonic is among active notes on some pad
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
-    for (int j=0; j<NOTES_PER_PAD; j++)
-    if (padNote[i][j] != BLANK_NOTE)
-    if (getTonicFromNote(padNote[i][j]) == note) return true;
+        for (int j=0; j<NOTES_PER_PAD; j++)
+            if (padNote[i][j] != BLANK_NOTE)
+                if (getTonicFromNote(padNote[i][j]) == note)
+                    return true;
 
     return false;
 
