@@ -13,14 +13,12 @@
 
 //lower aftertouch scale = upper pressure scale + AFTERTOUCH_PRESSURE_RATIO_LOWER%
 #define AFTERTOUCH_PRESSURE_RATIO_LOWER     30
-
 //upper aftertouch scale = upper pressure scale + AFTERTOUCH_PRESSURE_RATIO_UPPER%
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER     70
-
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER     65
 //change aftertouch step difference after this timeout
-#define AFTERTOUCH_SEND_TIMEOUT             100
+#define AFTERTOUCH_SEND_TIMEOUT             50
 //ignore aftertouch reading change below this timeout
-#define AFTERTOUCH_SEND_TIMEOUT_IGNORE      3
+#define AFTERTOUCH_SEND_TIMEOUT_IGNORE      10
 //threshold difference between current and last aftertouch value after AFTERTOUCH_SEND_TIMEOUT of no movement
 #define AFTERTOUCH_SEND_TIMEOUT_STEP        2
 //don't check aftertouch when pad is just pressed for AFTERTOUCH_INITIAL_VALUE_DELAYms

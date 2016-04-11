@@ -185,7 +185,7 @@ bool Pads::checkAftertouch(uint8_t pad)  {
                     case aftertouchChannel:
                     //we need to find max pressure
                     for (int i=0; i<NUMBER_OF_PADS; i++)
-                    if (isPadPressed(i)) padsPressed++;
+                        if (isPadPressed(i)) padsPressed++;
 
                     if (padsPressed == 1) {
 
@@ -652,7 +652,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
         //show aftertouch
         if (aftertouchAvailable)    {
 
-            if (aftertouchSendEnabled[pad])
+            if (aftertouchSendEnabled[pad] && aftertouchActivated[pad])
                 display.displayAftertouch(lastAftertouchValue[pad]);
             else display.clearAftertouch();
 

@@ -91,7 +91,6 @@ void setup()    {
 
     #if MODE_SERIAL
         Serial.begin(38400);
-        _delay_ms(100);
     #endif
 
     initHardware();
