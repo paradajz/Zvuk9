@@ -8,13 +8,13 @@ void Pads::setCCXsendEnabled(uint8_t padNumber, uint8_t state)    {
         case splitXY:
         //global
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             xSendEnabled[i] = state;
         break;
 
         case splitXYFunctions:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
         xSendEnabled[padNumber] = state;
         break;
 
@@ -30,13 +30,13 @@ void Pads::setCCYsendEnabled(uint8_t padNumber, uint8_t state)    {
         case splitXY:
         //global
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             ySendEnabled[i] = state;
         break;
 
         case splitXYFunctions:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
         ySendEnabled[padNumber] = state;
         break;
 
@@ -52,13 +52,13 @@ void Pads::setNoteSendEnabled(uint8_t padNumber, uint8_t state)   {
         case splitXY:
         //global
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             noteSendEnabled[i] = state;
         break;
 
         case splitXYFunctions:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
         noteSendEnabled[padNumber] = state;
         break;
 
@@ -74,13 +74,13 @@ void Pads::setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state) {
         case splitXY:
         //global
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             aftertouchSendEnabled[i] = state;
         break;
 
         case splitXYFunctions:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
         aftertouchSendEnabled[padNumber] = state;
         break;
 
@@ -262,7 +262,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
     changeOutput_t result = outputChanged;
 
     //check if note/notes are too low/high if shifted
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+    for (int i=0; i<MAX_PADS; i++)    {
 
         if (!direction)  {  //shift down
 
@@ -356,15 +356,15 @@ void Pads::checkOctaveShift()   {
         case true:
         //predefined scale
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, currentOctave_predefinedScale+octaveShiftAmount);
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             direction ? padNote[i][0] += (MIDI_NOTES*abs(octaveShiftAmount)) : padNote[i][0] -= (MIDI_NOTES*abs(octaveShiftAmount));
         break;
 
         case false:
         //user scale
         octaveShiftAmount = abs(octaveShiftAmount);
-        uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
-        for (int i=0; i<NUMBER_OF_PADS; i++)    {
+        uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+        for (int i=0; i<MAX_PADS; i++)    {
 
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
@@ -421,7 +421,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
     changeAllowed = true;
 
     //check if all notes are within range before shifting
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+    for (int i=0; i<MAX_PADS; i++)    {
 
         if (!changeAllowed) break;
 
@@ -452,12 +452,12 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
         result = outputChanged;
 
-        uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
+        uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
         if (isPredefinedScale(activePreset) && !internalChange)
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
 
-        for (int i=0; i<NUMBER_OF_PADS; i++)    {
+        for (int i=0; i<MAX_PADS; i++)    {
 
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
@@ -536,14 +536,14 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 ccXPad[startPad] = changedValue;
                 break;
 
                 case true:
                 //global
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_X_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<NUMBER_OF_PADS; i++)
+                for (int i=0; i<MAX_PADS; i++)
                     ccXPad[i] = changedValue;
 
             }
@@ -572,14 +572,14 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 ccYPad[startPad] = changedValue;
                 break;
 
                 case true:
                 //global
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_Y_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<NUMBER_OF_PADS; i++)
+                for (int i=0; i<MAX_PADS; i++)
                     ccYPad[i] = changedValue;
 
             }
@@ -629,14 +629,14 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 ccXmaxPad[startPad] = changedValue;
                 break;
 
                 case true:
                 //global
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<NUMBER_OF_PADS; i++)
+                for (int i=0; i<MAX_PADS; i++)
                     ccXmaxPad[i] = changedValue;
 
             }
@@ -665,14 +665,14 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 ccXminPad[startPad] = changedValue;
                 break;
 
                 case true:
                 //global
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<NUMBER_OF_PADS; i++)
+                for (int i=0; i<MAX_PADS; i++)
                     ccXminPad[i] = changedValue;
 
             }
@@ -701,14 +701,14 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 ccYmaxPad[startPad] = changedValue;
                 break;
 
                 case true:
                 //global
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<NUMBER_OF_PADS; i++)
+                for (int i=0; i<MAX_PADS; i++)
                 ccYmaxPad[i] = changedValue;
 
             }
@@ -737,14 +737,14 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                     ccYminPad[startPad] = changedValue;
                 break;
 
                 case true:
                 //global
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<NUMBER_OF_PADS; i++)
+                for (int i=0; i<MAX_PADS; i++)
                     ccYminPad[i] = changedValue;
 
             }
@@ -794,14 +794,14 @@ changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate,
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                     padCurveX[startPad] = changedValue;
                 break;
 
                 case true:
                 //global
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<NUMBER_OF_PADS; i++)
+                for (int i=0; i<MAX_PADS; i++)
                     padCurveX[i] = changedValue;
 
             }
@@ -830,14 +830,14 @@ changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate,
 
                 case false:
                 //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), changedValue);
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 padCurveY[startPad] = changedValue;
                 break;
 
                 case true:
                 //global
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<NUMBER_OF_PADS; i++)
+                for (int i=0; i<MAX_PADS; i++)
                     padCurveY[i] = changedValue;
 
             }
@@ -889,7 +889,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
     for (int i=0; i<NOTES_PER_PAD; i++)
         if (padNote[pad][i] == newNote) { addOrRemove = false; noteIndex = i; break; }
 
-    uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
+    uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
     //if it isn't, add it
     if (addOrRemove)    {
@@ -963,16 +963,16 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
 
     scaleType_t currentScaleType = getScaleType(activePreset);
     if (currentScaleType == userScale) return notAllowed;
-    int16_t tempNoteArray[NUMBER_OF_PADS];
+    int16_t tempNoteArray[MAX_PADS];
 
     switch(direction)   {
 
         case true:
         //up, one note higher
         //last note gets increased, other notes get shifted down
-        tempNoteArray[NUMBER_OF_PADS-1] = padNote[NUMBER_OF_PADS-currentScaleType][0] + MIDI_NOTES;
-        if (tempNoteArray[NUMBER_OF_PADS-1] > 127) return outOfRange;
-        for (int i=0; i<NUMBER_OF_PADS-1; i++)    {
+        tempNoteArray[MAX_PADS-1] = padNote[MAX_PADS-currentScaleType][0] + MIDI_NOTES;
+        if (tempNoteArray[MAX_PADS-1] > 127) return outOfRange;
+        for (int i=0; i<MAX_PADS-1; i++)    {
 
             tempNoteArray[i] = padNote[i+1][0];
 
@@ -985,7 +985,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
         //first note gets decreased, other notes get shifted up
         tempNoteArray[0] = padNote[currentScaleType-1][0] - MIDI_NOTES;
         if (tempNoteArray[0] < 0) return outOfRange;
-        for (int i=0; i<NUMBER_OF_PADS-1; i++)    {
+        for (int i=0; i<MAX_PADS-1; i++)    {
 
             tempNoteArray[i+1] = padNote[i][0];
 
@@ -1006,7 +1006,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
         Serial.println(noteShiftAmount);
     #endif
 
-    for (int i=0; i<NUMBER_OF_PADS; i++)
+    for (int i=0; i<MAX_PADS; i++)
         padNote[i][0] = tempNoteArray[i];
 
     return outputChanged;
@@ -1021,7 +1021,7 @@ void Pads::notesOnOff()    {
 
         newNotesState = !noteSendEnabled[0];
 
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             setNoteSendEnabled(i, newNotesState);
 
         #if MODE_SERIAL > 0
@@ -1034,7 +1034,7 @@ void Pads::notesOnOff()    {
 
             //we have turned notes off for all pads
             //if there are pressed pads, send notes off
-            for (int i=0; i<NUMBER_OF_PADS; i++)    {
+            for (int i=0; i<MAX_PADS; i++)    {
 
                 if (!isPadPressed(i)) continue; //only send note off for released pads
                 sendNotes(i, 0, false);
@@ -1062,7 +1062,7 @@ void Pads::notesOnOff()    {
         if (!newNotesState) {
 
             uint8_t pressedPads = 0;
-            for (int i=0; i<NUMBER_OF_PADS; i++)
+            for (int i=0; i<MAX_PADS; i++)
                 if (isPadPressed(i)) pressedPads++;
 
             sendNotes(getLastTouchedPad(), 0, false);
@@ -1081,7 +1081,7 @@ void Pads::xOnOff()    {
 
         newXState = !xSendEnabled[0];
 
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             setCCXsendEnabled(i, newXState);
 
         #if MODE_SERIAL > 0
@@ -1118,7 +1118,7 @@ void Pads::yOnOff()    {
 
         newYState = !ySendEnabled[0];
 
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             setCCYsendEnabled(i, newYState);
 
         #if MODE_SERIAL > 0
@@ -1155,7 +1155,7 @@ void Pads::aftertouchOnOff()    {
 
         newAfterTouchState = !aftertouchSendEnabled[0];
 
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             setAfterTouchSendEnabled(i, newAfterTouchState);
 
         #if MODE_SERIAL > 0

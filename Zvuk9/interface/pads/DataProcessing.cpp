@@ -184,7 +184,7 @@ bool Pads::checkAftertouch(uint8_t pad)  {
 
                     case aftertouchChannel:
                     //we need to find max pressure
-                    for (int i=0; i<NUMBER_OF_PADS; i++)
+                    for (int i=0; i<MAX_PADS; i++)
                         if (isPadPressed(i)) padsPressed++;
 
                     if (padsPressed == 1) {
@@ -194,7 +194,7 @@ bool Pads::checkAftertouch(uint8_t pad)  {
 
                     } else {    uint8_t tempMaxValue = 0;
 
-                        for (int i=0; i<NUMBER_OF_PADS; i++)    {
+                        for (int i=0; i<MAX_PADS; i++)    {
 
                             if (!isPadPressed(i)) continue;
                             if (!aftertouchSendEnabled[i]) continue;
@@ -728,7 +728,7 @@ void Pads::updatePressHistory(uint8_t pad) {
     //store currently pressed pad in buffer
     uint8_t pressedPads = 0;
 
-    for (int i=0; i<NUMBER_OF_PADS; i++)
+    for (int i=0; i<MAX_PADS; i++)
         if (isPadPressed(i)) pressedPads++;
 
     if (pressedPads == 1)   {
@@ -739,7 +739,7 @@ void Pads::updatePressHistory(uint8_t pad) {
     }   else {
 
         padPressHistory_counter++;
-        if (padPressHistory_counter >= NUMBER_OF_PADS)
+        if (padPressHistory_counter >= MAX_PADS)
             padPressHistory_counter = 0; //overwrite
 
         padPressHistory_buffer[padPressHistory_counter] = pad;
@@ -750,7 +750,7 @@ void Pads::updatePressHistory(uint8_t pad) {
         //Serial.print(F("Inserting pad "));
         //Serial.print(pad);
         //Serial.println(F(" to pad press history. New buffer:"));
-        //for (int i=0; i<NUMBER_OF_PADS; i++)
+        //for (int i=0; i<MAX_PADS; i++)
             //Serial.println(padPressHistory_buffer[i]);
     //#endif
 
@@ -760,12 +760,12 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
 
     uint8_t padPressedCounter = 0;
 
-    for (int i=0; i<NUMBER_OF_PADS; i++)
+    for (int i=0; i<MAX_PADS; i++)
         if (isPadPressed(i)) padPressedCounter++;
 
     if (padPressedCounter < 1)  {
 
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
             padPressHistory_buffer[i] = 0;
 
         padPressHistory_buffer[0] = pad;
@@ -773,7 +773,7 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
 
         //#if MODE_SERIAL > 0
             //Serial.println(F("No more pressed pads. Current buffer:"));
-            //for (int i=0; i<NUMBER_OF_PADS; i++)
+            //for (int i=0; i<MAX_PADS; i++)
                 //Serial.println(padPressHistory_buffer[i]);
             //Serial.print(F("Current padPressHistoryCounter: "));
             //Serial.println(padPressHistory_counter);
@@ -786,20 +786,20 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
     uint8_t index = pad;
     uint8_t newValue = 0;
 
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+    for (int i=0; i<MAX_PADS; i++)    {
 
         if (padPressHistory_buffer[i] == pad)   { index = i; padPressHistory_buffer[i] = newValue; break; }
 
     }
 
     //copy history array
-    int8_t tempHistoryArray[NUMBER_OF_PADS];
+    int8_t tempHistoryArray[MAX_PADS];
 
-    for (int i=0; i<NUMBER_OF_PADS; i++)
+    for (int i=0; i<MAX_PADS; i++)
         tempHistoryArray[i] = padPressHistory_buffer[i];
 
     //shift all values so that newValue is at the end of array
-    for (int i=index; i<(NUMBER_OF_PADS-1); i++) {
+    for (int i=index; i<(MAX_PADS-1); i++) {
 
         padPressHistory_buffer[i] = tempHistoryArray[i+1];
 
@@ -813,7 +813,7 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
         //Serial.print(pad);
         //Serial.println(F(" from history"));
         //Serial.println(F("New history buffer:"));
-        //for (int i=0; i<NUMBER_OF_PADS; i++)
+        //for (int i=0; i<MAX_PADS; i++)
             //Serial.println(padPressHistory_buffer[i]);
     //#endif
 

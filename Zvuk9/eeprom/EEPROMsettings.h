@@ -16,8 +16,8 @@ EEPROM addresses of parameters.
 #include "../hardware/lcd/lcd.h"
 #endif
 
-#include "Defaults.h"
 #include "../interface/pads/Pads.h"
+#include "Defaults.h"
 #include "../Scales.h"
 #include "Blocks.h"
 #include "Sections.h"

@@ -1,8 +1,11 @@
+#include "Modules.h"
+
+#ifdef MODULE_LCD
+
 #ifndef LCD_H_
 #define LCD_H_
 
 #include "Arduino.h"
-#include "../../Modules.h"
 #include "../../Types.h"
 #include "../../hardware/lcd/lcd.h"
 #include "LCDsettings.h"
@@ -85,4 +88,5 @@ class LCD   {
 
 extern LCD display;
 
+#endif
 #endif

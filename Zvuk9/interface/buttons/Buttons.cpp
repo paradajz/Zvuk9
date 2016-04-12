@@ -1,4 +1,7 @@
 #include "Buttons.h"
+
+#ifdef BUTTONS_H_
+
 #include "../../hardware/i2c/i2c_master.h"
 #include "../pads/Pads.h"
 
@@ -545,7 +548,7 @@ void Buttons::handleTonicEvent(note_t note) {
     if (!pads.editModeActive())   {
 
         //don't allow change of tonic while pads are pressed
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i=0; i<MAX_PADS; i++)
         if (pads.isPadPressed(i))  {
 
             #ifdef MODULE_LCD
@@ -747,3 +750,4 @@ bool Buttons::modifierEnabled() {
 }
 
 Buttons buttons;
+#endif

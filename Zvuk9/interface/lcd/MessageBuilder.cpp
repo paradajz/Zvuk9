@@ -1,4 +1,6 @@
 #include "LCD.h"
+
+#ifdef LCD_H_
 #include "../../Scales.h"
 #include "../pads/Pads.h"
 
@@ -735,3 +737,4 @@ void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool 
     }
 
 }
+#endif

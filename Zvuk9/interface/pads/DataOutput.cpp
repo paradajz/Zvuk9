@@ -92,7 +92,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
                 if (padNote[pad][i] == BLANK_NOTE) continue;
 
-                for (int j=0; j<NUMBER_OF_PADS; j++) {
+                for (int j=0; j<MAX_PADS; j++) {
 
                     //don't check current pad
                     if (j == pad) continue;
@@ -213,7 +213,7 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
 
             noteActive = false;
 
-            for (int i=0; i<NUMBER_OF_PADS; i++)    {
+            for (int i=0; i<MAX_PADS; i++)    {
 
                 if (!isPadPressed(i)) continue; //skip released pad
                 if (i == pad) continue; //skip current pad

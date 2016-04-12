@@ -1,4 +1,8 @@
 #include "Encoders.h"
+
+#ifdef ENCODERS_H_
+
+#include "Encoders.h"
 #include "EncoderSettings.h"
 #include "../../Types.h"
 #include "../../hardware/timer/TimerObject.h"
@@ -31,6 +35,7 @@ Encoders::Encoders()    {
 void Encoders::init()   {
 
     //nothing
+
 
 }
 
@@ -75,7 +80,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         if (encoderNumber != PROGRAM_ENCODER) return;
     #endif
 
-    for (int i=0; i<NUMBER_OF_PADS; i++)
+    for (int i=0; i<MAX_PADS; i++)
     if (pads.isPadPressed(i)) {
 
         //disable encoders while pads are pressed
@@ -236,3 +241,4 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 }
 
 Encoders encoders;
+#endif

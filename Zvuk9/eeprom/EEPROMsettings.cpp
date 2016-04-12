@@ -125,7 +125,6 @@ void EEPROMsettings::factoryReset(factoryResetType_t type)   {
          lcd_puts("Factory reset");
          lcd_gotoxy(0, 1);
          lcd_puts("finished!");
-
          _delay_ms(2000);
     #endif
 
@@ -160,7 +159,7 @@ void EEPROMsettings::createSectionAddresses()   {
                 //first section address is always 0
                 blocks[i].sectionAddress[0] = 0;
 
-                }   else {
+            }   else {
 
                 switch(blocks[i].sectionParameterType[j-1])   {
 
@@ -274,9 +273,9 @@ void EEPROMsettings::initProgramSettings(bool partialReset) {
     //init local settings for all programs
     for (int i=0; i<NUMBER_OF_PROGRAMS; i++)    {
 
-        parameterAddress = blockStartAddress + blocks[CONF_BLOCK_PROGRAM].sectionAddress[programLocalSettingsSection] + ((LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS)*i);
+        parameterAddress = blockStartAddress + blocks[CONF_BLOCK_PROGRAM].sectionAddress[programLocalSettingsSection] + ((LOCAL_PROGRAM_SETTINGS*MAX_PADS)*i);
 
-        for (int j=0; j<NUMBER_OF_PADS; j++)    {
+        for (int j=0; j<MAX_PADS; j++)    {
 
             for (int k=0; k<LOCAL_PROGRAM_SETTINGS; k++)    {
 
@@ -316,9 +315,9 @@ void EEPROMsettings::initUserScales(bool partialReset)   {
 
     for (int i=0; i<NUMBER_OF_USER_SCALES; i++) {
 
-        parameterAddress = blockStartAddress + blocks[CONF_BLOCK_USER_SCALE].sectionAddress[padNotesSection] + ((NUMBER_OF_PADS*NOTES_PER_PAD)*i);
+        parameterAddress = blockStartAddress + blocks[CONF_BLOCK_USER_SCALE].sectionAddress[padNotesSection] + ((MAX_PADS*NOTES_PER_PAD)*i);
 
-        for (int j=0; j<NUMBER_OF_PADS; j++)    {
+        for (int j=0; j<MAX_PADS; j++)    {
 
             for (int k=0; k<NOTES_PER_PAD; k++) {
 
@@ -348,7 +347,7 @@ void EEPROMsettings::initPadCalibration(bool partialReset)   {
     eeprom_update_byte((uint8_t*)parameterAddress, 0);
 
     //init lower pressure limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+    for (int i=0; i<MAX_PADS; i++)    {
 
         parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationPressureLowerSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
@@ -356,7 +355,7 @@ void EEPROMsettings::initPadCalibration(bool partialReset)   {
     }
 
     //init upper pressure limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+    for (int i=0; i<MAX_PADS; i++)    {
 
         parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationPressureUpperSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
@@ -364,7 +363,7 @@ void EEPROMsettings::initPadCalibration(bool partialReset)   {
     }
 
     //init lower x limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+    for (int i=0; i<MAX_PADS; i++)    {
 
         parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationXlowerSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_X_LIMIT_LOWER);
@@ -372,7 +371,7 @@ void EEPROMsettings::initPadCalibration(bool partialReset)   {
     }
 
     //init upper x limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+    for (int i=0; i<MAX_PADS; i++)    {
 
         parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationXupperSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_X_LIMIT_UPPER);
@@ -380,7 +379,7 @@ void EEPROMsettings::initPadCalibration(bool partialReset)   {
     }
 
     //init lower y limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+    for (int i=0; i<MAX_PADS; i++)    {
 
         parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationYlowerSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_Y_LIMIT_LOWER);
@@ -388,7 +387,7 @@ void EEPROMsettings::initPadCalibration(bool partialReset)   {
     }
 
     //init upper y limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)    {
+    for (int i=0; i<MAX_PADS; i++)    {
 
         parameterAddress = blockStartAddress+blocks[CONF_BLOCK_PAD_CALIBRATION].sectionAddress[padCalibrationYupperSection] + i*2;
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_Y_LIMIT_UPPER);

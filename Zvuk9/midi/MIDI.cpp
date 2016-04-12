@@ -2,6 +2,7 @@
 #include "MIDI_parameters.h"
 #include "hw_midi/hw_MIDI.h"
 #include "../Debug.h"
+#include "../interface/pads/Pads.h"
 
 MIDI::MIDI()    {
 
@@ -12,7 +13,7 @@ MIDI::MIDI()    {
 void MIDI::init() {
 
     //enable only midi out
-    hwMIDI.init(DEFAULT_MIDI_CHANNEL, false, true);
+    hwMIDI.init(pads.getMIDIchannel(), false, true);
     //usb midi started automatically
 
 }

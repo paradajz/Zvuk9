@@ -2,7 +2,6 @@
 #define MENU_SERVICEMENUSTRINGS_H_
 
 #include <avr/pgmspace.h>
-#include "Arduino.h"
 
 //menu names
 const char PROGMEM menuType_user[] PROGMEM = "User menu";

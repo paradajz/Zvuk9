@@ -1,4 +1,5 @@
 #include "LEDs.h"
+#ifdef LEDS_H_
 #include "../../hardware/timer/TimerObject.h"
 #include "../pads/Pads.h"
 
@@ -175,3 +176,4 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad) {
 }
 
 LEDs leds;
+#endif

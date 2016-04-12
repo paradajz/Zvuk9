@@ -223,6 +223,6 @@ void Pads::setNextPad()    {
 
     switchToNextPad = false;
     activePad++;
-    if (activePad == NUMBER_OF_PADS) activePad = 0;
+    if (activePad == CONNECTED_PADS) activePad = 0;
 
 }

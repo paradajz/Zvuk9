@@ -1,7 +1,10 @@
+#include "../LCD.h"
+
+#ifdef LCD_H_
+
 #ifndef MENU_H_
 #define MENU_H_
 
-#include "../LCD.h"
 #include "../../../Types.h"
 #include "../Macros.h"
 #include "../strings/Strings.h"
@@ -36,4 +39,5 @@ class Menu  {
 
 extern Menu menu;
 
+#endif
 #endif

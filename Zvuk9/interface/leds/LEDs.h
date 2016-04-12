@@ -1,8 +1,11 @@
+#include "../../Modules.h"
+
+#ifdef MODULE_LEDS
+
 #ifndef LEDS_H_
 #define LEDS_H_
 
 #include "Arduino.h"
-#include "../../Modules.h"
 #include "../../hardware/pins/Pins.h"
 #include "../../Types.h"
 #include "LEDsettings.h"
@@ -34,3 +37,4 @@ class LEDs  {
 #endif
 
 extern LEDs leds;
+#endif

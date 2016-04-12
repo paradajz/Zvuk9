@@ -66,12 +66,12 @@ void startUpAnimation() {
     #ifdef MODULE_LEDS
         //restore led states
         for (int i=0; i<NUMBER_OF_LEDS; i++)
-        leds.setLEDstate(i, tempLedStateArray[i]);
+            leds.setLEDstate(i, tempLedStateArray[i]);
 
-    newDelay(1500);
+        newDelay(1500);
 
-    //restore normal fade speed
-    leds.setFadeSpeed(DEFAULT_FADE_SPEED);
+        //restore normal fade speed
+        leds.setFadeSpeed(DEFAULT_FADE_SPEED);
     #endif
 
 }
@@ -81,16 +81,14 @@ void startUpAnimation() {
 void initHardware() {
 
     //do not change order of initialization!
-    cli();
-
     configuration.init();
-
+    sei();
     timers.init();
 
     midi.init();
 
     #ifdef MODULE_LCD
-        display.init();
+    display.init();
     #endif
 
     #ifdef MODULE_LEDS
@@ -139,7 +137,7 @@ void setup()    {
 
 void loop()     {
 
-    pads.update();
+    //pads.update();
 
     #ifdef MODULE_BUTTONS
         buttons.update();

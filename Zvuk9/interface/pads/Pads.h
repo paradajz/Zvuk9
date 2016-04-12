@@ -25,7 +25,8 @@
 #include "../lcd/menu/Menu.h"
 #endif
 
-#define NUMBER_OF_PADS          9
+#define CONNECTED_PADS          9
+#define MAX_PADS                9
 
 #define NUMBER_OF_SAMPLES       3
 
@@ -209,15 +210,15 @@ class Pads  {
     void clearTouchHistoryPad(uint8_t pad);
 
     //last midi values
-    uint8_t     lastXMIDIvalue[NUMBER_OF_PADS],
-                lastYMIDIvalue[NUMBER_OF_PADS];
+    uint8_t     lastXMIDIvalue[MAX_PADS],
+                lastYMIDIvalue[MAX_PADS];
 
-    uint8_t     lastVelocityValue[NUMBER_OF_PADS],
-                lastAftertouchValue[NUMBER_OF_PADS],
-                lastMIDInoteState[NUMBER_OF_PADS];
+    uint8_t     lastVelocityValue[MAX_PADS],
+                lastAftertouchValue[MAX_PADS],
+                lastMIDInoteState[MAX_PADS];
 
     //last raw values
-    int16_t     lastPressureValue[NUMBER_OF_PADS];
+    int16_t     lastPressureValue[MAX_PADS];
 
     //median value samples get stored here (3 samples)
     int16_t     xValueSamples[NUMBER_OF_SAMPLES],
@@ -228,31 +229,31 @@ class Pads  {
     uint16_t    padPressed;
 
     //parameters from eeprom
-    int8_t      ccXPad[NUMBER_OF_PADS],
-                ccYPad[NUMBER_OF_PADS],
-                ccXminPad[NUMBER_OF_PADS],
-                ccXmaxPad[NUMBER_OF_PADS],
-                ccYminPad[NUMBER_OF_PADS],
-                ccYmaxPad[NUMBER_OF_PADS];
+    int8_t      ccXPad[MAX_PADS],
+                ccYPad[MAX_PADS],
+                ccXminPad[MAX_PADS],
+                ccXmaxPad[MAX_PADS],
+                ccYminPad[MAX_PADS],
+                ccYmaxPad[MAX_PADS];
 
-    bool        xSendEnabled[NUMBER_OF_PADS],
-                ySendEnabled[NUMBER_OF_PADS],
-                noteSendEnabled[NUMBER_OF_PADS],
-                aftertouchSendEnabled[NUMBER_OF_PADS];
+    bool        xSendEnabled[MAX_PADS],
+                ySendEnabled[MAX_PADS],
+                noteSendEnabled[MAX_PADS],
+                aftertouchSendEnabled[MAX_PADS];
 
-    int8_t      padCurveX[NUMBER_OF_PADS],
-                padCurveY[NUMBER_OF_PADS];
+    int8_t      padCurveX[MAX_PADS],
+                padCurveY[MAX_PADS];
 
-    int16_t     padPressureLimitLower[NUMBER_OF_PADS],
-                padPressureLimitUpper[NUMBER_OF_PADS],
-                padXLimitLower[NUMBER_OF_PADS],
-                padXLimitUpper[NUMBER_OF_PADS],
-                padYLimitLower[NUMBER_OF_PADS],
-                padYLimitUpper[NUMBER_OF_PADS],
-                padAftertouchLimitLower[NUMBER_OF_PADS],
-                padAftertouchLimitUpper[NUMBER_OF_PADS];
+    int16_t     padPressureLimitLower[MAX_PADS],
+                padPressureLimitUpper[MAX_PADS],
+                padXLimitLower[MAX_PADS],
+                padXLimitUpper[MAX_PADS],
+                padYLimitLower[MAX_PADS],
+                padYLimitUpper[MAX_PADS],
+                padAftertouchLimitLower[MAX_PADS],
+                padAftertouchLimitUpper[MAX_PADS];
 
-    uint8_t     padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
+    uint8_t     padNote[MAX_PADS][NOTES_PER_PAD];
 
     int8_t      midiChannel;
     uint8_t     aftertouchType;
@@ -268,16 +269,16 @@ class Pads  {
     int8_t      noteShiftAmount;
 
     //debouncing
-    bool        padDebounceTimerStarted[NUMBER_OF_PADS],
-                firstPressureValueDelayTimerStarted[NUMBER_OF_PADS],
-                aftertouchActivated[NUMBER_OF_PADS];
+    bool        padDebounceTimerStarted[MAX_PADS],
+                firstPressureValueDelayTimerStarted[MAX_PADS],
+                aftertouchActivated[MAX_PADS];
 
-    uint32_t    padDebounceTimer[NUMBER_OF_PADS],
-                firstPressureValueDelayTimer[NUMBER_OF_PADS],
-                xSendTimer[NUMBER_OF_PADS],
-                ySendTimer[NUMBER_OF_PADS],
-                afterTouchSendTimer[NUMBER_OF_PADS],
-                aftertouchActivationDelay[NUMBER_OF_PADS];
+    uint32_t    padDebounceTimer[MAX_PADS],
+                firstPressureValueDelayTimer[MAX_PADS],
+                xSendTimer[MAX_PADS],
+                ySendTimer[MAX_PADS],
+                afterTouchSendTimer[MAX_PADS],
+                aftertouchActivationDelay[MAX_PADS];
 
     uint8_t     sampleCounterPressure,
                 sampleCounterXY;
@@ -291,7 +292,7 @@ class Pads  {
     int8_t      octaveShiftAmount;
 
     //pad press history buffer
-    uint8_t     padPressHistory_buffer[NUMBER_OF_PADS];
+    uint8_t     padPressHistory_buffer[MAX_PADS];
     int8_t      padPressHistory_counter;
 
     //note buffer

@@ -1,4 +1,6 @@
 #include "LCD.h"
+
+#ifdef LCD_H_
 #include <util/delay.h>
 
 LCD::LCD()  {
@@ -6,13 +8,14 @@ LCD::LCD()  {
     displayMessage_var = false;
     messageDisplayTime = 0;
     string_line.reserve(MAX_TEXT_SIZE);
+    #ifdef MODULE_LCD
+        lcd_init(LCD_DISP_ON);
+        _delay_ms(150);
+    #endif
 
 }
 
 void LCD::init()    {
-
-    lcd_init(LCD_DISP_ON);
-    _delay_ms(150);
 
     lcd_clrscr();
 
@@ -261,3 +264,4 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 }
 
 LCD display;
+#endif

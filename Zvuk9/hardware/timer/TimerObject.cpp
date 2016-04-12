@@ -157,64 +157,66 @@ inline void ledRowOn(uint8_t rowNumber, uint8_t value)  {
 
 ISR(TIMER0_COMPA_vect)    {
 
-    static uint8_t ledUpdateCounter = 0;
+    #ifdef MODULE_LEDS
 
-    if (ledUpdateCounter == 2)  {
+        static uint8_t ledUpdateCounter = 0;
 
-        #ifdef MODULE_LEDS
-            ledUpdateCounter = 0;
+        if (ledUpdateCounter == 2)  {
 
-            //LEDs
-            ledRowsOff();
-            if (activeColumnInterrupt == NUMBER_OF_LED_COLUMNS) activeColumnInterrupt = 0;
-            activateColumn(activeColumnInterrupt);
+                ledUpdateCounter = 0;
 
-            uint8_t ledNumber;
-            uint8_t ledStateSingle;
-            uint8_t currentStepValue;
-            bool stepDirection;
-            bool stepUpdate;
+                //LEDs
+                ledRowsOff();
+                if (activeColumnInterrupt == NUMBER_OF_LED_COLUMNS) activeColumnInterrupt = 0;
+                activateColumn(activeColumnInterrupt);
 
-            for (int i=0; i<NUMBER_OF_LED_ROWS; i++)  {
+                uint8_t ledNumber;
+                uint8_t ledStateSingle;
+                uint8_t currentStepValue;
+                bool stepDirection;
+                bool stepUpdate;
 
-                ledNumber = activeColumnInterrupt+i*NUMBER_OF_LED_COLUMNS;
-                ledStateSingle = ledState[ledNumber];
-                currentStepValue = transitionCounter[ledNumber];
-                stepUpdate = currentStepValue != ledStateSingle;
+                for (int i=0; i<NUMBER_OF_LED_ROWS; i++)  {
 
-                if (currentStepValue)
-                    ledRowOn(i, currentStepValue);
+                    ledNumber = activeColumnInterrupt+i*NUMBER_OF_LED_COLUMNS;
+                    ledStateSingle = ledState[ledNumber];
+                    currentStepValue = transitionCounter[ledNumber];
+                    stepUpdate = currentStepValue != ledStateSingle;
 
-                if (stepUpdate) {
+                    if (currentStepValue)
+                        ledRowOn(i, currentStepValue);
 
-                    stepDirection = currentStepValue < ledStateSingle;
+                    if (stepUpdate) {
 
-                    switch(stepDirection)   {
+                        stepDirection = currentStepValue < ledStateSingle;
 
-                        case true:
-                        transitionCounter[ledNumber] += pwmSteps;
-                        if (transitionCounter[ledNumber] > ledStateSingle)
-                            transitionCounter[ledNumber] = ledStateSingle;
-                        break;
+                        switch(stepDirection)   {
 
-                        case false:
-                        transitionCounter[ledNumber] -= pwmSteps;
-                        if (transitionCounter[ledNumber] < ledStateSingle)
-                            transitionCounter[ledNumber] = ledStateSingle;
-                        break;
+                            case true:
+                            transitionCounter[ledNumber] += pwmSteps;
+                            if (transitionCounter[ledNumber] > ledStateSingle)
+                                transitionCounter[ledNumber] = ledStateSingle;
+                            break;
+
+                            case false:
+                            transitionCounter[ledNumber] -= pwmSteps;
+                            if (transitionCounter[ledNumber] < ledStateSingle)
+                                transitionCounter[ledNumber] = ledStateSingle;
+                            break;
+
+                        }
 
                     }
 
                 }
 
-            }
-
             activeColumnInterrupt++;
-        #endif
 
-    }
+        }
 
-    ledUpdateCounter++;
+        ledUpdateCounter++;
+
+    #endif
 
     static bool updateMillis = false;
 
@@ -338,8 +340,10 @@ void TimerObject::init() {
 
     TIMSK3 |= (1<<OCIE3A);
 
-    for (int i=0; i<NUMBER_OF_ENCODERS; i++)
-        setupEncoder(i, encoderPin1Array[i], encoderPin2Array[i]);
+    #ifdef MODULE_ENCODERS
+        for (int i=0; i<NUMBER_OF_ENCODERS; i++)
+        setupEncoder(i, encoderPin1Array[i],encoderPin2Array[i]);
+    #endif
 
 };
 

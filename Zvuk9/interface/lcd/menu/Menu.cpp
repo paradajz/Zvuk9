@@ -1,4 +1,5 @@
 #include "Menu.h"
+#ifdef MENU_H_
 #include "../strings/Strings.h"
 
 Menu::Menu()    {
@@ -65,3 +66,4 @@ void Menu::selectOption()   {
 }
 
 Menu menu;
+#endif
