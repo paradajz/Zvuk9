@@ -29,6 +29,7 @@
 #include "Types.h"
 #include "hardware/reset/Reset.h"
 #include <util/delay.h>
+#include <avr/wdt.h>
 #include "midi/MIDI.h"
 
 //define function prototypes
@@ -79,6 +80,10 @@ void startUpAnimation() {
 //init
 
 void initHardware() {
+
+    //disable watchdog
+    MCUSR &= ~(1 << WDRF);
+    wdt_disable();
 
     //do not change order of initialization!
     configuration.init();
@@ -137,7 +142,7 @@ void setup()    {
 
 void loop()     {
 
-    //pads.update();
+    pads.update();
 
     #ifdef MODULE_BUTTONS
         buttons.update();

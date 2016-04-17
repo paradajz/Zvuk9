@@ -114,7 +114,9 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
             pads.setMIDIchannel(midiChannel);
 
-            display.displayMIDIchannelChange(pads.getMIDIchannel());
+            #ifdef MODULE_LCD
+                display.displayMIDIchannelChange(pads.getMIDIchannel());
+            #endif
 
         } else {
         #else

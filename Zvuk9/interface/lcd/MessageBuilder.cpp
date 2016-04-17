@@ -604,6 +604,16 @@ void LCD::displayActiveOctave(int8_t octave)   {
 
 }
 
+void LCD::displayDFUmode()   {
+
+    //this function writes directly to screen
+    lcd_clrscr();
+
+    strcpy_P(nameBuffer, dfu_string);
+    lcd_puts(nameBuffer);
+
+}
+
 void LCD::displayPadEditMode(uint8_t padNumber)  {
 
     strcpy_P(nameBuffer, editingPad_string);

@@ -185,4 +185,9 @@
 #define LCD_E_PORT                  PORTD       // Port for E line
 #define LCD_E_PIN                   4           // Pin for E line
 
+#define BTLDR_BUTTON_PIN_REGISTER   PINE
+#define BTLDR_BUTTON_PORT           PORTE
+#define BTLDR_BUTTON_DDR            DDRE
+#define BTLDR_BUTTON_PIN_INDEX      2
+
 #endif

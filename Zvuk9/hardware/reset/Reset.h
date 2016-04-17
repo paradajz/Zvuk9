@@ -3,7 +3,9 @@
 
 #include "Arduino.h"
 #include "../timer/TimerObject.h"
+#include "../../interface/lcd/LCD.h"
+#include "../../interface/leds/LEDs.h"
 
-void resetTeensy();
+void bootloaderReboot();
 
 #endif

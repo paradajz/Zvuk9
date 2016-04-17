@@ -56,6 +56,7 @@ class LCD   {
     void displayPadEditChangeParametersError();
     void displayPad(uint8_t pad);
     void clearPad();
+    void displayDFUmode();
     private:
     messageStatus_t getMessageStatus();
     void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite);

@@ -187,10 +187,15 @@ void Buttons::update(bool processingEnabled)    {
             else if ((newMillis() - resetActivationTimeout) > RESET_ENABLE_TIMEOUT)   {
 
                 #ifdef MODULE_LEDS
-                leds.allLEDsOff();
+                    //slowly turn off all the leds
+                    leds.setFadeSpeed(1);
+                    leds.allLEDsOff();
+                    newDelay(1000);
                 #endif
-                newDelay(50);
-                _reboot_Teensyduino_();
+                #ifdef MODULE_LCD
+                    display.displayDFUmode();
+                #endif
+                bootloaderReboot();
 
             }
 

@@ -42,7 +42,7 @@ typedef enum {  //list of IDs for global program settings for access
 #define GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_SHIFT   0x00
 #define GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE       0x00
 #define GLOBAL_PROGRAM_SETTING_X_ENABLE             0x01
-#define GLOBAL_PROGRAM_SETTING_Y_ENABLE             0x01
+#define GLOBAL_PROGRAM_SETTING_Y_ENABLE             0x00
 #define GLOBAL_PROGRAM_SETTING_NOTE_ENABLE          0x01
 #define GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE    0x01
 #define GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE      aftertouchPoly

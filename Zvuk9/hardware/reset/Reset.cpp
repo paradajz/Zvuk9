@@ -36,22 +36,22 @@ void disable_peripherals(void)   {
     TWCR = 0;
 
     //set all pins to inputs
-    DDRB = 0;
-    DDRC = 0;
-    DDRD = 0;
-    DDRE = 0;
-    DDRF = 0;
-
-    //write low to all pins
-    PORTB = 0;
-    PORTC = 0;
-    PORTD = 0;
-    PORTE = 0;
-    PORTF = 0;
+    //DDRB = 0;
+    //DDRC = 0;
+    //DDRD = 0;
+    //DDRE = 0;
+    //DDRF = 0;
+//
+    ////write low to all pins
+    //PORTB = 0;
+    //PORTC = 0;
+    //PORTD = 0;
+    //PORTE = 0;
+    //PORTF = 0;
 
 }
 
-void resetTeensy()  {
+void bootloaderReboot()  {
 
     cli();
     // stop watchdog timer, if running
@@ -64,7 +64,11 @@ void resetTeensy()  {
     _delay_ms(2000);
     disable_peripherals();
 
-    asm volatile("jmp 0x1FC00");
+    //set btldr pin to HIGH state so that we can reboot into bootloader mode using software
+    setOutputMacro(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
+    setHighMacro(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN_INDEX);
+
+    asm volatile("jmp 0x1E000");
     while (1);
 
 }

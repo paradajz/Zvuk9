@@ -17,4 +17,6 @@ const char PROGMEM editingPad_string[] PROGMEM = "Editing pad ";
 const char PROGMEM aftertouchClear_string[] PROGMEM = "     ";
 const char PROGMEM velocityClear_string[] PROGMEM = "    ";
 
+const char PROGMEM dfu_string[] PROGMEM = "Firmware update mode";
+
 #endif
