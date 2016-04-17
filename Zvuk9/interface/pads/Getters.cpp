@@ -40,7 +40,7 @@ void Pads::getProgramParameters()   {
 
 void Pads::getPadParameters()   {
 
-    splitCounter = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+    splitState = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #if MODE_SERIAL > 0
         Serial.println(F("----------------------------------------"));
@@ -48,7 +48,7 @@ void Pads::getPadParameters()   {
         Serial.println(F("----------------------------------------"));
     #endif
 
-    if (splitCounter == 0)  {   //split off
+    if (!splitState)  {   //split off
 
         //apply global settings to pads
         #if MODE_SERIAL > 0
@@ -87,62 +87,13 @@ void Pads::getPadParameters()   {
             Serial.print(F("Pad curve for Y: "));           Serial.println(padCurveY[0]);
         #endif
 
-    }   else if (splitCounter == 1) {   //split x/y
-
-            #if MODE_SERIAL > 0
-                Serial.println(F("Pad functions are global, rest is local - split x/y is on"));
-            #endif
-
-            for (int i=0; i<MAX_PADS; i++)    {
-
-                //functions are still global
-                xSendEnabled[i]                 = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-                ySendEnabled[i]                 = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-                noteSendEnabled[i]              = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-                aftertouchSendEnabled[i]        = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-
-                //pads have individual settings
-                ccXPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-                ccYPad[i]                   = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-                ccXminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-                ccXmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-                ccYminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-                ccYmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-                padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-                padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-
-                #if MODE_SERIAL > 0
-                    if (!i) {
-
-                        Serial.print(F("X send enabled: "));            Serial.println(xSendEnabled[i]);
-                        Serial.print(F("Y send enabled: "));            Serial.println(ySendEnabled[i]);
-                        Serial.print(F("Note send enabled: "));         Serial.println(noteSendEnabled[i]);
-                        Serial.print(F("Aftertouch send enabled: "));   Serial.println(aftertouchSendEnabled[i]);
-
-                    }
-
-                    Serial.print(F("Pad "));
-                    Serial.println(i+1);
-
-                    Serial.print(F("CC X MIDI ID: "));              Serial.println(ccXPad[i]);
-                    Serial.print(F("CC Y MIDI ID: "));              Serial.println(ccYPad[i]);
-                    Serial.print(F("CC X lower limit: "));          Serial.println(ccXminPad[i]);
-                    Serial.print(F("CC X upper limit: "));          Serial.println(ccXmaxPad[i]);
-                    Serial.print(F("CC Y lower limit: "));          Serial.println(ccYminPad[i]);
-                    Serial.print(F("CC Y upper limit: "));          Serial.println(ccYmaxPad[i]);
-                    Serial.print(F("Pad curve for X: "));           Serial.println(padCurveX[i]);
-                    Serial.print(F("Pad curve for Y: "));           Serial.println(padCurveY[i]);
-                #endif
-
-        }
-
-    }   else {  //split xy + functions
+    }   else {  //split on
 
         #if MODE_SERIAL > 0
-            Serial.println(F("Pads have individual settings and message send states - split x/y + messages"));
+            Serial.println(F("Pads have individual settings"));
         #endif
 
-        //pads have individual settings and functions
+        //pads have individual settings
         for (int i=0; i<MAX_PADS; i++)    {
 
                 xSendEnabled[i]             = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
@@ -183,7 +134,7 @@ void Pads::getPadParameters()   {
     uint8_t lastTouchedPad = getLastTouchedPad();
 
     #ifdef MODULE_LEDS
-        leds.setLEDstate(LED_ON_OFF_SPLIT, (ledIntensity_t)splitCounter);
+        leds.setLEDstate(LED_ON_OFF_SPLIT, splitState ? ledIntensityFull : ledIntensityOff);
         leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
         leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
         leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
@@ -506,20 +457,9 @@ aftertouchType_t Pads::getAftertouchType()  {
 
 }
 
-splitState_t Pads::getSplitState()    {
+bool Pads::getSplitState()    {
 
-    switch(splitCounter)    {
-
-        case 0:
-        return splitOff;
-
-        case 1:
-        return splitXY;
-
-        case 2:
-        return splitXYFunctions;
-
-    }   return splitOff;
+    return splitState;
 
 }
 

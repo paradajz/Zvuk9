@@ -13,8 +13,7 @@ const char PROGMEM onAftertouch_string[] PROGMEM = "Aftertouch on";
 const char PROGMEM onX_string[] PROGMEM = "X on";
 const char PROGMEM onY_string[] PROGMEM = "Y on";
 
-const char PROGMEM splitXY_string[] PROGMEM = "Split X, Y";
-const char PROGMEM splitXYFunctions_string[] PROGMEM = "+ functions";
+const char PROGMEM splitOn_string[] PROGMEM = "Split on";
 const char PROGMEM splitOff_string[] PROGMEM = "Split off";
 
 const char PROGMEM aftertouchPoly_string[] PROGMEM = "Key aftertouch";
@@ -41,8 +40,7 @@ PGM_P const onArray[] PROGMEM = {
 PGM_P const splitArray[] PROGMEM = {
 
     splitOff_string,
-    splitXY_string,
-    splitXYFunctions_string,
+    splitOn_string
 
 };
 

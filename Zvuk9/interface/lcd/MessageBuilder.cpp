@@ -78,24 +78,24 @@ void LCD::displayMIDIchannelChange(uint8_t channel) {
 
 }
 
-void LCD::displayCCchange(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)   {
+void LCD::displayCCchange(ccType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)   {
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccArray[(uint8_t)type])));
     string_line = nameBuffer;
     string_line += ccValue;
     updateDisplay(1, message, 0, true);
 
-    strcpy_P(nameBuffer, (_splitState != splitOff) ? padAmountSingle_string : padAmountAll_string);
+    strcpy_P(nameBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
     string_line = nameBuffer;
 
-    if (_splitState != splitOff)
-    string_line += padNumber; //local change
+    if (_splitState)
+        string_line += padNumber; //local change
 
     updateDisplay(2, message, 0, true);
 
 }
 
-void LCD::displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber)  {
+void LCD::displayCurveChange(curveCoordinate_t coordinate, bool _splitState, curveType_t type, uint8_t padNumber)  {
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
     string_line = nameBuffer;
@@ -105,17 +105,17 @@ void LCD::displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitSt
 
     updateDisplay(1, message, 0, true);
 
-    strcpy_P(nameBuffer, (_splitState != splitOff) ? padAmountSingle_string : padAmountAll_string);
+    strcpy_P(nameBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
     string_line = nameBuffer;
 
-    if (_splitState != splitOff)
-    string_line += padNumber; //local change
+    if (_splitState)
+        string_line += padNumber; //local change
 
     updateDisplay(2, message, 0, true);
 
 }
 
-void LCD::displayCClimitChange(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber)  {
+void LCD::displayCClimitChange(ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)  {
 
     strcpy_P(nameBuffer, (char*)pgm_read_word(&(ccLimitArray[(uint8_t)type])));
 
@@ -124,17 +124,17 @@ void LCD::displayCClimitChange(ccLimitType_t type, splitState_t _splitState, uin
 
     updateDisplay(1, message, 0, true);
 
-    strcpy_P(nameBuffer, (_splitState != splitOff) ? padAmountSingle_string : padAmountAll_string);
+    strcpy_P(nameBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
     string_line = nameBuffer;
 
-    if (_splitState != splitOff)
+    if (_splitState)
         string_line += padNumber; //local change
 
     updateDisplay(2, message, 0, true);
 
 }
 
-void LCD::displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, uint8_t functionState, uint8_t padNumber)  {
+void LCD::displayOnOff(functionsOnOff_t messageType, bool _splitState, uint8_t functionState, uint8_t padNumber)  {
 
     switch(messageType) {
 
@@ -147,41 +147,22 @@ void LCD::displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, u
         string_line = nameBuffer;
         updateDisplay(1, message, 0, true);
 
-        strcpy_P(nameBuffer, (_splitState != splitXYFunctions) ? padAmountAll_string : padAmountSingle_string);
+        strcpy_P(nameBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
         string_line = nameBuffer;
 
-        if (_splitState == splitXYFunctions)
+        if (_splitState)
             string_line += padNumber; //local change
 
         updateDisplay(2, message, 0, true);
         break;
 
         case featureSplit:
-        switch(_splitState) {
-
-            case splitOff:
-            case splitXY:
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[_splitState])));
-            string_line = nameBuffer;
-            updateDisplay(1, message, 0, true);
-            strcpy_P(nameBuffer, emptyLine_string);
-            string_line = nameBuffer;
-            updateDisplay(2, message, 0, true);
-            break;
-
-            case splitXYFunctions:
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[splitXY])));
-            string_line = nameBuffer;
-            updateDisplay(1, message, 0, true);
-            strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[splitXYFunctions])));
-            string_line = nameBuffer;
-            updateDisplay(2, message, 0, true);
-            break;
-
-            default:
-            break;
-
-        }
+        strcpy_P(nameBuffer, (char*)pgm_read_word(&(splitArray[_splitState])));
+        string_line = nameBuffer;
+        updateDisplay(1, message, 0, true);
+        strcpy_P(nameBuffer, emptyLine_string);
+        string_line = nameBuffer;
+        updateDisplay(2, message, 0, true);
         break;
 
         case featureAftertouchType:

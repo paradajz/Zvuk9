@@ -78,13 +78,13 @@ class Pads  {
     bool getCCXsendEnabled(uint8_t padNumber);
     bool getCCYsendEnabled(uint8_t padNumber);
     aftertouchType_t getAftertouchType();
-    splitState_t getSplitState();
+    bool getSplitState();
     //setters
     void notesOnOff();
     void aftertouchOnOff();
     void xOnOff();
     void yOnOff();
-    void updateSplit();
+    void splitOnOff();
     void changeAftertouchType();
 
     //notes
@@ -259,7 +259,7 @@ class Pads  {
     uint8_t     aftertouchType;
     uint8_t     maxAftertouchValue;
 
-    uint8_t     splitCounter;
+    bool        splitState;
 
     int8_t      activeOctave;
 

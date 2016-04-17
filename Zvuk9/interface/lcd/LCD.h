@@ -35,10 +35,10 @@ class LCD   {
     void clearXYcc(ccType_t type);
 
     void displayTransportControl(transportControl_t type, bool state);
-    void displayOnOff(functionsOnOff_t messageType, splitState_t _splitState, uint8_t functionState, uint8_t padNumber);
-    void displayCurveChange(curveCoordinate_t coordinate, splitState_t _splitState, curveType_t type, uint8_t padNumber);
-    void displayCClimitChange(ccLimitType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
-    void displayCCchange(ccType_t type, splitState_t _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayOnOff(functionsOnOff_t messageType, bool _splitState, uint8_t functionState, uint8_t padNumber);
+    void displayCurveChange(curveCoordinate_t coordinate, bool _splitState, curveType_t type, uint8_t padNumber);
+    void displayCClimitChange(ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayCCchange(ccType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
     void displayMIDIchannelChange(uint8_t channel);
     void displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes);
     void displayActiveOctave(int8_t octave);

@@ -33,15 +33,6 @@ typedef enum {
 
 typedef enum {
 
-    splitOff,
-    splitXY,
-    splitXYFunctions,
-    splitEnd
-
-} splitState_t;
-
-typedef enum {
-
     featureNotes,
     featureAftertouch,
     featureX,

@@ -406,7 +406,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
             pads.changeAftertouchType();
             //split and pad number are irrelevant here
             #ifdef MODULE_LCD
-            display.displayOnOff(lcdMessageType, splitOff, (uint8_t)pads.getAftertouchType(), 0);
+                display.displayOnOff(lcdMessageType, false, (uint8_t)pads.getAftertouchType(), 0);
             #endif
             return;
 
@@ -435,10 +435,10 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
         break;
 
         case BUTTON_ON_OFF_SPLIT:
-        pads.updateSplit();
+        pads.splitOnOff();
         lcdMessageType = featureSplit;
         ledNumber = LED_ON_OFF_SPLIT;
-        ledState = (ledIntensity_t)pads.getSplitState();
+        pads.getSplitState() ? ledState = ledIntensityFull : ledState = ledIntensityOff;
         break;
 
         default:

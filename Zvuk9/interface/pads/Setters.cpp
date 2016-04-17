@@ -2,17 +2,16 @@
 
 void Pads::setCCXsendEnabled(uint8_t padNumber, uint8_t state)    {
 
-    switch(splitCounter)    {
+    switch(splitState)    {
 
-        case splitOff:
-        case splitXY:
+        case false:
         //global
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
         for (int i=0; i<MAX_PADS; i++)
             xSendEnabled[i] = state;
         break;
 
-        case splitXYFunctions:
+        case true:
         //local
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
         xSendEnabled[padNumber] = state;
@@ -24,17 +23,16 @@ void Pads::setCCXsendEnabled(uint8_t padNumber, uint8_t state)    {
 
 void Pads::setCCYsendEnabled(uint8_t padNumber, uint8_t state)    {
 
-    switch(splitCounter)    {
+    switch(splitState)    {
 
-        case splitOff:
-        case splitXY:
+        case false:
         //global
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
         for (int i=0; i<MAX_PADS; i++)
             ySendEnabled[i] = state;
         break;
 
-        case splitXYFunctions:
+        case true:
         //local
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
         ySendEnabled[padNumber] = state;
@@ -46,17 +44,16 @@ void Pads::setCCYsendEnabled(uint8_t padNumber, uint8_t state)    {
 
 void Pads::setNoteSendEnabled(uint8_t padNumber, uint8_t state)   {
 
-    switch(splitCounter)    {
+    switch(splitState)    {
 
-        case splitOff:
-        case splitXY:
+        case false:
         //global
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
         for (int i=0; i<MAX_PADS; i++)
             noteSendEnabled[i] = state;
         break;
 
-        case splitXYFunctions:
+        case true:
         //local
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
         noteSendEnabled[padNumber] = state;
@@ -68,17 +65,16 @@ void Pads::setNoteSendEnabled(uint8_t padNumber, uint8_t state)   {
 
 void Pads::setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state) {
 
-    switch(splitCounter)    {
+    switch(splitState)    {
 
-        case splitOff:
-        case splitXY:
+        case false:
         //global
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
         for (int i=0; i<MAX_PADS; i++)
             aftertouchSendEnabled[i] = state;
         break;
 
-        case splitXYFunctions:
+        case true:
         //local
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
         aftertouchSendEnabled[padNumber] = state;
@@ -189,30 +185,15 @@ bool Pads::setActivePreset(uint8_t preset)  {
 
 }
 
-void Pads::updateSplit() {
+void Pads::splitOnOff() {
 
-    splitCounter++;
-    if (splitCounter == splitEnd)  splitCounter = splitOff;
+    splitState = !splitState;
 
-    configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitCounter);
+    configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitState);
     getPadParameters();
 
     #if MODE_SERIAL > 0
-        switch(splitCounter)    {
-
-            case splitOff:
-            Serial.println(F("Split off"));
-            break;
-
-            case splitXY:
-            Serial.println(F("Split XY"));
-            break;
-
-            case splitXYFunctions:
-            Serial.println(F("Split XY + functions"));
-            break;
-
-        }
+        splitState ? Serial.println(F("Split on")) : Serial.println(F("Split off"));
     #endif
 
 }
@@ -503,7 +484,7 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
     //public function
 
-    bool globalShift = (splitCounter == 0);
+    bool globalShift = (splitState == 0);
     changeOutput_t result = outputChanged;
     uint8_t startPad = globalShift ? 0 : getLastTouchedPad();
     uint8_t compareValue = 127;
@@ -595,7 +576,7 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
 changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t steps)  {
 
-    bool globalShift = (splitCounter == 0);
+    bool globalShift = (splitState == 0);
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
     uint8_t startPad = globalShift ? 0 : lastPressedPad;
@@ -760,7 +741,7 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
 
 changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate, int8_t steps)  {
 
-    bool globalShift = (splitCounter == 0);
+    bool globalShift = (splitState == 0);
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
     uint8_t startPad = globalShift ? 0 : lastPressedPad;
@@ -1017,7 +998,7 @@ void Pads::notesOnOff()    {
 
     bool newNotesState;
 
-    if (splitCounter != 2)   {   //feature splitting is off
+    if (!splitState)   {   //feature splitting is off
 
         newNotesState = !noteSendEnabled[0];
 
@@ -1077,7 +1058,7 @@ void Pads::xOnOff()    {
 
     bool newXState;
 
-    if (splitCounter != 2)   {   //feature splitting is off
+    if (!splitState)   {   //feature splitting is off
 
         newXState = !xSendEnabled[0];
 
@@ -1114,7 +1095,7 @@ void Pads::yOnOff()    {
 
     bool newYState;
 
-    if (splitCounter != 2)   {   //feature splitting is off
+    if (!splitState)   {   //feature splitting is off
 
         newYState = !ySendEnabled[0];
 
@@ -1151,7 +1132,7 @@ void Pads::aftertouchOnOff()    {
 
     bool newAfterTouchState;
 
-    if (splitCounter != 2)   {   //feature splitting is off
+    if (!splitState)   {   //feature splitting is off
 
         newAfterTouchState = !aftertouchSendEnabled[0];
 
@@ -1193,9 +1174,9 @@ void Pads::setPadPressed(uint8_t padNumber, bool padState) {
 void Pads::setFunctionLEDs(uint8_t padNumber)   {
 
     #ifdef MODULE_LEDS
-        if (splitCounter == splitXYFunctions)  {
+        if (splitState)  {
 
-            //split features
+            //split is on
             //turn off function LEDs first
             leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledIntensityOff);
             leds.setLEDstate(LED_ON_OFF_NOTES, ledIntensityOff);
