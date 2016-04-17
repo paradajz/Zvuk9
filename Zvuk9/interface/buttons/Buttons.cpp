@@ -1,5 +1,7 @@
 #include "Buttons.h"
 
+#include <util/delay.h>
+
 #ifdef BUTTONS_H_
 
 #include "../../hardware/i2c/i2c_master.h"
@@ -190,7 +192,7 @@ void Buttons::update(bool processingEnabled)    {
                     //slowly turn off all the leds
                     leds.setFadeSpeed(1);
                     leds.allLEDsOff();
-                    newDelay(1000);
+                    _delay_ms(2500);
                 #endif
                 #ifdef MODULE_LCD
                     display.displayDFUmode();

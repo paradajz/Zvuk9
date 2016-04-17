@@ -4,7 +4,9 @@
 
 #define WDFR 3
 
-void disable_peripherals(void)   {
+#define BOOTLOADER_START_ADDRESS  0x1E000
+
+void disablePeripherals(void)   {
 
     //disable eeprom
     EECR = 0;
@@ -51,10 +53,11 @@ void disable_peripherals(void)   {
 
 }
 
+
 void bootloaderReboot()  {
 
     cli();
-    // stop watchdog timer, if running
+    //stop watchdog timer, if running
     MCUSR &= ~(1<<WDFR);
     WDTCSR |= (1<<WDCE);
     WDTCSR = 0;
@@ -62,13 +65,14 @@ void bootloaderReboot()  {
     UDCON = 1;
     USBCON = (1<<FRZCLK);
     _delay_ms(2000);
-    disable_peripherals();
+    disablePeripherals();
 
     //set btldr pin to HIGH state so that we can reboot into bootloader mode using software
     setOutputMacro(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
     setHighMacro(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN_INDEX);
 
-    asm volatile("jmp 0x1E000");
-    while (1);
+    ((void (*)(void))BOOTLOADER_START_ADDRESS)();
+    for (;;);
+
 
 }

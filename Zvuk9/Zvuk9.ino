@@ -85,6 +85,9 @@ void initHardware() {
     MCUSR &= ~(1 << WDRF);
     wdt_disable();
 
+    setOutputMacro(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
+    setLowMacro(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN_INDEX);
+
     //do not change order of initialization!
     configuration.init();
     sei();
