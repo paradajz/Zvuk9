@@ -111,8 +111,8 @@ class Pads  {
     changeOutput_t changeCCcurve(bool direction, curveCoordinate_t coordinate, int8_t steps=1);
 
     //midi channel
-    uint8_t getMIDIchannel();
-    bool setMIDIchannel(uint8_t channel);
+    uint8_t getMIDIchannel(uint8_t pad);
+    bool setMIDIchannel(uint8_t pad, uint8_t channel);
 
     //pad info
     int8_t getLastTouchedPad();
@@ -255,7 +255,7 @@ class Pads  {
 
     uint8_t     padNote[MAX_PADS][NOTES_PER_PAD];
 
-    int8_t      midiChannel;
+    int8_t      midiChannel[MAX_PADS];
     uint8_t     aftertouchType;
     uint8_t     maxAftertouchValue;
 

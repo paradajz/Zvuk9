@@ -13,7 +13,8 @@ MIDI::MIDI()    {
 void MIDI::init() {
 
     //enable only midi out
-    hwMIDI.init(pads.getMIDIchannel(), false, true);
+    //listen only on channel 1
+    hwMIDI.init(DEFAULT_MIDI_CHANNEL, false, true);
     //usb midi started automatically
 
 }

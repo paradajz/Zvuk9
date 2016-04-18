@@ -15,9 +15,9 @@ void Pads::sendX(uint8_t pad)  {
         Serial.println(ccXPad[pad]);
     #else
         #if XY_FLIP_VALUES > 0
-            midi.sendControlChange(midiChannel, ccXPad[pad], 127-lastXMIDIvalue[pad]);
+            midi.sendControlChange(midiChannel[pad], ccXPad[pad], 127-lastXMIDIvalue[pad]);
         #else
-            midi.sendControlChange(midiChannel, ccXPad[pad], lastXMIDIvalue[pad]);
+            midi.sendControlChange(midiChannel[pad], ccXPad[pad], lastXMIDIvalue[pad]);
         #endif
     #endif
 
@@ -38,9 +38,9 @@ void Pads::sendY(uint8_t pad)  {
         Serial.println(ccYPad[pad]);
     #else
         #if XY_FLIP_VALUES > 0
-            midi.sendControlChange(midiChannel, ccYPad[pad], 127-lastYMIDIvalue[pad]);
+            midi.sendControlChange(midiChannel[pad], ccYPad[pad], 127-lastYMIDIvalue[pad]);
         #else
-            midi.sendControlChange(midiChannel, ccYPad[pad], lastYMIDIvalue[pad]);
+            midi.sendControlChange(midiChannel[pad], ccYPad[pad], lastYMIDIvalue[pad]);
         #endif
     #endif
 
@@ -67,7 +67,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
             #if MODE_SERIAL > 0
                 Serial.println(padNote[pad][i]);
             #else
-                midi.sendNoteOn(midiChannel, padNote[pad][i], velocity);
+                midi.sendNoteOn(midiChannel[pad], padNote[pad][i], velocity);
             #endif
 
         }
@@ -118,7 +118,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
                     #if MODE_SERIAL > 0
                         Serial.println(padNote[pad][i]);
                     #else
-                        midi.sendNoteOff(midiChannel, padNote[pad][i], 0);
+                        midi.sendNoteOff(midiChannel[pad], padNote[pad][i], 0);
                     #endif
 
                 }
@@ -149,7 +149,7 @@ void Pads::sendAftertouch(uint8_t pad)  {
             for (int i=0; i<NOTES_PER_PAD; i++) {
 
                 if (padNote[pad][i] != BLANK_NOTE)
-                    midi.sendKeyAftertouch(midiChannel, padNote[pad][i], aftertouchValue);
+                    midi.sendKeyAftertouch(midiChannel[pad], padNote[pad][i], aftertouchValue);
 
             }
         #endif
@@ -160,7 +160,7 @@ void Pads::sendAftertouch(uint8_t pad)  {
             Serial.print(F("Sending channel aftertouch: "));
             Serial.println(maxAftertouchValue);
         #else
-            midi.sendChannelAftertouch(midiChannel, maxAftertouchValue);
+            midi.sendChannelAftertouch(midiChannel[pad], maxAftertouchValue);
         #endif
         break;
 

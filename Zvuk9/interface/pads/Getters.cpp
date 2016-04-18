@@ -20,7 +20,6 @@ void Pads::getProgramParameters()   {
 
     activeProgram = configuration.readParameter(CONF_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
     activePreset = configuration.readParameter(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram);
-    midiChannel = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, (uint16_t)GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
     aftertouchType = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, (uint16_t)GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #if MODE_SERIAL > 0
@@ -28,8 +27,6 @@ void Pads::getProgramParameters()   {
         Serial.println(activeProgram+1);
         Serial.print(F("Active preset: "));
         Serial.println(activePreset);
-        Serial.print(F("MIDI channel: "));
-        Serial.println(midiChannel);
     #endif
 
     getPadParameters();
@@ -69,6 +66,7 @@ void Pads::getPadParameters()   {
             ccYmaxPad[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             padCurveX[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             padCurveY[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            midiChannel[i]                  = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
         }
 
@@ -85,6 +83,7 @@ void Pads::getPadParameters()   {
             Serial.print(F("CC Y upper limit: "));          Serial.println(ccYmaxPad[0]);
             Serial.print(F("Pad curve for X: "));           Serial.println(padCurveX[0]);
             Serial.print(F("Pad curve for Y: "));           Serial.println(padCurveY[0]);
+            Serial.print(F("MIDI channel: "));              Serial.println(midiChannel[0]);
         #endif
 
     }   else {  //split on
@@ -108,6 +107,7 @@ void Pads::getPadParameters()   {
                 ccYmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
                 padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
                 padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
+                midiChannel[i]              = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
 
                 #if MODE_SERIAL > 0
                     Serial.print(F("Pad "));
@@ -125,6 +125,7 @@ void Pads::getPadParameters()   {
                     Serial.print(F("CC Y upper limit: "));          Serial.println(ccYmaxPad[i]);
                     Serial.print(F("Pad curve for X: "));           Serial.println(padCurveX[i]);
                     Serial.print(F("Pad curve for Y: "));           Serial.println(padCurveY[i]);
+                    Serial.print(F("MIDI channel: "));              Serial.println(midiChannel[i]);
                 #endif
 
         }
@@ -524,9 +525,9 @@ uint8_t Pads::getCCvalue(ccType_t type, uint8_t padNumber)  {
 
 }
 
-uint8_t Pads::getMIDIchannel() {
+uint8_t Pads::getMIDIchannel(uint8_t pad) {
 
-    return midiChannel;
+    return midiChannel[pad];
 
 }
 

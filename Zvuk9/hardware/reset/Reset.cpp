@@ -66,6 +66,7 @@ void bootloaderReboot()  {
     USBCON = (1<<FRZCLK);
     _delay_ms(2000);
     disablePeripherals();
+    _delay_ms(150);
 
     //set btldr pin to HIGH state so that we can reboot into bootloader mode using software
     setOutputMacro(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);

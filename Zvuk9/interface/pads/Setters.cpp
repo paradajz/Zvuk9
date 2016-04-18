@@ -835,12 +835,26 @@ changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate,
 
 }
 
-bool Pads::setMIDIchannel(uint8_t channel)  {
+bool Pads::setMIDIchannel(uint8_t pad, uint8_t channel)  {
 
-    if (channel != midiChannel) {
+    if (channel != midiChannel[pad]) {
 
-        midiChannel = channel;
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram, channel);
+        if (!splitState)    {
+
+            //apply to all pads
+            for (int i=0; i<MAX_PADS; i++)
+                midiChannel[i] = channel;
+
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram, channel);
+
+        }   else {
+
+                //apply to single pad only
+                midiChannel[pad] = channel;
+                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*pad+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), channel);
+
+        }
+
         return true;
 
     }   return false;

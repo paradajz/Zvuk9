@@ -10,7 +10,6 @@ LCD::LCD()  {
     string_line.reserve(MAX_TEXT_SIZE);
     #ifdef MODULE_LCD
         lcd_init(LCD_DISP_ON);
-        _delay_ms(150);
     #endif
 
 }

@@ -65,15 +65,19 @@ void LCD::displayModifierEnabled()   {
 
 }
 
-void LCD::displayMIDIchannelChange(uint8_t channel) {
+void LCD::displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t padNumber) {
 
     strcpy_P(nameBuffer, midiChannel_string);
     string_line = nameBuffer;
     string_line += channel;
     updateDisplay(1, message, 0, true);
 
-    strcpy_P(nameBuffer, emptyLine_string);
+    strcpy_P(nameBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
     string_line = nameBuffer;
+
+    if (_splitState)
+        string_line += padNumber; //local change
+
     updateDisplay(2, message, 0, true);
 
 }

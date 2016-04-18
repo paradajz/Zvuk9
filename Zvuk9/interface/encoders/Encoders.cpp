@@ -104,7 +104,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         if (buttons.modifierEnabled())    {
 
             //change midi channel in case it's pressed
-            uint8_t midiChannel = pads.getMIDIchannel();
+            uint8_t midiChannel = pads.getMIDIchannel(lastTouchedPad);
 
             if (direction) midiChannel++;
             else           midiChannel--;
@@ -112,10 +112,10 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
             if (midiChannel < 1)  midiChannel = 16;
             if (midiChannel > 16) midiChannel = 1;
 
-            pads.setMIDIchannel(midiChannel);
+            pads.setMIDIchannel(lastTouchedPad, midiChannel);
 
             #ifdef MODULE_LCD
-                display.displayMIDIchannelChange(pads.getMIDIchannel());
+                display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad)+1, _splitState, lastTouchedPad);
             #endif
 
         } else {
