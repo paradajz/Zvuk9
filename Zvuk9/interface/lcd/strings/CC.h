@@ -32,11 +32,26 @@ PGM_P const curveCoordinateArray[] PROGMEM = {
 
 };
 
+const uint8_t curveCoordinateArray_sizes[] PROGMEM = {
+
+    sizeof(curveCoordinateX_string),
+    sizeof(curveCoordinateY_string)
+
+};
+
 PGM_P const curveNameArray[] PROGMEM = {
 
     curveTypeLinear_string,
     curveTypeWideMiddle_string,
     curveTypeWideEnds_string
+
+};
+
+const uint8_t curveNameArray_sizes[] PROGMEM = {
+
+    sizeof(curveTypeLinear_string),
+    sizeof(curveTypeWideMiddle_string),
+    sizeof(curveTypeWideEnds_string)
 
 };
 
@@ -49,10 +64,26 @@ PGM_P const ccLimitArray[] PROGMEM = {
 
 };
 
+const uint8_t ccLimitArray_sizes[] PROGMEM = {
+
+    sizeof(xMin_string),
+    sizeof(xMax_string),
+    sizeof(yMin_string),
+    sizeof(yMax_string)
+
+};
+
 PGM_P const ccArray[] PROGMEM = {
 
     xCC_string,
     yCC_string
+
+};
+
+const uint8_t ccArray_sizes[] PROGMEM = {
+
+    sizeof(xCC_string),
+    sizeof(yCC_string)
 
 };
 

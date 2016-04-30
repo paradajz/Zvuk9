@@ -367,9 +367,9 @@ bool Pads::xyUpdated()  {
 
             //x
             #if XY_FLIP_AXIS > 0
-                setupY();
-            #else
                 setupX();
+            #else
+                setupY();
             #endif
             admuxSet = true;
 
@@ -378,9 +378,9 @@ bool Pads::xyUpdated()  {
         }
 
         #if XY_FLIP_AXIS > 0
-            xValue = getY();
-        #else
             xValue = getX();
+        #else
+            xValue = getY();
         #endif
 
     }
@@ -392,9 +392,9 @@ bool Pads::xyUpdated()  {
     if (admuxSet && (yValue == -1)) {
 
         #if XY_FLIP_AXIS > 0
-            setupX();
-        #else
             setupY();
+        #else
+            setupX();
         #endif
 
         admuxSet = false;
@@ -405,9 +405,9 @@ bool Pads::xyUpdated()  {
     if (yValue == -1) {
 
         #if XY_FLIP_AXIS > 0
-            yValue = getX();
-        #else
             yValue = getY();
+        #else
+            yValue = getX();
         #endif
 
     }

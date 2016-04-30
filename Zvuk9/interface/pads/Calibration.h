@@ -31,12 +31,7 @@
 //threshold difference between current and last x/y value after XY_SEND_TIMEOUT of no movement
 #define XY_SEND_TIMEOUT_STEP                3
 
-#ifdef VARIANT_2
-#define XY_FLIP_AXIS                        1
-#define XY_FLIP_VALUES                      0
-#else
 #define XY_FLIP_AXIS                        0
 #define XY_FLIP_VALUES                      0
-#endif
 
 #endif

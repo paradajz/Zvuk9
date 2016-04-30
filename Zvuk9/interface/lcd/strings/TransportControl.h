@@ -17,4 +17,13 @@ PGM_P const transportControlChangeArray[] PROGMEM = {
 
 };
 
+const uint8_t transportControlChangeArray_sizes[] PROGMEM = {
+
+    sizeof(transportControlPlay_string),
+    sizeof(transportControlStop_string),
+    sizeof(transportControlRecordOn_string),
+    sizeof(transportControlRecordOff_string)
+
+};
+
 #endif

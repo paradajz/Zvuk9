@@ -40,4 +40,21 @@ PGM_P const noteNameArray[] PROGMEM = {
 
 };
 
+const uint8_t noteNameArray_sizes[] PROGMEM = {
+
+    sizeof(tonicC_string),
+    sizeof(tonicCSharp_string),
+    sizeof(tonicD_string),
+    sizeof(tonicDSharp_string),
+    sizeof(tonicE_string),
+    sizeof(tonicF_string),
+    sizeof(tonicFSharp_string),
+    sizeof(tonicG_string),
+    sizeof(tonicGSharp_string),
+    sizeof(tonicA_string),
+    sizeof(tonicASharp_string),
+    sizeof(tonicB_strig)
+
+};
+
 #endif

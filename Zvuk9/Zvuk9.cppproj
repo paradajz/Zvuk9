@@ -745,9 +745,6 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
     <Compile Include="interface\encoders\EncoderSettings.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\UpdateLogic.cpp">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="interface\lcd\LCD.h">
       <SubType>compile</SubType>
     </Compile>
@@ -800,6 +797,9 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\strings\TransportControl.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\UpdateLogic.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\leds\LEDs.cpp">
@@ -877,6 +877,9 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
     <Compile Include="Zvuk9.ino">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="__vm\.Zvuk9.vsarduino.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="hardware\lcd\" />
@@ -890,8 +893,8 @@ vmresolved.tools.path=D:\Applications\Arduino167_zvuk9_mod\hardware
     <Folder Include="interface\buttons\" />
     <Folder Include="interface\encoders\" />
     <Folder Include="interface\lcd\" />
-    <Folder Include="interface\lcd\menu" />
-    <Folder Include="interface\lcd\strings" />
+    <Folder Include="interface\lcd\menu\" />
+    <Folder Include="interface\lcd\strings\" />
     <Folder Include="interface\leds\" />
     <Folder Include="interface\pads\" />
     <Folder Include="hardware" />

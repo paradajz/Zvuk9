@@ -80,10 +80,7 @@ class LCD   {
     char lastLCDLine_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
     char lcdLineScroll_char[MAX_TEXT_SIZE+1];
 
-    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite);
-    String string_line;
-    char char_line[MAX_TEXT_SIZE+1];
-    char nameBuffer[MAX_TEXT_SIZE+1];
+    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size);
 
 };
 

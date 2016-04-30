@@ -32,6 +32,8 @@
 #include <avr/wdt.h>
 #include "midi/MIDI.h"
 
+#define START_UP_ANIMATION  1
+
 //define function prototypes
 void startUpAnimation();
 

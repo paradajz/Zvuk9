@@ -25,4 +25,17 @@ PGM_P const presetNameArray[] PROGMEM = {
 
 };
 
+const uint8_t presetNameArray_sizes[] PROGMEM = {
+
+    sizeof(presetNaturalMinor_string),
+    sizeof(presetMelodicMinor_string),
+    sizeof(presetHarmonicMinor_string),
+    sizeof(presetMajor_string),
+    sizeof(presetHarmonicMajor_string),
+    sizeof(presetMinorPentatonic_string),
+    sizeof(presetMajorPentatonic_string),
+    sizeof(presetUser_string)
+
+};
+
 #endif

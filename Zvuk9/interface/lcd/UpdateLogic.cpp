@@ -7,7 +7,6 @@ LCD::LCD()  {
 
     displayMessage_var = false;
     messageDisplayTime = 0;
-    string_line.reserve(MAX_TEXT_SIZE);
     #ifdef MODULE_LCD
         lcd_init(LCD_DISP_ON);
     #endif
