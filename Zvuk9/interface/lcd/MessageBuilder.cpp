@@ -440,7 +440,6 @@ void LCD::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
         strcpy_P(tempBuffer, (char*)pgm_read_word(&(presetNameArray[preset])));
         size += pgm_read_byte(&presetNameArray_sizes[preset]);
         strncat(stringBuffer, tempBuffer, pgm_read_byte(&presetNameArray_sizes[preset]));
-        Serial.print("START"); Serial.print(stringBuffer); Serial.println("END");
 
     }   else {
 
@@ -449,7 +448,6 @@ void LCD::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
         strcat(stringBuffer, tempBuffer);
         addSpaceToCharArray(size, 1);
         addNumberToCharArray((preset - NUMBER_OF_PREDEFINED_SCALES + 1), size);
-        Serial.print("START"); Serial.print(stringBuffer); Serial.println("END");
 
     }
 
