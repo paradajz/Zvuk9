@@ -2,7 +2,7 @@ Firmware/Debug/
 Firmware/Release/
 Firmware/__vm/
 .vs/
-Firmware/Zvuk9.componentinfo.xml
+Firmware/Firmware.componentinfo.xml
 Bootloader/Bootloader.componentinfo.xml
 Bootloader/Debug/
 Bootloader/doxyfile
