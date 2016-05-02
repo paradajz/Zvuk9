@@ -1,10 +1,11 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Atmel Studio Solution File, Format Version 11.00
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "Zvuk9", "Zvuk9\Zvuk9.cppproj", "{E51344C6-BE26-4295-BE64-DEBED91E57F8}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "Firmware", "Firmware\Firmware.cppproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
 EndProject
-Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Bootloader", "Bootloader\Bootloader.cproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Bootloader", "Bootloader\Bootloader.cproj", "{E85A183B-A12A-4A59-887E-E93FF8B36737}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,14 +13,14 @@ Global
 		Release|AVR = Release|AVR
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E51344C6-BE26-4295-BE64-DEBED91E57F8}.Debug|AVR.ActiveCfg = Debug|AVR
-		{E51344C6-BE26-4295-BE64-DEBED91E57F8}.Debug|AVR.Build.0 = Debug|AVR
-		{E51344C6-BE26-4295-BE64-DEBED91E57F8}.Release|AVR.ActiveCfg = Release|AVR
-		{E51344C6-BE26-4295-BE64-DEBED91E57F8}.Release|AVR.Build.0 = Release|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
 		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.Build.0 = Release|AVR
+		{E85A183B-A12A-4A59-887E-E93FF8B36737}.Debug|AVR.ActiveCfg = Debug|AVR
+		{E85A183B-A12A-4A59-887E-E93FF8B36737}.Debug|AVR.Build.0 = Debug|AVR
+		{E85A183B-A12A-4A59-887E-E93FF8B36737}.Release|AVR.ActiveCfg = Release|AVR
+		{E85A183B-A12A-4A59-887E-E93FF8B36737}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.C</ToolchainName>
-    <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
+    <ProjectGuid>{e85a183b-a12a-4a59-887e-e93ff8b36737}</ProjectGuid>
     <avrdevice>AT90USB1286</avrdevice>
     <avrdeviceseries>mega</avrdeviceseries>
     <OutputType>Executable</OutputType>

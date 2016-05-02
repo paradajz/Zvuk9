@@ -1,7 +1,8 @@
-Zvuk9/Debug/
-Zvuk9/Release/
-Zvuk9/__vm
-.vs/Zvuk9/v14/.atsuo
-Zvuk9/Zvuk9.componentinfo.xml
-Zvuk9/hardware/pins/Variants.h
+Firmware/Debug/
+Firmware/Release/
+Firmware/__vm/
+.vs/
+Firmware/Zvuk9.componentinfo.xml
+Bootloader/Bootloader.componentinfo.xml
 Bootloader/Debug/
+Bootloader/doxyfile
