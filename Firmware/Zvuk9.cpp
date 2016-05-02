@@ -1,3 +1,11 @@
+/*
+
+    Zvuk9 MIDI controller firmware
+    Author: Igor Petrovic
+    Ad Bit LLC 2016, 2015, 2014
+
+*/
+
 #include <avr/interrupt.h>
 
 #include "hardware/pins/Pins.h"
@@ -95,7 +103,11 @@ void initHardware() {
     sei();
     timers.init();
 
+    #if MODE_SERIAL < 1
     midi.init();
+    #else
+    vserial.init();
+    #endif
 
     #ifdef MODULE_LCD
     display.init();
@@ -137,11 +149,8 @@ void initHardware() {
 
 int main()    {
 
-    #if MODE_SERIAL > 0
-        Serial.begin(38400);
-    #endif
-
     initHardware();
+
     while(1) {
 
         pads.update();
@@ -156,6 +165,10 @@ int main()    {
 
         #ifdef MODULE_LCD
         display.update();
+        #endif
+
+        #if MODE_SERIAL > 0
+        vserial.update();
         #endif
 
     }

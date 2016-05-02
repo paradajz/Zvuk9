@@ -41,15 +41,15 @@ void EEPROMsettings::init() {
     }
 
     #if MODE_SERIAL > 0
-        Serial.println(F("EEPROM memory readout"));
-        Serial.println(F("----------------------------------------"));
+        vserial.println("EEPROM memory readout");
+        vserial.println("----------------------------------------");
         for (int i=0; i<4096; i++)  {
 
-            Serial.print(i);
-            Serial.print(F(": "));
-            Serial.println(eeprom_read_byte((uint8_t*)i));
+            vserial.print(i);
+            vserial.print(": ");
+            vserial.println(eeprom_read_byte((uint8_t*)i));
 
-        }   Serial.println(F("----------------------------------------"));
+        }   vserial.println("----------------------------------------");
     #endif
 
 }
@@ -133,15 +133,15 @@ void EEPROMsettings::factoryReset(factoryResetType_t type)   {
 void EEPROMsettings::createSectionAddresses()   {
 
     #if MODE_SERIAL > 0
-        Serial.println(F("We are now creating EEPROM memory layout"));
-        Serial.println();
+        vserial.println("We are now creating EEPROM memory layout");
+        vserial.println();
     #endif
 
     for (int i=0; i<CONF_BLOCKS; i++)  {
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Creating block "));
-            Serial.println(i);
+            vserial.print("Creating block ");
+            vserial.println(i);
         #endif
 
         uint16_t memory_usage = 0;
@@ -149,9 +149,9 @@ void EEPROMsettings::createSectionAddresses()   {
         for (int j=0; j<blocks[i].sections; j++)    {
 
             #if MODE_SERIAL > 0
-                Serial.print(F("Section "));
-                Serial.print(j);
-                Serial.print(F(", address: "));
+                vserial.print("Section ");
+                vserial.print(j);
+                vserial.print(", address: ");
             #endif
 
             if (!j) {
@@ -180,7 +180,7 @@ void EEPROMsettings::createSectionAddresses()   {
             }
 
             #if MODE_SERIAL > 0
-                Serial.println(blocks[i].sectionAddress[j]);
+                vserial.println(blocks[i].sectionAddress[j]);
             #endif
 
         }
@@ -204,10 +204,10 @@ void EEPROMsettings::createSectionAddresses()   {
         }
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Total memory usage: "));
-            Serial.print(memory_usage);
-            Serial.println(F(" bytes"));
-            Serial.println();
+            vserial.print("Total memory usage: ");
+            vserial.print(memory_usage);
+            vserial.println(" bytes");
+            vserial.println();
         #endif
 
         if (i < CONF_BLOCKS-1) {
@@ -219,16 +219,16 @@ void EEPROMsettings::createSectionAddresses()   {
     }
 
     #if MODE_SERIAL > 0
-        Serial.println(F("----------------------------------------"));
+        vserial.println("----------------------------------------");
 
         for (int i=0; i<CONF_BLOCKS; i++)  {
 
-            Serial.print("Block ");
-            Serial.print(i);
-            Serial.print(" start address: ");
-            Serial.println(blocks[i].blockStartAddress);
+            vserial.print("Block ");
+            vserial.print(i);
+            vserial.print(" start address: ");
+            vserial.println(blocks[i].blockStartAddress);
 
-        } Serial.println(F("----------------------------------------"));
+        } vserial.println("----------------------------------------");
     #endif
 
 }

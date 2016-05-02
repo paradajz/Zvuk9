@@ -193,7 +193,7 @@ void Pads::splitOnOff() {
     getPadParameters();
 
     #if MODE_SERIAL > 0
-        splitState ? Serial.println(F("Split on")) : Serial.println(F("Split off"));
+        splitState ? vserial.println("Split on") : vserial.println("Split off");
     #endif
 
 }
@@ -208,11 +208,11 @@ void Pads::changeAftertouchType()   {
     switch(aftertouchType)    {
 
         case aftertouchPoly:
-        Serial.println(F("Key aftertouch"));
+        vserial.println("Key aftertouch");
         break;
 
         case aftertouchChannel:
-        Serial.println(F("Channel aftertouch"));
+        vserial.println("Channel aftertouch");
         break;
 
         default:
@@ -276,8 +276,8 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
     if (!changeAllowed)    {
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Unable to do global shift: one or more pad notes are too "));
-            direction ? Serial.println(F("high.")) : Serial.println(F("low"));
+            vserial.print("Unable to do global shift: one or more pad notes are too ");
+            direction ? vserial.println("high.") : vserial.println("low");
         #endif
         result = outOfRange;
 
@@ -364,9 +364,9 @@ void Pads::checkOctaveShift()   {
     }
 
     #if MODE_SERIAL > 0
-        direction ? Serial.print(F("Octave up, ")) : Serial.print(F("Octave down, "));
-        Serial.print(F("active octave: "));
-        Serial.println(activeOctave);
+        direction ? vserial.print("Octave up, ") : vserial.print("Octave down, ");
+        vserial.print("active octave: ");
+        vserial.println(activeOctave);
     #endif
 
     octaveShiftAmount = 0;
@@ -460,16 +460,16 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
         }
 
         #if MODE_SERIAL > 0
-            Serial.println(F("Tonic changed, active tonic "));
-            Serial.print(newTonic);
-            Serial.print(F("/"));
+            vserial.println("Tonic changed, active tonic ");
+            vserial.print(newTonic);
+            vserial.print("/");
         #endif
 
     }   else {
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Unable to change tonic: one or more pad notes are too "));
-            shiftDirection ? Serial.println(F("high.")) : Serial.println(F("low"));
+            vserial.print("Unable to change tonic: one or more pad notes are too ");
+            shiftDirection ? vserial.println("high.") : vserial.println("low");
         #endif
 
         result = outOfRange;
@@ -909,7 +909,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
         configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+noteIndex+(NOTES_PER_PAD*(uint16_t)pad), newNote);
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Adding note "));
+            vserial.print("Adding note ");
         #endif
 
     }   else {
@@ -936,15 +936,15 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
                 configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*(uint16_t)pad), padNote[pad][i]);
 
             #if MODE_SERIAL > 0
-                Serial.print(F("Removing note "));
+                vserial.print("Removing note ");
             #endif
 
     }
 
     #if MODE_SERIAL > 0
-        Serial.print((uint8_t)note);
-        Serial.print(F(" to pad "));
-        Serial.println(pad);
+        vserial.print((uint8_t)note);
+        vserial.print(" to pad ");
+        vserial.println(pad);
     #endif
 
     return outputChanged;
@@ -997,8 +997,8 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset), noteShiftAmount);
 
     #if MODE_SERIAL > 0
-        Serial.print("Shifted note: ");
-        Serial.println(noteShiftAmount);
+        vserial.print("Shifted note: ");
+        vserial.println(noteShiftAmount);
     #endif
 
     for (int i=0; i<MAX_PADS; i++)
@@ -1020,9 +1020,9 @@ void Pads::notesOnOff()    {
             setNoteSendEnabled(i, newNotesState);
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Notes "));
-            newNotesState ? Serial.print(F("on")) : Serial.print(F("off"));
-            Serial.println(F(" for all pads"));
+            vserial.print("Notes ");
+            newNotesState ? vserial.print("on") : vserial.print("off");
+            vserial.println(" for all pads");
         #endif
 
         if (!newNotesState) {
@@ -1048,10 +1048,10 @@ void Pads::notesOnOff()    {
         setNoteSendEnabled(lastPressedPad, newNotesState);
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Notes "));
-            newNotesState ? Serial.print(F("on")) : Serial.print(F("off"));
-            Serial.print(F(" for pad "));
-            Serial.println(lastPressedPad);
+            vserial.print("Notes ");
+            newNotesState ? vserial.print("on") : vserial.print("off");
+            vserial.print(" for pad ");
+            vserial.println(lastPressedPad);
         #endif
 
         if (!newNotesState) {
@@ -1080,9 +1080,9 @@ void Pads::xOnOff()    {
             setCCXsendEnabled(i, newXState);
 
         #if MODE_SERIAL > 0
-            Serial.print(F("X "));
-            newXState ? Serial.print(F("on")) : Serial.print(F("off"));
-            Serial.println(F(" for all pads"));
+            vserial.print("X ");
+            newXState ? vserial.print("on") : vserial.print("off");
+            vserial.println(" for all pads");
         #endif
 
     }
@@ -1095,10 +1095,10 @@ void Pads::xOnOff()    {
         setCCXsendEnabled(lastPressedPad, newXState);
 
         #if MODE_SERIAL > 0
-            Serial.print(F("X "));
-            newXState ? Serial.print(F("on")) : Serial.print(F("off"));
-            Serial.print(F(" for pad "));
-            Serial.println(lastPressedPad);
+            vserial.print("X ");
+            newXState ? vserial.print("on") : vserial.print("off");
+            vserial.print(" for pad ");
+            vserial.println(lastPressedPad);
         #endif
 
     }
@@ -1117,9 +1117,9 @@ void Pads::yOnOff()    {
             setCCYsendEnabled(i, newYState);
 
         #if MODE_SERIAL > 0
-            Serial.print("Y ");
-            newYState ? Serial.print(F("on")) : Serial.print(F("off"));
-            Serial.println(F(" for all pads"));
+            vserial.print("Y ");
+            newYState ? vserial.print("on") : vserial.print("off");
+            vserial.println(" for all pads");
         #endif
 
     }
@@ -1132,10 +1132,10 @@ void Pads::yOnOff()    {
         setCCYsendEnabled(lastPressedPad, newYState);
 
         #if MODE_SERIAL > 0
-            Serial.print("Y ");
-            newYState ? Serial.print(F("on")) : Serial.print(F("off"));
-            Serial.print(F(" for pad "));
-            Serial.println(lastPressedPad);
+            vserial.print("Y ");
+            newYState ? vserial.print("on") : vserial.print("off");
+            vserial.print(" for pad ");
+            vserial.println(lastPressedPad);
         #endif
 
     }
@@ -1154,9 +1154,9 @@ void Pads::aftertouchOnOff()    {
             setAfterTouchSendEnabled(i, newAfterTouchState);
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Aftertouch "));
-            newAfterTouchState ? Serial.print(F("on ")) : Serial.print(F("off "));
-            Serial.println(F("for all pads"));
+            vserial.print("Aftertouch ");
+            newAfterTouchState ? vserial.print("on ") : vserial.print("off ");
+            vserial.println("for all pads");
         #endif
 
     }
@@ -1169,10 +1169,10 @@ void Pads::aftertouchOnOff()    {
         setAfterTouchSendEnabled(lastPressedPad, newAfterTouchState);
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Aftertouch "));
-            newAfterTouchState ? Serial.print(F("on")) : Serial.print(F("off"));
-            Serial.print(F(" for pad "));
-            Serial.println(lastPressedPad);
+            vserial.print("Aftertouch ");
+            newAfterTouchState ? vserial.print("on") : vserial.print("off");
+            vserial.print(" for pad ");
+            vserial.println(lastPressedPad);
         #endif
 
     }

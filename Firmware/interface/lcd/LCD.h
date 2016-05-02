@@ -11,6 +11,11 @@
 #include "../../Types.h"
 #include "../../hardware/timer/TimerObject.h"
 #include "../../Debug.h"
+
+#if MODE_SERIAL > 0
+#include "../../vserial/Serial.h"
+#endif
+
 #include "Macros.h"
 #include "strings/Strings.h"
 #include <string.h>

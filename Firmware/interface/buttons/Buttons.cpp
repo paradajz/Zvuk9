@@ -115,7 +115,7 @@ void Buttons::init()  {
 
         //we should activate service menu now
         #if MODE_SERIAL > 0
-            Serial.println(F("Activating user menu"));
+            vserial.println("Activating user menu");
         #endif
 
         #ifdef MODULE_LCD
@@ -470,7 +470,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             sysExArray[4] = 0x02;
             type = transportPlay;
             #if MODE_SERIAL > 0
-                Serial.println(F("Transport Control Play"));
+                vserial.println("Transport Control Play");
             #endif
             #ifdef MODULE_LEDS
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityFull);
@@ -486,7 +486,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             sysExArray[4] = 0x01;
             type = transportStop;
             #if MODE_SERIAL > 0
-                Serial.println(F("Transport Control Stop"));
+                vserial.println("Transport Control Stop");
             #endif
             #ifdef MODULE_LEDS
                 leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
@@ -496,7 +496,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
         } else {
 
             #if MODE_SERIAL > 0
-                Serial.println(F("Modifier active"));
+                vserial.println("Modifier active");
             #endif
 
             stopDisableTimeout = rTimeMillis();
@@ -515,7 +515,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                     sysExArray[4] = 0x07;
                     recordState = ledIntensityOff;
                     #if MODE_SERIAL > 0
-                    Serial.println(F("Transport Control Record Stop"));
+                    vserial.println("Transport Control Record Stop");
                     #endif
                     displayState = false;
 
@@ -524,7 +524,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                     sysExArray[4] = 0x06;
                     recordState = ledIntensityFull;
                     #if MODE_SERIAL > 0
-                    Serial.println(F("Transport Control Record Start"));
+                    vserial.println("Transport Control Record Start");
                     #endif
                     displayState = true;
 
@@ -625,9 +625,9 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     //normally, this is called in automatically in Pads.cpp
                     //but on first occasion call it manually
                     #if MODE_SERIAL > 0
-                        Serial.println(F("----------------------------------------"));
-                        Serial.println(F("Pad edit mode"));
-                        Serial.println(F("----------------------------------------"));
+                        vserial.println("----------------------------------------");
+                        vserial.println("Pad edit mode");
+                        vserial.println("----------------------------------------");
                     #endif
                     pads.setupPadEditMode(pads.getLastTouchedPad());
 

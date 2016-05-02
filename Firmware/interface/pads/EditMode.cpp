@@ -5,8 +5,8 @@ bool editModeActivated;
 void Pads::setupPadEditMode(uint8_t pad)    {
 
     #if MODE_SERIAL > 0
-        Serial.print(F("Editing pad "));
-        Serial.println(pad);
+        vserial.print("Editing pad ");
+        vserial.println(pad);
     #endif
 
     #ifdef MODULE_LCD
@@ -14,8 +14,8 @@ void Pads::setupPadEditMode(uint8_t pad)    {
     #endif
 
     #if MODE_SERIAL > 0
-        Serial.print(F("Active octave: "));
-        Serial.println(activeOctave);
+        vserial.print("Active octave: ");
+        vserial.println(activeOctave);
     #endif
 
     #ifdef MODULE_LCD
@@ -39,7 +39,7 @@ void Pads::displayActivePadNotes(uint8_t pad) {
             noteCounter = 0;
 
     #if MODE_SERIAL > 0
-        Serial.println(F("Assigned notes:"));
+        vserial.println("Assigned notes:");
     #endif
 
     for (int i=0; i<NOTES_PER_PAD; i++) {
@@ -51,7 +51,7 @@ void Pads::displayActivePadNotes(uint8_t pad) {
         noteCounter++;
 
         #if MODE_SERIAL > 0
-            Serial.println(padNote[pad][i]);
+            vserial.println(padNote[pad][i]);
         #endif
 
     }

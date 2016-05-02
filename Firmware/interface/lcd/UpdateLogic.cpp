@@ -143,7 +143,7 @@ messageStatus_t LCD::getMessageStatus()    {
     if (displayMessage_var)   {
 
         #if MODE_SERIAL > 0
-            Serial.println(F("Displaying LCD message"));
+            vserial.println("Displaying LCD message");
         #endif
 
         for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) lineChange[i] = true;
@@ -171,7 +171,7 @@ messageStatus_t LCD::getMessageStatus()    {
         }
 
         #if MODE_SERIAL > 0
-            Serial.println(F("Clearing LCD message"));
+            vserial.println("Clearing LCD message");
         #endif
 
         return clearMessage;

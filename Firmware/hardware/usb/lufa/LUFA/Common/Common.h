@@ -75,7 +75,7 @@
 		#include "Attributes.h"
 
 		#if defined(USE_LUFA_CONFIG_HEADER)
-			#include "../../config/LUFAconfig.h"
+			#include "../../config/LUFAConfig.h"
 		#endif
 
 	/* Enable C linkage for C++ Compilers: */

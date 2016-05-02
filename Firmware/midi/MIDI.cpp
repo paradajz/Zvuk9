@@ -1,7 +1,9 @@
 #include "MIDI.h"
+
+#ifdef MIDI_H_
+
 #include "MIDI_parameters.h"
 #include "../hardware/midi/MIDI.h"
-#include "../Debug.h"
 #include "../interface/pads/Pads.h"
 
 MIDI::MIDI()    {
@@ -22,56 +24,45 @@ void MIDI::init() {
 
 void MIDI::sendNoteOn(uint8_t channel, uint8_t note, uint8_t velocity)  {
 
-    #if MODE_SERIAL < 1
-        hwMIDI.sendNoteOn(note, velocity, channel, dinInterface);
-        hwMIDI.sendNoteOn(note, velocity, channel, usbInterface);
-    #endif
+    hwMIDI.sendNoteOn(note, velocity, channel, dinInterface);
+    hwMIDI.sendNoteOn(note, velocity, channel, usbInterface);
 
 }
 
 void MIDI::sendNoteOff(uint8_t channel, uint8_t note, uint8_t velocity)  {
 
-    #if MODE_SERIAL < 1
-        hwMIDI.sendNoteOff(note, velocity, channel, dinInterface);
-        hwMIDI.sendNoteOff(note, velocity, channel, usbInterface);
-    #endif
+    hwMIDI.sendNoteOff(note, velocity, channel, dinInterface);
+    hwMIDI.sendNoteOff(note, velocity, channel, usbInterface);
 
 }
 
 void MIDI::sendControlChange(uint8_t channel, uint8_t ccNumber, uint8_t ccValue) {
 
-    #if MODE_SERIAL < 1
-        hwMIDI.sendControlChange(ccNumber, ccValue, channel, dinInterface);
-        hwMIDI.sendControlChange(ccNumber, ccValue, channel, usbInterface);
-    #endif
+    hwMIDI.sendControlChange(ccNumber, ccValue, channel, dinInterface);
+    hwMIDI.sendControlChange(ccNumber, ccValue, channel, usbInterface);
 
 }
 
 void MIDI::sendChannelAftertouch(uint8_t channel, uint8_t pressure)   {
 
-    #if MODE_SERIAL < 1
-        hwMIDI.sendAfterTouch(pressure, channel, dinInterface);
-        hwMIDI.sendAfterTouch(pressure, channel, usbInterface);
-    #endif
+    hwMIDI.sendAfterTouch(pressure, channel, dinInterface);
+    hwMIDI.sendAfterTouch(pressure, channel, usbInterface);
 
 }
 
 void MIDI::sendKeyAftertouch(uint8_t channel, uint8_t note, uint8_t pressure)   {
 
-    #if MODE_SERIAL < 1
-        hwMIDI.sendPolyPressure(note, pressure, channel, dinInterface);
-        hwMIDI.sendPolyPressure(note, pressure, channel, usbInterface);
-    #endif
+    hwMIDI.sendPolyPressure(note, pressure, channel, dinInterface);
+    hwMIDI.sendPolyPressure(note, pressure, channel, usbInterface);
 
 }
 
 void MIDI::sendSysEx(uint8_t *sysExArray, uint8_t arraySize)   {
 
-    #if MODE_SERIAL < 1
-        hwMIDI.sendSysEx(arraySize, sysExArray, true, dinInterface);
-        hwMIDI.sendSysEx(arraySize, sysExArray, true, usbInterface);
-    #endif
+    hwMIDI.sendSysEx(arraySize, sysExArray, true, dinInterface);
+    hwMIDI.sendSysEx(arraySize, sysExArray, true, usbInterface);
 
 }
 
 MIDI midi;
+#endif

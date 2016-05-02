@@ -55,7 +55,7 @@
 
 	/* Includes: */
 		#include "../../Core/StdDescriptors.h"
-		//#include "AudioClassCommon.h"
+		#include "AudioClassCommon.h"
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
@@ -66,6 +66,66 @@
 		#if !defined(__INCLUDE_FROM_MIDI_DRIVER)
 			#error Do not include this file directly. Include LUFA/Drivers/USB.h instead.
 		#endif
+
+	/* Macros: */
+		/** \name MIDI Command Values
+		 *  See http://www.midi.org/techspecs/midimessages.php for more information.
+		 */
+		//@{
+		/** MIDI command for System Exclusive (SysEx) single event that has one byte of data total. */
+		#define MIDI_COMMAND_SYSEX_1BYTE           MIDI_COMMAND_SYSEX_END_1BYTE
+
+		/** MIDI command for System Exclusive (SysEx) single event that has two bytes of data total. */
+		#define MIDI_COMMAND_SYSEX_2BYTE           0x20
+
+		/** MIDI command for System Exclusive (SysEx) single event that has three bytes of data total. */
+		#define MIDI_COMMAND_SYSEX_3BYTE           0x30
+
+		/** MIDI command for System Exclusive (SysEx) stream event that has at least four bytes of data total. */
+		#define MIDI_COMMAND_SYSEX_START_3BYTE     0x40
+
+		/** MIDI command for System Exclusive (SysEx) stream event terminator with one remaining data byte. */
+		#define MIDI_COMMAND_SYSEX_END_1BYTE       0x50
+
+		/** MIDI command for System Exclusive (SysEx) stream event terminator with two remaining data bytes. */
+		#define MIDI_COMMAND_SYSEX_END_2BYTE       0x60
+
+		/** MIDI command for System Exclusive (SysEx) stream event terminator with three remaining data bytes. */
+		#define MIDI_COMMAND_SYSEX_END_3BYTE       0x70
+
+		/** MIDI command for a note off (deactivation) event. */
+		#define MIDI_COMMAND_NOTE_OFF              0x80
+
+		/** MIDI command for a note on (activation) event. */
+		#define MIDI_COMMAND_NOTE_ON               0x90
+
+		/** MIDI command for a note pressure change event. */
+		#define MIDI_COMMAND_NOTE_PRESSURE         0xA0
+
+		/** MIDI command for a control change event. */
+		#define MIDI_COMMAND_CONTROL_CHANGE        0xB0
+
+		/** MIDI command for a control change event. */
+		#define MIDI_COMMAND_PROGRAM_CHANGE        0xC0
+
+		/** MIDI command for a channel pressure change event. */
+		#define MIDI_COMMAND_CHANNEL_PRESSURE      0xD0
+
+		/** MIDI command for a pitch change event. */
+		#define MIDI_COMMAND_PITCH_WHEEL_CHANGE    0xE0
+		//@}
+
+		/** Standard key press velocity value used for all note events. */
+		#define MIDI_STANDARD_VELOCITY             64
+
+		/** Convenience macro. MIDI channels are numbered from 1-10 (natural numbers) however the logical channel
+		 *  addresses are zero-indexed. This converts a natural MIDI channel number into the logical channel address.
+		 *
+		 *  \param[in] channel  MIDI channel number to address.
+		 *
+		 *  \return Constructed MIDI channel ID.
+		 */
+		#define MIDI_CHANNEL(channel)              ((channel) - 1)
 
 		/** Constructs a MIDI event ID from a given MIDI command and a virtual MIDI cable index. This can then be
 		 *  used to create and decode \ref MIDI_EventPacket_t MIDI event packets.

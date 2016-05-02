@@ -23,8 +23,12 @@
 
 //library modifed by Igor Petrovic
 
- #ifndef HW_MIDI_H
- #define HW_MIDI_H
+#include "../../Debug.h"
+
+#if MODE_SERIAL < 1
+
+#ifndef HW_MIDI_H
+#define HW_MIDI_H
 
 #include "../../midi/MIDI_parameters.h"
 #include "../../hardware/uart/UART.h"
@@ -37,8 +41,6 @@
 #include <stdbool.h>
 
 #include "../usb/midi/Descriptors.h"
-#include "../usb/midi/LUFA/Drivers/USB/USB.h"
-#include "../usb/midi/LUFA/Platform/Platform.h"
 
 #define USE_SERIAL_PORT         uart
 
@@ -162,4 +164,5 @@ class HWmidi    {
 
 extern HWmidi hwMIDI;
 
+#endif
 #endif

@@ -211,8 +211,8 @@ bool Pads::checkAftertouch(uint8_t pad)  {
                             returnValue = true;
 
                             #if MODE_SERIAL > 0
-                                Serial.print(F("Maximum channel aftertouch updated: "));
-                                Serial.println(maxAftertouchValue);
+                                vserial.print("Maximum channel aftertouch updated: ");
+                                vserial.println(maxAftertouchValue);
                             #endif
 
                         } else {
@@ -709,8 +709,8 @@ void Pads::updateLastPressedPad(uint8_t pad, bool state)   {
         if (pad != getLastTouchedPad())    {
 
             #if MODE_SERIAL > 0
-            Serial.print(F("Last touched pad: ")); Serial.println(getLastTouchedPad());
-            Serial.print(F("Current pad: ")); Serial.println(pad);
+            vserial.print("Last touched pad: "); vserial.println(getLastTouchedPad());
+            vserial.print("Current pad: "); vserial.println(pad);
             #endif
 
             updatePressHistory(pad);
@@ -751,11 +751,11 @@ void Pads::updatePressHistory(uint8_t pad) {
     }
 
     //#if MODE_SERIAL > 0
-        //Serial.print(F("Inserting pad "));
-        //Serial.print(pad);
-        //Serial.println(F(" to pad press history. New buffer:"));
+        //vserial.print("Inserting pad ");
+        //vserial.print(pad);
+        //vserial.println(" to pad press history. New buffer:");
         //for (int i=0; i<MAX_PADS; i++)
-            //Serial.println(padPressHistory_buffer[i]);
+            //vserial.println(padPressHistory_buffer[i]);
     //#endif
 
 }
@@ -776,11 +776,11 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
         padPressHistory_counter = 0;
 
         //#if MODE_SERIAL > 0
-            //Serial.println(F("No more pressed pads. Current buffer:"));
+            //vserial.println("No more pressed pads. Current buffer:");
             //for (int i=0; i<MAX_PADS; i++)
-                //Serial.println(padPressHistory_buffer[i]);
-            //Serial.print(F("Current padPressHistoryCounter: "));
-            //Serial.println(padPressHistory_counter);
+                //vserial.println(padPressHistory_buffer[i]);
+            //vserial.print("Current padPressHistoryCounter: ");
+            //vserial.println(padPressHistory_counter);
         //#endif
 
         return;
@@ -813,12 +813,12 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
     if (padPressHistory_counter < 0) padPressHistory_counter = 0;
 
     //#if MODE_SERIAL > 0
-        //Serial.print(F("Clearing pad "));
-        //Serial.print(pad);
-        //Serial.println(F(" from history"));
-        //Serial.println(F("New history buffer:"));
+        //vserial.print("Clearing pad ");
+        //vserial.print(pad);
+        //vserial.println(" from history");
+        //vserial.println("New history buffer:");
         //for (int i=0; i<MAX_PADS; i++)
-            //Serial.println(padPressHistory_buffer[i]);
+            //vserial.println(padPressHistory_buffer[i]);
     //#endif
 
 }
@@ -826,8 +826,8 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
 void Pads::storeNotes(uint8_t pad)  {
 
     //#if MODE_SERIAL > 0
-        //Serial.print(F("Storing notes in buffer for pad "));
-        //Serial.println(pad);
+        //vserial.print("Storing notes in buffer for pad ");
+        //vserial.println(pad);
     //#endif
 
     //store midi note on in circular buffer

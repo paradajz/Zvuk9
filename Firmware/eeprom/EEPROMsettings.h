@@ -11,6 +11,11 @@ EEPROM addresses of parameters.
 #include "../Modules.h"
 #include "UniqueID.h"
 #include "../Debug.h"
+
+#if MODE_SERIAL > 0
+#include "../vserial/Serial.h"
+#endif
+
 #include "../BitManipulation.h"
 
 #ifdef MODULE_LCD

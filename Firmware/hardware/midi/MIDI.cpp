@@ -25,6 +25,8 @@
 
 #include "MIDI.h"
 
+#ifdef HW_MIDI_H
+
 HWmidi::HWmidi()   {
 
     //default constructor
@@ -1566,3 +1568,4 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
 }
 
 HWmidi hwMIDI;
+#endif

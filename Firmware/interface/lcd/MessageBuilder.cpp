@@ -704,7 +704,7 @@ void LCD::clearPad()    {
 void LCD::clearPadEditMode()    {
 
     #if MODE_SERIAL > 0
-        Serial.println(F("Clearing pad edit mode from LCD"));
+        vserial.println("Clearing pad edit mode from LCD");
     #endif
 
     strcpy_P(stringBuffer, emptyLine_string);

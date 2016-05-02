@@ -3,16 +3,16 @@
 void Pads::sendX(uint8_t pad)  {
 
     #if MODE_SERIAL > 0
-        Serial.print(F("X for pad "));
-        Serial.print(pad);
-        Serial.print(F(": "));
+        vserial.print("X for pad ");
+        vserial.print(pad);
+        vserial.print(": ");
         #if XY_FLIP_VALUES > 0
-            Serial.println(127-lastXMIDIvalue[pad]);
+            vserial.println(127-lastXMIDIvalue[pad]);
         #else
-            Serial.println(lastXMIDIvalue[pad]);
+            vserial.println(lastXMIDIvalue[pad]);
         #endif
-        Serial.print(F("X CC: "));
-        Serial.println(ccXPad[pad]);
+        vserial.print("X CC: ");
+        vserial.println(ccXPad[pad]);
     #else
         #if XY_FLIP_VALUES > 0
             midi.sendControlChange(midiChannel[pad], ccXPad[pad], 127-lastXMIDIvalue[pad]);
@@ -26,16 +26,16 @@ void Pads::sendX(uint8_t pad)  {
 void Pads::sendY(uint8_t pad)  {
 
     #if MODE_SERIAL > 0
-        Serial.print(F("Y for pad "));
-        Serial.print(pad);
-        Serial.print(F(": "));
+        vserial.print("Y for pad ");
+        vserial.print(pad);
+        vserial.print(": ");
         #if XY_FLIP_VALUES > 0
-            Serial.println(127-lastYMIDIvalue[pad]);
+            vserial.println(127-lastYMIDIvalue[pad]);
         #else
-            Serial.println(lastYMIDIvalue[pad]);
+            vserial.println(lastYMIDIvalue[pad]);
         #endif
-        Serial.print(F("Y CC: "));
-        Serial.println(ccYPad[pad]);
+        vserial.print("Y CC: ");
+        vserial.println(ccYPad[pad]);
     #else
         #if XY_FLIP_VALUES > 0
             midi.sendControlChange(midiChannel[pad], ccYPad[pad], 127-lastYMIDIvalue[pad]);
@@ -55,9 +55,9 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
         case true:
         //note on
         #if MODE_SERIAL > 0
-            Serial.print(F("Pad "));
-            Serial.print(pad);
-            Serial.println(F(" pressed. Notes: "));
+            vserial.print("Pad ");
+            vserial.print(pad);
+            vserial.println(" pressed. Notes: ");
         #endif
 
         for (int i=0; i<NOTES_PER_PAD; i++) {
@@ -65,7 +65,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
             if (padNote[pad][i] == BLANK_NOTE) continue;
 
             #if MODE_SERIAL > 0
-                Serial.println(padNote[pad][i]);
+                vserial.println(padNote[pad][i]);
             #else
                 midi.sendNoteOn(midiChannel[pad], padNote[pad][i], velocity);
             #endif
@@ -73,17 +73,17 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
         }
 
         #if MODE_SERIAL > 0
-            Serial.print(F("Velocity: "));
-            Serial.println(velocity);
+            vserial.print("Velocity: ");
+            vserial.println(velocity);
         #endif
         break;
 
         case false:
         //note off
         #if MODE_SERIAL > 0
-            Serial.print(F("Pad "));
-            Serial.print(pad);
-            Serial.println(F(" released. Notes: "));
+            vserial.print("Pad ");
+            vserial.print(pad);
+            vserial.println(" released. Notes: ");
         #endif
             //some special considerations here
             for (int i=0; i<NOTES_PER_PAD; i++)    {
@@ -116,7 +116,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
                 if (sendOff)    {
 
                     #if MODE_SERIAL > 0
-                        Serial.println(padNote[pad][i]);
+                        vserial.println(padNote[pad][i]);
                     #else
                         midi.sendNoteOff(midiChannel[pad], padNote[pad][i], 0);
                     #endif
@@ -141,10 +141,10 @@ void Pads::sendAftertouch(uint8_t pad)  {
 
         case aftertouchPoly:
         #if MODE_SERIAL > 0
-            Serial.print(F("Sending key aftertouch, pad "));
-            Serial.print(pad);
-            Serial.print(F(": "));
-            Serial.println(lastAftertouchValue[pad]);
+            vserial.print("Sending key aftertouch, pad ");
+            vserial.print(pad);
+            vserial.print(": ");
+            vserial.println(lastAftertouchValue[pad]);
         #else
             for (int i=0; i<NOTES_PER_PAD; i++) {
 
@@ -157,8 +157,8 @@ void Pads::sendAftertouch(uint8_t pad)  {
 
         case aftertouchChannel:
         #if MODE_SERIAL > 0
-            Serial.print(F("Sending channel aftertouch: "));
-            Serial.println(maxAftertouchValue);
+            vserial.print("Sending channel aftertouch: ");
+            vserial.println(maxAftertouchValue);
         #else
             midi.sendChannelAftertouch(midiChannel[pad], maxAftertouchValue);
         #endif
@@ -265,8 +265,8 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
         if (!noteCounter || !noteSendEnabled[pad])  {
 
             #if MODE_SERIAL > 0
-                Serial.print(F("Clearing notes on LCD for pad "));
-                Serial.println(pad);
+                vserial.print("Clearing notes on LCD for pad ");
+                vserial.println(pad);
             #endif
 
             #ifdef MODULE_LCD

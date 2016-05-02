@@ -1,3 +1,7 @@
+#include "../Debug.h"
+
+#if MODE_SERIAL < 1
+
 #ifndef MIDI_H_
 #define MIDI_H_
 
@@ -22,4 +26,5 @@ class MIDI {
 
 extern MIDI midi;
 
+#endif
 #endif

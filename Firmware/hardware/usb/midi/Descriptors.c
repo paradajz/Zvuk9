@@ -37,6 +37,8 @@
 
 #include "Descriptors.h"
 
+#ifdef _DESCRIPTORS_MIDI_H_
+
 /** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
  *  device characteristics, including the supported USB version, control endpoint size and the
  *  number of device configurations. The descriptor is read out by the USB host when the enumeration
@@ -311,4 +313,4 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 	*DescriptorAddress = Address;
 	return Size;
 }
-
+#endif
