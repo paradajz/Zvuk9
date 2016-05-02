@@ -2,7 +2,7 @@
 
     Zvuk9 MIDI controller firmware
     Author: Igor Petrovic
-    Ad Bit LLC 2016, 2015, 2014
+    Ad Bit LLC 2014-2016
 
 */
 
