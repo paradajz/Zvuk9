@@ -86,13 +86,6 @@ void Serial::init() {
 
     USB_Init();
 
-    //for (;;)
-    //{
-        ///* Must throw away unused bytes from the host, or it will lock up while waiting for the device */
-        //CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
-        //CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
-    //}
-
 }
 
 void Serial::println()  {
@@ -115,7 +108,7 @@ void Serial::println(const char *text)  {
 
 }
 
-void Serial::print(uint32_t number)  {
+void Serial::print(int32_t number)  {
 
     char numberString[10];
     itoa(number, numberString, 10);
@@ -123,7 +116,7 @@ void Serial::print(uint32_t number)  {
 
 }
 
-void Serial::println(uint32_t number)    {
+void Serial::println(int32_t number)    {
 
     print(number);
     println();

@@ -39,6 +39,9 @@ class LCD   {
     void clearAftertouch();
     void clearXYposition(ccType_t type);
     void clearXYcc(ccType_t type);
+    void clearPadEditMode();
+    void clearPad();
+    void clearMIDIchannel();
 
     void displayTransportControl(transportControl_t type, bool state);
     void displayOnOff(functionsOnOff_t messageType, bool _splitState, uint8_t functionState, uint8_t padNumber);
@@ -46,12 +49,11 @@ class LCD   {
     void displayCClimitChange(ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
     void displayCCchange(ccType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
     void displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t padNumber);
-    void displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes);
+    void displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numberOfNotes, bool padEditMode);
     void displayActiveOctave(int8_t octave);
     void displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value);
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayPadEditMode(uint8_t padNumber);
-    void clearPadEditMode();
     void displayServiceMenu();
     void changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption);
     void selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
@@ -61,8 +63,8 @@ class LCD   {
     void displayPadReleaseError(padReleaseError_t error);
     void displayPadEditChangeParametersError();
     void displayPad(uint8_t pad);
-    void clearPad();
     void displayDFUmode();
+    void displayMIDIchannel(uint8_t channel);
     private:
     messageStatus_t getMessageStatus();
     void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite);
@@ -80,6 +82,9 @@ class LCD   {
     bool messageActivated;
 
     int8_t scrollIndex[NUMBER_OF_LCD_ROWS];
+
+    uint8_t scrollStartIndex[NUMBER_OF_LCD_ROWS],
+            scrollEndIndex[NUMBER_OF_LCD_ROWS];
 
     char lcdLine_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
     char lcdLineMessage_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];

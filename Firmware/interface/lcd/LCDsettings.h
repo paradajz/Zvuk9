@@ -8,7 +8,7 @@
 //sync refresh time with this setting to show x/y and notes at the same time
 #define LCD_REFRESH_TIME                PAD_NOTE_SEND_DELAY
 
-#define LCD_SCROLL_TIME                 500
+#define LCD_SCROLL_TIME                 400
 
 #define LCD_PAD_DATA_CLEAR_DELAY        300
 

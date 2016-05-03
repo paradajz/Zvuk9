@@ -681,10 +681,18 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
         }
 
+        if (velocityAvailable || xAvailable || yAvailable)  {
+
+            #ifdef MODULE_LCD
+                display.displayMIDIchannel(midiChannel[pad]);
+            #endif
+
+        }
+
     }   else if (allPadsReleased() && !lcdCleared) {
 
             #ifdef MODULE_LCD
-                display.displayActivePadNotes(0, 0, 0);
+                display.displayActivePadNotes(0, 0, 0, editModeActive());
                 display.clearVelocity();
                 display.clearAftertouch();
                 display.clearXYcc(ccTypeX);
@@ -692,6 +700,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
                 display.clearXYposition(ccTypeX);
                 display.clearXYposition(ccTypeY);
                 display.clearPad();
+                display.clearMIDIchannel();
             #endif
 
             lcdCleared = true;

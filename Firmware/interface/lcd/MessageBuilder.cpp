@@ -9,19 +9,38 @@
 #define PAD_V_XY_AT_ROW     2
 #define XY_CC_PAD_ROW       3
 
-#define X_COORDINATE_START  5
-#define Y_COORDINATE_START  10
-#define AFTERTOUCH_START    15
-#define PAD_NUMBER_START    15
-#define VELOCITY_START      0
+#define X_COORDINATE_START  0
+#define Y_COORDINATE_START  7
+
 #define CC_X_START          0
 #define CC_Y_START          7
+
+#define VELOCITY_START      0
+#define NOTES_START         5
+#define AFTERTOUCH_START    15
+#define MIDI_CHANNEL_START  16
+#define PAD_NUMBER_START    15
+
+typedef struct {
+
+    uint8_t ccx;
+    uint8_t ccy;
+    uint8_t xpos;
+    uint8_t ypos;
+    uint8_t velocity;
+    uint8_t aftertouch;
+    uint8_t padNumber;
+    uint8_t midiChannel;
+    uint8_t program;
+    uint8_t preset;
+
+} lcdParametersRows;
 
 #define SPACE_CHAR          32
 
 char stringBuffer[MAX_TEXT_SIZE+1];
 
-inline uint8_t getNumberOfDigits(uint32_t number)  {
+inline uint8_t getNumberOfDigits(int32_t number)  {
 
     if (number < 10)            return 1;
     if (number < 100)           return 2;
@@ -37,12 +56,14 @@ inline uint8_t getNumberOfDigits(uint32_t number)  {
 
 }
 
-inline void addNumberToCharArray(uint32_t number, uint8_t &stringSize)  {
+inline void addNumberToCharArray(int32_t number, uint8_t &stringSize)  {
 
     char intToCharArray[7];
     itoa(number, intToCharArray, 10);
     stringSize += getNumberOfDigits(number);
+    if (number < 0) stringSize++;
     strcat(stringBuffer, intToCharArray);
+    stringBuffer[stringSize-1] = '\0';
 
 }
 
@@ -98,14 +119,15 @@ void LCD::displayModifierEnabled()   {
 void LCD::displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t padNumber) {
 
     uint8_t size = 0;
-    strcpy_P(stringBuffer, midiChannel_string);
-    size = progmemArraySize(midiChannel_string);
+    strcpy_P(stringBuffer, midiChannelChange_string);
+    size = progmemArraySize(midiChannelChange_string);
     addNumberToCharArray(channel, size);
     updateDisplay(1, message, 0, true, size);
 
     strcpy_P(stringBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
 
     if (_splitState) { addSpaceToCharArray(size, 1); addNumberToCharArray(padNumber, size); }
+    updateDisplay(2, message, 0, true, size);
 
 }
 
@@ -120,6 +142,7 @@ void LCD::displayCCchange(ccType_t type, bool _splitState, uint8_t ccValue, uint
     strcpy_P(stringBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
 
     if (_splitState) { addSpaceToCharArray(size, 1); addNumberToCharArray(padNumber, size); }
+    updateDisplay(2, message, 0, true, size);
 
 }
 
@@ -139,6 +162,7 @@ void LCD::displayCurveChange(curveCoordinate_t coordinate, bool _splitState, cur
     strcpy_P(stringBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
 
     if (_splitState) { addSpaceToCharArray(size, 1); addNumberToCharArray(padNumber, size); }
+    updateDisplay(2, message, 0, true, size);
 
 }
 
@@ -154,6 +178,7 @@ void LCD::displayCClimitChange(ccLimitType_t type, bool _splitState, uint8_t ccV
     strcpy_P(stringBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
 
     if (_splitState) { addSpaceToCharArray(size, 1); addNumberToCharArray(padNumber, size); }
+    updateDisplay(2, message, 0, true, size);
 
 }
 
@@ -184,6 +209,7 @@ void LCD::displayOnOff(functionsOnOff_t messageType, bool _splitState, uint8_t f
         strcpy_P(stringBuffer, _splitState ? padAmountSingle_string : padAmountAll_string);
 
         if (_splitState) { addSpaceToCharArray(size, 1); addNumberToCharArray(padNumber, size); }
+        updateDisplay(2, message, 0, true, size);
         break;
 
         case featureSplit:
@@ -455,8 +481,6 @@ void LCD::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
 
 }
 
-
-
 void LCD::displayVelocity(uint8_t velocity)  {
 
     uint8_t size = 0;
@@ -467,7 +491,7 @@ void LCD::displayVelocity(uint8_t velocity)  {
     if (velocity < 10)         addSpaceToCharArray(size, 2);
     else if (velocity < 100)   addSpaceToCharArray(size, 1);
 
-    updateDisplay(PAD_V_XY_AT_ROW, text, 0, false, size);
+    updateDisplay(1, text, VELOCITY_START, false, size);
 
 }
 
@@ -481,7 +505,7 @@ void LCD::displayAftertouch(uint8_t afterTouch)  {
     if (afterTouch < 10)       addSpaceToCharArray(size, 2);
     else if (afterTouch < 100) addSpaceToCharArray(size, 1);
 
-    updateDisplay(PAD_V_XY_AT_ROW, text, AFTERTOUCH_START, false, size);
+    updateDisplay(1, text, AFTERTOUCH_START, false, size);
 
 }
 
@@ -492,27 +516,24 @@ void LCD::displayXYposition(uint8_t position, ccType_t type)   {
     switch(type)    {
 
         case ccTypeX:
-        strcpy_P(stringBuffer, x_string);
-        size = progmemArraySize(x_string);
         lcdCoordinate = X_COORDINATE_START;
         break;
 
         case ccTypeY:
-        strcpy_P(stringBuffer, y_string);
-        size = progmemArraySize(y_string);
         lcdCoordinate = Y_COORDINATE_START;
         break;
 
     }
+
+    strcpy_P(stringBuffer, xyPosition_string);
+    size = progmemArraySize(xyPosition_string);
 
     addNumberToCharArray(position, size);
 
     if (position < 10)         addSpaceToCharArray(size, 2);
     else if (position < 100)   addSpaceToCharArray(size, 1);
 
-    addSpaceToCharArray(size, 1);
-
-    updateDisplay(PAD_V_XY_AT_ROW, text, lcdCoordinate, false, size);
+    updateDisplay(3, text, lcdCoordinate, false, size);
 
 }
 
@@ -541,13 +562,11 @@ void LCD::displayXYcc(uint8_t ccXY, ccType_t type)   {
     if (ccXY < 10)         addSpaceToCharArray(size, 2);
     else if (ccXY < 100)   addSpaceToCharArray(size, 1);
 
-    addSpaceToCharArray(size, 1);
-
-    updateDisplay(XY_CC_PAD_ROW, text, lcdCoordinate, false, size);
+    updateDisplay(2, text, lcdCoordinate, false, size);
 
 }
 
-void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numberOfNotes)  {
+void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numberOfNotes, bool padEditMode)  {
 
     uint8_t size = 0;
     char tempBuffer[MAX_TEXT_SIZE];
@@ -562,8 +581,8 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numb
 
             strcpy_P(stringBuffer, velocityClear_string);
             size = progmemArraySize(velocityClear_string);
-            updateDisplay(2, text, 0, false, size);
-
+            if (padEditMode)    updateDisplay(2, text, 0, true, size);
+            else                updateDisplay(2, text, NOTES_START, false, size);
         }
 
     }   else {
@@ -575,7 +594,7 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numb
             if (i) {
 
                 strcat(stringBuffer, tempBuffer);
-                size += pgm_read_byte(&noteNameArray_sizes[notes[i]]);
+                size += pgm_read_byte(&noteNameArray_sizes[notes[i]]) - 1;
 
             } else {
 
@@ -589,7 +608,8 @@ void LCD::displayActivePadNotes(uint8_t notes[], uint8_t octaves[], uint8_t numb
 
         }
 
-        updateDisplay(1, text, 0, true, size);
+        if (padEditMode)    updateDisplay(1, text, 0, true, size);
+        else                updateDisplay(1, text, NOTES_START, false, size);
 
     }
 
@@ -599,7 +619,7 @@ void LCD::clearVelocity()   {
 
     strcpy_P(stringBuffer, velocityClear_string);
     uint8_t size = progmemArraySize(velocityClear_string);
-    updateDisplay(PAD_V_XY_AT_ROW, text, VELOCITY_START, false, size);
+    updateDisplay(1, text, VELOCITY_START, false, size);
 
 }
 
@@ -607,7 +627,7 @@ void LCD::clearAftertouch() {
 
     strcpy_P(stringBuffer, aftertouchClear_string);
     uint8_t size = progmemArraySize(aftertouchClear_string);
-    updateDisplay(PAD_V_XY_AT_ROW, text, AFTERTOUCH_START, false, size);
+    updateDisplay(1, text, AFTERTOUCH_START, false, size);
 
 }
 
@@ -619,11 +639,11 @@ void LCD::clearXYposition(ccType_t type)    {
     switch(type)    {
 
         case ccTypeX:
-        updateDisplay(PAD_V_XY_AT_ROW, text, X_COORDINATE_START, false, size);
+        updateDisplay(3, text, X_COORDINATE_START, false, size);
         break;
 
         case ccTypeY:
-        updateDisplay(PAD_V_XY_AT_ROW, text, Y_COORDINATE_START, false, size);
+        updateDisplay(3, text, Y_COORDINATE_START, false, size);
         break;
 
     }
@@ -638,11 +658,11 @@ void LCD::clearXYcc(ccType_t type)  {
     switch(type)    {
 
         case ccTypeX:
-        updateDisplay(XY_CC_PAD_ROW, text, CC_X_START, false, size);
+        updateDisplay(2, text, CC_X_START, false, size);
         break;
 
         case ccTypeY:
-        updateDisplay(XY_CC_PAD_ROW, text, CC_Y_START, false, size);
+        updateDisplay(2, text, CC_Y_START, false, size);
         break;
 
     }
@@ -694,6 +714,16 @@ void LCD::displayPad(uint8_t pad)   {
 
 }
 
+void LCD::displayMIDIchannel(uint8_t channel)   {
+
+    strcpy_P(stringBuffer, midiChannel_string);
+    uint8_t size = progmemArraySize(midiChannel_string);
+    addNumberToCharArray(channel, size);
+
+    updateDisplay(2, text, MIDI_CHANNEL_START, false, size);
+
+}
+
 void LCD::clearPad()    {
 
     strcpy_P(stringBuffer, padClear_string);
@@ -710,6 +740,13 @@ void LCD::clearPadEditMode()    {
     strcpy_P(stringBuffer, emptyLine_string);
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
         updateDisplay(i, text, 0, true, progmemArraySize(emptyLine_string));
+
+}
+
+void LCD::clearMIDIchannel()    {
+
+    strcpy_P(stringBuffer, midiChannelClear_string);
+    updateDisplay(2, text, MIDI_CHANNEL_START, false, progmemArraySize(midiChannelClear_string));
 
 }
 

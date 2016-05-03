@@ -3,6 +3,8 @@
 #ifdef LCD_H_
 #include <util/delay.h>
 
+#define SCROLL_LINE_LENGTH  (NUMBER_OF_LCD_COLUMNS-5)
+
 LCD::LCD()  {
 
     displayMessage_var = false;

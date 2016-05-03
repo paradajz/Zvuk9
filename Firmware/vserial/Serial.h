@@ -28,8 +28,8 @@ class Serial {
     void println();
     void print(const char *text);
     void println(const char *text);
-    void print(uint32_t number);
-    void println(uint32_t number);
+    void print(int32_t number);
+    void println(int32_t number);
     void update();
 
     private:

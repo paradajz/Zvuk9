@@ -270,14 +270,14 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
             #endif
 
             #ifdef MODULE_LCD
-                display.displayActivePadNotes(0, 0, 0);
+                display.displayActivePadNotes(0, 0, 0, editModeActive());
             #endif
             return;
 
         }
         //note on
-        uint8_t tonicArray[NOTES_PER_PAD],
-                octaveArray[NOTES_PER_PAD];
+        uint8_t tonicArray[NOTES_PER_PAD];
+        int8_t octaveArray[NOTES_PER_PAD];
 
         for (int i=0; i<noteCounter; i++) {
 
@@ -287,16 +287,16 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
         }
 
         #ifdef MODULE_LCD
-        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
-        display.displayVelocity(velocity);
+            display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, editModeActive());
+            display.displayVelocity(velocity);
         #endif
         break;
 
         case false:
-        //note off
-        #ifdef MODULE_LCD
-        display.displayActivePadNotes(0, 0, 0);
-        #endif
+            //note off
+            #ifdef MODULE_LCD
+            display.displayActivePadNotes(0, 0, 0, editModeActive());
+            #endif
         break;
 
     }

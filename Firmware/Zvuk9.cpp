@@ -98,16 +98,16 @@ void initHardware() {
     setOutputMacro(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
     setLowMacro(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN_INDEX);
 
-    //do not change order of initialization!
-    configuration.init();
-    sei();
-    timers.init();
-
     #if MODE_SERIAL < 1
     midi.init();
     #else
     vserial.init();
     #endif
+
+    //do not change order of initialization!
+    configuration.init();
+    sei();
+    timers.init();
 
     #ifdef MODULE_LCD
     display.init();

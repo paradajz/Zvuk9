@@ -35,8 +35,9 @@ void Pads::displayActivePadNotes(uint8_t pad) {
     //this will display all active notes currently assigned to pad while in pad edit mode
 
     uint8_t tonicArray[NOTES_PER_PAD],
-            octaveArray[NOTES_PER_PAD],
             noteCounter = 0;
+
+    int8_t octaveArray[NOTES_PER_PAD];
 
     #if MODE_SERIAL > 0
         vserial.println("Assigned notes:");
@@ -57,7 +58,7 @@ void Pads::displayActivePadNotes(uint8_t pad) {
     }
 
     #ifdef MODULE_LCD
-        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter);
+        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, true);
     #endif
 
 }
