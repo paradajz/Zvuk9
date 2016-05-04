@@ -10,9 +10,18 @@ Button control using two MPC23017 expanders.
 #ifndef BUTTONS_H_
 #define BUTTONS_H_
 #include "../../Debug.h"
-#include "../../hardware/pins/Pins.h"
 #include "../../midi/MIDI_parameters.h"
 #include "../../Types.h"
+#include "../pads/Pads.h"
+
+#ifdef MODULE_LCD
+#include "../lcd/LCD.h"
+#include "../lcd/menu/Menu.h"
+#endif
+
+#ifdef MODULE_LEDS
+#include "../leds/LEDs.h"
+#endif
 
 #define MAX_NUMBER_OF_BUTTONS   32
 
