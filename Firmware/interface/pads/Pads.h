@@ -116,6 +116,7 @@ class Pads  {
     //pad info
     int8_t getLastTouchedPad();
     bool isPadPressed(uint8_t padNumber);
+    bool allPadsReleased();
 
     //scale info
     bool isUserScale(uint8_t scale);
@@ -163,7 +164,6 @@ class Pads  {
     //data processing
     bool pressureUpdated();
     bool xyUpdated();
-    void checkOctaveShift();
 
     //data availability checks
     bool checkAftertouch(uint8_t pad);
@@ -174,7 +174,6 @@ class Pads  {
     //pad press updating/info
     void setPadPressed(uint8_t padNumber, bool padState);
     void updateLastPressedPad(uint8_t pad, bool state);
-    bool allPadsReleased();
 
     //lcd/led handling on midi event
     void handleNoteLEDs(uint8_t pad, bool state);
@@ -289,10 +288,11 @@ class Pads  {
 
     //used to shift octave once all pads are released
     int8_t      octaveShiftAmount;
+    uint16_t    currentPressedPadsHistory;
 
     //pad press history buffer
     uint8_t     padPressHistory_buffer[MAX_PADS];
-    int8_t      padPressHistory_counter;
+    uint8_t     padPressHistory_counter;
 
     //note buffer
     uint8_t     pad_buffer[PAD_NOTE_BUFFER_SIZE];

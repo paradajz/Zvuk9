@@ -236,8 +236,9 @@ void Pads::changeActiveOctave(bool direction)   {
 
 changeOutput_t Pads::shiftOctave(bool direction)  {
 
-    //this function only checks for whether all notes can be shifted or not
-    //actual shifting takes place in checkOctaveShift function when all pads are released
+    //this function shifts octave up or down
+    //upon shifting, pressed pads should also send new notes
+    //upon release of pad which changed octave, note off should be sent for both new and previous notes
 
     bool changeAllowed = true;
     changeOutput_t result = outputChanged;
@@ -286,10 +287,20 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
         if (direction) octaveShiftAmount++;
         else octaveShiftAmount--;
 
+        bool octaveDirection = octaveShiftAmount > 0;
+
         if (isPredefinedScale(activePreset))    {
 
+            //predefined scale
             //octave is ALWAYS first note on pad
             activeOctave = getOctaveFromNote(padNote[0][0] + MIDI_NOTES*octaveShiftAmount);
+
+            uint16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset;
+            uint8_t currentOctave_predefinedScale = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale);
+
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, currentOctave_predefinedScale+octaveShiftAmount);
+            for (int i=0; i<MAX_PADS; i++)
+                octaveDirection ? padNote[i][0] += (MIDI_NOTES*abs(octaveShiftAmount)) : padNote[i][0] -= (MIDI_NOTES*abs(octaveShiftAmount));
 
         }   else {
 
@@ -309,67 +320,46 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
             }
 
-        }
+            //user scale
+            octaveShiftAmount = abs(octaveShiftAmount);
+            uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+            for (int i=0; i<MAX_PADS; i++)    {
 
-    }
+                for (int j=0; j<NOTES_PER_PAD; j++) {
 
-    return result;
+                    if (padNote[i][j] != BLANK_NOTE)    {
 
-}
+                        octaveDirection ? padNote[i][j] += (MIDI_NOTES*abs(octaveShiftAmount)) : padNote[i][j] -= (MIDI_NOTES*abs(octaveShiftAmount));
+                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), padNote[i][j]);
 
-void Pads::checkOctaveShift()   {
-
-    //internal
-    //this function will shift octave if octave needs to be shifted only when all pads are released
-
-    if (!octaveShiftAmount) return; //nothing to shift
-
-    if (!allPadsReleased()) return; //shift only when all pads are released
-
-    bool direction = octaveShiftAmount > 0;
-    uint16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset;
-    uint8_t currentOctave_predefinedScale = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale);
-
-    bool predefinedScale = isPredefinedScale(activePreset);
-
-    switch(predefinedScale) {
-
-        case true:
-        //predefined scale
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, currentOctave_predefinedScale+octaveShiftAmount);
-        for (int i=0; i<MAX_PADS; i++)
-            direction ? padNote[i][0] += (MIDI_NOTES*abs(octaveShiftAmount)) : padNote[i][0] -= (MIDI_NOTES*abs(octaveShiftAmount));
-        break;
-
-        case false:
-        //user scale
-        octaveShiftAmount = abs(octaveShiftAmount);
-        uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
-        for (int i=0; i<MAX_PADS; i++)    {
-
-            for (int j=0; j<NOTES_PER_PAD; j++) {
-
-                if (padNote[i][j] != BLANK_NOTE)    {
-
-                    direction ? padNote[i][j] += (MIDI_NOTES*abs(octaveShiftAmount)) : padNote[i][j] -= (MIDI_NOTES*abs(octaveShiftAmount));
-                    configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), padNote[i][j]);
+                    }
 
                 }
 
             }
 
         }
-        break;
+
+        #if MODE_SERIAL > 0
+            octaveDirection ? vserial.print("Octave up, ") : vserial.print("Octave down, ");
+            vserial.print("active octave: ");
+            vserial.println(activeOctave);
+        #endif
+
+        //we should remember which pads are currently pressed so that we know which pads need to send two notes off (updated and previous)
+        //we should also send new notes
+        for (int i=0; i<MAX_PADS; i++)
+            if (isPadPressed(i)) {
+
+                bitWrite(currentPressedPadsHistory, i, 1);
+                if (noteSendEnabled[i])
+                    sendNotes(i, lastVelocityValue[i], true);
+
+            }
 
     }
 
-    #if MODE_SERIAL > 0
-        direction ? vserial.print("Octave up, ") : vserial.print("Octave down, ");
-        vserial.print("active octave: ");
-        vserial.println(activeOctave);
-    #endif
-
-    octaveShiftAmount = 0;
+    return result;
 
 }
 

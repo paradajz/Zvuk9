@@ -350,7 +350,13 @@ void Pads::update(bool midiEnabled)  {
 
     }
 
-    checkOctaveShift();
+    //reset "remember" logic when shifting octave
+    if (allPadsReleased() && (octaveShiftAmount != 0))  {
+
+        octaveShiftAmount = 0;
+        currentPressedPadsHistory = 0;
+
+    }
 
 }
 

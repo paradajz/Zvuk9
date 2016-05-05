@@ -222,17 +222,6 @@ void Buttons::handleTonicEvent(note_t note) {
 
     if (!pads.editModeActive())   {
 
-        //don't allow change of tonic while pads are pressed
-        for (int i=0; i<MAX_PADS; i++)
-        if (pads.isPadPressed(i))  {
-
-            #ifdef MODULE_LCD
-                display.displayPadReleaseError(changeTonic);
-            #endif
-            return;
-
-        }
-
         changeOutput_t result = pads.setTonic(note);
         note_t activeTonic = pads.getActiveTonic();
 
@@ -352,9 +341,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             case false:
             if (!modifierActive || pads.isUserScale(pads.getActivePreset()))   {
 
-                //shift entire octave
-
-                //shift all notes up or down
+                //shift entire octave up or down
                 if (!state)    {
 
                     changeOutput_t shiftResult = pads.shiftOctave(direction);
@@ -366,7 +353,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                         direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
                     #endif
 
-                    }   else {
+                }   else {
 
                     #ifdef MODULE_LEDS
                         direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);

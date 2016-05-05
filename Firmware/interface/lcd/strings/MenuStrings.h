@@ -22,10 +22,24 @@ PGM_P const menu_types[] PROGMEM = {
 
 };
 
+const uint8_t menu_types_sizes[] PROGMEM = {
+
+    sizeof(menuType_user),
+    sizeof(menuType_service)
+
+};
+
 PGM_P const service_menu_options[] PROGMEM = {
 
     serviceMenuOption_padCalibration,
     serviceMenuOption_exit
+
+};
+
+const uint8_t service_menu_options_sizes[] PROGMEM = {
+
+    sizeof(serviceMenuOption_padCalibration),
+    sizeof(serviceMenuOption_exit)
 
 };
 

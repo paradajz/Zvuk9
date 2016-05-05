@@ -752,56 +752,58 @@ void LCD::clearMIDIchannel()    {
 
 void LCD::displayServiceMenu()  {
 
-    //strcpy_P(stringBuffer, (char*)pgm_read_word(&(menu_types[serviceMenu])));
-    //updateDisplay(0, text, 0, true);
-//
-    //for (int i=0; i<(int16_t)progmemArraySize(service_menu_options); i++)    {
-//
-        //(!i) ? string_line = ">" : string_line = " ";
-        //strcpy_P(stringBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
-        //string_line += stringBuffer;
-        //updateDisplay(i+1, text, 0, true);
-//
-    //}
+    char tempBuffer[MAX_TEXT_SIZE];
+    uint8_t size;
+
+    strcpy_P(stringBuffer, (char*)pgm_read_word(&(menu_types[serviceMenu])));
+    size = pgm_read_byte(&menu_types_sizes[serviceMenu]);
+    updateDisplay(0, text, 0, true, size);
+
+    for (int i=0; i<(int16_t)progmemArraySize(service_menu_options); i++)    {
+
+        (!i) ? stringBuffer[0] = '>' : stringBuffer[0] = SPACE_CHAR;
+        stringBuffer[1] = '\0';
+        strcpy_P(tempBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
+        strcat(stringBuffer, tempBuffer);
+        size = 1 + pgm_read_byte(&service_menu_options_sizes[i]);
+        updateDisplay(i+1, text, 0, true, size);
+
+    }
 
 }
 
 void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
 
-    ////we can display up to three options/suboptions at the time
-    //uint8_t markerOption = (option > 2) ? (NUMBER_OF_LCD_ROWS-1) : option;
-//
-    //switch(type)    {
-//
-        //case serviceMenu:
-        //for (int i=0; i<(int)progmemArraySize(service_menu_options); i++)    {
-//
-            //if (i == markerOption)  {
-//
-                //string_line = ">";
-                //strcpy_P(stringBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
-                //string_line += stringBuffer;
-                //updateDisplay(i+1, text, 0, true);
-//
-                //}   else {
-//
-                //strcpy_P(stringBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
-                //string_line = " ";
-                //string_line += stringBuffer;
-                //updateDisplay(i+1, text, 0, true);
-//
-            //}
-//
-        //}
-        //break;
-//
-        //case userMenu:
-        //break;
-//
-        //case noMenu:
-        //break;
-//
-    //}
+    //we can display up to three options/suboptions at the time
+    uint8_t markerOption = (option > 2) ? (NUMBER_OF_LCD_ROWS-1) : option;
+
+    char tempBuffer[MAX_TEXT_SIZE];
+    uint8_t size;
+
+    switch(type)    {
+
+        case serviceMenu:
+        for (int i=0; i<(int)progmemArraySize(service_menu_options); i++)    {
+
+            if (i == markerOption)  stringBuffer[0] = '>';
+            else                    stringBuffer[0] = SPACE_CHAR;
+
+            stringBuffer[1] = '\0';
+            strcpy_P(tempBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
+            strcat(stringBuffer, tempBuffer);
+            size = 1 + pgm_read_byte(&service_menu_options_sizes[i]);
+            updateDisplay(i+1, text, 0, true, size);
+
+        }
+        break;
+
+        case userMenu:
+        break;
+
+        case noMenu:
+        break;
+
+    }
 
 }
 
