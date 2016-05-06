@@ -207,6 +207,10 @@ class Pads  {
     void updatePressHistory(uint8_t pad);
     void clearTouchHistoryPad(uint8_t pad);
 
+    //internal checking functions
+    void checkRemainingOctaveShift();
+    void checkRemainingNoteShift();
+
     //last midi values
     uint8_t     lastXMIDIvalue[MAX_PADS],
                 lastYMIDIvalue[MAX_PADS];
@@ -287,8 +291,8 @@ class Pads  {
                 switchToXYread;
 
     //used to shift octave once all pads are released
-    int8_t      octaveShiftAmount;
-    uint16_t    currentPressedPadsHistory;
+    int8_t      octaveShiftAmount[MAX_PADS];
+    uint16_t    octaveShiftPadBuffer;
 
     //pad press history buffer
     uint8_t     padPressHistory_buffer[MAX_PADS];

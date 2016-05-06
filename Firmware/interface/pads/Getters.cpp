@@ -154,7 +154,6 @@ void Pads::getPresetParameters()    {
         vserial.println(activePreset);
     #endif
 
-    octaveShiftAmount = 0;
     noteShiftAmount = 0;
 
     //clear all pad notes before assigning new ones

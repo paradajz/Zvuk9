@@ -13,6 +13,7 @@ Pads::Pads()  {
         lastYMIDIvalue[i] = DEFAULT_XY_AT_VALUE;
         lastAftertouchValue[i] = DEFAULT_XY_AT_VALUE;
         padPressHistory_buffer[i] = 0;
+        octaveShiftAmount[i] = 0;
 
         for (int j=0; j<NOTES_PER_PAD; j++)
             padNote[i][j] = BLANK_NOTE;
@@ -21,8 +22,8 @@ Pads::Pads()  {
 
     activeProgram = -1;
     activePreset = -1;
-    octaveShiftAmount = 0;
     noteShiftAmount = 0;
+    octaveShiftPadBuffer = 0;
 
 }
 
