@@ -3,10 +3,10 @@
 
 #include <avr/pgmspace.h>
 
-const char PROGMEM transportControlPlay_string[] PROGMEM = "Play";
-const char PROGMEM transportControlStop_string[] PROGMEM = "Stop";
-const char PROGMEM transportControlRecordOn_string[] PROGMEM = "Record on";
-const char PROGMEM transportControlRecordOff_string[] PROGMEM = "Record off";
+const char transportControlPlay_string[] PROGMEM = "Play";
+const char transportControlStop_string[] PROGMEM = "Stop";
+const char transportControlRecordOn_string[] PROGMEM = "Record on";
+const char transportControlRecordOff_string[] PROGMEM = "Record off";
 
 PGM_P const transportControlChangeArray[] PROGMEM = {
 
@@ -19,10 +19,10 @@ PGM_P const transportControlChangeArray[] PROGMEM = {
 
 const uint8_t transportControlChangeArray_sizes[] PROGMEM = {
 
-    sizeof(transportControlPlay_string),
-    sizeof(transportControlStop_string),
-    sizeof(transportControlRecordOn_string),
-    sizeof(transportControlRecordOff_string)
+    sizeof(transportControlPlay_string) - 1,
+    sizeof(transportControlStop_string) - 1,
+    sizeof(transportControlRecordOn_string) - 1,
+    sizeof(transportControlRecordOff_string) - 1
 
 };
 

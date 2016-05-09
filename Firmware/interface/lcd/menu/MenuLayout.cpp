@@ -5,7 +5,7 @@
 void Menu::createLayout()   {
 
     {
-        menuOption[OPTION_PAD_CALIBRATION].options = progmemArraySize(service_menu_options);
+        menuOption[OPTION_PAD_CALIBRATION].options = progmemCharArraySize(service_menu_options);
     }
 
 }

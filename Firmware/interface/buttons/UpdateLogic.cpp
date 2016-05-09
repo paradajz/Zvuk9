@@ -24,6 +24,8 @@ const uint8_t gppuAddress[]     = { 0x0C, 0x0D };   //interrupt/pull-up
 //if it's 0xFF or buttonDebounceCompare, its reading is stable
 const uint8_t buttonDebounceCompare = 0b11110000;
 
+bool processingEnabled = true;
+
 Buttons::Buttons()  {
 
     //default constructor
@@ -88,12 +90,13 @@ void Buttons::init()  {
     write_I2C_reg(expanderAddress[1], gppuAddress[1], 0xFF);    //expander 2, turn on pull-ups, PORTB
 
     uint32_t currentTime = rTimeMillis();
+    processingEnabled = false;
 
     //read buttons for 0.1 seconds
     do {
 
         //read all buttons without activating event handlers
-        update(false);
+        update();
 
     }   while ((rTimeMillis() - currentTime) < 100);
 
@@ -101,21 +104,21 @@ void Buttons::init()  {
 
         //we should activate service menu now
         #if MODE_SERIAL > 0
-        vserial.println("Activating user menu");
+            vserial.println("Activating user menu");
         #endif
 
         #ifdef MODULE_LCD
-        menu.displayMenu(serviceMenu);
+            menu.displayMenu(serviceMenu);
         #endif
 
         buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
         buttonEnabled[BUTTON_TRANSPORT_PLAY] = false;
 
-    }
+    }   else processingEnabled = true;
 
 }
 
-void Buttons::update(bool processingEnabled)    {
+void Buttons::update()    {
 
     if (!((rTimeMillis() - lastCheckTime) > EXPANDER_CHECK_TIME)) return;
 
@@ -145,13 +148,16 @@ void Buttons::update(bool processingEnabled)    {
     if (getButtonState(BUTTON_TRANSPORT_STOP) && buttonEnabled[BUTTON_TRANSPORT_STOP])   {
 
         //measure the time the button is pressed
-        if (!stopDisableTimeout) stopDisableTimeout = rTimeMillis();
+        if (!stopDisableTimeout || !pads.allPadsReleased()) stopDisableTimeout = rTimeMillis();
         else if ((rTimeMillis() - stopDisableTimeout) > STOP_DISABLE_TIMEOUT) {
 
             buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
             stopDisableTimeout = 0;
             #ifdef MODULE_LCD
             display.displayModifierEnabled();
+            #endif
+            #if MODE_SERIAL > 0
+            vserial.println("Modifier active");
             #endif
             modifierActive = true;
 

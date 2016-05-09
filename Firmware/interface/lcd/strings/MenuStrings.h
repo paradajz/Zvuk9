@@ -4,16 +4,16 @@
 #include <avr/pgmspace.h>
 
 //menu names
-const char PROGMEM menuType_user[] PROGMEM = "User menu";
-const char PROGMEM menuType_service[] PROGMEM = "Service menu";
+const char menuType_user[] PROGMEM = "User menu";
+const char menuType_service[] PROGMEM = "Service menu";
 
 //service menu
-const char PROGMEM serviceMenuOption_padCalibration[] PROGMEM = "Pad calibration";
-const char PROGMEM serviceMenuOption_exit[] PROGMEM = "Exit";
-const char PROGMEM serviceMenuSubOption_padCalibration_x[] PROGMEM = "Calibrate X";
-const char PROGMEM serviceMenuSubOption_padCalibration_y[] PROGMEM = "Calibrate Y";
-const char PROGMEM serviceMenuSubOption_padCalibration_pressure[] PROGMEM = "Calibrate pressure";
-const char PROGMEM serviceMenuSubOption_padCalibration_flipAxis[] PROGMEM = "Flip X/Y axis";
+const char serviceMenuOption_padCalibration[] PROGMEM = "Pad calibration";
+const char serviceMenuOption_factoryReset[] PROGMEM = "Factory reset";
+const char serviceMenuOption_exit[] PROGMEM = "Exit";
+const char serviceMenuSubOption_padCalibration_x[] PROGMEM = "Calibrate X";
+const char serviceMenuSubOption_padCalibration_y[] PROGMEM = "Calibrate Y";
+const char serviceMenuSubOption_padCalibration_pressure[] PROGMEM = "Calibrate pressure";
 
 PGM_P const menu_types[] PROGMEM = {
 
@@ -24,22 +24,24 @@ PGM_P const menu_types[] PROGMEM = {
 
 const uint8_t menu_types_sizes[] PROGMEM = {
 
-    sizeof(menuType_user),
-    sizeof(menuType_service)
+    sizeof(menuType_user) - 1,
+    sizeof(menuType_service) - 1
 
 };
 
 PGM_P const service_menu_options[] PROGMEM = {
 
     serviceMenuOption_padCalibration,
+    serviceMenuOption_factoryReset,
     serviceMenuOption_exit
 
 };
 
 const uint8_t service_menu_options_sizes[] PROGMEM = {
 
-    sizeof(serviceMenuOption_padCalibration),
-    sizeof(serviceMenuOption_exit)
+    sizeof(serviceMenuOption_padCalibration) - 1,
+    sizeof(serviceMenuOption_factoryReset) - 1,
+    sizeof(serviceMenuOption_exit) - 1
 
 };
 
@@ -47,8 +49,7 @@ PGM_P const menu_subOptions_padCalibration[] PROGMEM = {
 
     serviceMenuSubOption_padCalibration_x,
     serviceMenuSubOption_padCalibration_y,
-    serviceMenuSubOption_padCalibration_pressure,
-    serviceMenuSubOption_padCalibration_flipAxis
+    serviceMenuSubOption_padCalibration_pressure
 
 };
 

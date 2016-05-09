@@ -3,9 +3,9 @@
 
 #include <avr/pgmspace.h>
 
-const char PROGMEM padAmountSingle_string[] = "pad ";
-const char PROGMEM padAmountAll_string[] = "all pads";
+const char padAmountSingle_string[] PROGMEM = "pad";
+const char padAmountAll_string[] PROGMEM = "all pads";
 
-const char PROGMEM padClear_string[] = "     ";
+const char padClear_string[] PROGMEM = "     ";
 
 #endif

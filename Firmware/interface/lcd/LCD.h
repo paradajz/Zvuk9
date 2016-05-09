@@ -70,6 +70,7 @@ class LCD   {
     void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite);
     void displayMessage(uint8_t row, const char *message);
     void checkScroll(uint8_t row);
+    void displayPadAmount(bool singlePad, uint8_t padNumber);
 
     uint32_t messageDisplayTime;
     uint32_t lastScrollTime;

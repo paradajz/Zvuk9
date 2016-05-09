@@ -11,4 +11,6 @@
 #include "PadAmount.h"
 #include "Misc.h"
 
+//note: in _sizes arrays, we need to subtract 1 because of EOL char
+
 #endif

@@ -596,6 +596,9 @@
     <Compile Include="interface\buttons\Buttons.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\buttons\MenuOptionSelection.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\buttons\UpdateLogic.cpp">
       <SubType>compile</SubType>
     </Compile>

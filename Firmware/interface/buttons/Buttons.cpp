@@ -163,10 +163,6 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
         } else {
 
-            #if MODE_SERIAL > 0
-                vserial.println("Modifier active");
-            #endif
-
             stopDisableTimeout = rTimeMillis();
             return;
 

@@ -3,7 +3,7 @@
 
 #define OCTAVE_NORMALIZATION            -2
 
-#define progmemArraySize(x) (sizeof(x) / sizeof(x[0]))
+#define progmemCharArraySize(x) (sizeof(x) / sizeof(x[0]) -1)
 #define normalizeOctave(octave) ((octave)+(OCTAVE_NORMALIZATION))
 
 

@@ -30,7 +30,7 @@ class Buttons   {
     public:
     Buttons();
     void init();
-    void update(bool processingEnabled = true);
+    void update();
 
     //getters
     bool getButtonState(uint8_t buttonNumber);

@@ -119,10 +119,6 @@ void initHardware() {
 
     pads.init();
 
-    #ifdef MODULE_ENCODERS
-    encoders.init();
-    #endif
-
     #ifdef MODULE_LEDS
     leds.displayActiveNoteLEDs();
     #endif
@@ -133,12 +129,8 @@ void initHardware() {
     sei();
     #endif
 
-    //setup program/preset on display
-    uint8_t activeProgram = pads.getActiveProgram();
-    uint8_t activePreset = pads.getActivePreset();
-
     #ifdef MODULE_LCD
-    display.displayProgramAndPreset(activeProgram+1, activePreset);
+    display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());
     #endif
 
     #ifdef MODULE_BUTTONS

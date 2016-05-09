@@ -294,6 +294,10 @@ class Pads  {
     int8_t      octaveShiftAmount[MAX_PADS];
     uint16_t    octaveShiftPadBuffer;
 
+    //used to shift scale once all pads are released
+    int8_t      noteShiftAmount__[MAX_PADS];
+    uint16_t    scaleShiftPadBuffer;
+
     //pad press history buffer
     uint8_t     padPressHistory_buffer[MAX_PADS];
     uint8_t     padPressHistory_counter;

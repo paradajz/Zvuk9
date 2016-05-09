@@ -3,25 +3,25 @@
 
 #include <avr/pgmspace.h>
 
-const char PROGMEM tonicC_string[] PROGMEM = "C";
-const char PROGMEM tonicCSharp_string[] PROGMEM = "C#";
-const char PROGMEM tonicD_string[] PROGMEM = "D";
-const char PROGMEM tonicDSharp_string[] PROGMEM = "D#";
-const char PROGMEM tonicE_string[] PROGMEM = "E";
-const char PROGMEM tonicF_string[] PROGMEM = "F";
-const char PROGMEM tonicFSharp_string[] PROGMEM = "F#";
-const char PROGMEM tonicG_string[] PROGMEM = "G";
-const char PROGMEM tonicGSharp_string[] PROGMEM = "G#";
-const char PROGMEM tonicA_string[] PROGMEM = "A";
-const char PROGMEM tonicASharp_string[] PROGMEM = "A#";
-const char PROGMEM tonicB_strig[] PROGMEM = "B";
+const char tonicC_string[] PROGMEM = "C";
+const char tonicCSharp_string[] PROGMEM = "C#";
+const char tonicD_string[] PROGMEM = "D";
+const char tonicDSharp_string[] PROGMEM = "D#";
+const char tonicE_string[] PROGMEM = "E";
+const char tonicF_string[] PROGMEM = "F";
+const char tonicFSharp_string[] PROGMEM = "F#";
+const char tonicG_string[] PROGMEM = "G";
+const char tonicGSharp_string[] PROGMEM = "G#";
+const char tonicA_string[] PROGMEM = "A";
+const char tonicASharp_string[] PROGMEM = "A#";
+const char tonicB_strig[] PROGMEM = "B";
 
-const char PROGMEM tonic_string[] PROGMEM = "Tonic ";
-const char PROGMEM octave_string[] PROGMEM = "Octave ";
-const char PROGMEM activeOctave_string[] PROGMEM = "Active octave: ";
+const char tonic_string[] PROGMEM = "Tonic ";
+const char octave_string[] PROGMEM = "Octave ";
+const char activeOctave_string[] PROGMEM = "Active octave: ";
 
-const char PROGMEM noteDown_string[] PROGMEM = "One note down";
-const char PROGMEM noteUp_string[] PROGMEM = "One note up";
+const char noteDown_string[] PROGMEM = "One note down";
+const char noteUp_string[] PROGMEM = "One note up";
 
 PGM_P const noteNameArray[] PROGMEM = {
 
@@ -42,18 +42,18 @@ PGM_P const noteNameArray[] PROGMEM = {
 
 const uint8_t noteNameArray_sizes[] PROGMEM = {
 
-    sizeof(tonicC_string),
-    sizeof(tonicCSharp_string),
-    sizeof(tonicD_string),
-    sizeof(tonicDSharp_string),
-    sizeof(tonicE_string),
-    sizeof(tonicF_string),
-    sizeof(tonicFSharp_string),
-    sizeof(tonicG_string),
-    sizeof(tonicGSharp_string),
-    sizeof(tonicA_string),
-    sizeof(tonicASharp_string),
-    sizeof(tonicB_strig)
+    sizeof(tonicC_string) - 1,
+    sizeof(tonicCSharp_string) - 1,
+    sizeof(tonicD_string) - 1,
+    sizeof(tonicDSharp_string) - 1,
+    sizeof(tonicE_string) - 1,
+    sizeof(tonicF_string) - 1,
+    sizeof(tonicFSharp_string) - 1,
+    sizeof(tonicG_string) - 1,
+    sizeof(tonicGSharp_string) - 1,
+    sizeof(tonicA_string) - 1,
+    sizeof(tonicASharp_string) - 1,
+    sizeof(tonicB_strig) - 1
 
 };
 
