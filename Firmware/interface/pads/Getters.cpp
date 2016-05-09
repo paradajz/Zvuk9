@@ -13,9 +13,9 @@ void Pads::getConfiguration()   {
 void Pads::getProgramParameters()   {
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
-        vserial.println("Printing out program settings");
-        vserial.println("----------------------------------------");
+        printf("----------------------------------------\n");
+        printf("Printing out program settings\n");
+        printf("----------------------------------------\n");
     #endif
 
     activeProgram = configuration.readParameter(CONF_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
@@ -23,10 +23,8 @@ void Pads::getProgramParameters()   {
     aftertouchType = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, (uint16_t)GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #if MODE_SERIAL > 0
-        vserial.print("Active program: ");
-        vserial.println(activeProgram+1);
-        vserial.print("Active preset: ");
-        vserial.println(activePreset);
+        printf("Active program: %d\n", activeProgram+1);
+        printf("Active preset: %d\n", activePreset);
     #endif
 
     getPadParameters();
@@ -40,16 +38,16 @@ void Pads::getPadParameters()   {
     splitState = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
-        vserial.println("Printing out pad configuration");
-        vserial.println("----------------------------------------");
+        printf("----------------------------------------\n");
+        printf("Printing out pad configuration\n");
+        printf("----------------------------------------\n");
     #endif
 
     if (!splitState)  {   //split off
 
         //apply global settings to pads
         #if MODE_SERIAL > 0
-            vserial.println("All pad parameters are global - split is off");
+            printf("All pad parameters are global - split is off\n");
         #endif
 
         for (int i=0; i<MAX_PADS; i++)    {
@@ -71,25 +69,25 @@ void Pads::getPadParameters()   {
         }
 
         #if MODE_SERIAL > 0
-            vserial.print("X send enabled: ");            vserial.println(xSendEnabled[0]);
-            vserial.print("Y send enabled: ");            vserial.println(ySendEnabled[0]);
-            vserial.print("Note send enabled: ");         vserial.println(noteSendEnabled[0]);
-            vserial.print("Aftertouch send enabled: ");   vserial.println(aftertouchSendEnabled[0]);
-            vserial.print("CC X MIDI ID: ");              vserial.println(ccXPad[0]);
-            vserial.print("CC Y MIDI ID: ");              vserial.println(ccYPad[0]);
-            vserial.print("CC X lower limit: ");          vserial.println(ccXminPad[0]);
-            vserial.print("CC X upper limit: ");          vserial.println(ccXmaxPad[0]);
-            vserial.print("CC Y lower limit: ");          vserial.println(ccYminPad[0]);
-            vserial.print("CC Y upper limit: ");          vserial.println(ccYmaxPad[0]);
-            vserial.print("Pad curve for X: ");           vserial.println(padCurveX[0]);
-            vserial.print("Pad curve for Y: ");           vserial.println(padCurveY[0]);
-            vserial.print("MIDI channel: ");              vserial.println(midiChannel[0]);
+            printf("X send enabled: %d\n", xSendEnabled[0]);
+            printf("Y send enabled: %d\n", ySendEnabled[0]);
+            printf("Note send enabled: %d\n", noteSendEnabled[0]);
+            printf("Aftertouch send enabled: %d\n", aftertouchSendEnabled[0]);
+            printf("CC X MIDI ID: %d\n", ccXPad[0]);
+            printf("CC Y MIDI ID: %d\n", ccYPad[0]);
+            printf("CC X lower limit: %d\n", ccXminPad[0]);
+            printf("CC X upper limit: %d\n", ccXmaxPad[0]);
+            printf("CC Y lower limit: %d\n", ccYminPad[0]);
+            printf("CC Y upper limit: %d\n", ccYmaxPad[0]);
+            printf("Pad curve for X: %d\n", padCurveX[0]);
+            printf("Pad curve for Y: %d\n", padCurveY[0]);
+            printf("MIDI channel: %d\n", midiChannel[0]);
         #endif
 
     }   else {  //split on
 
         #if MODE_SERIAL > 0
-            vserial.println("Pads have individual settings");
+            printf("Pads have individual settings\n");
         #endif
 
         //pads have individual settings
@@ -110,22 +108,21 @@ void Pads::getPadParameters()   {
                 midiChannel[i]              = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
 
                 #if MODE_SERIAL > 0
-                    vserial.print("Pad ");
-                    vserial.println(i+1);
+                    printf("Pad %d", i+1);
 
-                    vserial.print("X send enabled: ");            vserial.println(xSendEnabled[i]);
-                    vserial.print("Y send enabled: ");            vserial.println(ySendEnabled[i]);
-                    vserial.print("Note send enabled: ");         vserial.println(noteSendEnabled[i]);
-                    vserial.print("Aftertouch send enabled: ");   vserial.println(aftertouchSendEnabled[i]);
-                    vserial.print("CC X MIDI ID: ");              vserial.println(ccXPad[i]);
-                    vserial.print("CC Y MIDI ID: ");              vserial.println(ccYPad[i]);
-                    vserial.print("CC X lower limit: ");          vserial.println(ccXminPad[i]);
-                    vserial.print("CC X upper limit: ");          vserial.println(ccXmaxPad[i]);
-                    vserial.print("CC Y lower limit: ");          vserial.println(ccYminPad[i]);
-                    vserial.print("CC Y upper limit: ");          vserial.println(ccYmaxPad[i]);
-                    vserial.print("Pad curve for X: ");           vserial.println(padCurveX[i]);
-                    vserial.print("Pad curve for Y: ");           vserial.println(padCurveY[i]);
-                    vserial.print("MIDI channel: ");              vserial.println(midiChannel[i]);
+                    printf("X send enabled: %d\n", xSendEnabled[i]);
+                    printf("Y send enabled: %d\n", ySendEnabled[i]);
+                    printf("Note send enabled: %d\n", noteSendEnabled[i]);
+                    printf("Aftertouch send enabled: %d\n", aftertouchSendEnabled[i]);
+                    printf("CC X MIDI ID: %d\n", ccXPad[i]);
+                    printf("CC Y MIDI ID: %d\n", ccYPad[i]);
+                    printf("CC X lower limit: %d\n", ccXminPad[i]);
+                    printf("CC X upper limit: %d\n", ccXmaxPad[i]);
+                    printf("CC Y lower limit: %d\n", ccYminPad[i]);
+                    printf("CC Y upper limit: %d\n", ccYmaxPad[i]);
+                    printf("Pad curve for X: %d\n", padCurveX[i]);
+                    printf("Pad curve for Y: %d\n", padCurveY[i]);
+                    printf("MIDI channel: %d\n", midiChannel[i]);
                 #endif
 
         }
@@ -147,11 +144,10 @@ void Pads::getPadParameters()   {
 void Pads::getPresetParameters()    {
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
-        vserial.println("Printing out preset settings");
-        vserial.println("----------------------------------------");
-        vserial.print("Scale: ");
-        vserial.println(activePreset);
+        printf("----------------------------------------\n");
+        printf("Printing out preset settings\n");
+        printf("----------------------------------------\n");
+        printf("Scale: %d\n", activePreset);
     #endif
 
     //clear all pad notes before assigning new ones
@@ -170,8 +166,7 @@ void Pads::getPresetParameters()    {
 
             activeOctave = getOctaveFromNote(padNote[0][i]);
             #if MODE_SERIAL > 0
-                vserial.print("Active octave: ");
-                vserial.println(activeOctave);
+                printf("Active octave: %d\n", activeOctave);
             #endif
             break;
 
@@ -192,9 +187,9 @@ void Pads::generateScale(scale_t scale)    {
         int8_t shift = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
 
         #if MODE_SERIAL > 0
-            vserial.print("Octave: ");    vserial.println(octave);
-            vserial.print("Tonic: ");     vserial.println(tonic);
-            vserial.print("Shift: ");     vserial.println(shift);
+            printf("Octave: %d\n", octave);
+            printf("Tonic: %d\n", tonic);
+            printf("Shift: %d\n", shift);
         #endif
 
         uint8_t noteCounter = 0;
@@ -250,10 +245,7 @@ void Pads::generateScale(scale_t scale)    {
     }   else {  //user scales
 
         #if MODE_SERIAL > 0
-            vserial.print((uint8_t)scale);
-            vserial.print("/");
-            vserial.print("User preset ");
-            vserial.println(scale-NUMBER_OF_PREDEFINED_SCALES);
+            printf("User preset %d\n", scale-NUMBER_OF_PREDEFINED_SCALES);
         #endif
 
         uint16_t noteID = (scale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
@@ -271,17 +263,15 @@ void Pads::generateScale(scale_t scale)    {
     }
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
-        vserial.println("Printing out notes for pads");
-        vserial.println("----------------------------------------");
+        printf("----------------------------------------\n");
+        printf("Printing out notes for pads\n");
+        printf("----------------------------------------\n");
         for (int i=0; i<MAX_PADS; i++)    {
 
-            vserial.print("Pad ");
-            vserial.print(i+1);
-            vserial.println(":");
+            printf("Pad %d: \n", i+1);
 
             for (int j=0; j<NOTES_PER_PAD; j++)
-                vserial.println(padNote[i][j]);
+                printf("%d\n", padNote[i][j]);
 
         }
     #endif
@@ -291,9 +281,9 @@ void Pads::generateScale(scale_t scale)    {
 void Pads::getPadLimits()   {
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
-        vserial.println("Printing out limits for pads");
-        vserial.println("----------------------------------------");
+        printf("----------------------------------------\n");
+        printf("Printing out limits for pads\n");
+        printf("----------------------------------------\n");
     #endif
 
     getPressureLimits();
@@ -306,9 +296,9 @@ void Pads::getPadLimits()   {
 void Pads::getPressureLimits()  {
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
-        vserial.println("Printing out pressure limits for pads");
-        vserial.println("----------------------------------------");
+        printf("----------------------------------------\n");
+        printf("Printing out pressure limits for pads\n");
+        printf("----------------------------------------\n");
     #endif
 
     for (int i=0; i<MAX_PADS; i++) {
@@ -317,16 +307,8 @@ void Pads::getPressureLimits()  {
         padPressureLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
 
         #if MODE_SERIAL > 0
-            vserial.print("Lower pressure limit for pad ");
-            vserial.print(i);
-            vserial.print(": ");
-            vserial.println(padPressureLimitLower[i]);
-
-            vserial.print("Upper pressure limit for pad ");
-            vserial.print(i);
-            vserial.print(": ");
-            vserial.println(padPressureLimitUpper[i]);
-            vserial.println();
+            printf("Lower pressure limit for pad %d: %d\n", i, padPressureLimitLower[i]);
+            printf("Upper pressure limit for pad %d: %d\n", i, padPressureLimitUpper[i]);
         #endif
 
     }
@@ -336,9 +318,9 @@ void Pads::getPressureLimits()  {
 void Pads::getXLimits()  {
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
-        vserial.println("Printing out X limits for pads");
-        vserial.println("----------------------------------------");
+        printf("----------------------------------------\n");
+        printf("Printing out X limits for pads\n");
+        printf("----------------------------------------\n");
     #endif
 
     for (int i=0; i<MAX_PADS; i++) {
@@ -347,16 +329,8 @@ void Pads::getXLimits()  {
         padXLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, i);
 
         #if MODE_SERIAL > 0
-            vserial.print("Lower X limit for pad ");
-            vserial.print(i);
-            vserial.print(": ");
-            vserial.println(padXLimitLower[i]);
-
-            vserial.print("Upper X limit for pad ");
-            vserial.print(i);
-            vserial.print(": ");
-            vserial.println(padXLimitUpper[i]);
-            vserial.println();
+            printf("Lower X limit for pad %d: %d\n", i, padXLimitLower[i]);
+            printf("Upper X limit for pad %d: %d\n", i, padXLimitUpper[i]);
         #endif
 
     }
@@ -366,9 +340,9 @@ void Pads::getXLimits()  {
 void Pads::getYLimits()  {
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
-        vserial.println("Printing out Y limits for pads");
-        vserial.println("----------------------------------------");
+        printf("----------------------------------------\n");
+        printf("Printing out Y limits for pads\n");
+        printf("----------------------------------------\n");
     #endif
 
     for (int i=0; i<MAX_PADS; i++) {
@@ -377,16 +351,8 @@ void Pads::getYLimits()  {
         padYLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, i);
 
         #if MODE_SERIAL > 0
-            vserial.print("Lower Y limit for pad ");
-            vserial.print(i);
-            vserial.print(": ");
-            vserial.println(padYLimitLower[i]);
-
-            vserial.print("Upper Y limit for pad ");
-            vserial.print(i);
-            vserial.print(": ");
-            vserial.println(padYLimitUpper[i]);
-            vserial.println();
+            printf("Lower Y limit for pad %d: %d\n", i, padYLimitLower[i]);
+            printf("Upper Y limit for pad %d: %d\n", i, padYLimitUpper[i]);
         #endif
 
     }
@@ -396,9 +362,9 @@ void Pads::getYLimits()  {
 void Pads::getAftertouchLimits()    {
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
-        vserial.println("Printing out aftertouch limits for pads");
-        vserial.println("----------------------------------------");
+        printf("----------------------------------------\n");
+        printf("Printing out aftertouch limits for pads\n");
+        printf("----------------------------------------\n");
     #endif
 
     for (int i=0; i<MAX_PADS; i++)    {
@@ -409,16 +375,8 @@ void Pads::getAftertouchLimits()    {
         padAftertouchLimitUpper[i] = upperLimit;
 
         #if MODE_SERIAL > 0
-            vserial.print("Lower aftertouch limit for pad ");
-            vserial.print(i);
-            vserial.print(": ");
-            vserial.println(padAftertouchLimitLower[i]);
-
-            vserial.print("Upper aftertouch limit for pad ");
-            vserial.print(i);
-            vserial.print(": ");
-            vserial.println(padAftertouchLimitUpper[i]);
-            vserial.println();
+            printf("Lower aftertouch limit for pad %d: %d\n", i, padAftertouchLimitLower[i]);
+            printf("Upper aftertouch limit for pad %d: %d\n", i, padAftertouchLimitUpper[i]);
         #endif
 
     }

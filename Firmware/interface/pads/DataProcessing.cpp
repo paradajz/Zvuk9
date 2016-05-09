@@ -211,8 +211,7 @@ bool Pads::checkAftertouch(uint8_t pad)  {
                             returnValue = true;
 
                             #if MODE_SERIAL > 0
-                                vserial.print("Maximum channel aftertouch updated: ");
-                                vserial.println(maxAftertouchValue);
+                                printf("Maximum channel aftertouch updated: %d", maxAftertouchValue);
                             #endif
 
                         } else {
@@ -719,8 +718,8 @@ void Pads::updateLastPressedPad(uint8_t pad, bool state)   {
         if (pad != getLastTouchedPad())    {
 
             #if MODE_SERIAL > 0
-            vserial.print("Last touched pad: "); vserial.println(getLastTouchedPad());
-            vserial.print("Current pad: "); vserial.println(pad);
+                printf("Last touched pad: %d\n", getLastTouchedPad());
+                printf("Current pad: %d\n", pad);
             #endif
 
             updatePressHistory(pad);

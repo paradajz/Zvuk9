@@ -138,7 +138,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             sysExArray[4] = 0x02;
             type = transportPlay;
             #if MODE_SERIAL > 0
-                vserial.println("Transport Control Play");
+                printf("Transport Control Play\n");
             #endif
             #ifdef MODULE_LEDS
                 leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityFull);
@@ -154,7 +154,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             sysExArray[4] = 0x01;
             type = transportStop;
             #if MODE_SERIAL > 0
-                vserial.println("Transport Control Stop");
+                printf("Transport Control Stop\n");
             #endif
             #ifdef MODULE_LEDS
                 leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
@@ -179,7 +179,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                     sysExArray[4] = 0x07;
                     recordState = ledIntensityOff;
                     #if MODE_SERIAL > 0
-                    vserial.println("Transport Control Record Stop");
+                    printf("Transport Control Record Stop\n");
                     #endif
                     displayState = false;
 
@@ -188,7 +188,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                     sysExArray[4] = 0x06;
                     recordState = ledIntensityFull;
                     #if MODE_SERIAL > 0
-                    vserial.println("Transport Control Record Start");
+                    printf("Transport Control Record Start\n");
                     #endif
                     displayState = true;
 
@@ -278,9 +278,9 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     //normally, this is called in automatically in Pads.cpp
                     //but on first occasion call it manually
                     #if MODE_SERIAL > 0
-                        vserial.println("----------------------------------------");
-                        vserial.println("Pad edit mode");
-                        vserial.println("----------------------------------------");
+                        printf("----------------------------------------\n");
+                        printf("Pad edit mode\n");
+                        printf("----------------------------------------\n");
                     #endif
                     pads.setupPadEditMode(pads.getLastTouchedPad());
 

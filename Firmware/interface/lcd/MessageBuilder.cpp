@@ -747,10 +747,6 @@ void LCD::displayMIDIchannel(uint8_t channel)   {
 
 void LCD::clearPadEditMode()    {
 
-    #if MODE_SERIAL > 0
-        vserial.println("Clearing pad edit mode from LCD");
-    #endif
-
     strcpy_P(stringBuffer, emptyLine_string);
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
         updateDisplay(i, text, 0, true, progmemCharArraySize(emptyLine_string));

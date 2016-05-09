@@ -33,6 +33,9 @@ USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
     },
 
 };
+
+FILE USBSerialStream;
+
 void EVENT_USB_Device_Connect(void)
 {
 	//LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
@@ -79,47 +82,14 @@ void EVENT_CDC_Device_ControLineStateChanged(USB_ClassInfo_CDC_Device_t *const C
 Serial::Serial()    {
 
     //def constructor
+    CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USBSerialStream);
+    stdout = &USBSerialStream;
 
 }
 
 void Serial::init() {
 
     USB_Init();
-
-}
-
-void Serial::println()  {
-
-    const char* string  = "\n";
-    CDC_Device_SendString(&VirtualSerial_CDC_Interface, string);
-
-}
-
-void Serial::print(const char *text)    {
-
-    CDC_Device_SendString(&VirtualSerial_CDC_Interface, text);
-
-}
-
-void Serial::println(const char *text)  {
-
-    CDC_Device_SendString(&VirtualSerial_CDC_Interface, text);
-    println();
-
-}
-
-void Serial::print(int32_t number)  {
-
-    char numberString[10];
-    itoa(number, numberString, 10);
-    CDC_Device_SendString(&VirtualSerial_CDC_Interface, numberString);
-
-}
-
-void Serial::println(int32_t number)    {
-
-    print(number);
-    println();
 
 }
 

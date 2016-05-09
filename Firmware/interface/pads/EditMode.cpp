@@ -5,8 +5,7 @@ bool editModeActivated;
 void Pads::setupPadEditMode(uint8_t pad)    {
 
     #if MODE_SERIAL > 0
-        vserial.print("Editing pad ");
-        vserial.println(pad);
+        printf("Editing pad %d\n", pad);
     #endif
 
     #ifdef MODULE_LCD
@@ -14,8 +13,7 @@ void Pads::setupPadEditMode(uint8_t pad)    {
     #endif
 
     #if MODE_SERIAL > 0
-        vserial.print("Active octave: ");
-        vserial.println(activeOctave);
+        printf("Active octave: %d\n", activeOctave);
     #endif
 
     #ifdef MODULE_LCD
@@ -40,7 +38,7 @@ void Pads::displayActivePadNotes(uint8_t pad) {
     int8_t octaveArray[NOTES_PER_PAD];
 
     #if MODE_SERIAL > 0
-        vserial.println("Assigned notes:");
+        printf("Assigned notes:\n");
     #endif
 
     for (int i=0; i<NOTES_PER_PAD; i++) {
@@ -52,7 +50,7 @@ void Pads::displayActivePadNotes(uint8_t pad) {
         noteCounter++;
 
         #if MODE_SERIAL > 0
-            vserial.println(padNote[pad][i]);
+            printf("%d\n", padNote[pad][i]);
         #endif
 
     }

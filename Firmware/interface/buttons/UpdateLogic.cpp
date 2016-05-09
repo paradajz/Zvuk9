@@ -104,7 +104,7 @@ void Buttons::init()  {
 
         //we should activate service menu now
         #if MODE_SERIAL > 0
-            vserial.println("Activating user menu");
+            printf("Activating user menu\n");
         #endif
 
         #ifdef MODULE_LCD
@@ -157,7 +157,7 @@ void Buttons::update()    {
             display.displayModifierEnabled();
             #endif
             #if MODE_SERIAL > 0
-            vserial.println("Modifier active");
+            printf("Modifier active\n");
             #endif
             modifierActive = true;
 

@@ -25,11 +25,6 @@ class Serial {
     public:
     Serial();
     void init();
-    void println();
-    void print(const char *text);
-    void println(const char *text);
-    void print(int32_t number);
-    void println(int32_t number);
     void update();
 
     private:

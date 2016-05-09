@@ -41,15 +41,14 @@ void EEPROMsettings::init() {
     }
 
     #if MODE_SERIAL > 0
-        vserial.println("EEPROM memory readout");
-        vserial.println("----------------------------------------");
+        printf("EEPROM memory readout\n");
+        printf("----------------------------------------\n");
         for (int i=0; i<4096; i++)  {
 
-            vserial.print(i);
-            vserial.print(": ");
-            vserial.println(eeprom_read_byte((uint8_t*)i));
+            printf("%d: ", i);
+            printf("%d", eeprom_read_byte((uint8_t*)i));
 
-        }   vserial.println("----------------------------------------");
+        }   printf("----------------------------------------\n");
     #endif
 
 }
@@ -133,15 +132,13 @@ void EEPROMsettings::factoryReset(factoryResetType_t type)   {
 void EEPROMsettings::createSectionAddresses()   {
 
     #if MODE_SERIAL > 0
-        vserial.println("We are now creating EEPROM memory layout");
-        vserial.println();
+        printf("We are now creating EEPROM memory layout\n");
     #endif
 
     for (int i=0; i<CONF_BLOCKS; i++)  {
 
         #if MODE_SERIAL > 0
-            vserial.print("Creating block ");
-            vserial.println(i);
+            printf("Creating block %d", i);
         #endif
 
         uint16_t memory_usage = 0;
@@ -149,9 +146,7 @@ void EEPROMsettings::createSectionAddresses()   {
         for (int j=0; j<blocks[i].sections; j++)    {
 
             #if MODE_SERIAL > 0
-                vserial.print("Section ");
-                vserial.print(j);
-                vserial.print(", address: ");
+                printf("Section %d, address: ", j);
             #endif
 
             if (!j) {
@@ -180,7 +175,7 @@ void EEPROMsettings::createSectionAddresses()   {
             }
 
             #if MODE_SERIAL > 0
-                vserial.println(blocks[i].sectionAddress[j]);
+                printf("%d\n", blocks[i].sectionAddress[j]);
             #endif
 
         }
@@ -204,10 +199,7 @@ void EEPROMsettings::createSectionAddresses()   {
         }
 
         #if MODE_SERIAL > 0
-            vserial.print("Total memory usage: ");
-            vserial.print(memory_usage);
-            vserial.println(" bytes");
-            vserial.println();
+            printf("Total memory usage: %d bytes\n", memory_usage);
         #endif
 
         if (i < CONF_BLOCKS-1) {
@@ -219,16 +211,11 @@ void EEPROMsettings::createSectionAddresses()   {
     }
 
     #if MODE_SERIAL > 0
-        vserial.println("----------------------------------------");
+        printf("----------------------------------------\n");
 
-        for (int i=0; i<CONF_BLOCKS; i++)  {
-
-            vserial.print("Block ");
-            vserial.print(i);
-            vserial.print(" start address: ");
-            vserial.println(blocks[i].blockStartAddress);
-
-        } vserial.println("----------------------------------------");
+        for (int i=0; i<CONF_BLOCKS; i++)
+            printf("Block %d start address: %d", i, blocks[i].blockStartAddress);
+        printf("----------------------------------------\n");
     #endif
 
 }
