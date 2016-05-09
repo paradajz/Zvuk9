@@ -786,25 +786,25 @@ void LCD::displayServiceMenu(uint8_t startPosition)  {
 void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
 
     //we can display up to three options/suboptions at the time
-    uint8_t markerOption = (option > (NUMBER_OF_LCD_ROWS-2)) ? (NUMBER_OF_LCD_ROWS-1) : option;
+    uint8_t markerOption = (option > (NUMBER_OF_LCD_ROWS-2)) ? (NUMBER_OF_LCD_ROWS-2) : option;
 
     char tempBuffer[MAX_TEXT_SIZE];
     uint8_t size;
 
-    uint8_t startPosition = (option > (NUMBER_OF_LCD_ROWS-2)) ? NUMBER_OF_LCD_ROWS - option : option;
+    uint8_t startPosition = (option > (NUMBER_OF_LCD_ROWS-2)) ? NUMBER_OF_LCD_ROWS - option : 0;
 
     switch(type)    {
 
         case serviceMenu:
-        for (int i=startPosition; i<(NUMBER_OF_LCD_ROWS-1)+startPosition; i++)    {
+        for (int i=0; i<(NUMBER_OF_LCD_ROWS-1); i++)    {
 
             if (i == markerOption)  stringBuffer[0] = '>';
             else                    stringBuffer[0] = SPACE_CHAR;
 
             stringBuffer[1] = '\0';
-            strcpy_P(tempBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
+            strcpy_P(tempBuffer, (char*)pgm_read_word(&(service_menu_options[i+startPosition])));
             strcat(stringBuffer, tempBuffer);
-            size = 1 + pgm_read_byte(&service_menu_options_sizes[i]);
+            size = 1 + pgm_read_byte(&service_menu_options_sizes[i+startPosition]);
             updateDisplay(i+1, text, 0, true, size);
 
         }

@@ -56,7 +56,13 @@ const uint8_t service_menu_options_sizes[] PROGMEM = {
 
     sizeof(serviceMenuOption_padCalibration) - 1,
     sizeof(serviceMenuOption_factoryReset) - 1,
-    sizeof(serviceMenuOption_exit) - 1
+    sizeof(serviceMenuOption_deviceInfo) - 1,
+    sizeof(dummy1) - 1,
+    sizeof(dummy2) - 1,
+    sizeof(dummy3) - 1,
+    sizeof(dummy1) - 1,
+    sizeof(dummy2) - 1,
+    sizeof(dummy3) - 1,
 
 };
 
