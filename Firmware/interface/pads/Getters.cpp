@@ -542,7 +542,7 @@ note_t Pads::getActiveTonic()    {
 
         for (int i=0; i<NOTES_PER_PAD; i++)
             if (padNote[0][i] != BLANK_NOTE)
-                return getTonicFromNote(padNote[0][i]);
+                return getTonicFromNote(padNote[0][i]+noteShiftAmount[i]);
 
     }   else  {
 

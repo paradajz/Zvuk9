@@ -234,113 +234,6 @@ void Pads::changeActiveOctave(bool direction)   {
 
 }
 
-changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
-
-    changeOutput_t result = noChange;
-    note_t currentScaleTonic;
-
-    if (internalChange) {
-
-        //internal change means that this function got called on startup
-        //on startup, tonic isn't applied yet, so it's first note on first pad by default
-        //this never gets called on startup for user presets
-        currentScaleTonic = getTonicFromNote(padNote[0][0]);
-
-    }   else currentScaleTonic = getActiveTonic();
-
-    //determine distance between notes
-    uint8_t changeDifference;
-
-    bool changeAllowed = true;
-    bool shiftDirection;
-
-    if (currentScaleTonic == MIDI_NOTES) return result; //pad has no notes
-
-    shiftDirection = (uint8_t)currentScaleTonic < (uint8_t)newTonic;
-
-    changeDifference = abs((uint8_t)currentScaleTonic - (uint8_t)newTonic);
-    if (!changeDifference) { result = noChange; return result; }
-    changeAllowed = true;
-
-    //check if all notes are within range before shifting
-    for (int i=0; i<MAX_PADS; i++)    {
-
-        if (!changeAllowed) break;
-
-        for (int j=0; j<NOTES_PER_PAD; j++)  {
-
-            if ((uint8_t)currentScaleTonic < (uint8_t)newTonic)      {
-
-                if (padNote[i][j] != BLANK_NOTE)
-                    if ((padNote[i][j] + changeDifference) > MAX_MIDI_VALUE)
-                        changeAllowed = false;
-
-            }
-
-            else if ((uint8_t)currentScaleTonic > (uint8_t)newTonic) {
-
-                if (padNote[i][j] != BLANK_NOTE)
-                    if ((padNote[i][j] - changeDifference) < MIN_MIDI_VALUE)
-                        changeAllowed = false;
-
-            }
-
-        }
-
-    }
-
-    //change notes
-    if (changeAllowed)  {
-
-        result = outputChanged;
-
-        uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
-
-        if (isPredefinedScale(activePreset) && !internalChange)
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
-
-        for (int i=0; i<MAX_PADS; i++)    {
-
-            for (int j=0; j<NOTES_PER_PAD; j++) {
-
-                if (padNote[i][j] != BLANK_NOTE)    {
-
-                    if (shiftDirection) padNote[i][j] += changeDifference;
-                    else                padNote[i][j] -= changeDifference;
-
-                    if (isUserScale(activePreset) && !internalChange)  {
-
-                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), padNote[i][j]);
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        #if MODE_SERIAL > 0
-            vserial.println("Tonic changed, active tonic ");
-            vserial.print(newTonic);
-            vserial.print("/");
-        #endif
-
-    }   else {
-
-        #if MODE_SERIAL > 0
-            vserial.print("Unable to change tonic: one or more pad notes are too ");
-            shiftDirection ? vserial.println("high.") : vserial.println("low");
-        #endif
-
-        result = outOfRange;
-
-    }
-
-    return result;
-
-}
-
 changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
     //public function
@@ -888,7 +781,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
-                if (padNote[i][j] != BLANK_NOTE)
+                if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i]) != BLANK_NOTE)
                 if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i])-MIDI_NOTES < MIDI_NOTES)
                 changeAllowed = false;
 
@@ -900,7 +793,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
-                if (padNote[i][j] != BLANK_NOTE)
+                if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i]) != BLANK_NOTE)
                 if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i])+MIDI_NOTES > MAX_MIDI_VALUE)
                 changeAllowed = false;
 
@@ -915,8 +808,8 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
     if (!changeAllowed)    {
 
         #if MODE_SERIAL > 0
-        vserial.print("Unable to do global shift: one or more pad notes are too ");
-        direction ? vserial.println("high.") : vserial.println("low");
+            vserial.print("Unable to do global shift: one or more pad notes are too ");
+            direction ? vserial.println("high.") : vserial.println("low");
         #endif
         result = outOfRange;
 
@@ -953,6 +846,13 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
             uint8_t newNote;
             for (int i=0; i<MAX_PADS; i++)    {
 
+                if (isPadPressed(i))    {
+
+                    bitWrite(octaveShiftPadBuffer, i, 1);
+                    (direction) ? octaveShiftAmount[i]++ : octaveShiftAmount[i]--;
+
+                }
+
                 for (int j=0; j<NOTES_PER_PAD; j++) {
 
                     if (padNote[i][j] != BLANK_NOTE)    {
@@ -962,13 +862,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
                         configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote);
 
                         if (!isPadPressed(i))
-                        padNote[i][j] = newNote;
-                        else {
-
-                            bitWrite(octaveShiftPadBuffer, i, 1);
-                            (direction) ? octaveShiftAmount[i]++ : octaveShiftAmount[i]--;
-
-                        }
+                            padNote[i][j] = newNote;
 
                     }
 
@@ -1031,6 +925,169 @@ void Pads::checkRemainingOctaveShift()  {
         }
 
     }
+
+}
+
+changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
+
+    changeOutput_t result = noChange;
+    note_t currentScaleTonic;
+
+    if (internalChange) {
+
+        //internal change means that this function got called on startup
+        //on startup, tonic isn't applied yet, so it's first note on first pad by default
+        //this never gets called on startup for user presets
+        currentScaleTonic = getTonicFromNote(padNote[0][0]);
+
+    }   else currentScaleTonic = getActiveTonic();
+
+    //determine distance between notes
+    uint8_t changeDifference;
+
+    bool changeAllowed = true;
+    bool shiftDirection;
+
+    if (currentScaleTonic == MIDI_NOTES) return result; //pad has no notes
+
+    shiftDirection = (uint8_t)currentScaleTonic < (uint8_t)newTonic;
+
+    changeDifference = abs((uint8_t)currentScaleTonic - (uint8_t)newTonic);
+    if (!changeDifference) { result = noChange; return result; }
+    changeAllowed = true;
+
+    //check if all notes are within range before shifting
+    for (int i=0; i<MAX_PADS; i++)    {
+
+        if (!changeAllowed) break;
+
+        for (int j=0; j<NOTES_PER_PAD; j++)  {
+
+            if ((uint8_t)currentScaleTonic < (uint8_t)newTonic)      {
+
+                if (padNote[i][j]+  noteShiftAmount[i] != BLANK_NOTE)
+                if ((padNote[i][j] + noteShiftAmount[i] + changeDifference) > MAX_MIDI_VALUE)
+                changeAllowed = false;
+
+            }
+
+            else if ((uint8_t)currentScaleTonic > (uint8_t)newTonic) {
+
+                if (padNote[i][j] + noteShiftAmount[i] != BLANK_NOTE)
+                if ((padNote[i][j] + noteShiftAmount[i] - changeDifference) < MIN_MIDI_VALUE)
+                changeAllowed = false;
+
+            }
+
+        }
+
+    }
+
+    //change notes
+    if (changeAllowed)  {
+
+        result = outputChanged;
+
+        uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+
+        if (isPredefinedScale(activePreset) && !internalChange)
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
+
+        for (int i=0; i<MAX_PADS; i++)    {
+
+            uint8_t newNote;
+
+            if (isPadPressed(i))   {
+
+                shiftDirection ? noteShiftAmount[i] += changeDifference : noteShiftAmount[i] -= changeDifference;
+                bitWrite(scaleShiftPadBuffer, i, 1);
+
+            }
+
+            for (int j=0; j<NOTES_PER_PAD; j++) {
+
+                if (padNote[i][j] + noteShiftAmount[i] != BLANK_NOTE)    {
+
+                    if (shiftDirection) newNote = padNote[i][j] + changeDifference + noteShiftAmount[i];
+                    else                newNote = padNote[i][j] - changeDifference + noteShiftAmount[i];
+
+                    if (isUserScale(activePreset) && !internalChange)  {
+
+                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), padNote[i][j]);
+
+                    }
+
+                    if (!isPadPressed(i))
+                        padNote[i][j] = newNote;
+
+                }
+
+            }
+
+        }
+
+        #if MODE_SERIAL > 0
+            vserial.println("Tonic changed, active tonic ");
+            vserial.print(newTonic);
+        #endif
+
+        }   else {
+
+        #if MODE_SERIAL > 0
+            vserial.print("Unable to change tonic: one or more pad notes are too ");
+            shiftDirection ? vserial.println("high.") : vserial.println("low");
+        #endif
+
+        result = outOfRange;
+
+    }
+
+    return result;
+
+}
+
+void Pads::checkRemainingNoteShift()    {
+
+    if (scaleShiftPadBuffer == 0) return; //nothing left to shift
+
+    uint8_t tempPadNotes[MAX_PADS][NOTES_PER_PAD];
+
+    for (int i=0; i<MAX_PADS; i++)
+        for (int j=0; j<NOTES_PER_PAD; j++)
+            tempPadNotes[i][j] = padNote[i][j];
+
+    for (int i=0; i<MAX_PADS; i++)  {
+
+        if (bitRead(scaleShiftPadBuffer, i))   {
+
+            if (!isPadPressed(i))   {
+
+                for (int j=0; j<NOTES_PER_PAD; j++) {
+
+                    if (padNote[i][j] != BLANK_NOTE)
+                        padNote[i][j] += noteShiftAmount[i];
+
+                }
+
+                bitWrite(scaleShiftPadBuffer, i, 0);
+                noteShiftAmount[i] = 0;
+
+            }
+
+        }
+
+    }
+
+    //if note isn't available anymore, make sure to turn the note led off
+    for (int i=0; i<MAX_PADS; i++)
+        for (int j=0; j<NOTES_PER_PAD; j++)
+            if (tempPadNotes[i][j] != BLANK_NOTE)   {
+
+                note_t note = getTonicFromNote(tempPadNotes[i][j]);
+                if (!noteActive(note))
+                    leds.setNoteLEDstate(note, ledIntensityOff);
+
+            }
 
 }
 

@@ -351,6 +351,7 @@ void Pads::update(bool midiEnabled)  {
     }
 
     checkRemainingOctaveShift();
+    checkRemainingNoteShift();
 
 }
 
