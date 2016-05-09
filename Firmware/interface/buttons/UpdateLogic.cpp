@@ -12,7 +12,7 @@
 #define STOP_DISABLE_TIMEOUT        500
 #define RESET_ENABLE_TIMEOUT        4000
 
-#define SOFT_REBOOT                 1
+//#define SOFT_REBOOT                 1
 
 //MCP23017 address bytes
 const uint8_t expanderAddress[] = { 0x21, 0x20 };   //chip address

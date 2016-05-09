@@ -22,7 +22,6 @@ Pads::Pads()  {
 
     activeProgram = -1;
     activePreset = -1;
-    noteShiftAmount = 0;
     octaveShiftPadBuffer = 0;
 
 }

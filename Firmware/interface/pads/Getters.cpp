@@ -154,8 +154,6 @@ void Pads::getPresetParameters()    {
         vserial.println(activePreset);
     #endif
 
-    noteShiftAmount = 0;
-
     //clear all pad notes before assigning new ones
     for (int i=0; i<MAX_PADS; i++)
         for (int j=0; j<NOTES_PER_PAD; j++)

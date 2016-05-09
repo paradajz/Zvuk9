@@ -268,8 +268,6 @@ class Pads  {
     int8_t      activePreset,
                 activeProgram;
 
-    int8_t      noteShiftAmount;
-
     //debouncing
     bool        padDebounceTimerStarted[MAX_PADS],
                 firstPressureValueDelayTimerStarted[MAX_PADS],
