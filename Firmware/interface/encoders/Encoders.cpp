@@ -73,33 +73,29 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
     }
 
-    //allow only program while in menu
-    #ifdef MODULE_LCD
-        if (menu.menuDisplayed() && (encoderNumber != PROGRAM_ENCODER)) return;
-    #else
-        if (encoderNumber != PROGRAM_ENCODER) return;
-    #endif
-
-    for (int i=0; i<MAX_PADS; i++)
-    if (pads.isPadPressed(i)) {
-
-        //disable encoders while pads are pressed
-        #ifdef MODULE_LCD
-            display.displayPadReleaseError(changeParameters);
-        #endif
-        return;
-
-    }
+    //allow only program encoder while in menu
+    if (menu.menuDisplayed() && (encoderNumber != PROGRAM_ENCODER)) return;
 
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
     bool _splitState = pads.getSplitState();
     curveType_t activeCurve = curveTypeInvalid;
     uint8_t value;
     int8_t activePreset;
+    bool padsReleased = pads.allPadsReleased();
 
     switch(encoderNumber)   {
 
         case PROGRAM_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changeProgram);
+            #endif
+            return;
+
+        }
+
         #ifdef MODULE_BUTTONS
         if (buttons.modifierEnabled())    {
 
@@ -159,6 +155,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
         case PRESET_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changePreset);
+            #endif
+            return;
+
+        }
         activePreset = pads.getActivePreset();
         if (direction) activePreset++; else activePreset--;
         if (activePreset == (NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES)) activePreset = 0;
@@ -177,6 +182,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
         case X_CC_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changeCCnumber);
+            #endif
+            return;
+
+        }
         pads.changeCC(direction, ccTypeX, steps);
         #ifdef MODULE_LCD
             display.displayCCchange(ccTypeX,  _splitState, pads.getCCvalue(ccTypeX, lastTouchedPad), lastTouchedPad+1);
@@ -184,6 +198,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
         case Y_CC_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changeCCnumber);
+            #endif
+            return;
+
+        }
         pads.changeCC(direction, ccTypeY, steps);
         #ifdef MODULE_LCD
             display.displayCCchange(ccTypeY,  _splitState, pads.getCCvalue(ccTypeY, lastTouchedPad), lastTouchedPad+1);
@@ -191,6 +214,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
         case X_MAX_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changeCClimit);
+            #endif
+            return;
+
+        }
         pads.changeCClimits(direction, ccLimitTypeXmax, steps);
         value = pads.getCClimitValue(ccTypeX, ccLimitTypeXmax, lastTouchedPad);
         #ifdef MODULE_LCD
@@ -199,6 +231,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
         case X_MIN_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changeCClimit);
+            #endif
+            return;
+
+        }
         pads.changeCClimits(direction, ccLimitTypeXmin, steps);
         value = pads.getCClimitValue(ccTypeX, ccLimitTypeXmin, lastTouchedPad);
         #ifdef MODULE_LCD
@@ -207,6 +248,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
         case Y_MAX_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changeCClimit);
+            #endif
+            return;
+
+        }
         pads.changeCClimits(direction, ccLimitTypeYmax, steps);
         value = pads.getCClimitValue(ccTypeY, ccLimitTypeYmax, lastTouchedPad);
         #ifdef MODULE_LCD
@@ -215,6 +265,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
         case Y_MIN_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changeCClimit);
+            #endif
+            return;
+
+        }
         pads.changeCClimits(direction, ccLimitTypeYmin, steps);
         value = pads.getCClimitValue(ccTypeY, ccLimitTypeYmin, lastTouchedPad);
         #ifdef MODULE_LCD
@@ -223,6 +282,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
         case X_CURVE_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changeCurve);
+            #endif
+            return;
+
+        }
         pads.changeCCcurve(direction, curveCoordinateX);
         activeCurve = pads.getCCcurve(curveCoordinateX, lastTouchedPad);
         #ifdef MODULE_LCD
@@ -231,6 +299,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
         case Y_CURVE_ENCODER:
+        if (!padsReleased) {
+
+            //disable encoders while pads are pressed
+            #ifdef MODULE_LCD
+            display.displayPadReleaseError(changeCurve);
+            #endif
+            return;
+
+        }
         pads.changeCCcurve(direction, curveCoordinateY);
         activeCurve = pads.getCCcurve(curveCoordinateY, lastTouchedPad);
         #ifdef MODULE_LCD

@@ -167,8 +167,11 @@ typedef enum {
 
 typedef enum {
 
-    changeParameters,
-    changeTonic,
+    changeProgram,
+    changePreset,
+    changeCCnumber,
+    changeCClimit,
+    changeCurve,
     enterPadEditMode
 
 } padReleaseError_t;

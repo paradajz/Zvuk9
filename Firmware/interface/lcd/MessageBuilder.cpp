@@ -410,20 +410,34 @@ void LCD::displayPadReleaseError(padReleaseError_t error)    {
 
     switch(error)   {
 
-        case changeParameters:
-        strcpy_P(stringBuffer, changeParameters_string);
-        size = progmemCharArraySize(changeParameters_string);
+        case changeProgram:
+        strcpy_P(stringBuffer, changeProgram_string);
+        size = progmemCharArraySize(changeProgram_string);
         break;
 
-        case changeTonic:
-        strcpy_P(stringBuffer, changeTonic_string);
-        size = progmemCharArraySize(changeTonic_string);
+        case changePreset:
+        strcpy_P(stringBuffer, changePreset_string);
+        size = progmemCharArraySize(changePreset_string);
+        break;
+
+        case changeCCnumber:
+        strcpy_P(stringBuffer, changeCC_string);
+        size = progmemCharArraySize(changeCC_string);
+        break;
+
+        case changeCClimit:
+        strcpy_P(stringBuffer, changeCClimit_string);
+        size = progmemCharArraySize(changeCClimit_string);
+        break;
+
+        case changeCurve:
+        strcpy_P(stringBuffer, changeCurve_string);
+        size = progmemCharArraySize(changeCurve_string);
         break;
 
         case enterPadEditMode:
         strcpy_P(stringBuffer, enterPadEditMode_string);
         size = progmemCharArraySize(enterPadEditMode_string);
-        break;
         break;
 
         default:
@@ -750,7 +764,8 @@ void LCD::clearMIDIchannel()    {
 
 }
 
-void LCD::displayServiceMenu()  {
+//menu
+void LCD::displayServiceMenu(uint8_t startPosition)  {
 
     char tempBuffer[MAX_TEXT_SIZE];
     uint8_t size;
@@ -759,7 +774,7 @@ void LCD::displayServiceMenu()  {
     size = pgm_read_byte(&menu_types_sizes[serviceMenu]);
     updateDisplay(0, text, 0, true, size);
 
-    for (int i=0; i<(int16_t)progmemCharArraySize(service_menu_options); i++)    {
+    for (int i=0; i<(NUMBER_OF_LCD_ROWS-1); i++)    {
 
         (!i) ? stringBuffer[0] = '>' : stringBuffer[0] = SPACE_CHAR;
         stringBuffer[1] = '\0';
@@ -775,15 +790,17 @@ void LCD::displayServiceMenu()  {
 void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
 
     //we can display up to three options/suboptions at the time
-    uint8_t markerOption = (option > 2) ? (NUMBER_OF_LCD_ROWS-1) : option;
+    uint8_t markerOption = (option > (NUMBER_OF_LCD_ROWS-2)) ? (NUMBER_OF_LCD_ROWS-1) : option;
 
     char tempBuffer[MAX_TEXT_SIZE];
     uint8_t size;
 
+    uint8_t startPosition = (option > (NUMBER_OF_LCD_ROWS-2)) ? NUMBER_OF_LCD_ROWS - option : option;
+
     switch(type)    {
 
         case serviceMenu:
-        for (int i=0; i<(int)progmemCharArraySize(service_menu_options); i++)    {
+        for (int i=startPosition; i<(NUMBER_OF_LCD_ROWS-1)+startPosition; i++)    {
 
             if (i == markerOption)  stringBuffer[0] = '>';
             else                    stringBuffer[0] = SPACE_CHAR;

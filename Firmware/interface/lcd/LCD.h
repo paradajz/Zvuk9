@@ -54,7 +54,7 @@ class LCD   {
     void displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value);
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayPadEditMode(uint8_t padNumber);
-    void displayServiceMenu();
+    void displayServiceMenu(uint8_t startPosition = 0);
     void changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption);
     void selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption);
     void displayModifierEnabled();

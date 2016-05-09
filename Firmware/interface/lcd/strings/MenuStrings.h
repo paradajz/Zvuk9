@@ -10,6 +10,15 @@ const char menuType_service[] PROGMEM = "Service menu";
 //service menu
 const char serviceMenuOption_padCalibration[] PROGMEM = "Pad calibration";
 const char serviceMenuOption_factoryReset[] PROGMEM = "Factory reset";
+const char serviceMenuOption_deviceInfo[] PROGMEM = "Device info";
+
+const char deviceInfo_swVersion[] PROGMEM = "SW version:";
+const char deviceInfo_hwVersion[] PROGMEM = "HW version:";
+
+const char dummy1[] PROGMEM = "dummy1";
+const char dummy2[] PROGMEM = "dummy2";
+const char dummy3[] PROGMEM = "dummy3";
+
 const char serviceMenuOption_exit[] PROGMEM = "Exit";
 const char serviceMenuSubOption_padCalibration_x[] PROGMEM = "Calibrate X";
 const char serviceMenuSubOption_padCalibration_y[] PROGMEM = "Calibrate Y";
@@ -33,7 +42,13 @@ PGM_P const service_menu_options[] PROGMEM = {
 
     serviceMenuOption_padCalibration,
     serviceMenuOption_factoryReset,
-    serviceMenuOption_exit
+    serviceMenuOption_deviceInfo,
+    dummy1,
+    dummy2,
+    dummy3,
+    dummy1,
+    dummy2,
+    dummy3
 
 };
 
