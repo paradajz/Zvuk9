@@ -791,7 +791,7 @@ void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
     char tempBuffer[MAX_TEXT_SIZE];
     uint8_t size;
 
-    uint8_t startPosition = (option > (NUMBER_OF_LCD_ROWS-2)) ? NUMBER_OF_LCD_ROWS - option : 0;
+    uint8_t startPosition = (option > (NUMBER_OF_LCD_ROWS-2)) ? option-(NUMBER_OF_LCD_ROWS-2) : 0;
 
     switch(type)    {
 

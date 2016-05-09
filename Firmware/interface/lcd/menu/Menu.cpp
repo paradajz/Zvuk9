@@ -44,7 +44,7 @@ void Menu::changeOption(bool direction) {
 
         case serviceMenu:
         if (activeOption < 0) activeOption = 0;
-        if (activeOption > (int8_t)(progmemCharArraySize(service_menu_options)-1)) activeOption--;
+        if (activeOption >= (int8_t)(progmemArraySize(service_menu_options))) activeOption--;
         break;
 
         case userMenu:
