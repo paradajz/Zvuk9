@@ -820,8 +820,9 @@ void LCD::changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption) {
 
 }
 
-void LCD::selectMenuOption(menuType_t type, uint8_t option, uint8_t suboption)  {
+void LCD::confirmOption(bool confirm, uint8_t option)  {
 
+    //first, we need to get current option
 
 
 }

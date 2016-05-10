@@ -9,6 +9,9 @@ Menu::Menu()    {
     activeOption = 0;
     activeSubOption = 0;
 
+    for (int i=0; i<10; i++)
+        menuHierarchyPosition[i] = -1;
+
 }
 
 void Menu::displayMenu(menuType_t type) {
@@ -56,12 +59,6 @@ void Menu::changeOption(bool direction) {
     }
 
     display.changeMenuOption(activeMenu, activeOption, activeSubOption);
-
-}
-
-void Menu::selectOption()   {
-
-    display.selectMenuOption(activeMenu, activeOption, activeSubOption);
 
 }
 

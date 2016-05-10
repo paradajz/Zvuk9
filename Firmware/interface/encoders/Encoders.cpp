@@ -164,6 +164,13 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
             return;
 
         }
+
+        if (menu.menuDisplayed())   {
+
+            //display.confirmOption(direction);
+            return;
+
+        }
         activePreset = pads.getActivePreset();
         if (direction) activePreset++; else activePreset--;
         if (activePreset == (NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES)) activePreset = 0;
