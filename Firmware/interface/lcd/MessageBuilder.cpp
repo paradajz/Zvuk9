@@ -574,25 +574,12 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
     uint8_t size = 0;
     char tempBuffer[MAX_TEXT_SIZE];
 
-    if (!numberOfNotes) {
+    //always clear notes first since they can have large size
+    strcpy_P(stringBuffer, notesClear_string);
+    size = progmemCharArraySize(notesClear_string);
+    updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
 
-        //we should also clear velocity if we aren't in pad edit mode
-        if (!pads.editModeActive()) {
-
-            clearVelocity();
-            strcpy_P(stringBuffer, notesClear_string);
-            size = progmemCharArraySize(notesClear_string);
-            updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size);
-
-        }   else {
-
-            strcpy_P(stringBuffer, emptyLine_string);
-            size = NUMBER_OF_LCD_COLUMNS;
-            updateDisplay(lcdElements.notes.row, text, 0, true, size);
-
-        }
-
-    }   else {
+    if (numberOfNotes) {
 
         for (int i=0; i<numberOfNotes; i++) {
 
@@ -760,6 +747,14 @@ void LCD::clearPad()    {
 
 }
 
+void LCD::clearPadData()    {
+
+    strcpy_P(stringBuffer, emptyLine_string);
+    for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
+        updateDisplay(i, text, 0, true, progmemCharArraySize(emptyLine_string));
+
+}
+
 void LCD::clearMIDIchannel()    {
 
     strcpy_P(stringBuffer, midiChannelClear_string);
@@ -862,14 +857,14 @@ void LCD::changeMenuScreen(menuType_t type, int8_t *menuHierachy)    {
 
 //lcd update
 
-void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size)    {
+void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine)    {
 
     stringBuffer[size] = '\0'; //just a precaution
 
     switch(type)    {
 
         case text:
-        display.displayText(row, stringBuffer, startIndex, overwrite);
+        display.displayText(row, stringBuffer, startIndex, overwrite, endOfLine);
         break;
 
         case message:

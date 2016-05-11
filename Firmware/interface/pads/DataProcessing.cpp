@@ -690,15 +690,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
     }   else if (allPadsReleased() && !lcdCleared) {
 
             #ifdef MODULE_LCD
-                display.displayActivePadNotes(0, 0, 0, editModeActive());
-                display.clearVelocity();
-                display.clearAftertouch();
-                display.clearXYcc(ccTypeX);
-                display.clearXYcc(ccTypeY);
-                display.clearXYposition(ccTypeX);
-                display.clearXYposition(ccTypeY);
-                display.clearPad();
-                display.clearMIDIchannel();
+                display.clearPadData();
             #endif
 
             lcdCleared = true;

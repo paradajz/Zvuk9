@@ -44,6 +44,7 @@ class LCD   {
     void clearPadEditMode();
     void clearPad();
     void clearMIDIchannel();
+    void clearPadData();
 
     void displayTransportControl(transportControl_t type, bool state);
     void displayOnOff(functionsOnOff_t messageType, bool _splitState, uint8_t functionState, uint8_t padNumber);
@@ -71,7 +72,7 @@ class LCD   {
     void displayMIDIchannel(uint8_t channel);
     private:
     messageStatus_t getMessageStatus();
-    void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite);
+    void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite, bool endOfLine = false);
     void displayMessage(uint8_t row, const char *message);
     void checkScroll(uint8_t row);
     void displayPadAmount(bool singlePad, uint8_t padNumber);
@@ -124,7 +125,7 @@ class LCD   {
 
     lcdElements_t lcdElements;
 
-    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size);
+    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine = false);
 
 };
 

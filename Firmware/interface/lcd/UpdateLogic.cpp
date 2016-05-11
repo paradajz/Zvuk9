@@ -210,7 +210,7 @@ void LCD::displayMessage(uint8_t row, const char *message)  {
 
 }
 
-void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite)    {
+void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite, bool endOfLine)    {
 
     uint8_t size = strlen(text);
 
@@ -234,21 +234,33 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 
         }
 
+        printf("Appended string:\n");
+        printf(lcdLine_char[row]);
+        printf("\n\n");
+
         //now we need to determine whether we need to change current EOL index
+        printf("Received string size: %d\n", size);
+        printf("Current string size: %d\n", currentStringSize);
+        printf("Start index: %d\n", startIndex);
         bool changeEOLindex = (size+startIndex) > currentStringSize;
 
-        switch(changeEOLindex)  {
+        if (endOfLine)  {
 
-            case false:
-            //do nothing
-            break;
+            lcdLine_char[row][startIndex] = '\0';
 
-            case true:
-            //we need to clear current EOL char
-            lcdLine_char[row][currentStringSize] = SPACE_CHAR;
-            //now we set EOL char to new position
-            lcdLine_char[row][startIndex+size] = '\0';
-            break;
+        }   else {
+
+            switch(changeEOLindex)  {
+
+                case false:
+                break;
+
+                case true:
+                //we need to set EOL char to a new position
+                lcdLine_char[row][startIndex+size] = '\0';
+                break;
+
+            }
 
         }
 
