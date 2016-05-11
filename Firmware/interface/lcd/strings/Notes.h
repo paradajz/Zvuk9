@@ -23,6 +23,10 @@ const char activeOctave_string[] PROGMEM = "Active octave: ";
 const char noteDown_string[] PROGMEM = "One note down";
 const char noteUp_string[] PROGMEM = "One note up";
 
+const char velocity_string[] PROGMEM = "v";
+const char velocityClear_string[] PROGMEM = "    ";
+const char notesClear_string[] PROGMEM = "               ";
+
 PGM_P const noteNameArray[] PROGMEM = {
 
     tonicC_string,

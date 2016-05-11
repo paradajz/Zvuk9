@@ -13,6 +13,8 @@ LCD::LCD()  {
         lcd_init(LCD_DISP_ON);
     #endif
 
+    setupLCDlayout();
+
 }
 
 void LCD::init()    {

@@ -73,8 +73,13 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
     }
 
-    //allow only program encoder while in menu
-    if (menu.menuDisplayed() && (encoderNumber != PROGRAM_ENCODER)) return;
+    //allow only program and preset encoder while in menu
+    if (menu.menuDisplayed())   {
+
+        if (!((encoderNumber == PROGRAM_ENCODER) || (encoderNumber == PRESET_ENCODER)))
+            return;
+
+    }
 
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
     bool _splitState = pads.getSplitState();
@@ -167,7 +172,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
         if (menu.menuDisplayed())   {
 
-            //display.confirmOption(direction);
+            menu.confirmOption(direction);
             return;
 
         }

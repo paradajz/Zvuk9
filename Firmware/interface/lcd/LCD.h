@@ -55,9 +55,9 @@ class LCD   {
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayPadEditMode(uint8_t padNumber);
 
-    void displayServiceMenu(uint8_t startPosition = 0);
-    void changeMenuOption(menuType_t type, uint8_t option, uint8_t subOption);
-    void confirmOption(bool confirm, uint8_t option);
+    void displayServiceMenu();
+    void changeMenuOption(menuType_t type, int8_t *menuHierachy);
+    void changeMenuScreen(menuType_t type, int8_t *menuHierachy);
 
     void displayModifierEnabled();
     void displayOutOfRange();
@@ -73,6 +73,7 @@ class LCD   {
     void displayMessage(uint8_t row, const char *message);
     void checkScroll(uint8_t row);
     void displayPadAmount(bool singlePad, uint8_t padNumber);
+    void setupLCDlayout();
 
     uint32_t messageDisplayTime;
     uint32_t lastScrollTime;
@@ -93,6 +94,30 @@ class LCD   {
     char lcdLineMessage_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
     char lastLCDLine_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
     char lcdLineScroll_char[MAX_TEXT_SIZE+1];
+
+    typedef struct {
+
+        uint8_t row;
+        uint8_t startIndex;
+
+    } lcdElement_t;
+
+    typedef struct {
+
+        lcdElement_t ccx;
+        lcdElement_t ccy;
+        lcdElement_t xpos;
+        lcdElement_t ypos;
+        lcdElement_t velocity;
+        lcdElement_t aftertouch;
+        lcdElement_t padNumber;
+        lcdElement_t midiChannel;
+        lcdElement_t programAndPreset;
+        lcdElement_t notes;
+
+    } lcdElements_t;
+
+    lcdElements_t lcdElements;
 
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size);
 

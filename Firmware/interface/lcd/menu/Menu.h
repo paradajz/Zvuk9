@@ -19,14 +19,15 @@ class Menu  {
     void displayMenu(menuType_t type);
     bool menuDisplayed();
     void changeOption(bool direction);
+    void confirmOption(bool confirm);
     void createLayout();
 
     private:
     menuType_t activeMenu;
     int8_t activeOption;
     int8_t activeLevel;
-    int8_t activeSubOption;
-    int8_t menuHierarchyPosition[10];
+    int8_t menuHierarchyPosition[MAX_MENU_LEVELS];
+    uint8_t menuHierarchyIndex;
 
     typedef void (*actionPointer)(void);
 
@@ -55,8 +56,14 @@ class Menu  {
 
     } rootScreen_t;
 
-    menuScreen_t menuScreen[MAX_MENU_OPTIONS];
-    rootScreen_t rootScreen;
+    typedef struct {
+
+        menuScreen_t menuScreen[MAX_MENU_OPTIONS];
+        rootScreen_t rootScreen;
+
+    } menu_t;
+
+    menu_t menu;
 
 };
 

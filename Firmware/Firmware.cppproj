@@ -608,6 +608,9 @@
     <Compile Include="interface\encoders\EncoderSettings.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\lcd\Layout.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\lcd\LCD.h">
       <SubType>compile</SubType>
     </Compile>
