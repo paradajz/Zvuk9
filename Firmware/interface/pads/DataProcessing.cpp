@@ -260,8 +260,12 @@ void Pads::update(bool midiEnabled)  {
 
             //special case
             //make sure to send aftertouch with pressure 0 on note off
-            if (velocityAvailable && !lastMIDInoteState[pad])
+            if (velocityAvailable && !lastMIDInoteState[pad] && aftertouchActivated[pad])   {
+
                 aftertouchAvailable = true;
+                lastAftertouchValue[pad] = 0;
+
+            }
 
         }
 
@@ -531,7 +535,6 @@ bool Pads::checkVelocity(uint8_t pad)  {
                 returnValue = true;
                 lastXMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
                 lastYMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
-                lastAftertouchValue[pad] = DEFAULT_XY_AT_VALUE;
                 bitWrite(padPressed, pad, false);  //set pad not pressed
                 switchToXYread = false;
 

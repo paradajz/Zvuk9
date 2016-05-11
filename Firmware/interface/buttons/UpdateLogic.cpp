@@ -162,7 +162,7 @@ void Buttons::update()    {
             modifierActive = true;
 
             #ifdef MODULE_LEDS
-            if (!pads.editModeActive() && (pads.getActivePreset() < NUMBER_OF_PREDEFINED_SCALES)) {
+            if ((!pads.editModeActive()) && (pads.isPredefinedScale(pads.getActivePreset()))) {
 
                 leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
                 leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
