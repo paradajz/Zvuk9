@@ -34,17 +34,9 @@ void LCD::init()    {
     //init char arrays
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) {
 
-        for (int j=0; j<MAX_TEXT_SIZE; j++)   {
-
-            lcdLine_char[i][j] = ' ';
-            lcdLineMessage_char[i][j] = ' ';
-            lastLCDLine_char[i][j] = ' ';
-
-        }
-
-        lcdLine_char[i][MAX_TEXT_SIZE] = '\0';
-        lcdLineMessage_char[i][NUMBER_OF_LCD_COLUMNS] = '\0';
-        lastLCDLine_char[i][NUMBER_OF_LCD_COLUMNS] = '\0';
+        lcdLine_char[i][0] = '\0';
+        lcdLineMessage_char[i][0] = '\0';
+        lastLCDLine_char[i][0] = '\0';
 
     }
 
@@ -230,13 +222,37 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
     } else {
 
         //append characters
+        //we need to find out current string size
+        uint8_t currentStringSize = strlen(lcdLine_char[row]);
+
+        //now, we append the characters
         uint8_t charArrayIndex = 0;
-        while (charArrayIndex < size)   {
+        while (charArrayIndex < size)   { //make sure EOL isn't copied
 
             lcdLine_char[row][startIndex+charArrayIndex] = text[charArrayIndex];
             charArrayIndex++;
 
         }
+
+        //now we need to determine whether we need to change current EOL index
+        bool changeEOLindex = (size+startIndex) > currentStringSize;
+
+        switch(changeEOLindex)  {
+
+            case false:
+            //do nothing
+            break;
+
+            case true:
+            //we need to clear current EOL char
+            lcdLine_char[row][currentStringSize] = SPACE_CHAR;
+            //now we set EOL char to new position
+            lcdLine_char[row][startIndex+size] = '\0';
+            break;
+
+        }
+
+        size = strlen(lcdLine_char[row]);
 
     }
 

@@ -104,8 +104,7 @@ void Buttons::init()  {
 
         //we should activate service menu now
         #if MODE_SERIAL > 0
-            printf("Activating user menu\n");
-            printf("There are %d options in menu", progmemArraySize(service_menu_options));
+            printf("Activating service menu\n");
         #endif
 
         #ifdef MODULE_LCD

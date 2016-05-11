@@ -624,44 +624,42 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
     if (isPadPressed(pad))  {   lcdCleared = false;
 
-        //show X
         #ifdef MODULE_LCD
-            if (xAvailable) {
+        if (xAvailable) {
 
-                if (xSendEnabled[pad])  {
+            if (xSendEnabled[pad])  {
 
-                    display.displayXYposition(lastXMIDIvalue[pad], ccTypeX);
-                    display.displayXYcc(ccXPad[pad], ccTypeX);
+                display.displayXYposition(lastXMIDIvalue[pad], ccTypeX);
+                display.displayXYcc(ccXPad[pad], ccTypeX);
 
-                }   else {
+            }   else {
 
-                    display.clearXYposition(ccTypeX);
-                    display.clearXYcc(ccTypeX);
-
-                }
+                display.clearXYposition(ccTypeX);
+                display.clearXYcc(ccTypeX);
 
             }
+
+        }
         #endif
 
         #ifdef MODULE_LCD
-            if (yAvailable) {
+        if (yAvailable) {
 
-                if (ySendEnabled[pad])  {
+            if (ySendEnabled[pad])  {
 
-                    display.displayXYposition(lastYMIDIvalue[pad], ccTypeY);
-                    display.displayXYcc(ccYPad[pad], ccTypeY);
+                display.displayXYposition(lastYMIDIvalue[pad], ccTypeY);
+                display.displayXYcc(ccYPad[pad], ccTypeY);
 
-                }   else {
+            }   else {
 
-                    display.clearXYposition(ccTypeY);
-                    display.clearXYcc(ccTypeY);
-
-                }
+                display.clearXYposition(ccTypeY);
+                display.clearXYcc(ccTypeY);
 
             }
+
+        }
         #endif
 
-        //show aftertouch
         #ifdef MODULE_LCD
             if (aftertouchAvailable)    {
 
@@ -681,7 +679,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
         }
 
-        if (velocityAvailable || xAvailable || yAvailable)  {
+        if (velocityAvailable)  {
 
             #ifdef MODULE_LCD
                 display.displayMIDIchannel(midiChannel[pad]);

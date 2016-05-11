@@ -21,6 +21,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define SPACE_CHAR          32
+
 class LCD   {
 
     public:
@@ -114,6 +116,9 @@ class LCD   {
         lcdElement_t midiChannel;
         lcdElement_t programAndPreset;
         lcdElement_t notes;
+        lcdElement_t activeOctave;
+        lcdElement_t messageText1;
+        lcdElement_t messageText2;
 
     } lcdElements_t;
 

@@ -29,6 +29,10 @@ void LCD::setupLCDlayout()  {
 
         lcdElements.aftertouch.row = 2;
         lcdElements.aftertouch.startIndex = 15;
+
+        //pad edit mode only
+        lcdElements.activeOctave.row = 2;
+        lcdElements.activeOctave.startIndex = 0;
     }
 
     {
@@ -40,6 +44,14 @@ void LCD::setupLCDlayout()  {
 
         lcdElements.midiChannel.row = 3;
         lcdElements.midiChannel.startIndex = 16;
+    }
+
+    {
+        lcdElements.messageText1.row = 1;
+        lcdElements.messageText1.startIndex = 0;
+
+        lcdElements.messageText2.row = 2;
+        lcdElements.messageText2.startIndex = 0;
     }
 
 }
