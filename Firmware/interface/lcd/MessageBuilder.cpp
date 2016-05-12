@@ -69,7 +69,7 @@ void LCD::displayHelloMessage() {
 
     }
 
-    strcpy(lastLCDLine_char[0], stringBuffer);
+    strcpy(lastLCDLine[0], stringBuffer);
     wait(250);
 
 }

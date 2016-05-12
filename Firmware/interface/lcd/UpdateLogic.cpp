@@ -26,7 +26,7 @@ void LCD::init()    {
         lineChange[i] = false;
         scrollEnabled[i] = false;
         scrollDirection[i] = true;
-
+        scrollStartIndex[i] = 0;
         scrollIndex[i] = 0;
 
     }
@@ -34,19 +34,17 @@ void LCD::init()    {
     //init char arrays
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++) {
 
-        lcdLine_char[i][0] = '\0';
-        lcdLineMessage_char[i][0] = '\0';
-        lastLCDLine_char[i][0] = '\0';
+        lcdLine[i][0] = '\0';
+        lcdLineMessage[i][0] = '\0';
+        lastLCDLine[i][0] = '\0';
+        lcdLineScroll[i][0] = '\0';
 
     }
 
-    //init scroll line
-    for (int i=0; i<MAX_TEXT_SIZE; i++)
-        lcdLineScroll_char[i] = ' ';
-    lcdLineScroll_char[MAX_TEXT_SIZE] = '\0';
-
    lastScrollTime = 0;
    displayMessage_var = false;
+
+   setScrollStart(lcdElements.notes.row, lcdElements.notes.startIndex);
 
    _delay_ms(100);
    lcd_gotoxy(0,0);
@@ -75,15 +73,15 @@ void LCD::update()  {
         switch(messageStatus)   {
 
             case showMessage:
-            charPointer = lcdLineMessage_char[i];
+            charPointer = lcdLineMessage[i];
             break;
 
             case messageDisplayed:
             return; //line change + message shown = wait
 
             default:
-            if (scrollEnabled[i])   charPointer = lcdLineScroll_char;
-            else                    charPointer = lcdLine_char[i];
+            if (scrollEnabled[i])   charPointer = lcdLineScroll[i];
+            else                    charPointer = lcdLine[i];
             break;
 
         }
@@ -91,7 +89,7 @@ void LCD::update()  {
         //this is to avoid buffer overflow when comparing current and previous
         //lines and current is longer than previous
         uint8_t characters = strlen(charPointer);
-        uint8_t last_characters = strlen(lastLCDLine_char[i]);
+        uint8_t last_characters = strlen(lastLCDLine[i]);
 
         if (characters >= NUMBER_OF_LCD_COLUMNS) characters = NUMBER_OF_LCD_COLUMNS;
 
@@ -99,7 +97,7 @@ void LCD::update()  {
 
             if (j < last_characters)    {
 
-                if (charPointer[j] != lastLCDLine_char[i][j])  {
+                if (charPointer[j] != lastLCDLine[i][j])  {
 
                     lcd_gotoxy(j, i);
                     lcd_putc(charPointer[j]);
@@ -119,13 +117,13 @@ void LCD::update()  {
         for (int j=characters; j<NUMBER_OF_LCD_COLUMNS; j++)    {
 
             lcd_gotoxy(j, i);
-            lcd_putc(' ');
+            lcd_putc(SPACE_CHAR);
 
         }
 
         //lastLCDLine doesn't need to be null-terminated
         //because of other checks
-        strcpy(lastLCDLine_char[i], charPointer);
+        strcpy(lastLCDLine[i], charPointer);
         lineChange[i] = false;
 
     }
@@ -156,8 +154,8 @@ messageStatus_t LCD::getMessageStatus()    {
         for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
 
             for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++)
-            lcdLineMessage_char[i][j] = ' ';
-            lcdLineMessage_char[i][NUMBER_OF_LCD_COLUMNS] = '\0';
+            lcdLineMessage[i][j] = ' ';
+            lcdLineMessage[i][NUMBER_OF_LCD_COLUMNS] = '\0';
             lineChange[i] = true;
 
         }
@@ -176,13 +174,24 @@ void LCD::checkScroll(uint8_t row) {
 
     if ((rTimeMillis() - lastScrollTime) < LCD_SCROLL_TIME) return;
 
+    //copy string up to scrollStartIndex
+    for (int i=0; i<scrollStartIndex[row]; i++)
+        lcdLineScroll[row][i] = lcdLine[row][i];
+
     //scrollIndex is validated below
-    for (int i=0; i<NUMBER_OF_LCD_COLUMNS; i++)
-        lcdLineScroll_char[i] = lcdLine_char[row][i+scrollIndex[row]];
+    for (int i=scrollStartIndex[row]; i<NUMBER_OF_LCD_COLUMNS; i++)
+        lcdLineScroll[row][i] = lcdLine[row][i+scrollIndex[row]];
+
+    printf("original string:\t");
+    printf(lcdLine[row]);
+    printf("\nscrolling string:\t");
+    printf(lcdLineScroll[row]);
+    printf("\nScroll index: %d\n", scrollIndex[row]);
+    printf("Original string size: %d\n\n", strlen(lcdLine[row]));
 
     if (scrollDirection[row])    {
 
-        if (((strlen(lcdLine_char[row])-1) - scrollIndex[row]) > NUMBER_OF_LCD_COLUMNS) {
+        if ((strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (NUMBER_OF_LCD_COLUMNS - scrollStartIndex[row])) {
 
             scrollIndex[row]++;
 
@@ -203,7 +212,7 @@ void LCD::checkScroll(uint8_t row) {
 
 void LCD::displayMessage(uint8_t row, const char *message)  {
 
-    strcpy(lcdLineMessage_char[row], message);
+    strcpy(lcdLineMessage[row], message);
 
     messageDisplayTime = rTimeMillis();
     displayMessage_var = true;
@@ -217,19 +226,19 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
     if (overwrite) {
 
         //overwrite current text on selected line
-        strcpy(lcdLine_char[row], text);
+        strcpy(lcdLine[row], text);
 
     } else {
 
         //append characters
         //we need to find out current string size
-        uint8_t currentStringSize = strlen(lcdLine_char[row]);
+        uint8_t currentStringSize = strlen(lcdLine[row]);
 
         //now, we append the characters
         uint8_t charArrayIndex = 0;
         while (charArrayIndex < size)   { //make sure EOL isn't copied
 
-            lcdLine_char[row][startIndex+charArrayIndex] = text[charArrayIndex];
+            lcdLine[row][startIndex+charArrayIndex] = text[charArrayIndex];
             charArrayIndex++;
 
         }
@@ -239,7 +248,7 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 
         if (endOfLine)  {
 
-            lcdLine_char[row][startIndex] = '\0';
+            lcdLine[row][startIndex] = '\0';
 
         }   else {
 
@@ -250,14 +259,14 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 
                 case true:
                 //we need to set EOL char to a new position
-                lcdLine_char[row][startIndex+size] = '\0';
+                lcdLine[row][startIndex+size] = '\0';
                 break;
 
             }
 
         }
 
-        size = strlen(lcdLine_char[row]);
+        size = strlen(lcdLine[row]);
 
     }
 
@@ -275,6 +284,12 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
         scrollIndex[row] = 0;
 
     }
+
+}
+
+void LCD::setScrollStart(uint8_t row, uint8_t index)    {
+
+    scrollStartIndex[row] = index;
 
 }
 

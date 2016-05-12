@@ -32,6 +32,8 @@ class LCD   {
     void displayHelloMessage();
     void displayProgramAndPreset(uint8_t program, uint8_t preset);
 
+    void setScrollStart(uint8_t row, uint8_t index);
+
     void displayVelocity(uint8_t velocity);
     void displayAftertouch(uint8_t afterTouch);
     void displayXYposition(uint8_t position, ccType_t type);
@@ -90,13 +92,12 @@ class LCD   {
 
     int8_t scrollIndex[NUMBER_OF_LCD_ROWS];
 
-    uint8_t scrollStartIndex[NUMBER_OF_LCD_ROWS],
-            scrollEndIndex[NUMBER_OF_LCD_ROWS];
+    uint8_t scrollStartIndex[NUMBER_OF_LCD_ROWS];
 
-    char lcdLine_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
-    char lcdLineMessage_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
-    char lastLCDLine_char[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
-    char lcdLineScroll_char[MAX_TEXT_SIZE+1];
+    char lcdLine[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
+    char lcdLineMessage[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
+    char lastLCDLine[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
+    char lcdLineScroll[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
 
     typedef struct {
 
