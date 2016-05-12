@@ -87,6 +87,24 @@ const uint8_t calibrationDirection_options_sizes[] PROGMEM = {
 
 };
 
+//calibration mode
+const char calibrationMode_interactive[] PROGMEM = "Interactive";
+const char calibrationMode_manual[] PROGMEM = "Manual";
+
+PGM_P const calibration_mode[] PROGMEM = {
+
+    calibrationMode_interactive,
+    calibrationMode_manual
+
+};
+
+const uint8_t calibrationMode_sizes[] PROGMEM = {
+
+    sizeof(calibrationMode_interactive) - 1,
+    sizeof(calibrationMode_manual) - 1
+
+};
+
 
 //device info options
 const char deviceInfo_swVersion[] PROGMEM = "SW version";

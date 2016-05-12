@@ -25,16 +25,16 @@ void Pads::sendY(uint8_t pad)  {
     #if MODE_SERIAL > 0
         printf("Y for pad %d: ", pad);
         #if XY_FLIP_VALUES > 0
-            printf("%d\n", 127-lastYMIDIvalue[pad]);
-        #else
             printf("%d\n", lastYMIDIvalue[pad]);
+        #else
+            printf("%d\n", 127-lastYMIDIvalue[pad]);
         #endif
         printf("Y CC: %d\n", ccYPad[pad]);
     #else
         #if XY_FLIP_VALUES > 0
-            midi.sendControlChange(midiChannel[pad], ccYPad[pad], 127-lastYMIDIvalue[pad]);
-        #else
             midi.sendControlChange(midiChannel[pad], ccYPad[pad], lastYMIDIvalue[pad]);
+        #else
+            midi.sendControlChange(midiChannel[pad], ccYPad[pad], 127-lastYMIDIvalue[pad]);
         #endif
     #endif
 

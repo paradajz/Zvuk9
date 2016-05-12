@@ -8,6 +8,7 @@
 #include "../../../Types.h"
 #include "../Macros.h"
 #include "../strings/Strings.h"
+#include "Options.h"
 
 #define MAX_MENU_LEVELS     5
 #define MAX_MENU_OPTIONS    5
@@ -34,52 +35,15 @@ class Menu  {
     typedef struct {
 
         //denotes item level in menu hierarchy, ie. 1.2.3.1.
-        uint8_t level[MAX_MENU_LEVELS];
+        uint16_t level;
         //pointer to function if any
         actionPointer function;
         //pointer to string to show item name
-        char *stringPointer;
+        const char *stringPointer;
 
     } menuItem_t;
 
-    typedef struct {
-
-        menuItem_t calibration;
-        menuItem_t deviceInfo;
-        menuItem_t factoryReset;
-
-        menuItem_t calibrateX;
-        menuItem_t calibrateY;
-        menuItem_t calibratePressure;
-
-        menuItem_t calibrateXlower;
-        menuItem_t calibrateXupper;
-
-        menuItem_t calibrateYlower;
-        menuItem_t calibrateYupper;
-
-        menuItem_t calibratePressureLower;
-        menuItem_t calibratePressureUpper;
-
-        menuItem_t xCalibrationManual;
-        menuItem_t xCalibrationInteractive;
-
-        menuItem_t yCalibrationManual;
-        menuItem_t yCalibrationInteractive;
-
-        menuItem_t pressureCalibrationManual;
-        menuItem_t pressureCalibrationInteractive;
-
-        menuItem_t softwareInfo;
-        menuItem_t hardwareInfo;
-
-        menuItem_t partial;
-        menuItem_t full;
-
-    } menuItems_t;
-
-    menuItems_t menu;
-
+    menuItem_t menuItem[MENU_ITEMS];
 
 };
 

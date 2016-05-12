@@ -3,40 +3,49 @@
 
 typedef enum {
 
-    MENU_OPTION_PAD_CALIBRATION,
-    MENU_OPTION_DEVICE_INFO,
-    MENU_OPTION_FACTORY_RESET
+    menuItem_calibration,
+    menuItem_deviceInfo,
+    menuItem_factoryReset,
 
-} menuScreen_root;
+    menuItem_calibrateX,
+    menuItem_calibrateY,
+    menuItem_calibratePressure,
 
-typedef enum {
+    menuItem_calibrateXlower,
+    menuItem_calibrateXupper,
 
-    MENU_OPTION_CALIBRATE_X,
-    MENU_OPTION_CALIBRATE_Y,
-    MENU_OPTION_CALIBRATE_PRESSURE
+    menuItem_calibrateYlower,
+    menuItem_calibrateYupper,
 
-} menuScreen_calibration;
+    menuItem_calibratePressureLower,
+    menuItem_calibratePressureUpper,
 
-typedef enum {
+    menuItem_calibrateXlowerInteractive,
+    menuItem_calibrateXlowerManual,
 
-    MENU_OPTION_CALIBRATION_DIRECTION_LOWER,
-    MENU_OPTION_CALIBRATION_DIRECTION_UPPER
+    menuItem_calibrateYlowerInteractive,
+    menuItem_calibrateYlowerManual,
 
-} menuScreen_calibrationDirection;
+    menuItem_calibratePressureLowerInteractive,
+    menuItem_calibratePressureLowerManual,
 
-typedef enum {
+    menuItem_calibrateXupperInteractive,
+    menuItem_calibrateXupperManual,
 
-    MENU_OPTION_DEVICE_INFO_SW,
-    MENU_OPTION_DEVICE_INFO_HW
+    menuItem_calibrateYupperInteractive,
+    menuItem_calibrateYupperManual,
 
-} menuScreen_deviceInfo;
+    menuItem_calibratePressureUpperInteractive,
+    menuItem_calibratePressureUpperManual,
 
-typedef enum {
+    menuItem_softwareInfo,
+    menuItem_hardwareInfo,
 
-    MENUSCREEN_FACTORY_RESET_FULL,
-    MENUSCREEN_FACTORY_RESET_PARTIAL
+    menuItem_partialReset,
+    menuItem_fullReset,
 
-} menuScreen_factoryReset;
+    MENU_ITEMS
 
+} menuItems_t;
 
 #endif
