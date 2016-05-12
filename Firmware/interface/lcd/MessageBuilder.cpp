@@ -575,9 +575,15 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
     char tempBuffer[MAX_TEXT_SIZE];
 
     //always clear notes first since they can have large size
+    //issues are raised if we don't do this
+    //a bit hacky...
     strcpy_P(stringBuffer, notesClear_string);
     size = progmemCharArraySize(notesClear_string);
     updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
+
+    if (!pads.editModeActive())
+        display.setScrollStart(lcdElements.notes.row, lcdElements.notes.startIndex);
+    else display.setScrollStart(lcdElements.notes.row, 0);
 
     if (numberOfNotes) {
 

@@ -44,8 +44,6 @@ void LCD::init()    {
    lastScrollTime = 0;
    displayMessage_var = false;
 
-   setScrollStart(lcdElements.notes.row, lcdElements.notes.startIndex);
-
    _delay_ms(100);
    lcd_gotoxy(0,0);
 
@@ -182,16 +180,9 @@ void LCD::checkScroll(uint8_t row) {
     for (int i=scrollStartIndex[row]; i<NUMBER_OF_LCD_COLUMNS; i++)
         lcdLineScroll[row][i] = lcdLine[row][i+scrollIndex[row]];
 
-    printf("original string:\t");
-    printf(lcdLine[row]);
-    printf("\nscrolling string:\t");
-    printf(lcdLineScroll[row]);
-    printf("\nScroll index: %d\n", scrollIndex[row]);
-    printf("Original string size: %d\n\n", strlen(lcdLine[row]));
-
     if (scrollDirection[row])    {
 
-        if ((strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (NUMBER_OF_LCD_COLUMNS - scrollStartIndex[row])) {
+        if (((int8_t)strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (NUMBER_OF_LCD_COLUMNS - scrollStartIndex[row])) {
 
             scrollIndex[row]++;
 
