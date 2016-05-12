@@ -33,37 +33,53 @@ class Menu  {
 
     typedef struct {
 
-        //pointer to function
+        //denotes item level in menu hierarchy, ie. 1.2.3.1.
+        uint8_t level[MAX_MENU_LEVELS];
+        //pointer to function if any
         actionPointer function;
+        //pointer to string to show item name
+        char *stringPointer;
 
-    } menuOption;
-
-    typedef struct {
-
-        uint8_t options;
-        menuOption option[MAX_MENU_OPTIONS];
-        //pointer to function
-        actionPointer function[MAX_MENU_OPTIONS];
-        //pointer to progmem char array
-
-
-    } menuScreen_t;
+    } menuItem_t;
 
     typedef struct {
 
-        uint8_t options;
-        actionPointer function[MAX_MENU_OPTIONS];
+        menuItem_t calibration;
+        menuItem_t deviceInfo;
+        menuItem_t factoryReset;
 
-    } rootScreen_t;
+        menuItem_t calibrateX;
+        menuItem_t calibrateY;
+        menuItem_t calibratePressure;
 
-    typedef struct {
+        menuItem_t calibrateXlower;
+        menuItem_t calibrateXupper;
 
-        menuScreen_t menuScreen[MAX_MENU_OPTIONS];
-        rootScreen_t rootScreen;
+        menuItem_t calibrateYlower;
+        menuItem_t calibrateYupper;
 
-    } menu_t;
+        menuItem_t calibratePressureLower;
+        menuItem_t calibratePressureUpper;
 
-    menu_t menu;
+        menuItem_t xCalibrationManual;
+        menuItem_t xCalibrationInteractive;
+
+        menuItem_t yCalibrationManual;
+        menuItem_t yCalibrationInteractive;
+
+        menuItem_t pressureCalibrationManual;
+        menuItem_t pressureCalibrationInteractive;
+
+        menuItem_t softwareInfo;
+        menuItem_t hardwareInfo;
+
+        menuItem_t partial;
+        menuItem_t full;
+
+    } menuItems_t;
+
+    menuItems_t menu;
+
 
 };
 

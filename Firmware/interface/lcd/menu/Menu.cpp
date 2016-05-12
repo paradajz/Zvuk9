@@ -102,7 +102,7 @@ void Menu::confirmOption(bool confirm)  {
         printf("Menu hierarchy index: %d\n", menuHierarchyIndex);
     #endif
 
-    display.changeMenuScreen(activeMenu, menuHierarchyPosition);
+    //display.changeMenuScreen(activeMenu, menuHierarchyPosition);
 
 }
 
