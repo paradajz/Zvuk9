@@ -113,6 +113,8 @@ void initHardware() {
     display.init();
     #endif
 
+    menu.init();
+
     #ifdef MODULE_LEDS
     leds.init();
     #endif

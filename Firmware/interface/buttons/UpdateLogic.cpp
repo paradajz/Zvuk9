@@ -157,7 +157,7 @@ void Buttons::update()    {
             display.displayModifierEnabled();
             #endif
             #if MODE_SERIAL > 0
-            printf("Modifier active\n");
+                printf("Modifier active\n");
             #endif
             modifierActive = true;
 

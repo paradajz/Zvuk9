@@ -886,8 +886,8 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
         }
 
         #if MODE_SERIAL > 0
-        direction ? printf("Octave up, ") : printf("Octave down, ");
-        printf("active octave: %d\n", activeOctave);
+            direction ? printf("Octave up, ") : printf("Octave down, ");
+            printf("active octave: %d\n", activeOctave);
         #endif
 
     }

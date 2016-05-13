@@ -17,6 +17,7 @@ class Menu  {
 
     public:
     Menu();
+    void init();
     void displayMenu(menuType_t type);
     bool menuDisplayed();
     void changeOption(bool direction);
@@ -27,8 +28,7 @@ class Menu  {
     menuType_t activeMenu;
     int8_t activeOption;
     int8_t activeLevel;
-    int8_t menuHierarchyPosition[MAX_MENU_LEVELS];
-    uint8_t menuHierarchyIndex;
+    uint16_t menuHierarchyPosition;
 
     typedef void (*actionPointer)(void);
 

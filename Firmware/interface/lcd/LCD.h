@@ -61,7 +61,7 @@ class LCD   {
     void displayPadEditMode(uint8_t padNumber);
 
     void displayServiceMenu();
-    void changeMenuOption(menuType_t type, int8_t *menuHierachy);
+    void changeMenuOption(menuType_t type, bool direction);
     void changeMenuScreen(menuType_t type, int8_t *menuHierachy);
 
     void displayModifierEnabled();
@@ -72,6 +72,23 @@ class LCD   {
     void displayPad(uint8_t pad);
     void displayDFUmode();
     void displayMIDIchannel(uint8_t channel);
+
+    inline uint8_t getNumberOfDigits(int32_t number)  {
+
+        if (number < 10)            return 1;
+        if (number < 100)           return 2;
+        if (number < 1000)          return 3;
+        if (number < 10000)         return 4;
+        if (number < 100000)        return 5;
+        if (number < 1000000)       return 6;
+        if (number < 10000000)      return 7;
+        if (number < 100000000)     return 8;
+        if (number < 1000000000)    return 9;
+
+        return 10; //max size
+
+    }
+
     private:
     messageStatus_t getMessageStatus();
     void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite, bool endOfLine = false);
@@ -98,6 +115,8 @@ class LCD   {
     char lcdLineMessage[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
     char lastLCDLine[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
     char lcdLineScroll[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
+
+    uint32_t menuHierarchyPosition;
 
     typedef struct {
 
@@ -127,6 +146,28 @@ class LCD   {
     lcdElements_t lcdElements;
 
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine = false);
+
+    char stringBuffer[MAX_TEXT_SIZE+1];
+
+    inline void addNumberToCharArray(int32_t number, uint8_t &stringSize)  {
+
+        char intToCharArray[7];
+        itoa(number, intToCharArray, 10);
+        stringSize += getNumberOfDigits(number);
+        if (number < 0) stringSize++;
+        strcat(stringBuffer, intToCharArray);
+        stringBuffer[stringSize] = '\0';
+
+    }
+
+    inline void addSpaceToCharArray(uint8_t &stringSize, uint8_t numberOfSpaces) {
+
+        for (int i=0; i<numberOfSpaces; i++)
+        stringBuffer[stringSize+i] = SPACE_CHAR;
+        stringSize += numberOfSpaces;
+        stringBuffer[stringSize] = '\0';
+
+    }
 
 };
 

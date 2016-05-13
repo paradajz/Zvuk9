@@ -179,7 +179,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                     sysExArray[4] = 0x07;
                     recordState = ledIntensityOff;
                     #if MODE_SERIAL > 0
-                    printf("Transport Control Record Stop\n");
+                        printf("Transport Control Record Stop\n");
                     #endif
                     displayState = false;
 
@@ -188,7 +188,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                     sysExArray[4] = 0x06;
                     recordState = ledIntensityFull;
                     #if MODE_SERIAL > 0
-                    printf("Transport Control Record Start\n");
+                        printf("Transport Control Record Start\n");
                     #endif
                     displayState = true;
 
