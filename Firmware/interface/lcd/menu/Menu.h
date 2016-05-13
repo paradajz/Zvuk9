@@ -29,6 +29,8 @@ class Menu : LCD {
     int8_t activeLevel;
     uint16_t menuHierarchyPosition;
 
+    void updateMenuScreen();
+
     typedef void (*actionPointer)(void);
 
     typedef struct {
