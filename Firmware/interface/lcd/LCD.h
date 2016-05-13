@@ -89,6 +89,11 @@ class LCD   {
 
     }
 
+    protected:
+    char stringBuffer[MAX_TEXT_SIZE+1];
+    char tempBuffer[MAX_TEXT_SIZE+1];
+    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine = false);
+
     private:
     messageStatus_t getMessageStatus();
     void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite, bool endOfLine = false);
@@ -144,10 +149,6 @@ class LCD   {
     } lcdElements_t;
 
     lcdElements_t lcdElements;
-
-    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine = false);
-
-    char stringBuffer[MAX_TEXT_SIZE+1];
 
     inline void addNumberToCharArray(int32_t number, uint8_t &stringSize)  {
 

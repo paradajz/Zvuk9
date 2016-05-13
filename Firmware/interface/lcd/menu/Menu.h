@@ -13,7 +13,7 @@
 #define MAX_MENU_LEVELS     5
 #define MAX_MENU_OPTIONS    5
 
-class Menu  {
+class Menu : LCD {
 
     public:
     Menu();

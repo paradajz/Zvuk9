@@ -45,18 +45,17 @@ bool Menu::menuDisplayed()  {
 
 void Menu::changeOption(bool direction) {
 
-    //we need to find out how many items are in current hierarchy level
-    uint8_t items = 0;
-    uint8_t indexes[10];
-    char textBuffer[50];
-
     uint8_t currentDigits = display.getNumberOfDigits(menuHierarchyPosition);
-    uint8_t menuMarker = menuHierarchyPosition % 10;
-    uint8_t subtract = (menuHierarchyPosition - menuMarker) * (currentDigits > 1);
+    uint8_t currentOption = menuHierarchyPosition % 10;
+    uint8_t subtract = (menuHierarchyPosition - currentOption) * (currentDigits > 1);
 
-    #if MODE_SERIAL > 0
-        printf("Subtract: %d\n\n", subtract);
-    #endif
+    //#if MODE_SERIAL > 0
+        //printf("Subtract: %d\n\n", subtract);
+    //#endif
+
+    //first, we need to find out how many items are in current hierarchy level and their indexes
+    uint8_t items = 0;
+    uint8_t indexes[MAX_MENU_OPTIONS];
 
     for (int i=0; i<MENU_ITEMS; i++) {
 
@@ -75,9 +74,9 @@ void Menu::changeOption(bool direction) {
 
                 if ((display.getNumberOfDigits(result) == 1) && (result > 0)) {
 
-                    #if MODE_SERIAL > 0
-                        printf("Selected: %d\n", menuItem[i].level);
-                    #endif
+                    //#if MODE_SERIAL > 0
+                        //printf("Selected: %d\n", menuItem[i].level);
+                    //#endif
 
                     indexes[items] = i;
                     items++;
@@ -88,25 +87,62 @@ void Menu::changeOption(bool direction) {
 
     }
 
-    uint8_t newMarkerPosition = menuMarker;
-    direction ? newMarkerPosition++ : newMarkerPosition--;
+    //here we actually change selected option
+    uint8_t newSelectedOption = currentOption;
+    direction ? newSelectedOption++ : newSelectedOption--;
 
-    if (newMarkerPosition < 1) newMarkerPosition = 1;
-    if (newMarkerPosition > items) newMarkerPosition--;
+    //make sure we don't cross bounds
+    if (newSelectedOption < 1) newSelectedOption = 1;
+    if (newSelectedOption > items) newSelectedOption--;
 
-    menuHierarchyPosition = (menuHierarchyPosition-menuMarker)+newMarkerPosition;
+    //we need to update global hierarchy position
+    //to do that, first we get rid of current position and then add new one
+    menuHierarchyPosition = (menuHierarchyPosition-currentOption)+newSelectedOption;
 
     #if MODE_SERIAL > 0
-        printf("Menu marker position: %d\n", menuHierarchyPosition%10);
+        printf("Selected option: %d\n", menuHierarchyPosition%10);
         printf("Options:\n");
         for (int i=0; i<items; i++) {
 
-            strcpy_P(textBuffer, menuItem[indexes[i]].stringPointer);
-            printf(textBuffer);
+            strcpy_P(stringBuffer, menuItem[indexes[i]].stringPointer);
+            printf(stringBuffer);
             printf("\n");
 
         }
     #endif
+
+    uint8_t size;
+
+    //we can display up to three options/suboptions at the time
+    uint8_t markerOption = (newSelectedOption > (NUMBER_OF_LCD_ROWS-2)) ? (NUMBER_OF_LCD_ROWS-2) : newSelectedOption;
+    //position from which we start retrieving menu items
+    uint8_t startPosition = (newSelectedOption > (NUMBER_OF_LCD_ROWS-2)) ? newSelectedOption-(NUMBER_OF_LCD_ROWS-2) : 0;
+
+    switch(activeMenu)    {
+
+        case serviceMenu:
+        for (int i=0; i<(NUMBER_OF_LCD_ROWS-1); i++)    {
+
+            if (i == markerOption)  stringBuffer[0] = '>';
+            else                    stringBuffer[0] = SPACE_CHAR;
+
+            stringBuffer[1] = '\0';
+            //strcpy_P(display.tempBuffer, (char*)pgm_read_word(&(service_menu_options[i+startPosition])));
+            strcpy_P(tempBuffer, menuItem[indexes[i]].stringPointer);
+            strcat(stringBuffer, tempBuffer);
+            size = 1 + pgm_read_byte(&service_menu_options_sizes[i+startPosition]);
+            updateDisplay(i+1, text, 0, true, size);
+
+        }
+        break;
+
+        case userMenu:
+        break;
+
+        case noMenu:
+        break;
+
+    }
 
     //display.changeMenuOption(activeMenu, direction);
 

@@ -88,7 +88,6 @@ void LCD::displayCCchange(ccType_t type, bool _splitState, uint8_t ccValue, uint
 void LCD::displayCurveChange(curveCoordinate_t coordinate, bool _splitState, curveType_t type, uint8_t padNumber)  {
 
     uint8_t size = 0;
-    char tempBuffer[MAX_TEXT_SIZE];
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
     strcpy_P(tempBuffer, (char*)pgm_read_word(&(curveNameArray[type])));
 
@@ -172,7 +171,6 @@ void LCD::displayOnOff(functionsOnOff_t messageType, bool _splitState, uint8_t f
 void LCD::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value) {
 
     uint8_t size = 0;
-    char tempBuffer[MAX_TEXT_SIZE];
 
     switch(type)    {
 
@@ -415,7 +413,6 @@ void LCD::displayProgramAndPreset(uint8_t program, uint8_t preset)   {
 
     //program and preset are displayed in single row
     uint8_t size = 0;
-    char tempBuffer[MAX_TEXT_SIZE];
     strcpy_P(stringBuffer, program_string);
     size = progmemCharArraySize(program_string);
 
@@ -535,7 +532,6 @@ void LCD::displayXYcc(uint8_t ccXY, ccType_t type)   {
 void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numberOfNotes, bool padEditMode)  {
 
     uint8_t size = 0;
-    char tempBuffer[MAX_TEXT_SIZE];
 
     //always clear notes first since they can have large size
     //issues are raised if we don't do this
@@ -734,7 +730,6 @@ void LCD::clearMIDIchannel()    {
 //menu
 void LCD::displayServiceMenu()  {
 
-    char tempBuffer[MAX_TEXT_SIZE];
     uint8_t size;
 
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(menu_types[serviceMenu])));
@@ -749,48 +744,6 @@ void LCD::displayServiceMenu()  {
         strcat(stringBuffer, tempBuffer);
         size = 1 + pgm_read_byte(&service_menu_options_sizes[i]);
         updateDisplay(i+1, text, 0, true, size);
-
-    }
-
-}
-
-void LCD::changeMenuOption(menuType_t type, bool direction) {
-
-    char tempBuffer[MAX_TEXT_SIZE];
-    uint8_t size;
-    uint8_t markerOption;
-    uint8_t startPosition;
-    int8_t currentLevel = -1;
-
-    
-
-    //we can display up to three options/suboptions at the time
-    markerOption = (currentLevel > (NUMBER_OF_LCD_ROWS-2)) ? (NUMBER_OF_LCD_ROWS-2) : currentLevel;
-    //position from which we start retrieving menu items
-    startPosition = (currentLevel > (NUMBER_OF_LCD_ROWS-2)) ? currentLevel-(NUMBER_OF_LCD_ROWS-2) : 0;
-
-    switch(type)    {
-
-        case serviceMenu:
-        for (int i=0; i<(NUMBER_OF_LCD_ROWS-1); i++)    {
-
-            if (i == markerOption)  stringBuffer[0] = '>';
-            else                    stringBuffer[0] = SPACE_CHAR;
-
-            stringBuffer[1] = '\0';
-            strcpy_P(tempBuffer, (char*)pgm_read_word(&(service_menu_options[i+startPosition])));
-            strcat(stringBuffer, tempBuffer);
-            size = 1 + pgm_read_byte(&service_menu_options_sizes[i+startPosition]);
-            updateDisplay(i+1, text, 0, true, size);
-
-        }
-        break;
-
-        case userMenu:
-        break;
-
-        case noMenu:
-        break;
 
     }
 
