@@ -8,9 +8,8 @@
 #include "../../../Types.h"
 #include "../Macros.h"
 #include "../strings/Strings.h"
-#include "Options.h"
+#include "Items.h"
 
-#define MAX_MENU_LEVELS     5
 #define MAX_MENU_OPTIONS    5
 
 class Menu : LCD {

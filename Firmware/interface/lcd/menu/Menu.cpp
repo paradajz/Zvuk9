@@ -114,23 +114,25 @@ void Menu::changeOption(bool direction) {
     uint8_t size;
 
     //we can display up to three options/suboptions at the time
-    uint8_t markerOption = (newSelectedOption > (NUMBER_OF_LCD_ROWS-2)) ? (NUMBER_OF_LCD_ROWS-2) : newSelectedOption;
+    //newSelectedOption needs to be subtracted by 1 since indexing uses 1 as starting point
+    uint8_t markerOption = ((newSelectedOption-1) > (NUMBER_OF_LCD_ROWS-2)) ? (NUMBER_OF_LCD_ROWS-2) : (newSelectedOption-1);
     //position from which we start retrieving menu items
-    uint8_t startPosition = (newSelectedOption > (NUMBER_OF_LCD_ROWS-2)) ? newSelectedOption-(NUMBER_OF_LCD_ROWS-2) : 0;
+    uint8_t startPosition = ((newSelectedOption-1) > (NUMBER_OF_LCD_ROWS-2)) ? newSelectedOption-1-(NUMBER_OF_LCD_ROWS-2) : 0;
 
     switch(activeMenu)    {
 
         case serviceMenu:
         for (int i=0; i<(NUMBER_OF_LCD_ROWS-1); i++)    {
 
+            //skipping first row since it's reserved for the menu title
+
             if (i == markerOption)  stringBuffer[0] = '>';
             else                    stringBuffer[0] = SPACE_CHAR;
 
             stringBuffer[1] = '\0';
-            //strcpy_P(display.tempBuffer, (char*)pgm_read_word(&(service_menu_options[i+startPosition])));
-            strcpy_P(tempBuffer, menuItem[indexes[i]].stringPointer);
+            strcpy_P(tempBuffer, menuItem[indexes[i+startPosition]].stringPointer);
             strcat(stringBuffer, tempBuffer);
-            size = 1 + pgm_read_byte(&service_menu_options_sizes[i+startPosition]);
+            size = 1 + strlen_P(menuItem[indexes[i+startPosition]].stringPointer);
             updateDisplay(i+1, text, 0, true, size);
 
         }
@@ -144,7 +146,9 @@ void Menu::changeOption(bool direction) {
 
     }
 
-    //display.changeMenuOption(activeMenu, direction);
+    #if MODE_SERIAL > 0
+        printf("menuHierarchyPosition: %d\n", menuHierarchyPosition);
+    #endif
 
 }
 
@@ -152,50 +156,36 @@ void Menu::confirmOption(bool confirm)  {
 
     //this confirms current hierarchy level and moves to next one,
     //or it deletes current level and switches to previous, depending on received argument
+    uint16_t newLevel = menuHierarchyPosition;
 
-    //switch(confirm) {
-//
-        //case true:
-        //switch(activeMenu)  {
-//
-            //case serviceMenu:
-            //if (menuHierarchyIndex < (MAX_MENU_LEVELS-1))   {
-//
-                //activeOption = 0;
-                //menuHierarchyIndex++;
-//
-            //}
-            //break;
-//
-        //}
-        //break;
-//
-        //case false:
-        //if (menuHierarchyIndex > 0) {
-//
-            //menuHierarchyPosition[menuHierarchyIndex] = -1;
-            //menuHierarchyIndex--;
-            //activeOption = 0;
-//
-        //}
-        //break;
-//
-    //}
-//
-    //menuHierarchyPosition[menuHierarchyIndex] = 0;
-//
-    //#if MODE_SERIAL > 0
-        //printf("Current position in menu:\n");
-        //for (int i=0; i<MAX_MENU_LEVELS; i++)    {
-//
-            //printf("%d.", menuHierarchyPosition[i]);
-//
-        //} printf("\n");
-//
-        //printf("Menu hierarchy index: %d\n", menuHierarchyIndex);
-    //#endif
+    confirm ? newLevel = (newLevel*10) + 1 : newLevel /= 10;
 
-    //display.changeMenuScreen(activeMenu, menuHierarchyPosition);
+    if (newLevel < 1) newLevel = 1;
+
+    bool menuLevelPresent = confirm ? false : true;
+
+    if (confirm && !menuLevelPresent)    {
+
+        //level needs to be increased
+        //we should first check it that level exists
+        for (int i=0; i<MENU_ITEMS; i++)
+            if (menuItem[i].level == newLevel)  {
+
+                menuLevelPresent = true;
+                break;
+
+            }
+    }
+
+    if (menuLevelPresent && (newLevel != menuHierarchyPosition))   {
+
+        #if MODE_SERIAL > 0
+            printf("New level: %d\n", newLevel);
+        #endif
+
+        menuHierarchyPosition = newLevel;
+
+    }
 
 }
 

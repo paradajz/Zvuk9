@@ -61,8 +61,6 @@ class LCD   {
     void displayPadEditMode(uint8_t padNumber);
 
     void displayServiceMenu();
-    void changeMenuOption(menuType_t type, bool direction);
-    void changeMenuScreen(menuType_t type, int8_t *menuHierachy);
 
     void displayModifierEnabled();
     void displayOutOfRange();

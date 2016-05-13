@@ -629,7 +629,7 @@
     <Compile Include="interface\lcd\menu\MenuLayout.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\menu\Options.h">
+    <Compile Include="interface\lcd\menu\Items.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\MessageBuilder.cpp">

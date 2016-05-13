@@ -749,27 +749,6 @@ void LCD::displayServiceMenu()  {
 
 }
 
-void LCD::changeMenuScreen(menuType_t type, int8_t *menuHierachy)    {
-
-    //we need to find out which screen to display
-    //marker position should always be at 0
-
-    int8_t screenIndex;
-
-    //let's find last index in menu hierarchy
-    for (int i=MAX_MENU_LEVELS-1; i>=0; i--)
-        if (menuHierachy[i] != -1)  {
-
-            screenIndex = i;
-            break;
-
-        }
-
-
-
-}
-
-
 //lcd update
 
 void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine)    {
