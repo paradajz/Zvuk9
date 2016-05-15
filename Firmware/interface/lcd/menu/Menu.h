@@ -28,8 +28,12 @@ class Menu : LCD {
     int8_t activeOption;
     int8_t activeLevel;
     uint16_t menuHierarchyPosition;
+    uint8_t items;
+    uint8_t indexes[MAX_MENU_OPTIONS];
+    bool functionRunning;
 
     void updateMenuScreen();
+    void getMenuItems();
 
     typedef void (*actionPointer)(void);
 

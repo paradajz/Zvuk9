@@ -9,7 +9,6 @@ LCD::LCD()  {
 
     displayMessage_var = false;
     messageDisplayTime = 0;
-    menuHierarchyPosition = 0;
     #ifdef MODULE_LCD
         lcd_init(LCD_DISP_ON);
     #endif

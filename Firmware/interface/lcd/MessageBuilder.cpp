@@ -727,28 +727,6 @@ void LCD::clearMIDIchannel()    {
 
 }
 
-//menu
-void LCD::displayServiceMenu()  {
-
-    uint8_t size;
-
-    strcpy_P(stringBuffer, (char*)pgm_read_word(&(menu_types[serviceMenu])));
-    size = pgm_read_byte(&menu_types_sizes[serviceMenu]);
-    updateDisplay(0, text, 0, true, size);
-
-    for (int i=0; i<(NUMBER_OF_LCD_ROWS-1); i++)    {
-
-        (!i) ? stringBuffer[0] = '>' : stringBuffer[0] = SPACE_CHAR;
-        stringBuffer[1] = '\0';
-        strcpy_P(tempBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
-        strcat(stringBuffer, tempBuffer);
-        size = 1 + pgm_read_byte(&service_menu_options_sizes[i]);
-        updateDisplay(i+1, text, 0, true, size);
-
-    }
-
-}
-
 //lcd update
 
 void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine)    {

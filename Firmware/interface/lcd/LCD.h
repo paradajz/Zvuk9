@@ -60,8 +60,6 @@ class LCD   {
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayPadEditMode(uint8_t padNumber);
 
-    void displayServiceMenu();
-
     void displayModifierEnabled();
     void displayOutOfRange();
     void displayMaxNotesSet();
@@ -86,6 +84,8 @@ class LCD   {
         return 10; //max size
 
     }
+
+    friend void runMenuFunction();
 
     protected:
     char stringBuffer[MAX_TEXT_SIZE+1];
@@ -118,8 +118,6 @@ class LCD   {
     char lcdLineMessage[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
     char lastLCDLine[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
     char lcdLineScroll[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
-
-    uint32_t menuHierarchyPosition;
 
     typedef struct {
 
