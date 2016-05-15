@@ -33,18 +33,6 @@ void Menu::displayMenu(menuType_t type) {
         updateDisplay(0, text, 0, true, size);
         getMenuItems();
         updateMenuScreen();
-
-//
-        //for (int i=0; i<(NUMBER_OF_LCD_ROWS-1); i++)    {
-//
-            //(!i) ? stringBuffer[0] = '>' : stringBuffer[0] = SPACE_CHAR;
-            //stringBuffer[1] = '\0';
-            //strcpy_P(tempBuffer, (char*)pgm_read_word(&(service_menu_options[i])));
-            //strcat(stringBuffer, tempBuffer);
-            //size = 1 + pgm_read_byte(&service_menu_options_sizes[i]);
-            //updateDisplay(i+1, text, 0, true, size);
-//
-        //}
         break;
 
         case userMenu:
