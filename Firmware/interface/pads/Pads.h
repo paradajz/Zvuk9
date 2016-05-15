@@ -46,12 +46,7 @@ class Pads  {
     void update(bool midiEnabled = true);
 
     //calibration
-    bool setLowerPressureLimit(uint8_t pad, uint16_t limit);
-    bool setUpperPressureLimit(uint8_t pad, uint16_t limit);
-    bool setLowerXLimit(uint8_t pad, uint16_t limit);
-    bool setUpperXLimit(uint8_t pad, uint16_t limit);
-    bool setLowerYLimit(uint8_t pad, uint16_t limit);
-    bool setUpperYLimit(uint8_t pad, uint16_t limit);
+    bool calibrate(calibrationType type, calibrationDirection direction, uint8_t pad, uint16_t limit);
 
     //program/preset
     //getters

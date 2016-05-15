@@ -141,9 +141,76 @@ void initHardware() {
 
 }
 
+void calibratePads()    {
+
+    //see default values in eeprom/Defaults.h from line 160
+
+    //pads.calibrate(xCalibration, lower, 0, DEFAULT_PAD_X_LIMIT_LOWER);
+    //pads.calibrate(xCalibration, lower, 1, DEFAULT_PAD_X_LIMIT_LOWER);
+    //pads.calibrate(xCalibration, lower, 2, DEFAULT_PAD_X_LIMIT_LOWER);
+    //pads.calibrate(xCalibration, lower, 3, DEFAULT_PAD_X_LIMIT_LOWER);
+    //pads.calibrate(xCalibration, lower, 4, DEFAULT_PAD_X_LIMIT_LOWER);
+    //pads.calibrate(xCalibration, lower, 5, DEFAULT_PAD_X_LIMIT_LOWER);
+    //pads.calibrate(xCalibration, lower, 6, DEFAULT_PAD_X_LIMIT_LOWER);
+    //pads.calibrate(xCalibration, lower, 7, DEFAULT_PAD_X_LIMIT_LOWER);
+    //pads.calibrate(xCalibration, lower, 8, DEFAULT_PAD_X_LIMIT_LOWER);
+//
+    //pads.calibrate(xCalibration, upper, 0, DEFAULT_PAD_X_LIMIT_UPPER);
+    //pads.calibrate(xCalibration, upper, 1, DEFAULT_PAD_X_LIMIT_UPPER);
+    //pads.calibrate(xCalibration, upper, 2, DEFAULT_PAD_X_LIMIT_UPPER);
+    //pads.calibrate(xCalibration, upper, 3, DEFAULT_PAD_X_LIMIT_UPPER);
+    //pads.calibrate(xCalibration, upper, 4, DEFAULT_PAD_X_LIMIT_UPPER);
+    //pads.calibrate(xCalibration, upper, 5, DEFAULT_PAD_X_LIMIT_UPPER);
+    //pads.calibrate(xCalibration, upper, 6, DEFAULT_PAD_X_LIMIT_UPPER);
+    //pads.calibrate(xCalibration, upper, 7, DEFAULT_PAD_X_LIMIT_UPPER);
+    //pads.calibrate(xCalibration, upper, 8, DEFAULT_PAD_X_LIMIT_UPPER);
+//
+    //pads.calibrate(yCalibration, lower, 0, DEFAULT_PAD_Y_LIMIT_LOWER);
+    //pads.calibrate(yCalibration, lower, 1, DEFAULT_PAD_Y_LIMIT_LOWER);
+    //pads.calibrate(yCalibration, lower, 2, DEFAULT_PAD_Y_LIMIT_LOWER);
+    //pads.calibrate(yCalibration, lower, 3, DEFAULT_PAD_Y_LIMIT_LOWER);
+    //pads.calibrate(yCalibration, lower, 4, DEFAULT_PAD_Y_LIMIT_LOWER);
+    //pads.calibrate(yCalibration, lower, 5, DEFAULT_PAD_Y_LIMIT_LOWER);
+    //pads.calibrate(yCalibration, lower, 6, DEFAULT_PAD_Y_LIMIT_LOWER);
+    //pads.calibrate(yCalibration, lower, 7, DEFAULT_PAD_Y_LIMIT_LOWER);
+    //pads.calibrate(yCalibration, lower, 8, DEFAULT_PAD_Y_LIMIT_LOWER);
+//
+    //pads.calibrate(yCalibration, upper, 0, DEFAULT_PAD_Y_LIMIT_UPPER);
+    //pads.calibrate(yCalibration, upper, 1, DEFAULT_PAD_Y_LIMIT_UPPER);
+    //pads.calibrate(yCalibration, upper, 2, DEFAULT_PAD_Y_LIMIT_UPPER);
+    //pads.calibrate(yCalibration, upper, 3, DEFAULT_PAD_Y_LIMIT_UPPER);
+    //pads.calibrate(yCalibration, upper, 4, DEFAULT_PAD_Y_LIMIT_UPPER);
+    //pads.calibrate(yCalibration, upper, 5, DEFAULT_PAD_Y_LIMIT_UPPER);
+    //pads.calibrate(yCalibration, upper, 6, DEFAULT_PAD_Y_LIMIT_UPPER);
+    //pads.calibrate(yCalibration, upper, 7, DEFAULT_PAD_Y_LIMIT_UPPER);
+    //pads.calibrate(yCalibration, upper, 8, DEFAULT_PAD_Y_LIMIT_UPPER);
+//
+    //pads.calibrate(pressureCalibration, lower, 0, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
+    //pads.calibrate(pressureCalibration, lower, 1, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
+    //pads.calibrate(pressureCalibration, lower, 2, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
+    //pads.calibrate(pressureCalibration, lower, 3, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
+    //pads.calibrate(pressureCalibration, lower, 4, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
+    //pads.calibrate(pressureCalibration, lower, 5, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
+    //pads.calibrate(pressureCalibration, lower, 6, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
+    //pads.calibrate(pressureCalibration, lower, 7, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
+    //pads.calibrate(pressureCalibration, lower, 8, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
+//
+    //pads.calibrate(pressureCalibration, upper, 0, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+    //pads.calibrate(pressureCalibration, upper, 1, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+    //pads.calibrate(pressureCalibration, upper, 2, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+    //pads.calibrate(pressureCalibration, upper, 3, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+    //pads.calibrate(pressureCalibration, upper, 4, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+    //pads.calibrate(pressureCalibration, upper, 5, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+    //pads.calibrate(pressureCalibration, upper, 6, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+    //pads.calibrate(pressureCalibration, upper, 7, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+    //pads.calibrate(pressureCalibration, upper, 8, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+
+}
+
 int main()    {
 
     initHardware();
+    calibratePads();
 
     while(1) {
 

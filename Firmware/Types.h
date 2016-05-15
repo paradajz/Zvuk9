@@ -247,4 +247,19 @@ enum midiFilterMode_t {
 
 };
 
+enum calibrationDirection {
+
+    lower,
+    upper
+
+};
+
+enum calibrationType {
+
+    xCalibration,
+    yCalibration,
+    pressureCalibration
+
+};
+
 #endif
