@@ -2,6 +2,9 @@
 #ifdef MENU_H_
 #include "Items.h"
 
+#include "../../../version/Firmware.h"
+#include "../../../version/Hardware.h"
+
 void runMenuFunction() {
 
     #if MODE_SERIAL > 0
@@ -13,6 +16,59 @@ void runMenuFunction() {
 
     for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
     display.updateDisplay(i, text, 0, true, size);
+
+}
+
+void displayDeviceInfo(deviceInfo type)   {
+
+    uint8_t byte0, byte1, byte2;
+
+    switch(type)    {
+
+        case firmware:
+        byte0 = FIRMWARE_VERSION_BYTE_0;
+        byte1 = FIRMWARE_VERSION_BYTE_1;
+        byte2 = FIRMWARE_VERSION_BYTE_2;
+        break;
+
+        case hardware:
+        byte0 = HARDWARE_VERSION_BYTE_0;
+        byte1 = HARDWARE_VERSION_BYTE_1;
+        byte2 = HARDWARE_VERSION_BYTE_2;
+        break;
+
+        default:
+        return;
+
+    }
+
+    uint8_t size = 0;
+    display.stringBuffer[0] = '\0';
+    display.addNumberToCharArray(byte0, size);
+    display.appendText(".", size);
+    display.addNumberToCharArray(byte1, size);
+    display.appendText(".", size);
+    display.addNumberToCharArray(byte2, size);
+
+    display.updateDisplay(1, text, 0, true, size);
+
+    strcpy_P(display.stringBuffer, emptyLine_string);
+    size = progmemCharArraySize(dummy_string);
+
+    display.updateDisplay(2, text, 0, true, size);
+    display.updateDisplay(3, text, 0, true, size);
+
+}
+
+void displayHardwareVersion()   {
+
+    displayDeviceInfo(hardware);
+
+}
+
+void displayFirmwareVersion()   {
+
+    displayDeviceInfo(firmware);
 
 }
 
@@ -134,11 +190,11 @@ void Menu::createLayout()   {
         {
             menuItem[menuItem_softwareInfo].stringPointer = deviceInfo_swVersion;
             menuItem[menuItem_softwareInfo].level = 21;
-            menuItem[menuItem_softwareInfo].function = runMenuFunction;
+            menuItem[menuItem_softwareInfo].function = displayFirmwareVersion;
 
             menuItem[menuItem_hardwareInfo].stringPointer = deviceInfo_hwVersion;
             menuItem[menuItem_hardwareInfo].level = 22;
-            menuItem[menuItem_hardwareInfo].function = runMenuFunction;
+            menuItem[menuItem_hardwareInfo].function = displayHardwareVersion;
         }
 
     menuItem[menuItem_factoryReset].stringPointer = serviceMenuOption_factoryReset;

@@ -710,6 +710,12 @@
     <Compile Include="interface\pads\XYscales.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="version\Firmware.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="version\Hardware.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="vserial\Serial.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -738,9 +744,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Types.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="Version.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
@@ -783,6 +786,7 @@
     <Folder Include="interface\leds\" />
     <Folder Include="interface\pads\" />
     <Folder Include="midi\" />
+    <Folder Include="version" />
     <Folder Include="vserial" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />

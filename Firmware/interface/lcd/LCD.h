@@ -85,7 +85,11 @@ class LCD   {
 
     }
 
+    //menu functions
     friend void runMenuFunction();
+    friend void displayFirmwareVersion();
+    friend void displayHardwareVersion();
+    friend void displayDeviceInfo(deviceInfo type);
 
     protected:
     char stringBuffer[MAX_TEXT_SIZE+1];
@@ -153,6 +157,14 @@ class LCD   {
         stringSize += getNumberOfDigits(number);
         if (number < 0) stringSize++;
         strcat(stringBuffer, intToCharArray);
+        stringBuffer[stringSize] = '\0';
+
+    }
+
+    inline void appendText(const char *text, uint8_t &stringSize) {
+
+        stringSize += strlen(text);
+        strcat(stringBuffer, text);
         stringBuffer[stringSize] = '\0';
 
     }

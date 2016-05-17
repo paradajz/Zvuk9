@@ -1,0 +1,8 @@
+#ifndef HARDWARE_H_
+#define HARDWARE_H_
+
+#define HARDWARE_VERSION_BYTE_0 2
+#define HARDWARE_VERSION_BYTE_1 0
+#define HARDWARE_VERSION_BYTE_2 0
+
+#endif

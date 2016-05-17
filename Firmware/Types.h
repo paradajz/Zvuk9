@@ -262,4 +262,11 @@ enum calibrationType {
 
 };
 
+enum deviceInfo {
+
+    firmware,
+    hardware
+
+};
+
 #endif
