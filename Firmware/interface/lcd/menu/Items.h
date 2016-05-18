@@ -44,6 +44,12 @@ typedef enum {
     menuItem_partialReset,
     menuItem_fullReset,
 
+    menuItem_confirmPartialReset,
+    menuItem_rejectPartialReset,
+
+    menuItem_confirmFullReset,
+    menuItem_rejectFullReset,
+
     MENU_ITEMS
 
 } menuItems_t;

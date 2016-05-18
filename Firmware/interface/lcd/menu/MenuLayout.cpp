@@ -4,6 +4,18 @@
 
 #include "../../../version/Firmware.h"
 #include "../../../version/Hardware.h"
+#include "../../../eeprom/EEPROMsettings.h"
+#include "../../../init/Init.h"
+
+void factory_reset(factoryResetType_t type) {
+
+    leds.setFadeSpeed(1);
+    leds.allLEDsOff();
+    configuration.factoryReset(type);
+    globalInit();
+    menu.exitMenu();
+
+}
 
 void runMenuFunction() {
 
@@ -69,6 +81,18 @@ void displayHardwareVersion()   {
 void displayFirmwareVersion()   {
 
     displayDeviceInfo(firmware);
+
+}
+
+void partialReset() {
+
+    factory_reset(factoryReset_restore);
+
+}
+
+void fullReset()    {
+
+    factory_reset(factoryReset_partial);
 
 }
 
@@ -202,13 +226,33 @@ void Menu::createLayout()   {
     menuItem[menuItem_factoryReset].function = NULL;
 
         {
-            menuItem[menuItem_partialReset].stringPointer = factoryReset_partial;
+            menuItem[menuItem_partialReset].stringPointer = factoryReset_partial_string;
             menuItem[menuItem_partialReset].level = 31;
-            menuItem[menuItem_partialReset].function = runMenuFunction;
+            menuItem[menuItem_partialReset].function = NULL;
 
-            menuItem[menuItem_fullReset].stringPointer = factoryReset_full;
+                {
+                    menuItem[menuItem_rejectPartialReset].stringPointer = no_option;
+                    menuItem[menuItem_rejectPartialReset].level = 311;
+                    menuItem[menuItem_rejectPartialReset].function = NULL;
+
+                    menuItem[menuItem_confirmPartialReset].stringPointer = yes_option;
+                    menuItem[menuItem_confirmPartialReset].level = 312;
+                    menuItem[menuItem_confirmPartialReset].function = partialReset;
+                }
+
+            menuItem[menuItem_fullReset].stringPointer = factoryReset_full_string;
             menuItem[menuItem_fullReset].level = 32;
-            menuItem[menuItem_fullReset].function = runMenuFunction;
+            menuItem[menuItem_fullReset].function = NULL;
+
+                {
+                        menuItem[menuItem_rejectFullReset].stringPointer = no_option;
+                        menuItem[menuItem_rejectFullReset].level = 321;
+                        menuItem[menuItem_rejectPartialReset].function = NULL;
+
+                        menuItem[menuItem_confirmFullReset].stringPointer = yes_option;
+                        menuItem[menuItem_confirmFullReset].level = 322;
+                        menuItem[menuItem_confirmFullReset].function = fullReset;
+                }
         }
 
 }

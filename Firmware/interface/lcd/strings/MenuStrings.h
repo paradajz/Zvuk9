@@ -32,9 +32,11 @@ const char deviceInfo_swVersion[] PROGMEM = "SW version";
 const char deviceInfo_hwVersion[] PROGMEM = "HW version";
 
 //factory reset options
-const char factoryReset_partial[] PROGMEM = "Partial reset";
-const char factoryReset_full[] PROGMEM = "Full reset";
+const char factoryReset_partial_string[] PROGMEM = "Partial reset";
+const char factoryReset_full_string[] PROGMEM = "Full reset";
 
+const char yes_option[] PROGMEM = "Yes";
+const char no_option[] PROGMEM = "No";
 
 const char dummy_string[] PROGMEM = "dummy";
 #endif

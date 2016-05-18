@@ -590,6 +590,12 @@
     <Compile Include="hardware\usb\vserial\Descriptors.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="init\Init.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="init\Init.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\buttons\Buttons.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -786,6 +792,7 @@
     <Folder Include="interface\leds\" />
     <Folder Include="interface\pads\" />
     <Folder Include="midi\" />
+    <Folder Include="init" />
     <Folder Include="version" />
     <Folder Include="vserial" />
   </ItemGroup>

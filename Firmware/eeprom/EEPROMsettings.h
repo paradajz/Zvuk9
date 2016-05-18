@@ -41,14 +41,6 @@ typedef enum {
 
 } sectionParameterType_t;
 
-typedef enum {
-
-    FACTORY_RESET_WIPE_RESTORE, //clear eeprom, restore defauls
-    FACTORY_RESET_RESTORE_FULL, //restore defaults
-    FACTORY_RESET_RESTORE_PARTIAL //partially restore defaults
-
-} factoryResetType_t;
-
 typedef struct {
 
     uint8_t sections;
@@ -70,6 +62,7 @@ class EEPROMsettings {
     void init();
     void initSettings(bool partialReset);
     void factoryReset(factoryResetType_t type);
+    friend void factory_reset(factoryResetType_t type);
     void createMemoryLayout();
     void createSectionAddresses();
     inline uint16_t readParameter(uint8_t blockID, uint8_t sectionID, uint16_t parameterID = 0)  {

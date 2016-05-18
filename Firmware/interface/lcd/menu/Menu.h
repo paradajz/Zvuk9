@@ -17,6 +17,7 @@ class Menu : LCD {
     public:
     Menu();
     void init();
+    void exitMenu();
     void displayMenu(menuType_t type);
     bool menuDisplayed();
     void changeOption(bool direction);

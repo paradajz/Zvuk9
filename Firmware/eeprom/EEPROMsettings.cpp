@@ -5,6 +5,81 @@
 #include <util/delay.h>
 #include "../midi/MIDI_parameters.h"
 
+void EEPROMsettings::factoryReset(factoryResetType_t type)   {
+
+    #ifdef MODULE_LCD
+    lcd_clrscr();
+    lcd_gotoxy(0, 0);
+    lcd_puts("Factory reset in");
+
+    for (int i=3; i>=1; i--) {
+
+        lcd_gotoxy(17, 0);
+        lcd_putc(i+48);   //convert int to char, +48
+        _delay_ms(1000);
+
+    }
+
+    lcd_clrscr();
+    lcd_gotoxy(0, 0);
+    lcd_puts("Factory reset...");
+    lcd_gotoxy(0, 1);
+    #endif
+
+    switch(type)    {
+
+        case factoryReset_wipeRestore:
+        #ifdef MODULE_LCD
+        lcd_puts("Wiping memory");
+        #endif
+        clearEEPROM();
+        break;
+
+        default:
+        //nothing
+        break;
+
+    }
+
+    #ifdef MODULE_LCD
+    lcd_gotoxy(0, 1);
+    #endif
+
+    switch(type)    {
+
+        case factoryReset_wipeRestore:
+        case factoryReset_restore:
+        #ifdef MODULE_LCD
+        lcd_puts("Full restore");
+        #endif
+        initSettings(false);
+        break;
+
+        case factoryReset_partial:
+        #ifdef MODULE_LCD
+        lcd_puts("Partial restore");
+        #endif
+        initSettings(true);
+        break;
+
+    }
+
+    #ifdef MODULE_LCD
+        _delay_ms(2000);
+        lcd_clrscr();
+        lcd_gotoxy(0,0);
+        lcd_puts("Factory reset");
+        lcd_gotoxy(0, 1);
+        lcd_puts("finished!");
+        _delay_ms(2000);
+    #endif
+
+    eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_0, EEPROM_UNIQUE_ID);
+    eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_1, EEPROM_UNIQUE_ID);
+    eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_2, EEPROM_UNIQUE_ID);
+
+}
+
 EEPROMsettings::EEPROMsettings()    {
 
     //def const
@@ -31,12 +106,8 @@ void EEPROMsettings::init() {
         ((eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_0)) == (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_1))) &&
         ((eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_0)) == (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_2)))
 
-        )   factoryReset(FACTORY_RESET_RESTORE_FULL);
-        else factoryReset(FACTORY_RESET_WIPE_RESTORE);
-
-        eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_0, EEPROM_UNIQUE_ID);
-        eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_1, EEPROM_UNIQUE_ID);
-        eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_2, EEPROM_UNIQUE_ID);
+        )   factoryReset(factoryReset_restore);
+        else factoryReset(factoryReset_wipeRestore);
 
     }
 
@@ -56,76 +127,6 @@ void EEPROMsettings::init() {
 void EEPROMsettings::clearEEPROM()  {
 
     for (int i=0; i<EEPROM_SIZE; i++) eeprom_update_byte((uint8_t*)i, 0xFF);
-
-}
-
-void EEPROMsettings::factoryReset(factoryResetType_t type)   {
-
-    #ifdef MODULE_LCD
-        lcd_gotoxy(0, 0);
-        lcd_puts("Factory reset in");
-
-        for (int i=3; i>=1; i--) {
-
-            lcd_gotoxy(17, 0);
-            lcd_putc(i+48);   //convert int to char, +48
-            _delay_ms(1000);
-
-        }
-
-        lcd_clrscr();
-        lcd_gotoxy(0, 0);
-        lcd_puts("Factory reset...");
-        lcd_gotoxy(0, 1);
-    #endif
-
-    switch(type)    {
-
-        case FACTORY_RESET_WIPE_RESTORE:
-        #ifdef MODULE_LCD
-        lcd_puts("Wiping memory");
-        #endif
-        clearEEPROM();
-        break;
-
-        default:
-        //nothing
-        break;
-
-    }
-
-    #ifdef MODULE_LCD
-        lcd_gotoxy(0, 1);
-    #endif
-
-    switch(type)    {
-
-        case FACTORY_RESET_WIPE_RESTORE:
-        case FACTORY_RESET_RESTORE_FULL:
-        #ifdef MODULE_LCD
-            lcd_puts("Full restore");
-        #endif
-        initSettings(false);
-        break;
-
-        case FACTORY_RESET_RESTORE_PARTIAL:
-        #ifdef MODULE_LCD
-            lcd_puts("Partial restore");
-        #endif
-        initSettings(true);
-        break;
-
-    }
-
-    #ifdef MODULE_LCD
-         _delay_ms(2000);
-         lcd_clrscr();
-         lcd_gotoxy(0,0);
-         lcd_puts("Factory reset");
-         lcd_gotoxy(0, 1);
-         lcd_puts("finished!");
-         _delay_ms(2000);
-    #endif
 
 }
 

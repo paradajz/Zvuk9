@@ -269,4 +269,12 @@ enum deviceInfo {
 
 };
 
+typedef enum {
+
+    factoryReset_wipeRestore, //clear eeprom, restore defaults
+    factoryReset_restore, //restore defaults
+    factoryReset_partial //partially restore defaults
+
+} factoryResetType_t;
+
 #endif

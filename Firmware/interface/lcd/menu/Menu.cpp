@@ -45,6 +45,12 @@ void Menu::displayMenu(menuType_t type) {
 
 }
 
+void Menu::exitMenu()   {
+
+    activeMenu = noMenu;
+
+}
+
 bool Menu::menuDisplayed()  {
 
     return (activeMenu != noMenu);
