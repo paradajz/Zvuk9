@@ -41,5 +41,6 @@ void globalInit();
 void initHardware();
 void calibratePads();
 void startUpAnimation();
+void reboot();
 
 #endif

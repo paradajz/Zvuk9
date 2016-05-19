@@ -10,8 +10,7 @@
 
 int main()    {
 
-    initHardware();
-    calibratePads();
+    globalInit();
 
     while(1) {
 

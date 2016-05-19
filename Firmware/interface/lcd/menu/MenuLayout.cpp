@@ -7,94 +7,7 @@
 #include "../../../eeprom/EEPROMsettings.h"
 #include "../../../init/Init.h"
 
-void factory_reset(factoryResetType_t type) {
-
-    leds.setFadeSpeed(1);
-    leds.allLEDsOff();
-    configuration.factoryReset(type);
-    globalInit();
-    menu.exitMenu();
-
-}
-
-void runMenuFunction() {
-
-    #if MODE_SERIAL > 0
-    printf("great success\n");
-    #endif
-
-    strcpy_P(display.stringBuffer, dummy_string);
-    uint8_t size = progmemCharArraySize(dummy_string);
-
-    for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
-    display.updateDisplay(i, text, 0, true, size);
-
-}
-
-void displayDeviceInfo(deviceInfo type)   {
-
-    uint8_t byte0, byte1, byte2;
-
-    switch(type)    {
-
-        case firmware:
-        byte0 = FIRMWARE_VERSION_BYTE_0;
-        byte1 = FIRMWARE_VERSION_BYTE_1;
-        byte2 = FIRMWARE_VERSION_BYTE_2;
-        break;
-
-        case hardware:
-        byte0 = HARDWARE_VERSION_BYTE_0;
-        byte1 = HARDWARE_VERSION_BYTE_1;
-        byte2 = HARDWARE_VERSION_BYTE_2;
-        break;
-
-        default:
-        return;
-
-    }
-
-    uint8_t size = 0;
-    display.stringBuffer[0] = '\0';
-    display.addNumberToCharArray(byte0, size);
-    display.appendText(".", size);
-    display.addNumberToCharArray(byte1, size);
-    display.appendText(".", size);
-    display.addNumberToCharArray(byte2, size);
-
-    display.updateDisplay(1, text, 0, true, size);
-
-    strcpy_P(display.stringBuffer, emptyLine_string);
-    size = progmemCharArraySize(dummy_string);
-
-    display.updateDisplay(2, text, 0, true, size);
-    display.updateDisplay(3, text, 0, true, size);
-
-}
-
-void displayHardwareVersion()   {
-
-    displayDeviceInfo(hardware);
-
-}
-
-void displayFirmwareVersion()   {
-
-    displayDeviceInfo(firmware);
-
-}
-
-void partialReset() {
-
-    factory_reset(factoryReset_restore);
-
-}
-
-void fullReset()    {
-
-    factory_reset(factoryReset_partial);
-
-}
+#include "MenuFunctions.h"
 
 void Menu::createLayout()   {
 
@@ -231,11 +144,11 @@ void Menu::createLayout()   {
             menuItem[menuItem_partialReset].function = NULL;
 
                 {
-                    menuItem[menuItem_rejectPartialReset].stringPointer = no_option;
+                    menuItem[menuItem_rejectPartialReset].stringPointer = back_option;
                     menuItem[menuItem_rejectPartialReset].level = 311;
-                    menuItem[menuItem_rejectPartialReset].function = NULL;
+                    menuItem[menuItem_rejectPartialReset].function = backFunction;
 
-                    menuItem[menuItem_confirmPartialReset].stringPointer = yes_option;
+                    menuItem[menuItem_confirmPartialReset].stringPointer = confirm_option;
                     menuItem[menuItem_confirmPartialReset].level = 312;
                     menuItem[menuItem_confirmPartialReset].function = partialReset;
                 }
@@ -245,11 +158,11 @@ void Menu::createLayout()   {
             menuItem[menuItem_fullReset].function = NULL;
 
                 {
-                        menuItem[menuItem_rejectFullReset].stringPointer = no_option;
+                        menuItem[menuItem_rejectFullReset].stringPointer = back_option;
                         menuItem[menuItem_rejectFullReset].level = 321;
-                        menuItem[menuItem_rejectPartialReset].function = NULL;
+                        menuItem[menuItem_rejectPartialReset].function = backFunction;
 
-                        menuItem[menuItem_confirmFullReset].stringPointer = yes_option;
+                        menuItem[menuItem_confirmFullReset].stringPointer = confirm_option;
                         menuItem[menuItem_confirmFullReset].level = 322;
                         menuItem[menuItem_confirmFullReset].function = fullReset;
                 }

@@ -187,7 +187,7 @@ void Menu::updateMenuScreen()   {
 void Menu::confirmOption(bool confirm)  {
 
     //first, we should check if current item has defined function pointer
-    //if it does, run function, but only on cofirm (else we go back)
+    //if it does, run function, but only on confirm (else we go back)
     //else, go to next menu level
 
     uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;

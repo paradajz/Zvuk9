@@ -166,3 +166,10 @@ void globalInit()   {
     calibratePads();
 
 }
+
+void reboot()   {
+
+    wdt_enable(WDTO_30MS);
+    while(1) {};
+
+}
