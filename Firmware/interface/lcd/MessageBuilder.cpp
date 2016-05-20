@@ -737,38 +737,11 @@ void LCD::clearMIDIchannel()    {
 
 }
 
-//raw values
-
-void LCD::displayCalibration(coordinateType_t type)  {
-
-    uint8_t size = 0;
-    strcpy_P(stringBuffer, calibration_string);
-    size = progmemCharArraySize(calibration_string);
-
-    switch(type)    {
-
-        case coordinateX:
-        strcpy_P(tempBuffer, xPosition_string);
-        size += progmemCharArraySize(xPosition_string);
-        break;
-
-        case coordinateY:
-        strcpy_P(tempBuffer, yPosition_string);
-        size += progmemCharArraySize(yPosition_string);
-        break;
-
-        default:
-        break;
-
-    }
-
-    strcat(stringBuffer, tempBuffer);
-    updateDisplay(lcdElements.padCalibration.row, text, lcdElements.padCalibration.startIndex, true, size);
+void LCD::clearLine(uint8_t row)    {
 
     strcpy_P(stringBuffer, emptyLine_string);
-    size = progmemCharArraySize(emptyLine_string);
-    for (int i=1; i<NUMBER_OF_LCD_ROWS; i++)
-        updateDisplay(i, text, 0, true, size);
+    uint8_t size = progmemCharArraySize(emptyLine_string);
+    updateDisplay(row, text, 0, true, size);
 
 }
 

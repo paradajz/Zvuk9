@@ -31,6 +31,7 @@ class LCD   {
     void update();
     void displayHelloMessage();
     void displayProgramAndPreset(uint8_t program, uint8_t preset);
+    void clearLine(uint8_t row);
 
     void setScrollStart(uint8_t row, uint8_t index);
 
@@ -84,8 +85,6 @@ class LCD   {
         return 10; //max size
 
     }
-
-    void displayCalibration(coordinateType_t type);
 
     //menu functions
     friend void runMenuFunction();

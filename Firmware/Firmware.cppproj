@@ -644,9 +644,6 @@
     <Compile Include="interface\lcd\MessageBuilder.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\strings\Calibration.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="interface\lcd\strings\CC.h">
       <SubType>compile</SubType>
     </Compile>

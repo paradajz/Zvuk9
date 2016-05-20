@@ -10,7 +10,6 @@
 #include "TransportControl.h"
 #include "PadAmount.h"
 #include "Misc.h"
-#include "Calibration.h"
 
 //note: in _sizes arrays, we need to subtract 1 because of EOL char
 

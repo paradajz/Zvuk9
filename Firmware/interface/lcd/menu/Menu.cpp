@@ -22,27 +22,13 @@ void Menu::init()   {
 
 void Menu::displayMenu(menuType_t type) {
 
-    uint8_t size;
+    activeMenu = type;
+    //always reset menu level when displaying menu
+    menuHierarchyPosition = 1;
 
-    switch(type)    {
-
-        case serviceMenu:
-        activeMenu = serviceMenu;
-        menuHierarchyPosition = 1;
-        strcpy_P(stringBuffer, menuType_service);
-        size = progmemCharArraySize(menuType_service);
-        updateDisplay(0, text, 0, true, size);
-        getMenuItems();
-        updateMenuScreen();
-        break;
-
-        case userMenu:
-        break;
-
-        case noMenu:
-        break;
-
-    }
+    setMenuTitle(true);
+    getMenuItems();
+    updateMenuScreen();
 
 }
 
@@ -98,6 +84,8 @@ void Menu::getMenuItems()   {
 
 void Menu::changeOption(bool direction) {
 
+    if (functionRunning) return;
+
     uint8_t currentOption = menuHierarchyPosition % 10;
 
     //here we actually change selected option
@@ -149,11 +137,6 @@ void Menu::updateMenuScreen()   {
     uint8_t startPosition = ((currentOption-1) > (NUMBER_OF_LCD_ROWS-2)) ? currentOption-1-(NUMBER_OF_LCD_ROWS-2) : 0;
     uint8_t itemsIterate = items > (NUMBER_OF_LCD_ROWS-1) ? (NUMBER_OF_LCD_ROWS-1) : items;
 
-    //just in case
-    strcpy_P(stringBuffer, menuType_service);
-    size = progmemCharArraySize(menuType_service);
-    updateDisplay(0, text, 0, true, size);
-
     for (int i=0; i<itemsIterate; i++)    {
 
         //skipping first row since it's reserved for the menu title
@@ -192,36 +175,9 @@ void Menu::updateMenuScreen()   {
 
 void Menu::confirmOption(bool confirm)  {
 
-    //first, we should check if current item has defined function pointer
-    //if it does, run function, but only on confirm (else we go back)
-    //else, go to next menu level
+    if (confirm && functionRunning) return;
 
     uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
-
-    if (menuItem[indexes[currentOptionIndex]].function != NULL)   {
-
-        if (confirm)    {
-
-            if (!functionRunning) {
-
-                functionRunning = true;
-                menuItem[indexes[currentOptionIndex]].function();
-
-            }   return;
-
-        } else {
-
-            if (functionRunning) {
-
-                functionRunning = false;
-                updateMenuScreen();
-                return;
-
-            }
-
-        }
-
-    }
 
     //this confirms current hierarchy level and moves to next one,
     //or it deletes current level and switches to previous, depending on received argument
@@ -229,26 +185,12 @@ void Menu::confirmOption(bool confirm)  {
 
     confirm ? newLevel = (newLevel*10) + 1 : newLevel /= 10;
 
-    if (newLevel < 1) newLevel = 1;
+    if (newLevel < 1)   {   //exit menu
 
-    bool menuLevelPresent = confirm ? false : true;
-
-    if (confirm && !menuLevelPresent)    {
-
-        //level needs to be increased
-        //we should first check it that level exists
-        for (int i=0; i<MENU_ITEMS; i++)
-        if (menuItem[i].level == newLevel)  {
-
-            menuLevelPresent = true;
-            break;
-
-        }
-
-    }
-
-    if (!confirm && newLevel == 1 && menuHierarchyPosition == 1)    {   //exit menu
-
+        #if MODE_SERIAL > 0
+        printf("Exiting menu\n");
+        #endif
+        //exit menu and restore initial state
         display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());
         //disable calibration if active
         pads.setCalibrationMode(false);
@@ -259,25 +201,119 @@ void Menu::confirmOption(bool confirm)  {
 
     }
 
-    if (menuLevelPresent && (newLevel != menuHierarchyPosition))   {
+    if (confirm)    {
 
-        menuHierarchyPosition = newLevel;
-        getMenuItems();
+        bool menuLevelPresent = false;
+
+        //check if level has assigned function
+        if (menuItem[indexes[currentOptionIndex]].function != NULL) {
+
+            if (!functionRunning) {
+
+                setMenuTitle(false);
+                functionRunning = true;
+                menuItem[indexes[currentOptionIndex]].function();
+
+            }
+
+            //update level regardless
+            menuHierarchyPosition = newLevel;
+            return;
+
+        }
+
+        //level needs to be increased
+        //we should first check it that level exists
+        for (int i=0; i<MENU_ITEMS; i++)
+        if (menuItem[i].level == newLevel)  {
+
+            menuLevelPresent = true;
+            break;
+
+        }   if (!menuLevelPresent) return; //no level
+
+    }
+
+    if (newLevel != menuHierarchyPosition)   {
+
+        //if we got here, we should update menu
+
+        if (confirm)    {
+
+            if (newLevel > 10) setMenuTitle(false);
+            else setMenuTitle(true);
+
+            menuHierarchyPosition = newLevel;
+            getMenuItems();
+
+        }   else {
+
+            //check for function
+            if (menuItem[indexes[currentOptionIndex]].function != NULL) {
+
+                if (functionRunning) {
+
+                    functionRunning = false;
+
+                }
+
+            }
+
+            //we need to get one level behind new level to find out menu title when going backwards
+            menuHierarchyPosition = newLevel/10;
+
+            getMenuItems();
+
+            if (newLevel > 10) setMenuTitle(false);
+            else setMenuTitle(true);
+
+            menuHierarchyPosition = newLevel;
+            getMenuItems();
+
+        }
+
+        //fill menu with items
         updateMenuScreen();
 
     }
 
 }
 
-void Menu::startFunction()  {
+void Menu::setMenuTitle(bool rootTitle)   {
 
-    functionRunning = true;
+    uint8_t size = 0;
+    uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
 
-}
+    //set menu title, but only if current level isn't 1 (root)
+    if (!rootTitle) {
 
-void Menu::stopFunction()   {
+        strcpy_P(stringBuffer, menuItem[indexes[currentOptionIndex]].stringPointer);
+        size = strlen_P(menuItem[indexes[currentOptionIndex]].stringPointer);
+        updateDisplay(0, text, 0, true, size);
 
-    functionRunning = false;
+    }   else {
+
+        switch(activeMenu)  {
+
+            case userMenu:
+            strcpy_P(stringBuffer, menuType_user);
+            size = progmemCharArraySize(menuType_user);
+            updateDisplay(0, text, 0, true, size);
+            break;
+            break;
+
+            case serviceMenu:
+            strcpy_P(stringBuffer, menuType_service);
+            size = progmemCharArraySize(menuType_service);
+            updateDisplay(0, text, 0, true, size);
+            break;
+
+            default:
+            break;
+
+        }
+
+    }
 
 }
 

@@ -24,9 +24,6 @@ class Menu : LCD {
     void confirmOption(bool confirm);
     void createLayout();
 
-    void startFunction();
-    void stopFunction();
-
     private:
     menuType_t activeMenu;
     int8_t activeOption;
@@ -36,6 +33,7 @@ class Menu : LCD {
     uint8_t indexes[MAX_MENU_OPTIONS];
     bool functionRunning;
 
+    void setMenuTitle(bool rootTitle);
     void updateMenuScreen();
     void getMenuItems();
 

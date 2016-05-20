@@ -91,8 +91,9 @@ void fullReset()    {
 void enableCalibration_x()    {
 
     pads.setCalibrationMode(true, coordinateX);
-    display.displayCalibration(coordinateX);
-    pads.getXLimits();
+    display.clearLine(1);
+    display.clearLine(2);
+    display.clearLine(3);
 
 }
 
@@ -100,6 +101,8 @@ void enableCalibration_x()    {
 void enableCalibration_y()    {
 
     pads.setCalibrationMode(true, coordinateY);
-    display.displayCalibration(coordinateY);
+    display.clearLine(1);
+    display.clearLine(2);
+    display.clearLine(3);
 
 }
