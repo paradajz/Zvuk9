@@ -88,10 +88,18 @@ void fullReset()    {
 
 }
 
-void backFunction() {
+void enableCalibration_x()    {
 
-    //just go one level back
-    menu.confirmOption(false);
+    pads.setCalibrationMode(true, coordinateX);
+    display.displayCalibration(coordinateX);
+    pads.getXLimits();
 
+}
+
+
+void enableCalibration_y()    {
+
+    pads.setCalibrationMode(true, coordinateY);
+    display.displayCalibration(coordinateY);
 
 }

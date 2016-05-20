@@ -32,6 +32,8 @@
 #define DEFAULT_XY_AT_VALUE     255
 #define PAD_NOTE_BUFFER_SIZE    32
 
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+
 //multiplexer pins
 const uint8_t muxCommonPinsAnalogRead[] = { MUX_COMMON_PIN_0_INDEX, MUX_COMMON_PIN_1_INDEX, MUX_COMMON_PIN_2_INDEX, MUX_COMMON_PIN_3_INDEX };
 const uint8_t padID[] = { PAD_0, PAD_1, PAD_2, PAD_3, PAD_4, PAD_5, PAD_6, PAD_7, PAD_8 };
@@ -43,10 +45,7 @@ class Pads  {
     //init
     Pads();
     void init();
-    void update(bool midiEnabled = true);
-
-    //calibration
-    bool calibrate(calibrationType type, calibrationDirection direction, uint8_t pad, uint16_t limit);
+    void update();
 
     //program/preset
     //getters
@@ -117,6 +116,15 @@ class Pads  {
     bool isUserScale(uint8_t scale);
     bool isPredefinedScale(uint8_t scale);
 
+    //calibration
+    bool calibrate(coordinateType_t type, calibrationDirection direction, uint8_t pad, uint16_t limit);
+    void setCalibrationMode(bool state, coordinateType_t type = coordinateX);
+    void setCalibration(coordinateType_t type, calibrationDirection direction, bool state);
+    void resetCalibration();
+
+    void getXLimits();
+    void getYLimits();
+
     private:
 
     //init
@@ -129,8 +137,8 @@ class Pads  {
     void getPresetParameters();
     void getPadLimits();
     void getPressureLimits();
-    void getXLimits();
-    void getYLimits();
+    //void getXLimits();
+    //void getYLimits();
     void getAftertouchLimits();
     void getPadParameters();
 
@@ -147,6 +155,8 @@ class Pads  {
     //midi scaling
     uint8_t scalePressure(uint8_t pad, int16_t pressure, pressureType_t type);
     uint8_t scaleXY(uint8_t padNumber, int16_t xyValue, ccType_t type);
+    uint8_t scale_raw(uint16_t rawValue, uint16_t rawMin, uint16_t rawMax);
+    uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
 
     //data sampling/debouncing
     void addPressureSamples(uint16_t pressure);
@@ -158,7 +168,7 @@ class Pads  {
 
     //data processing
     bool pressureUpdated();
-    bool xyUpdated();
+    bool xyUpdated(uint8_t pad);
 
     //data availability checks
     bool checkAftertouch(uint8_t pad);
@@ -214,7 +224,8 @@ class Pads  {
                 lastAftertouchValue[MAX_PADS],
                 lastMIDInoteState[MAX_PADS];
 
-    //last raw values
+    //last raw pressure value
+    //needed to get correct aftertouch value
     int16_t     lastPressureValue[MAX_PADS];
 
     //median value samples get stored here (3 samples)
@@ -301,6 +312,12 @@ class Pads  {
     uint32_t    pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
     uint8_t     note_buffer_head;
     uint8_t     note_buffer_tail;
+
+    //calibration
+    bool        calibrationEnabled;
+    int16_t     minCalibrationValue,
+                maxCalibrationValue;
+    coordinateType_t activeCalibration;
 
 };
 

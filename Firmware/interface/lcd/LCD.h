@@ -85,6 +85,8 @@ class LCD   {
 
     }
 
+    void displayCalibration(coordinateType_t type);
+
     //menu functions
     friend void runMenuFunction();
     friend void displayFirmwareVersion();
@@ -145,6 +147,7 @@ class LCD   {
         lcdElement_t activeOctave;
         lcdElement_t messageText1;
         lcdElement_t messageText2;
+        lcdElement_t padCalibration;
 
     } lcdElements_t;
 

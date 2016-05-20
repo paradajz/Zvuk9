@@ -24,8 +24,6 @@ const uint8_t gppuAddress[]     = { 0x0C, 0x0D };   //interrupt/pull-up
 //if it's 0xFF or buttonDebounceCompare, its reading is stable
 const uint8_t buttonDebounceCompare = 0b11110000;
 
-bool processingEnabled = true;
-
 Buttons::Buttons()  {
 
     //default constructor
@@ -325,6 +323,18 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
 void Buttons::setButtonState(uint8_t buttonNumber, uint8_t state) {
 
     bitWrite(lastButtonDataPress, buttonNumber, state);
+
+}
+
+void Buttons::enable()  {
+
+    processingEnabled = true;
+
+}
+
+void Buttons::disable() {
+
+    processingEnabled = false;
 
 }
 

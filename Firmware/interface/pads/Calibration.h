@@ -31,6 +31,11 @@
 //threshold difference between current and last x/y value after XY_SEND_TIMEOUT of no movement
 #define XY_SEND_TIMEOUT_STEP                3
 
+//when doing interactive calibration, scrolling from left to right isn't 100% accurate
+//compensate using offset
+#define X_MIN_CALIBRATION_OFFSET            3
+#define X_MAX_CALIBRATION_OFFSET            -3
+
 #define XY_FLIP_AXIS                        0
 #define XY_FLIP_VALUES                      0
 

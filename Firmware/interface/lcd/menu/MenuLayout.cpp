@@ -19,70 +19,11 @@ void Menu::createLayout()   {
 
             menuItem[menuItem_calibrateX].stringPointer = calibration_x;
             menuItem[menuItem_calibrateX].level = 11;
-            menuItem[menuItem_calibrateX].function = NULL;
-
-            {
-                menuItem[menuItem_calibrateXlower].stringPointer = calibrationDirection_lower;
-                menuItem[menuItem_calibrateXlower].level = 111;
-                menuItem[menuItem_calibrateXlower].function = NULL;
-
-                    {
-                        menuItem[menuItem_calibrateXlowerInteractive].stringPointer = calibrationMode_interactive;
-                        menuItem[menuItem_calibrateXlowerInteractive].level = 1111;
-                        menuItem[menuItem_calibrateXlowerInteractive].function = runMenuFunction;
-
-                        menuItem[menuItem_calibrateXlowerManual].stringPointer = calibrationMode_manual;
-                        menuItem[menuItem_calibrateXlowerManual].level = 1112;
-                        menuItem[menuItem_calibrateXlowerManual].function = runMenuFunction;
-                    }
-
-                menuItem[menuItem_calibrateXupper].stringPointer = calibrationDirection_upper;
-                menuItem[menuItem_calibrateXupper].level = 112;
-                menuItem[menuItem_calibrateXupper].function = NULL;
-
-                    {
-                        menuItem[menuItem_calibrateXupperInteractive].stringPointer = calibrationMode_interactive;
-                        menuItem[menuItem_calibrateXupperInteractive].level = 1121;
-                        menuItem[menuItem_calibrateXupperInteractive].function = runMenuFunction;
-
-                        menuItem[menuItem_calibrateXupperManual].stringPointer = calibrationMode_manual;
-                        menuItem[menuItem_calibrateXupperManual].level = 1122;
-                        menuItem[menuItem_calibrateXupperManual].function = runMenuFunction;
-                    }
-            }
+            menuItem[menuItem_calibrateX].function = enableCalibration_x;
 
             menuItem[menuItem_calibrateY].stringPointer = calibration_y;
             menuItem[menuItem_calibrateY].level = 12;
-            menuItem[menuItem_calibrateY].function = NULL;
-
-            {
-                menuItem[menuItem_calibrateYlower].stringPointer = calibrationDirection_lower;
-                menuItem[menuItem_calibrateYlower].level = 121;
-                menuItem[menuItem_calibrateYlower].function = NULL;
-
-                    {
-                        menuItem[menuItem_calibrateYlowerInteractive].stringPointer = calibrationMode_interactive;
-                        menuItem[menuItem_calibrateYlowerInteractive].level = 1211;
-                        menuItem[menuItem_calibrateYlowerInteractive].function = runMenuFunction;
-
-                        menuItem[menuItem_calibrateYlowerManual].stringPointer = calibrationMode_manual;
-                        menuItem[menuItem_calibrateYlowerManual].level = 1212;
-                        menuItem[menuItem_calibrateYlowerManual].function = runMenuFunction;
-                    }
-
-                menuItem[menuItem_calibrateYupper].stringPointer = calibrationDirection_upper;
-                menuItem[menuItem_calibrateYupper].level = 122;
-
-                    {
-                        menuItem[menuItem_calibrateYupperInteractive].stringPointer = calibrationMode_interactive;
-                        menuItem[menuItem_calibrateYupperInteractive].level = 1221;
-                        menuItem[menuItem_calibrateYupperInteractive].function = runMenuFunction;
-
-                        menuItem[menuItem_calibrateYupperManual].stringPointer = calibrationMode_manual;
-                        menuItem[menuItem_calibrateYupperManual].level = 1222;
-                        menuItem[menuItem_calibrateYupperManual].function = runMenuFunction;
-                    }
-            }
+            menuItem[menuItem_calibrateY].function = enableCalibration_y;
 
             menuItem[menuItem_calibratePressure].stringPointer = calibration_pressure;
             menuItem[menuItem_calibratePressure].level = 13;
@@ -144,12 +85,8 @@ void Menu::createLayout()   {
             menuItem[menuItem_partialReset].function = NULL;
 
                 {
-                    menuItem[menuItem_rejectPartialReset].stringPointer = back_option;
-                    menuItem[menuItem_rejectPartialReset].level = 311;
-                    menuItem[menuItem_rejectPartialReset].function = backFunction;
-
-                    menuItem[menuItem_confirmPartialReset].stringPointer = confirm_option;
-                    menuItem[menuItem_confirmPartialReset].level = 312;
+                    menuItem[menuItem_confirmPartialReset].stringPointer = confirm_partial_reset;
+                    menuItem[menuItem_confirmPartialReset].level = 311;
                     menuItem[menuItem_confirmPartialReset].function = partialReset;
                 }
 
@@ -158,12 +95,8 @@ void Menu::createLayout()   {
             menuItem[menuItem_fullReset].function = NULL;
 
                 {
-                        menuItem[menuItem_rejectFullReset].stringPointer = back_option;
-                        menuItem[menuItem_rejectFullReset].level = 321;
-                        menuItem[menuItem_rejectPartialReset].function = backFunction;
-
-                        menuItem[menuItem_confirmFullReset].stringPointer = confirm_option;
-                        menuItem[menuItem_confirmFullReset].level = 322;
+                        menuItem[menuItem_confirmFullReset].stringPointer = confirm_full_reset;
+                        menuItem[menuItem_confirmFullReset].level = 321;
                         menuItem[menuItem_confirmFullReset].function = fullReset;
                 }
         }

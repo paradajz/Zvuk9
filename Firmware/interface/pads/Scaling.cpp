@@ -1,8 +1,6 @@
 #include "Pads.h"
 
-#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
-
-inline uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)   {
+uint32_t Pads::map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)   {
 
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 
@@ -37,5 +35,11 @@ uint8_t Pads::scaleXY(uint8_t padNumber, int16_t xyValue, ccType_t type) {
         return map(constrain(xyValue, padYLimitLower[padNumber], padYLimitUpper[padNumber]), padYLimitLower[padNumber], padYLimitUpper[padNumber], ccYminPad[padNumber], ccYmaxPad[padNumber]);
 
     }   return 0;
+
+}
+
+uint8_t Pads::scale_raw(uint16_t rawValue, uint16_t rawMin, uint16_t rawMax) {
+
+    return map(constrain(rawValue, rawMin, rawMax), rawMin, rawMax, 0, 127);
 
 }

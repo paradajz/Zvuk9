@@ -2,6 +2,7 @@
 #ifdef MENU_H_
 #include "../strings/Strings.h"
 #include "../../pads/Pads.h"
+#include "../../buttons/Buttons.h"
 
 Menu::Menu()    {
 
@@ -148,6 +149,11 @@ void Menu::updateMenuScreen()   {
     uint8_t startPosition = ((currentOption-1) > (NUMBER_OF_LCD_ROWS-2)) ? currentOption-1-(NUMBER_OF_LCD_ROWS-2) : 0;
     uint8_t itemsIterate = items > (NUMBER_OF_LCD_ROWS-1) ? (NUMBER_OF_LCD_ROWS-1) : items;
 
+    //just in case
+    strcpy_P(stringBuffer, menuType_service);
+    size = progmemCharArraySize(menuType_service);
+    updateDisplay(0, text, 0, true, size);
+
     for (int i=0; i<itemsIterate; i++)    {
 
         //skipping first row since it's reserved for the menu title
@@ -244,6 +250,10 @@ void Menu::confirmOption(bool confirm)  {
     if (!confirm && newLevel == 1 && menuHierarchyPosition == 1)    {   //exit menu
 
         display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());
+        //disable calibration if active
+        pads.setCalibrationMode(false);
+        //re-enable buttons
+        buttons.enable();
         activeMenu = noMenu;
         return;
 
@@ -256,6 +266,18 @@ void Menu::confirmOption(bool confirm)  {
         updateMenuScreen();
 
     }
+
+}
+
+void Menu::startFunction()  {
+
+    functionRunning = true;
+
+}
+
+void Menu::stopFunction()   {
+
+    functionRunning = false;
 
 }
 

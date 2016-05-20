@@ -254,14 +254,6 @@ enum calibrationDirection {
 
 };
 
-enum calibrationType {
-
-    xCalibration,
-    yCalibration,
-    pressureCalibration
-
-};
-
 enum deviceInfo {
 
     firmware,

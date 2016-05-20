@@ -84,11 +84,12 @@ void Pads::setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state) {
 
 }
 
-bool Pads::calibrate(calibrationType type, calibrationDirection direction, uint8_t pad, uint16_t limit)   {
+bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint8_t pad, uint16_t limit)   {
 
     switch(type) {
 
-        case pressureCalibration:
+        case coordinateZ:
+        //pressure
         switch(direction)   {
 
             case lower:
@@ -114,7 +115,7 @@ bool Pads::calibrate(calibrationType type, calibrationDirection direction, uint8
         }
         break;
 
-        case xCalibration:
+        case coordinateX:
         switch(direction)   {
 
             case lower:
@@ -140,7 +141,7 @@ bool Pads::calibrate(calibrationType type, calibrationDirection direction, uint8
         }
         break;
 
-        case yCalibration:
+        case coordinateY:
         switch(direction)   {
 
             case lower:
@@ -167,6 +168,21 @@ bool Pads::calibrate(calibrationType type, calibrationDirection direction, uint8
         break;
 
     }   return false;
+
+}
+
+void Pads::setCalibrationMode(bool state, coordinateType_t type)  {
+
+    calibrationEnabled = state;
+    activeCalibration = type;
+    resetCalibration();
+
+}
+
+void Pads::resetCalibration()   {
+
+    minCalibrationValue = 9999;
+    maxCalibrationValue = -9999;
 
 }
 

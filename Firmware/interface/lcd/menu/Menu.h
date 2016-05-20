@@ -24,6 +24,9 @@ class Menu : LCD {
     void confirmOption(bool confirm);
     void createLayout();
 
+    void startFunction();
+    void stopFunction();
+
     private:
     menuType_t activeMenu;
     int8_t activeOption;

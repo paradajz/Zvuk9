@@ -25,6 +25,7 @@ Pads::Pads()  {
     activePreset = -1;
     octaveShiftPadBuffer = 0;
     scaleShiftPadBuffer = 0;
+    calibrationEnabled = false;
 
 }
 

@@ -54,6 +54,12 @@ void LCD::setupLCDlayout()  {
         lcdElements.messageText2.startIndex = 0;
     }
 
+    {
+        //used during pad calibration
+        lcdElements.padCalibration.row = 0;
+        lcdElements.padCalibration.startIndex = 0;
+    }
+
 }
 
 #endif

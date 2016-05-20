@@ -31,6 +31,8 @@ class Buttons   {
     Buttons();
     void init();
     void update();
+    void enable();
+    void disable();
 
     //getters
     bool getButtonState(uint8_t buttonNumber);
@@ -63,6 +65,7 @@ class Buttons   {
     uint32_t stopDisableTimeout;
     uint32_t resetActivationTimeout;
     bool modifierActive;
+    bool processingEnabled;
 
 };
 
