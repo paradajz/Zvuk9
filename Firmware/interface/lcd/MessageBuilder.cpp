@@ -504,10 +504,6 @@ void LCD::displayXYposition(uint8_t position, ccType_t type)   {
     if (position < 10)         addSpaceToCharArray(size, 2);
     else if (position < 100)   addSpaceToCharArray(size, 1);
 
-    printf("testing_xy_string: ");
-    printf(stringBuffer);
-    printf("\n\n");
-
     updateDisplay(lcdRow, text, lcdCoordinate, false, size);
 
 }
