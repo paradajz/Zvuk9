@@ -24,7 +24,7 @@ const char yCCid_string[] PROGMEM = "CCy";
 const char xPosition_string[] PROGMEM = "x";
 const char yPosition_string[] PROGMEM = "y";
 
-const char xyPositionClear_string[] PROGMEM = "      ";
+const char xyPositionClear_string[] PROGMEM = "    ";
 const char xyCCclear_string[] PROGMEM = "      ";
 
 PGM_P const curveCoordinateArray[] PROGMEM = {
