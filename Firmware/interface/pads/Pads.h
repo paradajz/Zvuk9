@@ -122,9 +122,6 @@ class Pads  {
     void setCalibration(coordinateType_t type, calibrationDirection direction, bool state);
     void resetCalibration();
 
-    void getXLimits();
-    void getYLimits();
-
     private:
 
     //init
@@ -137,8 +134,8 @@ class Pads  {
     void getPresetParameters();
     void getPadLimits();
     void getPressureLimits();
-    //void getXLimits();
-    //void getYLimits();
+    void getXLimits();
+    void getYLimits();
     void getAftertouchLimits();
     void getPadParameters();
 

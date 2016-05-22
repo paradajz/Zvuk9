@@ -150,9 +150,6 @@ void Menu::updateMenuScreen()   {
         size = 1 + strlen_P(menuItem[indexes[i+startPosition]].stringPointer);
         updateDisplay(i+1, text, 0, true, size);
 
-        printf(stringBuffer);
-        printf("\n");
-
     }
 
     if (items < (NUMBER_OF_LCD_ROWS-1)) {

@@ -126,7 +126,10 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
 
 void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
+    #if MODE_SERIAL < 1
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
+    #endif
+
     transportControl_t type = transportStop;
     bool displayState = true;
 
@@ -135,10 +138,11 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
         case BUTTON_TRANSPORT_PLAY:
         if (state) {
 
-            sysExArray[4] = 0x02;
             type = transportPlay;
             #if MODE_SERIAL > 0
                 printf("Transport Control Play\n");
+            #else
+                sysExArray[4] = 0x02;
             #endif
             #ifdef MODULE_LEDS
                 leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityFull);
@@ -151,10 +155,11 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
         case BUTTON_TRANSPORT_STOP:
         if (!state)    {
 
-            sysExArray[4] = 0x01;
             type = transportStop;
             #if MODE_SERIAL > 0
                 printf("Transport Control Stop\n");
+            #else
+                sysExArray[4] = 0x01;
             #endif
             #ifdef MODULE_LEDS
                 leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
@@ -176,19 +181,21 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                 ledIntensity_t recordState = leds.getLEDstate(LED_TRANSPORT_RECORD);
                 if (recordState == ledIntensityFull) {
 
-                    sysExArray[4] = 0x07;
                     recordState = ledIntensityOff;
                     #if MODE_SERIAL > 0
                         printf("Transport Control Record Stop\n");
+                    #else
+                        sysExArray[4] = 0x07;
                     #endif
                     displayState = false;
 
-                    }   else if (recordState == ledIntensityOff) {
+                }   else if (recordState == ledIntensityOff) {
 
-                    sysExArray[4] = 0x06;
                     recordState = ledIntensityFull;
                     #if MODE_SERIAL > 0
                         printf("Transport Control Record Start\n");
+                    #else
+                        sysExArray[4] = 0x06;
                     #endif
                     displayState = true;
 

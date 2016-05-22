@@ -124,7 +124,9 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
 void Pads::sendAftertouch(uint8_t pad)  {
 
-    uint8_t aftertouchValue = lastMIDInoteState[pad] ? lastAftertouchValue[pad] : 0;
+    #if MODE_SERIAL < 1
+        uint8_t aftertouchValue = lastMIDInoteState[pad] ? lastAftertouchValue[pad] : 0;
+    #endif
 
     switch(aftertouchType)  {
 
