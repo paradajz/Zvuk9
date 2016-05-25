@@ -548,7 +548,8 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
     //a bit hacky...
     strcpy_P(stringBuffer, notesClear_string);
     size = progmemCharArraySize(notesClear_string);
-    updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
+    padEditMode ?   updateDisplay(lcdElements.notes.row, text, 0, false, size, true) : 
+                    updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
 
     if (!pads.editModeActive())
         display.setScrollStart(lcdElements.notes.row, lcdElements.notes.startIndex);
@@ -580,6 +581,16 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
         if (pads.editModeActive())
             updateDisplay(lcdElements.notes.row, text, 0, true, size);
         else updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size);
+
+    }   else {
+
+        if (padEditMode)    {
+
+            strcpy_P(stringBuffer, noNotes_string);
+            size = strlen_P(noNotes_string);
+            updateDisplay(lcdElements.notes.row, text, 0, true, size);
+
+        }
 
     }
 

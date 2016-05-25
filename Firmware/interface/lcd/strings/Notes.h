@@ -16,6 +16,8 @@ const char tonicA_string[] PROGMEM = "A";
 const char tonicASharp_string[] PROGMEM = "A#";
 const char tonicB_strig[] PROGMEM = "B";
 
+const char noNotes_string[] PROGMEM = "<no assigned notes>";
+
 const char tonic_string[] PROGMEM = "Tonic ";
 const char octave_string[] PROGMEM = "Octave ";
 const char activeOctave_string[] PROGMEM = "Active octave: ";
