@@ -139,6 +139,9 @@ static void ReadWriteFLASHFileBlock(const uint16_t BlockNumber,
                                     uint8_t* BlockBuffer,
                                     const bool Read)
 {
+
+    if (Read) return;
+
     //flash start cluster is 2
 	uint16_t FileStartBlock = DISK_BLOCK_DataStartBlock /*+ (*FLASHFileStartCluster - 2)*/ * SECTOR_PER_CLUSTER;
 	uint16_t FileEndBlock   = FileStartBlock + (FILE_SECTORS(FLASH_FILE_SIZE_BYTES) - 1);
@@ -154,20 +157,20 @@ static void ReadWriteFLASHFileBlock(const uint16_t BlockNumber,
 	uint16_t FlashAddress = (uint16_t)(BlockNumber - FileStartBlock) * SECTOR_SIZE_BYTES;
 	#endif
 
-	if (Read)
-	{
-		/* Read out the mapped block of data from the device's FLASH */
-		for (uint16_t i = 0; i < SECTOR_SIZE_BYTES; i++)
-		{
-			#if (FLASHEND > 0xFFFF)
-			  BlockBuffer[i] = 0;
-			#else
-			  BlockBuffer[i] = 0;
-			#endif
-		}
-	}
-	else
-	{
+	//if (Read)
+	//{
+		///* Read out the mapped block of data from the device's FLASH */
+		//for (uint16_t i = 0; i < SECTOR_SIZE_BYTES; i++)
+		//{
+			//#if (FLASHEND > 0xFFFF)
+			  //BlockBuffer[i] = 0;
+			//#else
+			  //BlockBuffer[i] = 0;
+			//#endif
+		//}
+	//}
+	//else
+	//{
 		/* Write out the mapped block of data to the device's FLASH */
 		for (uint16_t i = 0; i < SECTOR_SIZE_BYTES; i += 2)
 		{
@@ -187,7 +190,7 @@ static void ReadWriteFLASHFileBlock(const uint16_t BlockNumber,
 				BootloaderAPI_WritePage(FlashAddress - SPM_PAGESIZE);
 			}
 		}
-	}
+	//}
 }
 
 /** Writes a block of data to the virtual FAT filesystem, from the USB Mass
