@@ -1039,7 +1039,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
                     if (isUserScale(activePreset) && !internalChange)  {
 
-                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), padNote[i][j]);
+                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote);
 
                     }
 
