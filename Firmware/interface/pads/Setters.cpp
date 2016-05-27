@@ -809,7 +809,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
                 if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i]) != BLANK_NOTE)
-                if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i])-MIDI_NOTES < MIDI_NOTES)
+                if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i]) < MIDI_NOTES)
                 changeAllowed = false;
 
                 if (!changeAllowed) break;
@@ -842,6 +842,10 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
     }   else {
 
+        #if MODE_SERIAL > 0
+            direction ? printf("Octave up\n") : printf("Octave down\n");
+        #endif
+
         if (isPredefinedScale(activePreset))    {
 
             //predefined scale
@@ -852,8 +856,14 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, newOctave);
             for (int i=0; i<MAX_PADS; i++)  {
 
+                uint8_t newNote = direction ? padNote[i][0] + MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES) : padNote[i][0] - MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES);
+
+                #if MODE_SERIAL > 0
+                    printf("New note for pad %d: %d\n", i, newNote);
+                #endif
+
                 if (!isPadPressed(i))
-                direction ? padNote[i][0] = padNote[i][0] + MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES) : padNote[i][0] = padNote[i][0] - MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES);
+                    padNote[i][0] = newNote;
                 else {
 
                     bitWrite(octaveShiftPadBuffer, i, 1);
@@ -863,8 +873,12 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
             }
 
-            //octave is ALWAYS first note on pad
+            //octave is ALWAYS first note on pad in predefined presets
             activeOctave = getOctaveFromNote(padNote[0][0]+(octaveShiftAmount[0]*MIDI_NOTES));
+
+            #if MODE_SERIAL > 0
+                printf("active octave: %d\n", activeOctave);
+            #endif
 
         }   else {
 
@@ -880,13 +894,20 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
                 }
 
+                #if MODE_SERIAL > 0
+                    printf("New notes for pad %d: ", i);
+                #endif
+
                 for (int j=0; j<NOTES_PER_PAD; j++) {
 
                     if (padNote[i][j] != BLANK_NOTE)    {
 
                         newNote = (direction) ? padNote[i][j] + MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES) : padNote[i][j] - MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES);
-
                         configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote);
+
+                        #if MODE_SERIAL > 0
+                            printf("%d ", newNote);
+                        #endif
 
                         if (!isPadPressed(i))
                             padNote[i][j] = newNote;
@@ -894,6 +915,10 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
                     }
 
                 }
+
+                #if MODE_SERIAL > 0
+                    printf("\n");
+                #endif
 
             }
 
@@ -913,12 +938,12 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
             }
 
-        }
+            #if MODE_SERIAL > 0
+                direction ? printf("Octave up, ") : printf("Octave down, ");
+                printf("active octave: %d\n", activeOctave);
+            #endif
 
-        #if MODE_SERIAL > 0
-            direction ? printf("Octave up, ") : printf("Octave down, ");
-            printf("active octave: %d\n", activeOctave);
-        #endif
+        }
 
     }
 

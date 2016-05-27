@@ -111,8 +111,6 @@ void EEPROMsettings::init() {
 
     }
 
-    readMemory();
-
 }
 
 void EEPROMsettings::readMemory()   {
