@@ -6,6 +6,7 @@
 #define ENCODERS_H_
 
 #include "../../hardware/pins/Pins.h"
+#include <stdlib.h>
 
 #define PROGRAM_ENCODER         0
 #define PRESET_ENCODER          1

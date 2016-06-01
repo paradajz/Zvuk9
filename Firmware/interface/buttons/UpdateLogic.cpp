@@ -101,11 +101,10 @@ void Buttons::init()  {
     if (buttons.getButtonState(BUTTON_TRANSPORT_PLAY) && buttons.getButtonState(BUTTON_TRANSPORT_STOP)) {
 
         //we should activate service menu now
-        #if MODE_SERIAL > 0
-            printf("Activating service menu\n");
-        #endif
-
         #ifdef MODULE_LCD
+            #if MODE_SERIAL > 0
+            printf("Activating service menu\n");
+            #endif
             menu.displayMenu(serviceMenu);
         #endif
 

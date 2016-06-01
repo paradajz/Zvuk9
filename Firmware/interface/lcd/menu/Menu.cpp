@@ -192,7 +192,9 @@ void Menu::confirmOption(bool confirm)  {
         //disable calibration if active
         pads.setCalibrationMode(false);
         //re-enable buttons
+        #ifdef MODULE_BUTTONS
         buttons.enable();
+        #endif
         activeMenu = noMenu;
         return;
 

@@ -315,7 +315,9 @@ void Pads::update()  {
         if (!editModeActive()) {
 
             //don't send or show midi data while in pad edit mode or menu
+            #ifdef MODULE_LCD
             if (!menu.menuDisplayed())
+            #endif
                 checkMIDIdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
             //only display data from last touched pad
@@ -325,20 +327,26 @@ void Pads::update()  {
                 uint8_t padIndex = getLastTouchedPad();
 
                 //there are
+                #ifdef MODULE_LCD
                 if (!menu.menuDisplayed())
+                #endif
                     checkLCDdata(padIndex, true, aftertouchActivated[padIndex], true, true);
                 setFunctionLEDs(padIndex);
 
             }   else {
 
                 if (pad == getLastTouchedPad()) {
-
+                #ifdef MODULE_LCD
                     if (menu.menuDisplayed())   {
 
                         if (calibrationEnabled)
                             checkLCDdata(pad, false, false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
 
-                    }   else checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                    }
+                else checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                #else
+                checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                #endif
 
                 }
 

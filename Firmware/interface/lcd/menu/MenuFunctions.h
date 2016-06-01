@@ -37,8 +37,10 @@ static inline void USB_Device_GetSerialString_test()    //testing only
 
 void factory_reset(factoryResetType_t type) {
 
+    #ifdef MODULE_LEDS
     leds.setFadeSpeed(1);
     leds.allLEDsOff();
+    #endif
     configuration.factoryReset(type);
     reboot();
 

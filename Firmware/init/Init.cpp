@@ -64,9 +64,8 @@ void globalInit() {
 
     #ifdef MODULE_LCD
     display.init();
-    #endif
-
     menu.init();
+    #endif
 
     #ifdef MODULE_LEDS
     leds.init();

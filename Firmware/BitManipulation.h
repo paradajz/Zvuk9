@@ -6,6 +6,4 @@
 #define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 
-#define absolute(x) ((x)>0?(x):-(x))
-
 #endif

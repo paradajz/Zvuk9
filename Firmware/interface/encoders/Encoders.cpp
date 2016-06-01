@@ -74,12 +74,14 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     }
 
     //allow only program and preset encoder while in menu
+    #ifdef MODULE_LCD
     if (menu.menuDisplayed())   {
 
         if (!((encoderNumber == PROGRAM_ENCODER) || (encoderNumber == PRESET_ENCODER)))
             return;
 
     }
+    #endif
 
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
     bool _splitState = pads.getSplitState();
@@ -170,12 +172,15 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
         }
 
+        #ifdef MODULE_LCD
         if (menu.menuDisplayed())   {
 
             menu.confirmOption(direction);
             return;
 
         }
+        #endif
+
         activePreset = pads.getActivePreset();
         if (direction) activePreset++; else activePreset--;
         if (activePreset == (NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES)) activePreset = 0;

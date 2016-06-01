@@ -1134,8 +1134,10 @@ void Pads::checkRemainingNoteShift()    {
             if (tempPadNotes[i][j] != BLANK_NOTE)   {
 
                 note_t note = getTonicFromNote(tempPadNotes[i][j]);
+                #ifdef MODULE_LEDS
                 if (!noteActive(note))
                     leds.setNoteLEDstate(note, ledIntensityOff);
+                #endif
 
             }
 

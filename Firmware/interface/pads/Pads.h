@@ -3,6 +3,7 @@
 
 #include "../../Modules.h"
 #include <avr/eeprom.h>
+#include <stdlib.h>
 #include "../../Debug.h"
 #include "../../hardware/pins/Pins.h"
 #include "XYscales.h"
