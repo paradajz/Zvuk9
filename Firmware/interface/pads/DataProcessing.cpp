@@ -254,6 +254,9 @@ void Pads::update()  {
 
         if (pressureUpdated())  {
 
+            int16_t medianValue = getMedianValueXYZ(coordinateZ);
+            printf("pad %d median value: %d\n", pad, medianValue);
+
             //all needed pressure samples are obtained
             velocityAvailable = checkVelocity(pad);
             aftertouchAvailable = checkAftertouch(pad);
@@ -361,6 +364,11 @@ void Pads::update()  {
         aftertouchAvailable = false;
         xAvailable = false;
         yAvailable = false;
+
+        #ifdef MODE_SERIAL
+            if (activePad == 0)
+                printf("\n");
+        #endif
 
     }
 

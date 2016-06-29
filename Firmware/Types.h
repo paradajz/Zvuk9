@@ -154,6 +154,7 @@ typedef enum {
 
     userMenu,
     serviceMenu,
+    quickMenu,
     noMenu
 
 } menuType_t;
@@ -172,6 +173,7 @@ typedef enum {
     changeCCnumber,
     changeCClimit,
     changeCurve,
+    calibrationMode,
     enterPadEditMode
 
 } padReleaseError_t;
@@ -254,13 +256,6 @@ enum calibrationDirection {
 
 };
 
-enum deviceInfo {
-
-    firmware,
-    hardware
-
-};
-
 typedef enum {
 
     factoryReset_wipeRestore, //clear eeprom, restore defaults
@@ -268,5 +263,13 @@ typedef enum {
     factoryReset_partial //partially restore defaults
 
 } factoryResetType_t;
+
+typedef enum {
+
+    shiftMode_octave,
+    shiftMode_note,
+    shiftMode_channel
+
+} shiftMode_t;
 
 #endif

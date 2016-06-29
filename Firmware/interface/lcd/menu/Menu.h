@@ -8,9 +8,11 @@
 #include "../../../Types.h"
 #include "../Macros.h"
 #include "../strings/Strings.h"
-#include "Items.h"
+#include "items/ServiceMenu.h"
+#include "items/UserMenu.h"
+#include "items/QuickMenu.h"
 
-#define MAX_MENU_OPTIONS    5
+#define MAX_MENU_OPTIONS    25
 
 class Menu : LCD {
 
@@ -22,7 +24,10 @@ class Menu : LCD {
     bool menuDisplayed();
     void changeOption(bool direction);
     void confirmOption(bool confirm);
-    void createLayout();
+    void createServiceMenuLayout();
+    void createUserMenuLayout();
+    void createQuickMenuLayout();
+    void stopFunction();
 
     private:
     menuType_t activeMenu;
@@ -36,8 +41,9 @@ class Menu : LCD {
     void setMenuTitle(bool rootTitle);
     void updateMenuScreen();
     void getMenuItems();
+    uint8_t getMenuSize();
 
-    typedef void (*actionPointer)(void);
+    typedef bool (*actionPointer)();
 
     typedef struct {
 
@@ -47,10 +53,12 @@ class Menu : LCD {
         actionPointer function;
         //pointer to string to show item name
         const char *stringPointer;
+        bool conditionCheck;
 
     } menuItem_t;
 
-    menuItem_t menuItem[MENU_ITEMS];
+    menuItem_t menuItem[MAX_MENU_OPTIONS];
+    uint8_t menuSize;
 
 };
 

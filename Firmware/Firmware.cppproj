@@ -626,19 +626,34 @@
     <Compile Include="interface\lcd\Macros.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\lcd\menu\functions\MenuFunctions.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\menu\functions\MenuFunctions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\menu\items\QuickMenu.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\menu\items\ServiceMenu.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\menu\items\UserMenu.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\menu\layout\QuickMenu.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\menu\layout\ServiceMenu.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\menu\layout\UserMenu.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\lcd\menu\Menu.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\menu\Menu.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="interface\lcd\menu\MenuFunctions.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="interface\lcd\menu\MenuLayout.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="interface\lcd\menu\Items.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\MessageBuilder.cpp">
@@ -791,6 +806,9 @@
     <Folder Include="interface\encoders\" />
     <Folder Include="interface\lcd\" />
     <Folder Include="interface\lcd\menu\" />
+    <Folder Include="interface\lcd\menu\items" />
+    <Folder Include="interface\lcd\menu\layout" />
+    <Folder Include="interface\lcd\menu\functions" />
     <Folder Include="interface\lcd\strings\" />
     <Folder Include="interface\leds\" />
     <Folder Include="interface\pads\" />

@@ -27,6 +27,7 @@ Pads::Pads()  {
     octaveShiftPadBuffer = 0;
     scaleShiftPadBuffer = 0;
     calibrationEnabled = false;
+    activeShiftMode = shiftMode_octave;
 
 }
 

@@ -3,6 +3,8 @@
 #ifdef LCD_H_
 #include "../../Scales.h"
 #include "../pads/Pads.h"
+#include "../../version/Firmware.h"
+#include "../../version/Hardware.h"
 
 void LCD::displayPadAmount(bool singlePad, uint8_t padNumber)  {
 
@@ -294,6 +296,31 @@ void LCD::displayEditModeNotAllowed(padEditModeResult_t errorType)   {
 
 }
 
+void LCD::displayShiftMode(shiftMode_t type)    {
+
+    uint8_t size = 0;
+
+    switch(type)    {
+
+        case shiftMode_note:
+        strcpy_P(stringBuffer, shiftMode_note_string);
+        size = progmemCharArraySize(shiftMode_note_string);
+        break;
+
+        case shiftMode_octave:
+        strcpy_P(stringBuffer, shiftMode_octave_string);
+        size = progmemCharArraySize(shiftMode_octave_string);
+        break;
+
+        case shiftMode_channel:
+        strcpy_P(stringBuffer, shiftMode_midiChannel_string);
+        size = progmemCharArraySize(shiftMode_midiChannel_string);
+        break;
+
+    }   updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+
+}
+
 void LCD::displayTransportControl(transportControl_t type, bool state)  {
 
     uint8_t size = 0;
@@ -384,6 +411,11 @@ void LCD::displayPadReleaseError(padReleaseError_t error)    {
         case enterPadEditMode:
         strcpy_P(stringBuffer, enterPadEditMode_string);
         size = progmemCharArraySize(enterPadEditMode_string);
+        break;
+
+        case calibrationMode:
+        strcpy_P(stringBuffer, calibrationMode_string);
+        size = progmemCharArraySize(calibrationMode_string);
         break;
 
         default:
@@ -753,6 +785,45 @@ void LCD::clearLine(uint8_t row)    {
     strcpy_P(stringBuffer, emptyLine_string);
     uint8_t size = progmemCharArraySize(emptyLine_string);
     updateDisplay(row, text, 0, true, size);
+
+}
+
+void LCD::displayDeviceInfo()   {
+
+    uint8_t byte0, byte1, byte2, size;
+
+    byte0 = FIRMWARE_VERSION_BYTE_0;
+    byte1 = FIRMWARE_VERSION_BYTE_1;
+    byte2 = FIRMWARE_VERSION_BYTE_2;
+
+    size = 0;
+    strcpy_P(stringBuffer, deviceInfo_swVersion);
+    size += progmemCharArraySize(deviceInfo_swVersion);
+    addNumberToCharArray(byte0, size);
+    appendText(".", size);
+    addNumberToCharArray(byte1, size);
+    appendText(".", size);
+    addNumberToCharArray(byte2, size);
+    updateDisplay(1, text, 0, true, size);
+
+    byte0 = HARDWARE_VERSION_BYTE_0;
+    byte1 = HARDWARE_VERSION_BYTE_1;
+    byte2 = HARDWARE_VERSION_BYTE_2;
+
+    size = 0;
+    strcpy_P(stringBuffer, deviceInfo_hwVersion);
+    size += progmemCharArraySize(deviceInfo_hwVersion);
+    addNumberToCharArray(byte0, size);
+    appendText(".", size);
+    addNumberToCharArray(byte1, size);
+    appendText(".", size);
+    addNumberToCharArray(byte2, size);
+    updateDisplay(2, text, 0, true, size);
+
+    strcpy_P(stringBuffer, emptyLine_string);
+    size = progmemCharArraySize(emptyLine_string);
+
+    display.updateDisplay(3, text, 0, true, size);
 
 }
 

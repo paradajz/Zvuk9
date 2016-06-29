@@ -60,6 +60,7 @@ class LCD   {
     void displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value);
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayPadEditMode(uint8_t padNumber);
+    void displayShiftMode(shiftMode_t type);
 
     void displayModifierEnabled();
     void displayOutOfRange();
@@ -87,10 +88,7 @@ class LCD   {
     }
 
     //menu functions
-    friend void runMenuFunction();
-    friend void displayFirmwareVersion();
-    friend void displayHardwareVersion();
-    friend void displayDeviceInfo(deviceInfo type);
+    void displayDeviceInfo();
 
     protected:
     char stringBuffer[MAX_TEXT_SIZE+1];

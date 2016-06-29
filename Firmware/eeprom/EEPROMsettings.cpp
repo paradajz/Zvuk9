@@ -113,20 +113,20 @@ void EEPROMsettings::init() {
 
 }
 
-void EEPROMsettings::readMemory()   {
-
-    #if MODE_SERIAL > 0
-        printf("EEPROM memory readout\n");
-        printf("----------------------------------------\n");
-        for (int i=0; i<4096; i++)  {
-
-            printf("%d: ", i);
-            printf("%d\n", eeprom_read_byte((uint8_t*)i));
-
-        }   printf("----------------------------------------\n");
-    #endif
-
-}
+//void EEPROMsettings::readMemory()   {
+//
+    //#if MODE_SERIAL > 0
+        //printf("EEPROM memory readout\n");
+        //printf("----------------------------------------\n");
+        //for (int i=0; i<4096; i++)  {
+//
+            //printf("%d: ", i);
+            //printf("%d\n", eeprom_read_byte((uint8_t*)i));
+//
+        //}   printf("----------------------------------------\n");
+    //#endif
+//
+//}
 
 void EEPROMsettings::clearEEPROM()  {
 

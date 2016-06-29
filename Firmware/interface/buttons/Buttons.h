@@ -57,6 +57,9 @@ class Buttons   {
     //getters
     note_t getTonicFromButton(uint8_t buttonNumber);
 
+    //menu
+    void checkMenu(menuType_t type);
+
     uint32_t mcpData;                                       //store data from all expander inputs
     uint8_t previousButtonState[MAX_NUMBER_OF_BUTTONS];     //debounce status
     uint32_t lastButtonDataPress;                           //previous button value

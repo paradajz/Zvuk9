@@ -65,15 +65,58 @@ void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)  {
 
 }
 
+void Buttons::checkMenu(menuType_t type)   {
+
+    if (buttons.getButtonState(BUTTON_TRANSPORT_PLAY) && buttons.getButtonState(BUTTON_TRANSPORT_STOP)) {
+
+        if (!menu.menuDisplayed())  {
+
+            //we should activate menu now
+            //disable buttons while in menu
+            processingEnabled = false;
+            #ifdef MODULE_LCD
+            #if MODE_SERIAL > 0
+            switch(type)    {
+
+                case userMenu:
+                printf("Activating user menu\n");
+                break;
+
+                case serviceMenu:
+                printf("Activating service menu\n");
+                break;
+
+                default:
+                break;
+
+            }
+            #endif
+            menu.displayMenu(type);
+            #endif
+
+            buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
+            buttonEnabled[BUTTON_TRANSPORT_PLAY] = false;
+
+        }   else {
+
+            menu.exitMenu();
+            processingEnabled = true;
+
+        }
+
+    }
+
+}
+
 void Buttons::init()  {
 
     i2c_init();
 
     //ensure that we know the configuration
-    write_I2C_reg(expanderAddress[0], 0x0A, 0x00);         //IOCON=0x00 if BANK=0
-    write_I2C_reg(expanderAddress[0], 0x05, 0x00);         //IOCON=0x00 if BANK=1
-    write_I2C_reg(expanderAddress[1], 0x0A, 0x00);         //IOCON=0x00 if BANK=0
-    write_I2C_reg(expanderAddress[1], 0x05, 0x00);         //IOCON=0x00 if BANK=1
+    write_I2C_reg(expanderAddress[0], 0x0A, 0x00);              //IOCON=0x00 if BANK=0
+    write_I2C_reg(expanderAddress[0], 0x05, 0x00);              //IOCON=0x00 if BANK=1
+    write_I2C_reg(expanderAddress[1], 0x0A, 0x00);              //IOCON=0x00 if BANK=0
+    write_I2C_reg(expanderAddress[1], 0x05, 0x00);              //IOCON=0x00 if BANK=1
 
     write_I2C_reg(expanderAddress[0], iodirAddress[0], 0xFF);   //expander 1, set all pins on PORTA to input mode
     write_I2C_reg(expanderAddress[0], iodirAddress[1], 0xFF);   //expander 1, set all pins on PORTB to input mode
@@ -98,18 +141,10 @@ void Buttons::init()  {
 
     }   while ((rTimeMillis() - currentTime) < 100);
 
-    if (buttons.getButtonState(BUTTON_TRANSPORT_PLAY) && buttons.getButtonState(BUTTON_TRANSPORT_STOP)) {
+    if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP)) {
 
-        //we should activate service menu now
-        #ifdef MODULE_LCD
-            #if MODE_SERIAL > 0
-            printf("Activating service menu\n");
-            #endif
-            menu.displayMenu(serviceMenu);
-        #endif
-
-        buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
-        buttonEnabled[BUTTON_TRANSPORT_PLAY] = false;
+        menu.displayMenu(serviceMenu);
+        disable();
 
     }   else processingEnabled = true;
 
@@ -129,6 +164,8 @@ void Buttons::update()    {
 
             if (debounced) {
 
+                //if button state is same as last one, do nothing
+                //act on change only
                 if (state == getButtonState(i)) continue;
 
                 //update previous button state with current one
@@ -137,61 +174,41 @@ void Buttons::update()    {
 
             }
 
-        }   mcpData = 0;
+        }
+
+        mcpData = 0;
 
     }
 
-    //we know stop button is modifier
-    if (getButtonState(BUTTON_TRANSPORT_STOP) && buttonEnabled[BUTTON_TRANSPORT_STOP])   {
-
-        //measure the time the button is pressed
-        if (!stopDisableTimeout || !pads.allPadsReleased()) stopDisableTimeout = rTimeMillis();
-        else if ((rTimeMillis() - stopDisableTimeout) > STOP_DISABLE_TIMEOUT) {
-
-            buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
-            stopDisableTimeout = 0;
-            #ifdef MODULE_LCD
-            display.displayModifierEnabled();
-            #endif
-            #if MODE_SERIAL > 0
-                printf("Modifier active\n");
-            #endif
-            modifierActive = true;
-
-            #ifdef MODULE_LEDS
-            if ((!pads.editModeActive()) && (pads.isPredefinedScale(pads.getActivePreset()))) {
-
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-
-            } leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityFull);
-            #endif
-
-        }
-
-    }  else stopDisableTimeout = 0;
-
-    #if SOFT_REBOOT > 0
-    if (buttons.getButtonState(BUTTON_TRANSPORT_PLAY) && buttonEnabled[BUTTON_TRANSPORT_PLAY])    {
-
-        if (!resetActivationTimeout) resetActivationTimeout = rTimeMillis();
-        else if ((rTimeMillis() - resetActivationTimeout) > RESET_ENABLE_TIMEOUT)   {
-
-            #ifdef MODULE_LEDS
-            //slowly turn off all the leds
-            leds.setFadeSpeed(1);
-            leds.allLEDsOff();
-            _delay_ms(2500);
-            #endif
-            #ifdef MODULE_LCD
-            display.displayDFUmode();
-            #endif
-            bootloaderReboot();
-
-        }
-
-    }  else resetActivationTimeout = 0;
-    #endif
+    ////we know stop button is modifier
+    //if (getButtonState(BUTTON_TRANSPORT_STOP) && buttonEnabled[BUTTON_TRANSPORT_STOP])   {
+//
+        ////measure the time the button is pressed
+        //if (!stopDisableTimeout || !pads.allPadsReleased()) stopDisableTimeout = rTimeMillis();
+        //else if ((rTimeMillis() - stopDisableTimeout) > STOP_DISABLE_TIMEOUT) {
+//
+            //buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
+            //stopDisableTimeout = 0;
+            //#ifdef MODULE_LCD
+            //display.displayModifierEnabled();
+            //#endif
+            //#if MODE_SERIAL > 0
+                //printf("Modifier active\n");
+            //#endif
+            //modifierActive = true;
+//
+            //#ifdef MODULE_LEDS
+            //if ((!pads.editModeActive()) && (pads.isPredefinedScale(pads.getActivePreset()))) {
+//
+                //leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
+                //leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+//
+            //} leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityFull);
+            //#endif
+//
+        //}
+//
+    //}  else stopDisableTimeout = 0;
 
     lastCheckTime = rTimeMillis();
 

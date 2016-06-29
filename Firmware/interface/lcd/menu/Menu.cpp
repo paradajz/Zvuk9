@@ -16,39 +16,119 @@ Menu::Menu()    {
 
 void Menu::init()   {
 
-    createLayout();
 
 }
 
 void Menu::displayMenu(menuType_t type) {
 
     activeMenu = type;
+
+    switch(type)    {
+
+        case serviceMenu:
+        createServiceMenuLayout();
+        break;
+
+        case userMenu:
+        createUserMenuLayout();
+        break;
+
+        case quickMenu:
+        createQuickMenuLayout();
+        break;
+
+        default:
+        break;
+
+    }
+
     //always reset menu level when displaying menu
     menuHierarchyPosition = 1;
+    activeOption = 0;
+    functionRunning = false;
 
     setMenuTitle(true);
+    menuSize = getMenuSize();
     getMenuItems();
     updateMenuScreen();
 
 }
 
-void Menu::exitMenu()   {
+void Menu::setMenuTitle(bool rootTitle)   {
 
-    activeMenu = noMenu;
+    uint8_t size = 0;
+    uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
+
+    //set menu title, but only if current level isn't 1 (root)
+    if (!rootTitle) {
+
+        stringBuffer[0] = '<';
+        stringBuffer[1] = '\0';
+        strcpy_P(tempBuffer, menuItem[indexes[currentOptionIndex]].stringPointer);
+        strcat(stringBuffer, tempBuffer);
+        size = strlen_P(menuItem[indexes[currentOptionIndex]].stringPointer) + 1;
+        updateDisplay(0, text, 0, true, size);
+
+    }   else {
+
+        switch(activeMenu)  {
+
+            case userMenu:
+            strcpy_P(stringBuffer, menuType_user);
+            size = progmemCharArraySize(menuType_user);
+            updateDisplay(0, text, 0, true, size);
+            break;
+            break;
+
+            case serviceMenu:
+            strcpy_P(stringBuffer, menuType_service);
+            size = progmemCharArraySize(menuType_service);
+            updateDisplay(0, text, 0, true, size);
+            break;
+
+            case quickMenu:
+            strcpy_P(stringBuffer, menuType_quick);
+            size = progmemCharArraySize(menuType_quick);
+            updateDisplay(0, text, 0, true, size);
+            break;
+
+            default:
+            break;
+
+        }
+
+    }
 
 }
 
-bool Menu::menuDisplayed()  {
+uint8_t Menu::getMenuSize() {
 
-    return (activeMenu != noMenu);
+    uint8_t menuSize = 0;
+
+    switch(activeMenu)  {
+
+        case serviceMenu:
+        menuSize = SERVICE_MENU_ITEMS;
+        break;
+
+        case userMenu:
+        menuSize = USER_MENU_ITEMS;
+        break;
+
+        case quickMenu:
+        if (pads.isUserScale(pads.getActivePreset()))
+        menuSize = QUICK_MENU_ITEMS_USER_SCALE;
+        else menuSize = QUICK_MENU_ITEMS_PREDEFINED_SCALE;
+        break;
+
+        default:
+        break;
+
+    }   return menuSize;
 
 }
 
 void Menu::getMenuItems()   {
-
-    #if MODE_SERIAL > 0
-        printf("Getting menu items\n");
-    #endif
 
     //reset current items
     items = 0;
@@ -57,19 +137,13 @@ void Menu::getMenuItems()   {
     uint8_t currentOption = menuHierarchyPosition % 10;
     uint16_t subtract = (menuHierarchyPosition - currentOption) * (currentDigits > 1);
 
-    //we need to find out how many items are in current hierarchy level and their indexes
-
-    for (int i=0; i<MENU_ITEMS; i++) {
+    for (int i=0; i<menuSize; i++) {
 
         if (display.getNumberOfDigits(menuItem[i].level) == currentDigits)  {
 
             int16_t result = menuItem[i].level - subtract;
 
             if ((display.getNumberOfDigits(result) == 1) && (result > 0)) {
-
-                #if MODE_SERIAL > 0
-                printf("Indexes array[%d]: %d\n", items, i);
-                #endif
 
                 indexes[items] = i;
                 items++;
@@ -82,44 +156,6 @@ void Menu::getMenuItems()   {
 
 }
 
-void Menu::changeOption(bool direction) {
-
-    if (functionRunning) return;
-
-    uint8_t currentOption = menuHierarchyPosition % 10;
-
-    //here we actually change selected option
-    uint8_t newSelectedOption = currentOption;
-    direction ? newSelectedOption++ : newSelectedOption--;
-
-    //make sure we don't cross bounds
-    if (newSelectedOption < 1) newSelectedOption = 1;
-    if (newSelectedOption > items) newSelectedOption--;
-
-    if (newSelectedOption != currentOption) {
-
-        //we need to update global hierarchy position
-        //to do that, first we get rid of current position and then add new one
-        menuHierarchyPosition = (menuHierarchyPosition-currentOption)+newSelectedOption;
-
-        #if MODE_SERIAL > 0
-        printf("Selected option: %d\n", menuHierarchyPosition%10);
-        printf("Options:\n");
-        for (int i=0; i<items; i++) {
-
-            strcpy_P(stringBuffer, menuItem[indexes[i]].stringPointer);
-            printf(stringBuffer);
-            printf("\n");
-
-        }
-        #endif
-
-        updateMenuScreen();
-
-    }
-
-}
-
 void Menu::updateMenuScreen()   {
 
     uint8_t size;
@@ -127,7 +163,7 @@ void Menu::updateMenuScreen()   {
     uint8_t currentOption = menuHierarchyPosition % 10;
 
     #if MODE_SERIAL > 0
-        printf("Updating menu screen\n\n");
+    printf("Updating menu screen\n");
     #endif
 
     //we can display up to three options/suboptions at the time
@@ -160,19 +196,78 @@ void Menu::updateMenuScreen()   {
         size = progmemCharArraySize(emptyLine_string);
 
         for (int i=items+1; i<NUMBER_OF_LCD_ROWS; i++)
-            updateDisplay(i, text, 0, true, size);
+        updateDisplay(i, text, 0, true, size);
 
     }
 
     #if MODE_SERIAL > 0
-        printf("\nmenuHierarchyPosition: %d\n", menuHierarchyPosition);
+    printf("\nmenuHierarchyPosition: %d\n", menuHierarchyPosition);
     #endif
+
+}
+
+void Menu::changeOption(bool direction) {
+
+    if (functionRunning) return;
+    printf(" START: %d\n", menuHierarchyPosition);
+
+    uint8_t currentOption = menuHierarchyPosition % 10;
+    printf("current option: %d\n", currentOption);
+
+    //here we actually change selected option
+    uint8_t newSelectedOption = currentOption;
+    direction ? newSelectedOption++ : newSelectedOption--;
+
+    //make sure we don't cross bounds
+    if (newSelectedOption < 1) newSelectedOption = 1;
+    if (newSelectedOption > items) newSelectedOption--;
+    printf("new option: %d\n", newSelectedOption);
+
+    if (newSelectedOption != currentOption) {
+
+        //we need to update global hierarchy position
+        //to do that, first we get rid of current position and then add new one
+        menuHierarchyPosition = (menuHierarchyPosition-currentOption)+newSelectedOption;
+        printf("menuHierarchyPosition: %d\n", menuHierarchyPosition);
+
+        #if MODE_SERIAL > 0
+        printf("Selected option: %d\n", menuHierarchyPosition%10);
+        #endif
+
+        updateMenuScreen();
+
+    }
+
+}
+
+void Menu::exitMenu()   {
+
+    #if MODE_SERIAL > 0
+    printf("Exiting menu\n");
+    #endif
+    //exit menu and restore initial state
+    display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());
+    //disable calibration if active
+    pads.setCalibrationMode(false);
+    //re-enable buttons
+    #ifdef MODULE_BUTTONS
+    buttons.enable();
+    #endif
+    activeMenu = noMenu;
+    functionRunning = false;
+
+}
+
+bool Menu::menuDisplayed()  {
+
+    return (activeMenu != noMenu);
 
 }
 
 void Menu::confirmOption(bool confirm)  {
 
     if (confirm && functionRunning) return;
+    if (!confirm && functionRunning) functionRunning = false;
 
     uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
 
@@ -184,18 +279,7 @@ void Menu::confirmOption(bool confirm)  {
 
     if (newLevel < 1)   {   //exit menu
 
-        #if MODE_SERIAL > 0
-        printf("Exiting menu\n");
-        #endif
-        //exit menu and restore initial state
-        display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());
-        //disable calibration if active
-        pads.setCalibrationMode(false);
-        //re-enable buttons
-        #ifdef MODULE_BUTTONS
-        buttons.enable();
-        #endif
-        activeMenu = noMenu;
+        exitMenu();
         return;
 
     }
@@ -204,26 +288,53 @@ void Menu::confirmOption(bool confirm)  {
 
         bool menuLevelPresent = false;
 
-        //check if level has assigned function
-        if (menuItem[indexes[currentOptionIndex]].function != NULL) {
+        //special check for jumping to user menu from quick actions
+        if (activeMenu == quickMenu)    {
 
-            if (!functionRunning) {
+            if (
+            (indexes[currentOptionIndex] == quickMenuItem_us_userMenu) ||
+            (indexes[currentOptionIndex] == quickMenuItem_ps_userMenu)) {
 
-                setMenuTitle(false);
-                functionRunning = true;
-                menuItem[indexes[currentOptionIndex]].function();
+                displayMenu(userMenu);
+                return;
 
             }
 
-            //update level regardless
-            menuHierarchyPosition = newLevel;
-            return;
+        }
+
+        //check if level has assigned function
+        if (menuItem[indexes[currentOptionIndex]].function != NULL) {
+
+            if (menuItem[indexes[currentOptionIndex]].conditionCheck)   {
+
+                //run function without setting any flag or menu title
+                if (menuItem[indexes[currentOptionIndex]].function())   {
+
+                    //do nothing
+
+                } else return;
+
+            }   else {
+
+                if (!functionRunning) {
+
+                    setMenuTitle(false);
+                    functionRunning = true;
+                    menuItem[indexes[currentOptionIndex]].function();
+
+                }
+
+                //update level regardless
+                menuHierarchyPosition = newLevel;
+                return;
+
+            }
 
         }
 
         //level needs to be increased
         //we should first check it that level exists
-        for (int i=0; i<MENU_ITEMS; i++)
+        for (int i=0; i<menuSize; i++)
         if (menuItem[i].level == newLevel)  {
 
             menuLevelPresent = true;
@@ -247,17 +358,6 @@ void Menu::confirmOption(bool confirm)  {
 
         }   else {
 
-            //check for function
-            if (menuItem[indexes[currentOptionIndex]].function != NULL) {
-
-                if (functionRunning) {
-
-                    functionRunning = false;
-
-                }
-
-            }
-
             //we need to get one level behind new level to find out menu title when going backwards
             menuHierarchyPosition = newLevel/10;
 
@@ -278,41 +378,9 @@ void Menu::confirmOption(bool confirm)  {
 
 }
 
-void Menu::setMenuTitle(bool rootTitle)   {
+void Menu::stopFunction()   {
 
-    uint8_t size = 0;
-    uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
-
-    //set menu title, but only if current level isn't 1 (root)
-    if (!rootTitle) {
-
-        strcpy_P(stringBuffer, menuItem[indexes[currentOptionIndex]].stringPointer);
-        size = strlen_P(menuItem[indexes[currentOptionIndex]].stringPointer);
-        updateDisplay(0, text, 0, true, size);
-
-    }   else {
-
-        switch(activeMenu)  {
-
-            case userMenu:
-            strcpy_P(stringBuffer, menuType_user);
-            size = progmemCharArraySize(menuType_user);
-            updateDisplay(0, text, 0, true, size);
-            break;
-            break;
-
-            case serviceMenu:
-            strcpy_P(stringBuffer, menuType_service);
-            size = progmemCharArraySize(menuType_service);
-            updateDisplay(0, text, 0, true, size);
-            break;
-
-            default:
-            break;
-
-        }
-
-    }
+    functionRunning = false;
 
 }
 
