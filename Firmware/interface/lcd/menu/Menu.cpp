@@ -209,10 +209,8 @@ void Menu::updateMenuScreen()   {
 void Menu::changeOption(bool direction) {
 
     if (functionRunning) return;
-    printf(" START: %d\n", menuHierarchyPosition);
 
     uint8_t currentOption = menuHierarchyPosition % 10;
-    printf("current option: %d\n", currentOption);
 
     //here we actually change selected option
     uint8_t newSelectedOption = currentOption;
@@ -221,17 +219,15 @@ void Menu::changeOption(bool direction) {
     //make sure we don't cross bounds
     if (newSelectedOption < 1) newSelectedOption = 1;
     if (newSelectedOption > items) newSelectedOption--;
-    printf("new option: %d\n", newSelectedOption);
 
     if (newSelectedOption != currentOption) {
 
         //we need to update global hierarchy position
         //to do that, first we get rid of current position and then add new one
         menuHierarchyPosition = (menuHierarchyPosition-currentOption)+newSelectedOption;
-        printf("menuHierarchyPosition: %d\n", menuHierarchyPosition);
 
         #if MODE_SERIAL > 0
-        printf("Selected option: %d\n", menuHierarchyPosition%10);
+            printf("Selected option: %d\n", menuHierarchyPosition%10);
         #endif
 
         updateMenuScreen();

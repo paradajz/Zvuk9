@@ -72,23 +72,8 @@ int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
 
 bool Pads::checkX(uint8_t pad)  {
 
-    //#if MODE_SERIAL > 0
-    //printf("Y for pad %d: ", pad);
-    //#if XY_FLIP_VALUES > 0
-    //printf("%d\n", lastYMIDIvalue[pad]);
-    //#else
-    //printf("%d\n", 127-lastYMIDIvalue[pad]);
-    //#endif
-    //printf("Y CC: %d\n", ccYPad[pad]);
-    //#else
-    //#if XY_FLIP_VALUES > 0
-    //midi.sendControlChange(midiChannel[pad], ccYPad[pad], lastYMIDIvalue[pad]);
-    //#else
-    //midi.sendControlChange(midiChannel[pad], ccYPad[pad], 127-lastYMIDIvalue[pad]);
-    //#endif
-    //#endif
-
     int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), ccTypeX);
+    if (padCurveX[pad] != 0)  xValue = xyScale[padCurveX[pad]-1][xValue];
 
     bool xChanged = false;
 
@@ -104,8 +89,6 @@ bool Pads::checkX(uint8_t pad)  {
         lastXMIDIvalue[pad] = xValue;
         xSendTimer[pad] = rTimeMillis();
 
-        if (padCurveX[pad] != 0)  xValue = xyScale[padCurveX[pad]-1][xValue];
-
         padDebounceTimer[pad] = rTimeMillis(); //why? investigate
         return true;
 
@@ -116,6 +99,7 @@ bool Pads::checkX(uint8_t pad)  {
 bool Pads::checkY(uint8_t pad)  {
 
     int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), ccTypeY);
+    if (padCurveY[pad] != 0)  yValue = xyScale[padCurveY[pad]-1][yValue];
 
     bool yChanged = false;
 
@@ -130,8 +114,6 @@ bool Pads::checkY(uint8_t pad)  {
 
         lastYMIDIvalue[pad] = yValue;
         ySendTimer[pad] = rTimeMillis();
-
-        if (padCurveY[pad] != 0)  yValue = xyScale[padCurveY[pad]-1][yValue];
 
         padDebounceTimer[pad] = rTimeMillis(); //why? investigate
         return true;
