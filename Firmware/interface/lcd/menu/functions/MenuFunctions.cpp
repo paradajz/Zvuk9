@@ -1,5 +1,7 @@
 #include "MenuFunctions.h"
 
+#ifdef MENU_FUNCTIONS_H_
+
 void factory_reset(factoryResetType_t type) {
 
     #ifdef MODULE_LEDS
@@ -144,3 +146,4 @@ bool checkCalibration() {
     }   return true;
 
 }
+#endif

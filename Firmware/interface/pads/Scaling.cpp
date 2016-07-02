@@ -24,7 +24,34 @@ uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, pressureType_t type) 
 
 }
 
+inline uint8_t invertRange(uint8_t value, uint8_t min, uint8_t max) {
+
+    return (max + min) - value;
+
+}
+
 uint8_t Pads::scaleXY(uint8_t padNumber, int16_t xyValue, ccType_t type) {
+
+    switch (type)   {
+
+        case ccTypeX:
+        #if XY_FLIP_VALUES > 0
+            return invertRange(map(constrain(xyValue, padXLimitLower[padNumber], padXLimitUpper[padNumber]), padXLimitLower[padNumber], padXLimitUpper[padNumber], ccXminPad[padNumber], ccXmaxPad[padNumber]), ccXminPad[padNumber], ccXmaxPad[padNumber]);
+        #else
+            return map(constrain(xyValue, padXLimitLower[padNumber], padXLimitUpper[padNumber]), padXLimitLower[padNumber], padXLimitUpper[padNumber], ccXminPad[padNumber], ccXmaxPad[padNumber]);
+        #endif
+        case ccTypeY:
+        #if XY_FLIP_VALUES > 0
+            return map(constrain(xyValue, padYLimitLower[padNumber], padYLimitUpper[padNumber]), padYLimitLower[padNumber], padYLimitUpper[padNumber], ccYminPad[padNumber], ccYmaxPad[padNumber]);
+        #else
+            return invertRange(map(constrain(xyValue, padYLimitLower[padNumber], padYLimitUpper[padNumber]), padYLimitLower[padNumber], padYLimitUpper[padNumber], ccYminPad[padNumber], ccYmaxPad[padNumber]), ccYminPad[padNumber], ccYmaxPad[padNumber]);
+        #endif
+
+    }   return 0;
+
+}
+
+uint8_t Pads::rawToMIDI(uint8_t padNumber, int16_t xyValue, ccType_t type) {
 
     switch (type)   {
 

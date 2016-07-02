@@ -4,18 +4,10 @@ void Pads::sendX(uint8_t pad)  {
 
     #if MODE_SERIAL > 0
         printf("X for pad %d: ", pad);
-        #if XY_FLIP_VALUES > 0
-            printf("%d\n", 127-lastXMIDIvalue[pad]);
-        #else
-            printf("%d\n", lastXMIDIvalue[pad]);
-        #endif
+        printf("%d\n", lastXMIDIvalue[pad]);
         printf("X CC: %d\n", ccXPad[pad]);
     #else
-        #if XY_FLIP_VALUES > 0
-            midi.sendControlChange(midiChannel[pad], ccXPad[pad], 127-lastXMIDIvalue[pad]);
-        #else
-            midi.sendControlChange(midiChannel[pad], ccXPad[pad], lastXMIDIvalue[pad]);
-        #endif
+        midi.sendControlChange(midiChannel[pad], ccXPad[pad], lastXMIDIvalue[pad]);
     #endif
 
 }
@@ -24,18 +16,10 @@ void Pads::sendY(uint8_t pad)  {
 
     #if MODE_SERIAL > 0
         printf("Y for pad %d: ", pad);
-        #if XY_FLIP_VALUES > 0
-            printf("%d\n", lastYMIDIvalue[pad]);
-        #else
-            printf("%d\n", 127-lastYMIDIvalue[pad]);
-        #endif
+        printf("%d\n", lastYMIDIvalue[pad]);
         printf("Y CC: %d\n", ccYPad[pad]);
     #else
-        #if XY_FLIP_VALUES > 0
-            midi.sendControlChange(midiChannel[pad], ccYPad[pad], lastYMIDIvalue[pad]);
-        #else
-            midi.sendControlChange(midiChannel[pad], ccYPad[pad], 127-lastYMIDIvalue[pad]);
-        #endif
+        midi.sendControlChange(midiChannel[pad], ccYPad[pad], lastYMIDIvalue[pad]);
     #endif
 
 }

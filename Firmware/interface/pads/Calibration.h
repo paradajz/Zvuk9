@@ -36,7 +36,6 @@
 #define X_MIN_CALIBRATION_OFFSET            3
 #define X_MAX_CALIBRATION_OFFSET            -3
 
-#define XY_FLIP_AXIS                        0
 #define XY_FLIP_VALUES                      0
 
 #endif

@@ -31,6 +31,7 @@ Buttons::Buttons()  {
     lastButtonDataPress         = 0;
     mcpData                     = 0;
     modifierActive              = false;
+    processingEnabled           = true;
 
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
 
@@ -65,48 +66,48 @@ void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)  {
 
 }
 
-void Buttons::checkMenu(menuType_t type)   {
-
-    if (buttons.getButtonState(BUTTON_TRANSPORT_PLAY) && buttons.getButtonState(BUTTON_TRANSPORT_STOP)) {
-
-        if (!menu.menuDisplayed())  {
-
-            //we should activate menu now
-            //disable buttons while in menu
-            processingEnabled = false;
-            #ifdef MODULE_LCD
-            #if MODE_SERIAL > 0
-            switch(type)    {
-
-                case userMenu:
-                printf("Activating user menu\n");
-                break;
-
-                case serviceMenu:
-                printf("Activating service menu\n");
-                break;
-
-                default:
-                break;
-
-            }
-            #endif
-            menu.displayMenu(type);
-            #endif
-
-            buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
-            buttonEnabled[BUTTON_TRANSPORT_PLAY] = false;
-
-        }   else {
-
-            menu.exitMenu();
-            processingEnabled = true;
-
-        }
-
-    }
-
-}
+//void Buttons::checkMenu(menuType_t type)   {
+//
+    //if (buttons.getButtonState(BUTTON_TRANSPORT_PLAY) && buttons.getButtonState(BUTTON_TRANSPORT_STOP)) {
+//
+        //if (!menu.menuDisplayed())  {
+//
+            ////we should activate menu now
+            ////disable buttons while in menu
+            //processingEnabled = false;
+            //#ifdef MODULE_LCD
+            //#if MODE_SERIAL > 0
+            //switch(type)    {
+//
+                //case userMenu:
+                //printf("Activating user menu\n");
+                //break;
+//
+                //case serviceMenu:
+                //printf("Activating service menu\n");
+                //break;
+//
+                //default:
+                //break;
+//
+            //}
+            //#endif
+            //menu.displayMenu(type);
+            //#endif
+//
+            //buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
+            //buttonEnabled[BUTTON_TRANSPORT_PLAY] = false;
+//
+        //}   else {
+//
+            //menu.exitMenu();
+            //processingEnabled = true;
+//
+        //}
+//
+    //}
+//
+//}
 
 void Buttons::init()  {
 
@@ -131,6 +132,8 @@ void Buttons::init()  {
     write_I2C_reg(expanderAddress[1], gppuAddress[1], 0xFF);    //expander 2, turn on pull-ups, PORTB
 
     uint32_t currentTime = rTimeMillis();
+
+    #ifdef MODULE_LCD
     processingEnabled = false;
 
     //read buttons for 0.1 seconds
@@ -147,6 +150,7 @@ void Buttons::init()  {
         disable();
 
     }   else processingEnabled = true;
+    #endif
 
 }
 

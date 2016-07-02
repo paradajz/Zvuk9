@@ -790,34 +790,24 @@ void LCD::clearLine(uint8_t row)    {
 
 void LCD::displayDeviceInfo()   {
 
-    uint8_t byte0, byte1, byte2, size;
-
-    byte0 = FIRMWARE_VERSION_BYTE_0;
-    byte1 = FIRMWARE_VERSION_BYTE_1;
-    byte2 = FIRMWARE_VERSION_BYTE_2;
-
-    size = 0;
+    uint8_t size = 0;
     strcpy_P(stringBuffer, deviceInfo_swVersion);
     size += progmemCharArraySize(deviceInfo_swVersion);
-    addNumberToCharArray(byte0, size);
+    addNumberToCharArray(versionControl.getSWversion(swVersion_major), size);
     appendText(".", size);
-    addNumberToCharArray(byte1, size);
+    addNumberToCharArray(versionControl.getSWversion(swVersion_minor), size);
     appendText(".", size);
-    addNumberToCharArray(byte2, size);
+    addNumberToCharArray(versionControl.getSWversion(swVersion_revision), size);
     updateDisplay(1, text, 0, true, size);
-
-    byte0 = HARDWARE_VERSION_BYTE_0;
-    byte1 = HARDWARE_VERSION_BYTE_1;
-    byte2 = HARDWARE_VERSION_BYTE_2;
 
     size = 0;
     strcpy_P(stringBuffer, deviceInfo_hwVersion);
     size += progmemCharArraySize(deviceInfo_hwVersion);
-    addNumberToCharArray(byte0, size);
+    addNumberToCharArray(hardwareVersion.major, size);
     appendText(".", size);
-    addNumberToCharArray(byte1, size);
+    addNumberToCharArray(hardwareVersion.minor, size);
     appendText(".", size);
-    addNumberToCharArray(byte2, size);
+    addNumberToCharArray(hardwareVersion.revision, size);
     updateDisplay(2, text, 0, true, size);
 
     strcpy_P(stringBuffer, emptyLine_string);

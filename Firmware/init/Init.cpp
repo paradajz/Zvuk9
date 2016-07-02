@@ -1,4 +1,5 @@
 #include "Init.h"
+#include "../version/Firmware.h"
 
 void startUpAnimation() {
 
@@ -82,6 +83,9 @@ void globalInit() {
     #else
     sei();
     #endif
+
+    //if (GPIOR0)
+        //printf("NEW CODE\n");
 
     #ifdef MODULE_LCD
     display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());

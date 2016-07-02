@@ -4,6 +4,7 @@
 #include "EEPROMsettings.h"
 #include <util/delay.h>
 #include "../midi/MIDI_parameters.h"
+#include "../version/Firmware.h"
 
 void EEPROMsettings::factoryReset(factoryResetType_t type)   {
 
@@ -91,6 +92,8 @@ void EEPROMsettings::init() {
     createMemoryLayout();
     createSectionAddresses();
 
+    versionControl.checkNewRevision();
+
     //if ID bytes haven't been written to EEPROM on specified address,
     //write default configuration to EEPROM
     if  (!(
@@ -136,23 +139,11 @@ void EEPROMsettings::clearEEPROM()  {
 
 void EEPROMsettings::createSectionAddresses()   {
 
-    #if MODE_SERIAL > 0
-        printf("We are now creating EEPROM memory layout\n");
-    #endif
-
     for (int i=0; i<CONF_BLOCKS; i++)  {
-
-        #if MODE_SERIAL > 0
-            printf("Creating block %d", i);
-        #endif
 
         uint16_t memory_usage = 0;
 
         for (int j=0; j<blocks[i].sections; j++)    {
-
-            #if MODE_SERIAL > 0
-                printf("Section %d, address: ", j);
-            #endif
 
             if (!j) {
 
@@ -179,10 +170,6 @@ void EEPROMsettings::createSectionAddresses()   {
 
             }
 
-            #if MODE_SERIAL > 0
-                printf("%d\n", blocks[i].sectionAddress[j]);
-            #endif
-
         }
 
         uint8_t lastSection = blocks[i].sections-1;
@@ -203,10 +190,6 @@ void EEPROMsettings::createSectionAddresses()   {
 
         }
 
-        #if MODE_SERIAL > 0
-            printf("Total memory usage: %d bytes\n", memory_usage);
-        #endif
-
         if (i < CONF_BLOCKS-1) {
 
             blocks[i+1].blockStartAddress = blocks[i].blockStartAddress + memory_usage;
@@ -214,14 +197,6 @@ void EEPROMsettings::createSectionAddresses()   {
         }
 
     }
-
-    #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
-
-        for (int i=0; i<CONF_BLOCKS; i++)
-            printf("Block %d start address: %d", i, blocks[i].blockStartAddress);
-        printf("----------------------------------------\n");
-    #endif
 
 }
 

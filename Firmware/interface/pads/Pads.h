@@ -155,6 +155,7 @@ class Pads  {
     //midi scaling
     uint8_t scalePressure(uint8_t pad, int16_t pressure, pressureType_t type);
     uint8_t scaleXY(uint8_t padNumber, int16_t xyValue, ccType_t type);
+    uint8_t rawToMIDI(uint8_t padNumber, int16_t xyValue, ccType_t type);
     uint8_t scale_raw(uint16_t rawValue, uint16_t rawMin, uint16_t rawMax);
     uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
 

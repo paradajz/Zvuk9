@@ -307,6 +307,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 
 //
         //}
+        #ifdef MODULE_LCD
         if (!menu.menuDisplayed())  {
 
             menu.displayMenu(quickMenu);
@@ -330,9 +331,11 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
 
             }
+
             menu.exitMenu();
 
         }
+        #endif
 
         //stop buttons temporarily
         buttonEnabled[BUTTON_OCTAVE_UP] = false;

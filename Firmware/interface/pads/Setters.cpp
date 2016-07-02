@@ -396,6 +396,9 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
                 //local
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 ccXmaxPad[startPad] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("X max for %d pad: %d\n", startPad, changedValue);
+                #endif
                 break;
 
                 case true:
@@ -403,6 +406,10 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
                 for (int i=0; i<MAX_PADS; i++)
                     ccXmaxPad[i] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("X max for all pads: %d\n", changedValue);
+                #endif
+                break;
 
             }
 
@@ -432,6 +439,9 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
                 //local
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 ccXminPad[startPad] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("X min for %d pad: %d\n", startPad, changedValue);
+                #endif
                 break;
 
                 case true:
@@ -439,6 +449,10 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
                 for (int i=0; i<MAX_PADS; i++)
                     ccXminPad[i] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("X min for all pads: %d\n", changedValue);
+                #endif
+                break;
 
             }
 
@@ -468,13 +482,20 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
                 //local
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 ccYmaxPad[startPad] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("Y max for %d pad: %d\n", startPad, changedValue);
+                #endif
                 break;
 
                 case true:
                 //global
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
                 for (int i=0; i<MAX_PADS; i++)
-                ccYmaxPad[i] = changedValue;
+                    ccYmaxPad[i] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("Y max for all pads: %d\n", changedValue);
+                #endif
+                break;
 
             }
 
@@ -504,6 +525,9 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
                 //local
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                     ccYminPad[startPad] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("Y min for %d pad: %d\n", startPad, changedValue);
+                #endif
                 break;
 
                 case true:
@@ -511,6 +535,10 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
                 for (int i=0; i<MAX_PADS; i++)
                     ccYminPad[i] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("Y min for all pads: %d\n", changedValue);
+                #endif
+                break;
 
             }
 
@@ -561,6 +589,9 @@ changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate,
                 //local
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                     padCurveX[startPad] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("X curve for %d pad: %d\n", startPad, changedValue);
+                #endif
                 break;
 
                 case true:
@@ -568,6 +599,10 @@ changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate,
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
                 for (int i=0; i<MAX_PADS; i++)
                     padCurveX[i] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("X curve for all pads: %d\n", changedValue);
+                #endif
+                break;
 
             }
 
@@ -597,6 +632,9 @@ changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate,
                 //local
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
                 padCurveY[startPad] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("Y curve for %d pad: %d\n", startPad, changedValue);
+                #endif
                 break;
 
                 case true:
@@ -604,6 +642,10 @@ changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate,
                 configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
                 for (int i=0; i<MAX_PADS; i++)
                     padCurveY[i] = changedValue;
+                #if MODE_SERIAL > 0
+                    printf("Y curve for all pads: %d\n", changedValue);
+                #endif
+                break;
 
             }
 

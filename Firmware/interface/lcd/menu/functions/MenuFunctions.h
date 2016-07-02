@@ -1,4 +1,10 @@
 #include "../../LCD.h"
+
+#ifdef LCD_H_
+
+#ifndef MENU_FUNCTIONS_H_
+#define MENU_FUNCTIONS_H_
+
 #include "../../../../init/Init.h"
 
 #include "../../../pads/Pads.h"
@@ -63,3 +69,6 @@ bool noteShiftMode();
 bool octaveShiftMode();
 
 bool channelShiftMode();
+
+#endif
+#endif

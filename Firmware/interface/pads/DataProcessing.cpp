@@ -72,6 +72,22 @@ int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
 
 bool Pads::checkX(uint8_t pad)  {
 
+    //#if MODE_SERIAL > 0
+    //printf("Y for pad %d: ", pad);
+    //#if XY_FLIP_VALUES > 0
+    //printf("%d\n", lastYMIDIvalue[pad]);
+    //#else
+    //printf("%d\n", 127-lastYMIDIvalue[pad]);
+    //#endif
+    //printf("Y CC: %d\n", ccYPad[pad]);
+    //#else
+    //#if XY_FLIP_VALUES > 0
+    //midi.sendControlChange(midiChannel[pad], ccYPad[pad], lastYMIDIvalue[pad]);
+    //#else
+    //midi.sendControlChange(midiChannel[pad], ccYPad[pad], 127-lastYMIDIvalue[pad]);
+    //#endif
+    //#endif
+
     int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), ccTypeX);
 
     bool xChanged = false;
@@ -254,9 +270,6 @@ void Pads::update()  {
 
         if (pressureUpdated())  {
 
-            int16_t medianValue = getMedianValueXYZ(coordinateZ);
-            printf("pad %d median value: %d\n", pad, medianValue);
-
             //all needed pressure samples are obtained
             velocityAvailable = checkVelocity(pad);
             aftertouchAvailable = checkAftertouch(pad);
@@ -365,10 +378,10 @@ void Pads::update()  {
         xAvailable = false;
         yAvailable = false;
 
-        #ifdef MODE_SERIAL
-            if (activePad == 0)
-                printf("\n");
-        #endif
+        //#if MODE_SERIAL > 0
+            //if (activePad == 0)
+                //printf("\n");
+        //#endif
 
     }
 
@@ -556,6 +569,10 @@ bool Pads::checkVelocity(uint8_t pad)  {
     bool returnValue = false;
 
     if (pressureStable(pad, pressDetected))    {
+
+        //#if MODE_SERIAL > 0
+            //printf("pad %d median value: %d\tMIDI value: %d\n", pad, medianValue, calibratedPressure);
+        //#endif
 
         //pad reading is stable
 
@@ -771,26 +788,16 @@ void Pads::updateLastPressedPad(uint8_t pad, bool state)   {
 
         case true:
         //pad is pressed, add it to touch history buffer
-        if (pad != getLastTouchedPad())    {
-
-            #if MODE_SERIAL > 0
-                printf("Last touched pad: %d\n", getLastTouchedPad());
-                printf("Current pad: %d\n", pad);
-                resetCalibration();
-            #endif
-
+        if (pad != getLastTouchedPad())
             updatePressHistory(pad);
-
-        }
         break;
 
         case false:
         //pad released, clear it from buffer
         clearTouchHistoryPad(pad);
-        resetCalibration();
         break;
 
-    }
+    }   resetCalibration();
 
 }
 

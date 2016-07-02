@@ -249,12 +249,12 @@ enum midiFilterMode_t {
 
 };
 
-enum calibrationDirection {
+typedef enum {
 
     lower,
     upper
 
-};
+} calibrationDirection;
 
 typedef enum {
 
@@ -271,5 +271,13 @@ typedef enum {
     shiftMode_channel
 
 } shiftMode_t;
+
+typedef enum {
+
+    swVersion_major,
+    swVersion_minor,
+    swVersion_revision
+
+} swVersion_t;
 
 #endif
