@@ -116,20 +116,19 @@ void EEPROMsettings::init() {
 
 }
 
-//void EEPROMsettings::readMemory()   {
-//
-    //#if MODE_SERIAL > 0
-        //printf("EEPROM memory readout\n");
-        //printf("----------------------------------------\n");
-        //for (int i=0; i<4096; i++)  {
-//
-            //printf("%d: ", i);
-            //printf("%d\n", eeprom_read_byte((uint8_t*)i));
-//
-        //}   printf("----------------------------------------\n");
-    //#endif
-//
-//}
+void EEPROMsettings::readMemory()   {
+
+    #if MODE_SERIAL > 0
+        printf("EEPROM memory readout\n");
+        printf("----------------------------------------\n");
+
+        for (int i=0; i<4096; i++)
+            printf("%d: %d\n", i, eeprom_read_byte((uint8_t*)i));
+
+        printf("----------------------------------------\n");
+    #endif
+
+}
 
 void EEPROMsettings::clearEEPROM()  {
 
@@ -390,7 +389,7 @@ bool EEPROMsettings::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t 
 
         case WORD_PARAMETER:
         eeprom_update_word((uint16_t*)startAddress+parameterID, newValue);
-        return (newValue == eeprom_read_byte((uint8_t*)startAddress+parameterID));
+        return (newValue == (int16_t)eeprom_read_word((uint16_t*)startAddress+parameterID));
         break;
 
     }   return 0;

@@ -39,8 +39,6 @@
 #include "PinManipulation.h"
 #include <util/crc16.h>
 
-#define LAST_FLASH_ADDRESS  0x1DFFE
-
 /** LUFA Mass Storage Class driver interface configuration and state information. This structure is
  *  passed to all Mass Storage Class driver functions, so that multiple instances of the same class
  *  within a device can be differentiated from one another.
@@ -78,44 +76,10 @@ bool RunBootloader = true;
  */
 static uint8_t TicksSinceLastCommand = 0;
 
-void checkNewRevision() {
-
-    //this function calculates application CRC
-    //CRC is already written at last flash address
-    //if two don't match, new code is uploaded
-    //update eeprom counter
-
-    uint32_t addr;
-    uint8_t byte_u8;
-    uint16_t crc_u16;
-
-    /* Compute the CRC */
-    crc_u16 = 0;
-
-    for (addr=0; addr<LAST_FLASH_ADDRESS; addr++)   {
-
-        byte_u8 = pgm_read_byte_far(addr);
-        crc_u16 = _crc16_update(crc_u16, byte_u8);
-
-    }
-
-    if (pgm_read_word_far(LAST_FLASH_ADDRESS) == crc_u16)
-    {
-        //no updates
-    }
-    else
-    {
-        GPIOR0 = 0xFF;
-        eeprom_update_byte((uint8_t*)4090, crc_u16 & 0xFF);
-        eeprom_update_byte((uint8_t*)4091, (crc_u16 >> 8) & 0xFF);
-        //return true; //new code
-    }
-
-}
-
 //check whether we should jump to bootloader or application
 void Application_Jump_Check(void)
 {
+    //getCurrentCRC();
     bool JumpToApplication = false;
 
     //make sure bootloader button is configured as input
@@ -144,9 +108,6 @@ void Application_Jump_Check(void)
         /* Turn off the watchdog */
         MCUSR &= ~(1 << WDRF);
         wdt_disable();
-
-        checkNewRevision();
-        //GPIOR0 = 0xFF;
         // cppcheck-suppress constStatement
         ((void (*)(void))0x0000)();
     }

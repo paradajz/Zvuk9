@@ -84,8 +84,7 @@ void globalInit() {
     sei();
     #endif
 
-    //if (GPIOR0)
-        //printf("NEW CODE\n");
+    wait(1500);
 
     #ifdef MODULE_LCD
     display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());

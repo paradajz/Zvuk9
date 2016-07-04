@@ -3,17 +3,22 @@
 VersionControl::VersionControl()    {
 
     //init
-    firmwareVersion.magicValue = 6517;//
     firmwareVersion.minor = FIRMWARE_VERSION_MINOR;
     firmwareVersion.major = FIRMWARE_VERSION_MAJOR;
-    firmwareVersion.revision = FIRMWARE_VERSION_REVISION;
 
 }
 
 bool VersionControl::checkNewRevision() {
 
-    if (CODE_REVISION_FLAG) return true;
-    return false;
+    uint16_t crc_old = eeprom_read_word((uint16_t*)EEPROM_CRC_ADDRESS);
+    uint16_t crc_hex = pgm_read_word_far(LAST_FLASH_ADDRESS);
+
+    if (crc_old != crc_hex)   {
+
+        eeprom_update_word((uint16_t*)EEPROM_CRC_ADDRESS, crc_hex);
+        return true;
+
+    }
 
 }
 

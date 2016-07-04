@@ -60,7 +60,7 @@ class EEPROMsettings {
     EEPROMsettings();
     void clearEEPROM();
     void init();
-    //void readMemory();
+    void readMemory();
     void initSettings(bool partialReset);
     void factoryReset(factoryResetType_t type);
     friend void factory_reset(factoryResetType_t type);
