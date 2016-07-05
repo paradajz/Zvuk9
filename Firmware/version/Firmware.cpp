@@ -3,8 +3,8 @@
 VersionControl::VersionControl()    {
 
     //init
-    firmwareVersion.minor = FIRMWARE_VERSION_MINOR;
     firmwareVersion.major = FIRMWARE_VERSION_MAJOR;
+    firmwareVersion.minor = 0;
 
 }
 
@@ -18,7 +18,7 @@ bool VersionControl::checkNewRevision() {
         eeprom_update_word((uint16_t*)EEPROM_CRC_ADDRESS, crc_hex);
         return true;
 
-    }
+    }   return false;
 
 }
 

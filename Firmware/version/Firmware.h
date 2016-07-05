@@ -11,8 +11,7 @@
 
 #include <inttypes.h>
 
-#define FIRMWARE_VERSION_MAJOR      1
-#define FIRMWARE_VERSION_MINOR      0
+#define FIRMWARE_VERSION_MAJOR      0
 
 #define LAST_FLASH_ADDRESS          0x1DFFE
 #define EEPROM_CRC_ADDRESS          4000
