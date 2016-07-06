@@ -6,6 +6,14 @@ major=$(git tag -l "v*.0" | wc -l)
 #list all tags descending until major tag is found, count the output and assign result to $minor
 minor=$(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname) %(*objectname) %(objectname)' refs/tags | sort -r | awk '{ print $3 }' | sed -e 's/refs\/tags\///g' | sed '/v*.0/Q' | wc -l)
 
+#assign number of commits since last tag to $revision
+function revisionCheck_lastTag {
+
+	last_tag_commit=$(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname) %(*objectname) %(objectname)' refs/tags | sort -r | awk '{ print $4 }' | sed -e 's/refs\/tags\///g' | head -1)
+	revision=$(git rev-list --remotes | sed '/'$last_tag_commit'/Q' | wc -l)
+
+}
+
 #there are no major tags, count all tags instead
 if [ $minor == 0 ]
 then
@@ -16,12 +24,10 @@ if [ $minor == 0 ]
 then
 revision=$(git rev-list --remotes | wc -l)
 else
-last_tag_commit=$(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname) %(*objectname) %(objectname)' refs/tags | sort -r | awk '{ print $4 }' | sed -e 's/refs\/tags\///g' | head -1)
-revision=$(git rev-list --remotes | sed '/'$last_tag_commit'/Q' | wc -l)
+revisionCheck_lastTag
 fi
 else
-last_tag_commit=$(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname) %(*objectname) %(objectname)' refs/tags | sort -r | awk '{ print $4 }' | sed -e 's/refs\/tags\///g' | head -1)
-revision=$(git rev-list --remotes | sed '/'$last_tag_commit'/Q' | wc -l)
+revisionCheck_lastTag
 fi
 
 echo "software version: $major.$minor.$revision"
