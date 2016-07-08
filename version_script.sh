@@ -33,6 +33,4 @@ fi
 echo "software version: $major.$minor.$revision"
 
 #output $major, $minor and $revision into separate files
-echo "$major" > major
-echo "$minor" > minor
-echo "$revision" > revision
+echo "$major,$minor,$revision" > version
