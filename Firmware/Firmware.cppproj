@@ -168,7 +168,10 @@ call "D:\Applications\AVRdude+AVRsize\srec_cat.exe" "$(MSBuildProjectDirectory)\
 
 REM running version script
 call cd $(SolutionDir)
-call "C:\Program Files\Git\bin\sh.exe" -l "$(SolutionDir)\version_script.sh"</PostBuildEvent>
+call "C:\Program Files\Git\bin\sh.exe" -l "$(SolutionDir)\version_script.sh"
+
+REM calling version_append
+call version_append.exe</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BitManipulation.h">
