@@ -30,7 +30,5 @@ else
 revisionCheck_lastTag
 fi
 
-echo "software version: $major.$minor.$revision"
-
 #output $major, $minor and $revision into separate files
 echo "$major,$minor,$revision" > version
