@@ -49,6 +49,8 @@ class LCD   {
     void clearMIDIchannel();
     void clearPadData();
 
+    void displayFirmwareUpdated();
+
     void displayTransportControl(transportControl_t type, bool state);
     void displayOnOff(functionsOnOff_t messageType, bool _splitState, uint8_t functionState, uint8_t padNumber);
     void displayCurveChange(curveCoordinate_t coordinate, bool _splitState, curveType_t type, uint8_t padNumber);
@@ -68,7 +70,6 @@ class LCD   {
     void displayPadReleaseError(padReleaseError_t error);
     void displayPadEditChangeParametersError();
     void displayPad(uint8_t pad);
-    void displayDFUmode();
     void displayMIDIchannel(uint8_t channel);
 
     inline uint8_t getNumberOfDigits(int32_t number)  {

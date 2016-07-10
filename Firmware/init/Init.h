@@ -28,7 +28,7 @@
 #include "../hardware/timer/TimerObject.h"
 
 #include "../Debug.h"
-#include "../eeprom/EEPROMsettings.h"
+#include "../eeprom/Configuration.h"
 #include "../Types.h"
 #include "../hardware/reset/Reset.h"
 #include <util/delay.h>

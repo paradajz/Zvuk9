@@ -639,16 +639,6 @@ void LCD::displayActiveOctave(int8_t octave)   {
 
 }
 
-void LCD::displayDFUmode()   {
-
-    //this function writes directly to screen
-    lcd_clrscr();
-
-    strcpy_P(stringBuffer, dfu_string);
-    lcd_puts(stringBuffer);
-
-}
-
 void LCD::displayPadEditMode(uint8_t padNumber)  {
 
     uint8_t size = 0;
@@ -798,6 +788,8 @@ void LCD::displayDeviceInfo()   {
     addNumberToCharArray(getSWversion(swVersion_minor), size);
     appendText(".", size);
     addNumberToCharArray(getSWversion(swVersion_revision), size);
+    if (getSWversion(swVersion_development))
+        appendText("d", size);
     updateDisplay(1, text, 0, true, size);
 
     size = 0;

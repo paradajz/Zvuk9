@@ -84,8 +84,6 @@ void globalInit() {
     sei();
     #endif
 
-    wait(1500);
-
     #ifdef MODULE_LCD
     display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());
     #endif

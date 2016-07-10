@@ -4,7 +4,7 @@
 
 #include "../../../../version/Firmware.h"
 #include "../../../../version/Hardware.h"
-#include "../../../../eeprom/EEPROMsettings.h"
+#include "../../../../eeprom/Configuration.h"
 #include "../../../../init/Init.h"
 
 #include "../functions/MenuFunctions.h"

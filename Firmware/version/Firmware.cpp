@@ -1,9 +1,9 @@
 #include "Firmware.h"
-#include "../eeprom/EEPROMsettings.h"
+#include "../eeprom/Configuration.h"
 
 #define VERSION_POINT_LOCATION  0x1DFF6
 #define CRC_LOCATION_FLASH      0x1DFFE
-#define CRC_LOCATION_EEPROM     EEPROM_SIZE-1   //write crc to last eeprom location
+#define CRC_LOCATION_EEPROM     EEPROM_SIZE-2   //write crc to last eeprom location
 
 bool checkNewRevision() {
 

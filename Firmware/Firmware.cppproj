@@ -187,10 +187,10 @@ call del version</PostBuildEvent>
     <Compile Include="eeprom\Defaults.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="eeprom\EEPROMsettings.cpp">
+    <Compile Include="eeprom\Configuration.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="eeprom\EEPROMsettings.h">
+    <Compile Include="eeprom\Configuration.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="eeprom\MemoryLayout.cpp">
@@ -200,9 +200,6 @@ call del version</PostBuildEvent>
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="eeprom\UniqueID.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="eeprom\VersionBlock.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hardware\adc\ADC.cpp">

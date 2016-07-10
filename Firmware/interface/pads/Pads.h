@@ -11,7 +11,7 @@
 #include "Calibration.h"
 #include "../../Types.h"
 #include "../../hardware/adc/ADC.h"
-#include "../../eeprom/EEPROMsettings.h"
+#include "../../eeprom/Configuration.h"
 #include "../../midi/MIDI.h"
 #include "../lcd/Macros.h"
 #include "../../hardware/timer/TimerObject.h"

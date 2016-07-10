@@ -31,8 +31,8 @@ const char calibrationMode_interactive[] PROGMEM = "Interactive";
 const char calibrationMode_manual[] PROGMEM = "Manual";
 
 //device info options
-const char deviceInfo_swVersion[] PROGMEM = "SW version: ";
-const char deviceInfo_hwVersion[] PROGMEM = "HW version: ";
+const char deviceInfo_swVersion[] PROGMEM = "Software: ";
+const char deviceInfo_hwVersion[] PROGMEM = "Hardware: ";
 
 //factory reset options
 const char factoryReset_partial_string[] PROGMEM = "Partial reset";

@@ -31,7 +31,8 @@ EEPROM addresses of parameters.
 #ifndef EEPROM_H_
 #define EEPROM_H_
 
-#define EEPROM_SIZE 4095
+#define EEPROM_SIZE     4096
+#define START_OFFSET    5
 
 typedef enum {
 
@@ -54,10 +55,10 @@ typedef struct {
 
 //default controller settings
 
-class EEPROMsettings {
+class Configuration {
 
     public:
-    EEPROMsettings();
+    Configuration();
     void clearEEPROM();
     void init();
     void readMemory();
@@ -110,7 +111,12 @@ class EEPROMsettings {
     private:
     inline uint16_t getSectionAddress(uint8_t blockID, uint8_t sectionID)   {
 
-        return blocks[blockID].blockStartAddress+blocks[blockID].sectionAddress[sectionID];
+        return blocks[blockID].blockStartAddress+blocks[blockID].sectionAddress[sectionID] + START_OFFSET;
+
+    };
+    inline uint16_t getBlockAddress(uint8_t blockID)   {
+
+        return blocks[blockID].blockStartAddress+START_OFFSET;
 
     };
     inline uint8_t getParameterType(uint8_t blockID, uint8_t sectionID) {
@@ -120,6 +126,8 @@ class EEPROMsettings {
     }
     void initProgramSettings(bool partialReset);
     void initUserScales(bool partialReset);
+    void checkReset();
+    void writeSignature();
     void initPadCalibration(bool partialReset);
 
     struct {
@@ -133,6 +141,6 @@ class EEPROMsettings {
 
 };
 
-extern EEPROMsettings configuration;
+extern Configuration configuration;
 
 #endif

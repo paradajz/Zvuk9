@@ -1,12 +1,13 @@
 #ifndef EEPROMSETTINGS_H_
 #define EEPROMSETTINGS_H_
 
-#include "EEPROMsettings.h"
+#include "Configuration.h"
 #include <util/delay.h>
 #include "../midi/MIDI_parameters.h"
 #include "../version/Firmware.h"
+#include "../BitManipulation.h"
 
-void EEPROMsettings::factoryReset(factoryResetType_t type)   {
+void Configuration::factoryReset(factoryResetType_t type)   {
 
     #ifdef MODULE_LCD
     lcd_clrscr();
@@ -51,7 +52,7 @@ void EEPROMsettings::factoryReset(factoryResetType_t type)   {
         case factoryReset_wipeRestore:
         case factoryReset_restore:
         #ifdef MODULE_LCD
-        lcd_puts("Full restore");
+        lcd_puts("Full restore   ");
         #endif
         initSettings(false);
         break;
@@ -75,54 +76,92 @@ void EEPROMsettings::factoryReset(factoryResetType_t type)   {
         _delay_ms(2000);
     #endif
 
-    eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_0, EEPROM_UNIQUE_ID);
-    eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_1, EEPROM_UNIQUE_ID);
-    eeprom_update_byte((uint8_t*)UNIQUE_ID_LOCATION_2, EEPROM_UNIQUE_ID);
+    writeSignature();
 
 }
 
-EEPROMsettings::EEPROMsettings()    {
+void Configuration::writeSignature()    {
+
+    uint8_t unique_id_invert = invertByte(EEPROM_UNIQUE_ID);
+
+    for (int i=0; i<START_OFFSET; i++)
+        (i%2) ? eeprom_update_byte((uint8_t*)i, unique_id_invert) : eeprom_update_byte((uint8_t*)i, EEPROM_UNIQUE_ID);
+
+}
+
+Configuration::Configuration()    {
 
     //def const
 
 }
 
-void EEPROMsettings::init() {
+void Configuration::init() {
 
     createMemoryLayout();
     createSectionAddresses();
 
-    checkNewRevision();
+    checkReset();
+    if (checkNewRevision()) {
 
-    //if ID bytes haven't been written to EEPROM on specified address,
-    //write default configuration to EEPROM
-    if  (!(
-
-    (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_0) == EEPROM_UNIQUE_ID) &&
-    (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_1) == EEPROM_UNIQUE_ID) &&
-    (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_2) == EEPROM_UNIQUE_ID)
-
-    ))  {
-
-        if (
-        //if all three IDs are the same, there's no point in clearing eeprom first
-        ((eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_0)) == (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_1))) &&
-        ((eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_0)) == (eeprom_read_byte((uint8_t*)UNIQUE_ID_LOCATION_2)))
-
-        )   factoryReset(factoryReset_restore);
-        else factoryReset(factoryReset_wipeRestore);
+        
 
     }
 
 }
 
-void EEPROMsettings::readMemory()   {
+void Configuration::checkReset()    {
+
+    //if ID bytes haven't been written to EEPROM on specified address,
+    //write default configuration to EEPROM
+
+    bool factory_reset = false;
+    uint8_t unique_id_invert = invertByte(EEPROM_UNIQUE_ID);
+    uint8_t checkByte;
+
+    //first check if all bytes up to START_OFFSET address match unique id
+    for (int i=0; i<START_OFFSET; i++)  {
+
+        (i%2) ? checkByte = unique_id_invert : checkByte = EEPROM_UNIQUE_ID;
+
+        if (eeprom_read_byte((uint8_t*)i) != checkByte)  {
+
+            factory_reset = true;
+            break;
+
+        }
+
+    }
+
+    //id bytes don't match
+    //check if all bytes up to START_OFFSET are same
+    //if they're the same, eeprom has been cleared before, only restore configuration
+    //else clear eeprom and apply config
+    if (factory_reset)  {
+
+        for (int i=0; i<START_OFFSET-1; i++)  {
+
+            if (eeprom_read_byte((uint8_t*)i) != invertByte(eeprom_read_byte((uint8_t*)i+1)))    {
+
+                factoryReset(factoryReset_wipeRestore);
+                return;
+
+            }
+
+        }
+
+        factoryReset(factoryReset_restore);
+
+    }
+
+}
+
+void Configuration::readMemory()   {
 
     #if MODE_SERIAL > 0
         printf("EEPROM memory readout\n");
         printf("----------------------------------------\n");
 
-        for (int i=0; i<4096; i++)
+        for (int i=0; i<EEPROM_SIZE; i++)
             printf("%d: %d\n", i, eeprom_read_byte((uint8_t*)i));
 
         printf("----------------------------------------\n");
@@ -130,13 +169,13 @@ void EEPROMsettings::readMemory()   {
 
 }
 
-void EEPROMsettings::clearEEPROM()  {
+void Configuration::clearEEPROM()  {
 
     for (int i=0; i<EEPROM_SIZE; i++) eeprom_update_byte((uint8_t*)i, 0xFF);
 
 }
 
-void EEPROMsettings::createSectionAddresses()   {
+void Configuration::createSectionAddresses()   {
 
     for (int i=0; i<CONF_BLOCKS; i++)  {
 
@@ -199,7 +238,7 @@ void EEPROMsettings::createSectionAddresses()   {
 
 }
 
-void EEPROMsettings::initSettings(bool partialReset) {
+void Configuration::initSettings(bool partialReset) {
 
     //we need to init each block and section with data
     //program area
@@ -209,11 +248,11 @@ void EEPROMsettings::initSettings(bool partialReset) {
 
 }
 
-void EEPROMsettings::initProgramSettings(bool partialReset) {
+void Configuration::initProgramSettings(bool partialReset) {
 
     if (partialReset && blocks[CONF_BLOCK_PROGRAM].resetEnabled) return;
 
-    uint16_t blockStartAddress = blocks[CONF_BLOCK_PROGRAM].blockStartAddress;
+    uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_PROGRAM);
 
     uint16_t parameterAddress = blocks[CONF_BLOCK_PROGRAM].sectionAddress[programLastActiveProgramSection] + blockStartAddress;
 
@@ -272,11 +311,11 @@ void EEPROMsettings::initProgramSettings(bool partialReset) {
 
 }
 
-void EEPROMsettings::initUserScales(bool partialReset)   {
+void Configuration::initUserScales(bool partialReset)   {
 
     if (partialReset && blocks[CONF_BLOCK_USER_SCALE].resetEnabled) return;
 
-    uint16_t blockStartAddress = blocks[CONF_BLOCK_USER_SCALE].blockStartAddress;
+    uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_USER_SCALE);
     uint16_t parameterAddress;
 
     for (int i=0; i<NUMBER_OF_USER_SCALES; i++) {
@@ -301,11 +340,11 @@ void EEPROMsettings::initUserScales(bool partialReset)   {
 
 }
 
-void EEPROMsettings::initPadCalibration(bool partialReset)   {
+void Configuration::initPadCalibration(bool partialReset)   {
 
     if (partialReset && blocks[CONF_BLOCK_PAD_CALIBRATION].resetEnabled) return;
 
-    uint16_t blockStartAddress = blocks[CONF_BLOCK_PAD_CALIBRATION].blockStartAddress;
+    uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_PAD_CALIBRATION);
     uint16_t parameterAddress;
 
     //set padCalibrationStatus to false by default
@@ -362,7 +401,7 @@ void EEPROMsettings::initPadCalibration(bool partialReset)   {
 
 }
 
-bool EEPROMsettings::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue)    {
+bool Configuration::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue)    {
 
     uint16_t startAddress = getSectionAddress(blockID, sectionID);
 
@@ -406,6 +445,6 @@ bool EEPROMsettings::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t 
 
 }
 
-EEPROMsettings configuration;
+Configuration configuration;
 
 #endif

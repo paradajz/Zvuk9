@@ -14,6 +14,6 @@ const char editingPad_string[] PROGMEM = "Editing pad";
 const char aftertouchClear_string[] PROGMEM = "     ";
 const char midiChannelClear_string[] PROGMEM = "    ";
 const char midiChannel_string[] PROGMEM = "ch";
-const char dfu_string[] PROGMEM = "Firmware update mode";
+const char firmware_updated[] PROGMEM = "Firmware updated!";
 
 #endif
