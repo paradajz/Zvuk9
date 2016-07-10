@@ -428,6 +428,28 @@ void LCD::displayPadEditChangeParametersError()  {
 
 }
 
+void LCD::displayFirmwareUpdated()  {
+
+    strcpy_P(stringBuffer, firmware_updated);
+    uint8_t size = progmemCharArraySize(firmware_updated);
+    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+
+    size = 0;
+    strcpy_P(stringBuffer, deviceInfo_swVersion);
+    size += progmemCharArraySize(deviceInfo_swVersion);
+    addNumberToCharArray(getSWversion(swVersion_major), size);
+    appendText(".", size);
+    addNumberToCharArray(getSWversion(swVersion_minor), size);
+    appendText(".", size);
+    addNumberToCharArray(getSWversion(swVersion_revision), size);
+    if (getSWversion(swVersion_development))
+        appendText("d", size);
+    updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+
+
+
+}
+
 //text
 
 void LCD::displayProgramAndPreset(uint8_t program, uint8_t preset)   {

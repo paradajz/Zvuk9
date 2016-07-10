@@ -63,7 +63,6 @@ class LCD   {
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayPadEditMode(uint8_t padNumber);
     void displayShiftMode(shiftMode_t type);
-
     void displayOutOfRange();
     void displayMaxNotesSet();
     void displayPadReleaseError(padReleaseError_t error);

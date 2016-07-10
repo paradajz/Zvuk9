@@ -92,6 +92,12 @@ void globalInit() {
     buttons.init();
     #endif
 
+    if (checkNewRevision()) {
+
+        display.displayFirmwareUpdated();
+
+    }
+
 }
 
 void reboot()   {

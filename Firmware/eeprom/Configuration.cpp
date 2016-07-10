@@ -101,11 +101,6 @@ void Configuration::init() {
     createSectionAddresses();
 
     checkReset();
-    if (checkNewRevision()) {
-
-        
-
-    }
 
 }
 
