@@ -6,3 +6,4 @@ Firmware/Firmware.componentinfo.xml
 Bootloader/Bootloader.componentinfo.xml
 Bootloader/Debug/
 Bootloader/doxyfile
+FLASH.bin
