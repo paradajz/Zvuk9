@@ -52,17 +52,6 @@ void LCD::displayOutOfRange()    {
 
 }
 
-void LCD::displayModifierEnabled()   {
-
-    strcpy_P(stringBuffer, modifierEnabled_string);
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, progmemCharArraySize(modifierEnabled_string));
-
-    strcpy_P(stringBuffer, emptyLine_string);
-    uint8_t size = NUMBER_OF_LCD_COLUMNS;
-    updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
-
-}
-
 void LCD::displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t padNumber) {
 
     uint8_t size = 0;
