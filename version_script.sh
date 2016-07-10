@@ -30,5 +30,11 @@ else
 revisionCheck_lastTag
 fi
 
+if [ -z "$(git status --porcelain)" ]; then 
+  development=0
+else 
+  development=1
+fi
+
 #output $major, $minor and $revision into separate files
-echo "$major,$minor,$revision" > version
+echo "$major,$minor,$revision, $development" > version
