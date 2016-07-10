@@ -92,7 +92,7 @@ void EEPROMsettings::init() {
     createMemoryLayout();
     createSectionAddresses();
 
-    versionControl.checkNewRevision();
+    checkNewRevision();
 
     //if ID bytes haven't been written to EEPROM on specified address,
     //write default configuration to EEPROM
@@ -365,6 +365,16 @@ void EEPROMsettings::initPadCalibration(bool partialReset)   {
 bool EEPROMsettings::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue)    {
 
     uint16_t startAddress = getSectionAddress(blockID, sectionID);
+
+    if (startAddress > EEPROM_SIZE) {
+
+        #if MODE_SERIAL > 0
+            printf("Requested address out of EEPROM memory range\n");
+        #endif
+        return 0;
+
+    }
+
     uint8_t parameterType = getParameterType(blockID, sectionID);
 
     uint8_t arrayIndex;

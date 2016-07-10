@@ -1,45 +1,32 @@
 #include "Firmware.h"
+#include "../eeprom/EEPROMsettings.h"
 
-VersionControl::VersionControl()    {
+#define VERSION_POINT_LOCATION  0x1DFF8
+#define CRC_LOCATION_FLASH      0x1DFFE
+#define CRC_LOCATION_EEPROM     EEPROM_SIZE-1   //write crc to last eeprom location
 
-    //init
-    firmwareVersion.major = FIRMWARE_VERSION_MAJOR;
-    firmwareVersion.minor = 0;
+bool checkNewRevision() {
 
-}
+    //current app crc is written to last flash location
+    //previous crc is stored into eeprom
+    //if two differ, app has changed
 
-bool VersionControl::checkNewRevision() {
+    uint16_t crc_eeprom = eeprom_read_word((uint16_t*)CRC_LOCATION_EEPROM);
+    uint16_t crc_flash = pgm_read_word_far(CRC_LOCATION_FLASH);
 
-    uint16_t crc_old = eeprom_read_word((uint16_t*)EEPROM_CRC_ADDRESS);
-    uint16_t crc_hex = pgm_read_word_far(LAST_FLASH_ADDRESS);
+    if (crc_eeprom != crc_flash)   {
 
-    if (crc_old != crc_hex)   {
-
-        eeprom_update_word((uint16_t*)EEPROM_CRC_ADDRESS, crc_hex);
+        eeprom_update_word((uint16_t*)CRC_LOCATION_EEPROM, crc_flash);
         return true;
 
     }   return false;
 
-}
-
-uint8_t VersionControl::getSWversion(swVersion_t point) {
-
-    switch(point)   {
-
-        case swVersion_major:
-        return firmwareVersion.major;
-
-        case swVersion_minor:
-        return firmwareVersion.minor;
-
-        case swVersion_revision:
-        return firmwareVersion.revision;
-
-        default:
-        return 0;
-
-    }
+    return false;
 
 }
 
-VersionControl versionControl;
+uint16_t getSWversion(swVersion_t point) {
+
+    return pgm_read_word_far(VERSION_POINT_LOCATION+(uint8_t)point*2);
+
+}

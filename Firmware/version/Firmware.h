@@ -11,29 +11,7 @@
 
 #include <inttypes.h>
 
-#define FIRMWARE_VERSION_MAJOR      0
-
-#define LAST_FLASH_ADDRESS          0x1DFFE
-#define EEPROM_CRC_ADDRESS          4000
-
-class VersionControl {
-
-    public:
-    VersionControl();
-    bool checkNewRevision();
-    uint8_t getSWversion(swVersion_t point);
-
-    private:
-    struct {
-
-        uint8_t major;
-        uint8_t minor;
-        uint8_t revision;
-
-    } firmwareVersion;
-
-};
-
-extern VersionControl versionControl;
+bool checkNewRevision();
+uint16_t getSWversion(swVersion_t point);
 
 #endif

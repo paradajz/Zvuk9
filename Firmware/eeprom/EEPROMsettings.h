@@ -31,7 +31,7 @@ EEPROM addresses of parameters.
 #ifndef EEPROM_H_
 #define EEPROM_H_
 
-#define EEPROM_SIZE                             4096
+#define EEPROM_SIZE 4095
 
 typedef enum {
 
@@ -80,6 +80,14 @@ class EEPROMsettings {
             arrayIndex = parameterID/8;
             parameterIndex = parameterID - 8*arrayIndex;
             startAddress += arrayIndex;
+            if (startAddress > EEPROM_SIZE) {
+
+                #if MODE_SERIAL > 0
+                    printf("Requested address out of EEPROM memory range\n");
+                #endif
+                return 0;
+
+            }
             return bitRead(eeprom_read_byte((uint8_t*)startAddress), parameterIndex);
             break;
 
@@ -113,6 +121,15 @@ class EEPROMsettings {
     void initProgramSettings(bool partialReset);
     void initUserScales(bool partialReset);
     void initPadCalibration(bool partialReset);
+
+    struct {
+
+        uint8_t major;
+        uint8_t minor;
+        uint8_t revision;
+        uint16_t crc;
+
+    } firmwareVersion;
 
 };
 

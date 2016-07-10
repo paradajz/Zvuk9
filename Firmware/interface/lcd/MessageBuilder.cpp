@@ -793,11 +793,11 @@ void LCD::displayDeviceInfo()   {
     uint8_t size = 0;
     strcpy_P(stringBuffer, deviceInfo_swVersion);
     size += progmemCharArraySize(deviceInfo_swVersion);
-    addNumberToCharArray(versionControl.getSWversion(swVersion_major), size);
+    addNumberToCharArray(getSWversion(swVersion_major), size);
     appendText(".", size);
-    addNumberToCharArray(versionControl.getSWversion(swVersion_minor), size);
+    addNumberToCharArray(getSWversion(swVersion_minor), size);
     appendText(".", size);
-    addNumberToCharArray(versionControl.getSWversion(swVersion_revision), size);
+    addNumberToCharArray(getSWversion(swVersion_revision), size);
     updateDisplay(1, text, 0, true, size);
 
     size = 0;

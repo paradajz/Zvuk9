@@ -201,6 +201,9 @@ call version_append.exe</PostBuildEvent>
     <Compile Include="eeprom\UniqueID.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="eeprom\VersionBlock.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="hardware\adc\ADC.cpp">
       <SubType>compile</SubType>
     </Compile>
