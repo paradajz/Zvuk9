@@ -171,7 +171,8 @@ call cd $(SolutionDir)
 call "C:\Program Files\Git\bin\sh.exe" -l "$(SolutionDir)\version_script.sh"
 
 REM calling version_append
-call version_append.exe</PostBuildEvent>
+call version_append.exe
+call del version</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BitManipulation.h">

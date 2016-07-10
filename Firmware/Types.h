@@ -276,7 +276,8 @@ typedef enum {
 
     swVersion_major,
     swVersion_minor,
-    swVersion_revision
+    swVersion_revision,
+    swVersion_development
 
 } swVersion_t;
 

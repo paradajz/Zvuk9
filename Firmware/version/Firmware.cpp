@@ -1,7 +1,7 @@
 #include "Firmware.h"
 #include "../eeprom/EEPROMsettings.h"
 
-#define VERSION_POINT_LOCATION  0x1DFF8
+#define VERSION_POINT_LOCATION  0x1DFF6
 #define CRC_LOCATION_FLASH      0x1DFFE
 #define CRC_LOCATION_EEPROM     EEPROM_SIZE-1   //write crc to last eeprom location
 
