@@ -163,12 +163,12 @@
         <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
       </AvrGccCpp>
     </ToolchainSettings>
-    <PostBuildEvent>REM converting hex to bin and adding crc
-call "D:\Applications\AVRdude+AVRsize\srec_cat.exe" "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" -intel -fill 0xFF 0x0000 0x1DFFE -Cyclic_Redundancy_Check_16_Big_Endian 0x1DFFE -XMODEM -o "$(SolutionDir)\FLASH.bin" -binary
-
-REM running version script
+    <PostBuildEvent>REM running version script
 call cd $(SolutionDir)
 call "C:\Program Files\Git\bin\sh.exe" -l "$(SolutionDir)\version_script.sh"
+
+REM converting hex to bin and adding crc
+call "D:\Applications\AVRdude+AVRsize\srec_cat.exe" "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" -intel -fill 0xFF 0x0000 0x1DFFE -Cyclic_Redundancy_Check_16_Big_Endian 0x1DFFE -XMODEM -o "$(SolutionDir)\FLASH.bin" -binary
 
 REM calling version_append
 call version_append.exe
