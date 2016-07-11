@@ -12,7 +12,6 @@ typedef enum {
     userMenuItem_pressureSensitivity_1,
     userMenuItem_pressureSensitivity_2,
     userMenuItem_pressureSensitivity_3,
-    userMenuItem_pressureSensitivity_4,
 
     userMenuItem_pressureCurve_linear,
     userMenuItem_pressureCurve_log,

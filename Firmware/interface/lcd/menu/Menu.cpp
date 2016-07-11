@@ -296,7 +296,7 @@ void Menu::confirmOption(bool confirm)  {
             if (menuItem[indexes[currentOptionIndex]].conditionCheck)   {
 
                 //run function without setting any flag or menu title
-                if (menuItem[indexes[currentOptionIndex]].function())   {
+                if (menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument))   {
 
                     //do nothing
 
@@ -308,7 +308,7 @@ void Menu::confirmOption(bool confirm)  {
 
                     setMenuTitle(false);
                     functionRunning = true;
-                    menuItem[indexes[currentOptionIndex]].function();
+                    menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
 
                 }
 

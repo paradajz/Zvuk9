@@ -43,7 +43,7 @@ class Menu : LCD {
     void getMenuItems();
     uint8_t getMenuSize();
 
-    typedef bool (*actionPointer)();
+    typedef bool (*actionPointer)(uint8_t arg);
 
     typedef struct {
 
@@ -54,6 +54,8 @@ class Menu : LCD {
         //pointer to string to show item name
         const char *stringPointer;
         bool conditionCheck;
+        bool checkable;
+        uint8_t argument;
 
     } menuItem_t;
 

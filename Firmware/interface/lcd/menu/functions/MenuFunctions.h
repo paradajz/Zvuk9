@@ -44,31 +44,17 @@
     //SREG = curr_int;
 //}
 
-void factory_reset(factoryResetType_t type);
+bool factoryReset(uint8_t type);
 
-bool deviceInfo();
+bool deviceInfo(uint8_t arg = 0);
 
-bool padEditMode();
+bool padEditMode(uint8_t arg = 0);
 
-bool partialReset();
+bool checkCalibration(uint8_t arg = 0);
 
-bool fullReset();
+bool enableCalibration(uint8_t type);
 
-bool checkCalibration();
-
-bool enableCalibration_x();
-
-bool enableCalibration_y();
-
-bool enableCalibration_z();
-
-bool midiChannelMode();
-
-bool noteShiftMode();
-
-bool octaveShiftMode();
-
-bool channelShiftMode();
+bool changeOctaveButtons(uint8_t arg = 0);
 
 #endif
 #endif

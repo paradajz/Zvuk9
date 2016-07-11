@@ -42,14 +42,13 @@ const char confirm_partial_reset[] PROGMEM = "Confirm partial rst";
 const char confirm_full_reset[] PROGMEM = "Confirm full rst";
 const char back_option[] PROGMEM = "Back";
 
-const char pressure_sensitivity_1[] PROGMEM = "Level 1";
-const char pressure_sensitivity_2[] PROGMEM = "Level 2";
-const char pressure_sensitivity_3[] PROGMEM = "Level 3";
-const char pressure_sensitivity_4[] PROGMEM = "Level 4";
+const char pressure_sensitivity_1[] PROGMEM = "Soft";
+const char pressure_sensitivity_2[] PROGMEM = "Medium";
+const char pressure_sensitivity_3[] PROGMEM = "Hard";
 
 const char pressure_curve_lin[] PROGMEM = "Linear";
-const char pressure_curve_log[] PROGMEM = "Logarithmic";
-const char pressure_curve_inv_log[] PROGMEM = "Inv. logarithmic";
+const char pressure_curve_log[] PROGMEM = "Log.";
+const char pressure_curve_inv_log[] PROGMEM = "Inv. log.";
 
 const char midiSettings_midiChannel[] PROGMEM = "Channel";
 const char midiSettings_atouchType[] PROGMEM = "Aftertouch type";
@@ -62,7 +61,10 @@ const char aftertouchType_poly[] PROGMEM = "Poly";
 const char enabled_string[] PROGMEM = "Enabled";
 const char disabled_string[] PROGMEM = "Disabled";
 
-const char noteOff_zeroVel[] PROGMEM = "On channel, 0 vel";
+const char noteOff_zeroVel[] PROGMEM = "On channel/0 vel";
 const char noteOff_offChannel[] PROGMEM = "Off channel";
+
+const char checked_string[] PROGMEM = "[x]";
+const char unchecked_string[] PROGMEM = "[ ]";
 
 #endif

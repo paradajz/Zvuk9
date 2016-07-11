@@ -15,11 +15,13 @@ void Menu::createQuickMenuLayout()   {
     {
         menuItem[quickMenuItem_us_octaveShift].stringPointer = shiftMode_octave_string;
         menuItem[quickMenuItem_us_octaveShift].level = 1;
-        menuItem[quickMenuItem_us_octaveShift].function = octaveShiftMode;
+        menuItem[quickMenuItem_us_octaveShift].function = changeOctaveButtons;
+        menuItem[quickMenuItem_us_octaveShift].argument = (uint8_t)shiftMode_octave;
 
         menuItem[quickMenuItem_us_midiChannelChange].stringPointer = shiftMode_midiChannel_string;
         menuItem[quickMenuItem_us_midiChannelChange].level = 2;
-        menuItem[quickMenuItem_us_midiChannelChange].function = channelShiftMode;
+        menuItem[quickMenuItem_us_midiChannelChange].function = changeOctaveButtons;
+        menuItem[quickMenuItem_us_midiChannelChange].argument = (uint8_t)shiftMode_channel;
 
         menuItem[quickMenuItem_us_padEditMode].stringPointer = padEditMode_string;
         menuItem[quickMenuItem_us_padEditMode].level = 3;
@@ -34,15 +36,18 @@ void Menu::createQuickMenuLayout()   {
     {
         menuItem[quickMenuItem_ps_octaveShift].stringPointer = shiftMode_octave_string;
         menuItem[quickMenuItem_ps_octaveShift].level = 1;
-        menuItem[quickMenuItem_ps_octaveShift].function = octaveShiftMode;
+        menuItem[quickMenuItem_ps_octaveShift].function = changeOctaveButtons;
+        menuItem[quickMenuItem_ps_octaveShift].argument = (uint8_t)shiftMode_octave;
 
         menuItem[quickMenuItem_ps_midiChannelChange].stringPointer = shiftMode_midiChannel_string;
         menuItem[quickMenuItem_ps_midiChannelChange].level = 2;
-        menuItem[quickMenuItem_ps_midiChannelChange].function = channelShiftMode;
+        menuItem[quickMenuItem_ps_midiChannelChange].function = changeOctaveButtons;
+        menuItem[quickMenuItem_ps_midiChannelChange].argument = (uint8_t)shiftMode_channel;
 
         menuItem[quickMenuItem_ps_noteShift].stringPointer = shiftMode_note_string;
         menuItem[quickMenuItem_ps_noteShift].level = 3;
-        menuItem[quickMenuItem_ps_noteShift].function = noteShiftMode;
+        menuItem[quickMenuItem_ps_noteShift].function = changeOctaveButtons;
+        menuItem[quickMenuItem_ps_noteShift].argument = (uint8_t)shiftMode_octave;
 
         menuItem[quickMenuItem_ps_userMenu].stringPointer = menuType_user;
         menuItem[quickMenuItem_ps_userMenu].level = 4;

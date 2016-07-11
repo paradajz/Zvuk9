@@ -2,41 +2,42 @@
 
 #ifdef MENU_FUNCTIONS_H_
 
-void factory_reset(factoryResetType_t type) {
+bool factoryReset(uint8_t type) {
 
     #ifdef MODULE_LEDS
-    leds.setFadeSpeed(1);
-    leds.allLEDsOff();
+        leds.setFadeSpeed(1);
+        leds.allLEDsOff();
     #endif
-    configuration.factoryReset(type);
+    configuration.factoryReset((factoryResetType_t)type);
     reboot();
+    return true;
 
 }
 
-bool deviceInfo()   {
+bool deviceInfo(uint8_t arg)   {
 
     display.displayDeviceInfo();
     return true;
 
 }
 
-bool partialReset() {
+bool enableCalibration(uint8_t type)     {
 
-    factory_reset(factoryReset_partial);
-    return true;
+    switch(type)    {
 
-}
+        case coordinateX:
+        case coordinateY:
+        case coordinateZ:
+        //nothing
+        break;
 
-bool fullReset()    {
+        default:
+        //wrong type
+        return false;
 
-    factory_reset(factoryReset_restore);
-    return true;
+    }
 
-}
-
-bool enableCalibration_x()    {
-
-    pads.setCalibrationMode(true, coordinateX);
+    pads.setCalibrationMode(true, (coordinateType_t)type);
     display.clearLine(1);
     display.clearLine(2);
     display.clearLine(3);
@@ -44,27 +45,7 @@ bool enableCalibration_x()    {
 
 }
 
-bool enableCalibration_y()    {
-
-    pads.setCalibrationMode(true, coordinateY);
-    display.clearLine(1);
-    display.clearLine(2);
-    display.clearLine(3);
-    return true;
-
-}
-
-bool enableCalibration_z()  {
-
-    pads.setCalibrationMode(true, coordinateZ);
-    display.clearLine(1);
-    display.clearLine(2);
-    display.clearLine(3);
-    return true;
-
-}
-
-bool padEditMode()  {
+bool padEditMode(uint8_t arg)  {
 
     pads.setEditMode(true);
 
@@ -94,46 +75,41 @@ bool padEditMode()  {
 
 }
 
-bool octaveShiftMode()  {
+bool changeOctaveButtons(uint8_t arg)   {
 
-    pads.setNoteShiftMode(shiftMode_octave);
-    display.displayShiftMode(shiftMode_octave);
+    switch((shiftMode_t)arg)    {
 
-    leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-    leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
+        case shiftMode_note:
+        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
+        break;
 
-    menu.exitMenu();
-    return true;
 
-}
+        case shiftMode_octave:
+        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
+        break;
 
-bool noteShiftMode()    {
+        case shiftMode_channel:
+        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
+        break;
 
-    pads.setNoteShiftMode(shiftMode_note);
-    display.displayShiftMode(shiftMode_note);
+        default:
+        return false;
 
-    leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-    leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
+    }
 
-    menu.exitMenu();
-    return true;
-
-}
-
-bool channelShiftMode()    {
-
-    pads.setNoteShiftMode(shiftMode_channel);
-    display.displayShiftMode(shiftMode_channel);
-
-    leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-    leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
+    pads.setNoteShiftMode((shiftMode_t)arg);
+    display.displayShiftMode((shiftMode_t)arg);
 
     menu.exitMenu();
     return true;
 
+
 }
 
-bool checkCalibration() {
+bool checkCalibration(uint8_t arg) {
 
     if (!pads.allPadsReleased())    {
 
@@ -144,4 +120,5 @@ bool checkCalibration() {
     }   return true;
 
 }
+
 #endif
