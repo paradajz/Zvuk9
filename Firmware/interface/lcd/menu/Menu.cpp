@@ -162,10 +162,6 @@ void Menu::updateMenuScreen()   {
 
     uint8_t currentOption = menuHierarchyPosition % 10;
 
-    #if MODE_SERIAL > 0
-    printf("Updating menu screen\n");
-    #endif
-
     //we can display up to three options/suboptions at the time
     //newSelectedOption needs to be subtracted by 1 since indexing uses 1 as starting point
     uint8_t markerOption = ((currentOption-1) > (NUMBER_OF_LCD_ROWS-2)) ? (NUMBER_OF_LCD_ROWS-2) : (currentOption-1);
@@ -225,10 +221,6 @@ void Menu::changeOption(bool direction) {
         //we need to update global hierarchy position
         //to do that, first we get rid of current position and then add new one
         menuHierarchyPosition = (menuHierarchyPosition-currentOption)+newSelectedOption;
-
-        #if MODE_SERIAL > 0
-            printf("Selected option: %d\n", menuHierarchyPosition%10);
-        #endif
 
         updateMenuScreen();
 

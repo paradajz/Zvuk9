@@ -694,6 +694,9 @@ call del version</PostBuildEvent>
     <Compile Include="interface\lcd\strings\PadAmount.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\lcd\strings\Reset.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\lcd\strings\Scales.h">
       <SubType>compile</SubType>
     </Compile>

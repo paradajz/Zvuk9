@@ -11,6 +11,7 @@ EEPROM addresses of parameters.
 #include "../Modules.h"
 #include "UniqueID.h"
 #include "../Debug.h"
+#include "../interface/lcd/LCD.h"
 
 #if MODE_SERIAL > 0
 #include "../vserial/Serial.h"
@@ -55,13 +56,12 @@ typedef struct {
 
 //default controller settings
 
-class Configuration {
+class Configuration : LCD {
 
     public:
     Configuration();
     void clearEEPROM();
     void init();
-    void readMemory();
     void initSettings(bool partialReset);
     void factoryReset(factoryResetType_t type);
     friend void factory_reset(factoryResetType_t type);

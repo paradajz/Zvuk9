@@ -81,9 +81,7 @@ bool padEditMode()  {
         //normally, this is called in automatically in Pads.cpp
         //but on first occasion call it manually
         #if MODE_SERIAL > 0
-            printf("----------------------------------------\n");
             printf("Pad edit mode\n");
-            printf("----------------------------------------\n");
         #endif
         pads.setupPadEditMode(pads.getLastTouchedPad());
 

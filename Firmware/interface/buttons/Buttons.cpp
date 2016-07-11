@@ -139,9 +139,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
         if (!state) {
 
             type = transportPlay;
-            #if MODE_SERIAL > 0
-                printf("Transport Control Play\n");
-            #else
+            #if MODE_SERIAL < 1
                 sysExArray[4] = 0x02;
             #endif
             #ifdef MODULE_LEDS
@@ -155,9 +153,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
         if (!state)    {
 
             type = transportStop;
-            #if MODE_SERIAL > 0
-                printf("Transport Control Stop\n");
-            #else
+            #if MODE_SERIAL < 1
                 sysExArray[4] = 0x01;
             #endif
             #ifdef MODULE_LEDS
@@ -181,9 +177,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                 if (recordState == ledIntensityFull) {
 
                     recordState = ledIntensityOff;
-                    #if MODE_SERIAL > 0
-                        printf("Transport Control Record Stop\n");
-                    #else
+                    #if MODE_SERIAL < 1
                         sysExArray[4] = 0x07;
                     #endif
                     displayState = false;
@@ -191,9 +185,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                 }   else if (recordState == ledIntensityOff) {
 
                     recordState = ledIntensityFull;
-                    #if MODE_SERIAL > 0
-                        printf("Transport Control Record Start\n");
-                    #else
+                    #if MODE_SERIAL < 1
                         sysExArray[4] = 0x06;
                     #endif
                     displayState = true;
@@ -283,9 +275,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     ////normally, this is called in automatically in Pads.cpp
                     ////but on first occasion call it manually
                     //#if MODE_SERIAL > 0
-                        //printf("----------------------------------------\n");
                         //printf("Pad edit mode\n");
-                        //printf("----------------------------------------\n");
                     //#endif
                     //pads.setupPadEditMode(pads.getLastTouchedPad());
 //

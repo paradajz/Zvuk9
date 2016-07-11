@@ -10,30 +10,20 @@
 void Configuration::factoryReset(factoryResetType_t type)   {
 
     #ifdef MODULE_LCD
-    lcd_clrscr();
-    lcd_gotoxy(0, 0);
-    lcd_puts("Factory reset in");
-
-    for (int i=3; i>=1; i--) {
-
-        lcd_gotoxy(17, 0);
-        lcd_putc(i+48);   //convert int to char, +48
-        _delay_ms(1000);
-
-    }
-
-    lcd_clrscr();
-    lcd_gotoxy(0, 0);
-    lcd_puts("Factory reset...");
-    lcd_gotoxy(0, 1);
+        strcpy_P(stringBuffer, restoringDefaults_string);
+        lcd_clrscr();
+        lcd_gotoxy(0, 0);
+        lcd_puts(stringBuffer);
+        lcd_gotoxy(0, 1);
+        _delay_ms(2000);
+        strcpy_P(stringBuffer, pleaseWait_string);
+        lcd_puts(stringBuffer);
+        _delay_ms(2000);
     #endif
 
     switch(type)    {
 
         case factoryReset_wipeRestore:
-        #ifdef MODULE_LCD
-        lcd_puts("Wiping memory");
-        #endif
         clearEEPROM();
         break;
 
@@ -43,40 +33,27 @@ void Configuration::factoryReset(factoryResetType_t type)   {
 
     }
 
-    #ifdef MODULE_LCD
-    lcd_gotoxy(0, 1);
-    #endif
-
     switch(type)    {
 
         case factoryReset_wipeRestore:
         case factoryReset_restore:
-        #ifdef MODULE_LCD
-        lcd_puts("Full restore   ");
-        #endif
         initSettings(false);
         break;
 
         case factoryReset_partial:
-        #ifdef MODULE_LCD
-        lcd_puts("Partial restore");
-        #endif
         initSettings(true);
         break;
 
     }
 
+    writeSignature();
+
     #ifdef MODULE_LCD
-        _delay_ms(2000);
-        lcd_clrscr();
-        lcd_gotoxy(0,0);
-        lcd_puts("Factory reset");
-        lcd_gotoxy(0, 1);
-        lcd_puts("finished!");
+        lcd_gotoxy(0,2);
+        strcpy_P(stringBuffer, complete_string);
+        lcd_puts(stringBuffer);
         _delay_ms(2000);
     #endif
-
-    writeSignature();
 
 }
 
@@ -147,20 +124,6 @@ void Configuration::checkReset()    {
         factoryReset(factoryReset_restore);
 
     }
-
-}
-
-void Configuration::readMemory()   {
-
-    #if MODE_SERIAL > 0
-        printf("EEPROM memory readout\n");
-        printf("----------------------------------------\n");
-
-        for (int i=0; i<EEPROM_SIZE; i++)
-            printf("%d: %d\n", i, eeprom_read_byte((uint8_t*)i));
-
-        printf("----------------------------------------\n");
-    #endif
 
 }
 

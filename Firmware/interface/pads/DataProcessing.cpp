@@ -208,9 +208,9 @@ bool Pads::checkAftertouch(uint8_t pad)  {
                             maxAftertouchValue = calibratedPressureAfterTouch;
                             returnValue = true;
 
-                            #if MODE_SERIAL > 0
-                                printf("Maximum channel aftertouch updated: %d", maxAftertouchValue);
-                            #endif
+                            //#if MODE_SERIAL > 0
+                                //printf("Maximum channel aftertouch updated: %d", maxAftertouchValue);
+                            //#endif
 
                         } else {
 
@@ -459,12 +459,12 @@ bool Pads::xyUpdated(uint8_t pad)  {
                 pads.calibrate(activeCalibration, lower, pad, minCalibrationValue);
                 pads.calibrate(activeCalibration, upper, pad, maxCalibrationValue);
 
-                #if MODE_SERIAL > 0
-                    printf("Calibrating pad %d\n", pad);
-                    printf("Minimum value: %d\n", minCalibrationValue);
-                    printf("Maximum value: %d\n", maxCalibrationValue);
-                    printf("Calibrated value: %d\n", scale_raw(medianValue, minCalibrationValue, maxCalibrationValue));
-                #endif
+                //#if MODE_SERIAL > 0
+                    //printf("Calibrating pad %d\n", pad);
+                    //printf("Minimum value: %d\n", minCalibrationValue);
+                    //printf("Maximum value: %d\n", maxCalibrationValue);
+                    //printf("Calibrated value: %d\n", scale_raw(medianValue, minCalibrationValue, maxCalibrationValue));
+                //#endif
 
             }
 

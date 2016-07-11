@@ -13,9 +13,7 @@ void Pads::getConfiguration()   {
 void Pads::getProgramParameters()   {
 
     #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
         printf("Printing out program settings\n");
-        printf("----------------------------------------\n");
     #endif
 
     activeProgram = configuration.readParameter(CONF_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
@@ -38,9 +36,7 @@ void Pads::getPadParameters()   {
     splitState = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
         printf("Printing out pad configuration\n");
-        printf("----------------------------------------\n");
     #endif
 
     if (!splitState)  {   //split off
@@ -68,21 +64,21 @@ void Pads::getPadParameters()   {
 
         }
 
-        #if MODE_SERIAL > 0
-            printf("X send enabled: %d\n", xSendEnabled[0]);
-            printf("Y send enabled: %d\n", ySendEnabled[0]);
-            printf("Note send enabled: %d\n", noteSendEnabled[0]);
-            printf("Aftertouch send enabled: %d\n", aftertouchSendEnabled[0]);
-            printf("CC X MIDI ID: %d\n", ccXPad[0]);
-            printf("CC Y MIDI ID: %d\n", ccYPad[0]);
-            printf("CC X lower limit: %d\n", ccXminPad[0]);
-            printf("CC X upper limit: %d\n", ccXmaxPad[0]);
-            printf("CC Y lower limit: %d\n", ccYminPad[0]);
-            printf("CC Y upper limit: %d\n", ccYmaxPad[0]);
-            printf("Pad curve for X: %d\n", padCurveX[0]);
-            printf("Pad curve for Y: %d\n", padCurveY[0]);
-            printf("MIDI channel: %d\n", midiChannel[0]);
-        #endif
+        //#if MODE_SERIAL > 0
+            //printf("X send enabled: %d\n", xSendEnabled[0]);
+            //printf("Y send enabled: %d\n", ySendEnabled[0]);
+            //printf("Note send enabled: %d\n", noteSendEnabled[0]);
+            //printf("Aftertouch send enabled: %d\n", aftertouchSendEnabled[0]);
+            //printf("CC X MIDI ID: %d\n", ccXPad[0]);
+            //printf("CC Y MIDI ID: %d\n", ccYPad[0]);
+            //printf("CC X lower limit: %d\n", ccXminPad[0]);
+            //printf("CC X upper limit: %d\n", ccXmaxPad[0]);
+            //printf("CC Y lower limit: %d\n", ccYminPad[0]);
+            //printf("CC Y upper limit: %d\n", ccYmaxPad[0]);
+            //printf("Pad curve for X: %d\n", padCurveX[0]);
+            //printf("Pad curve for Y: %d\n", padCurveY[0]);
+            //printf("MIDI channel: %d\n", midiChannel[0]);
+        //#endif
 
     }   else {  //split on
 
@@ -107,23 +103,23 @@ void Pads::getPadParameters()   {
                 padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
                 midiChannel[i]              = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
 
-                #if MODE_SERIAL > 0
-                    printf("Pad %d", i+1);
-
-                    printf("X send enabled: %d\n", xSendEnabled[i]);
-                    printf("Y send enabled: %d\n", ySendEnabled[i]);
-                    printf("Note send enabled: %d\n", noteSendEnabled[i]);
-                    printf("Aftertouch send enabled: %d\n", aftertouchSendEnabled[i]);
-                    printf("CC X MIDI ID: %d\n", ccXPad[i]);
-                    printf("CC Y MIDI ID: %d\n", ccYPad[i]);
-                    printf("CC X lower limit: %d\n", ccXminPad[i]);
-                    printf("CC X upper limit: %d\n", ccXmaxPad[i]);
-                    printf("CC Y lower limit: %d\n", ccYminPad[i]);
-                    printf("CC Y upper limit: %d\n", ccYmaxPad[i]);
-                    printf("Pad curve for X: %d\n", padCurveX[i]);
-                    printf("Pad curve for Y: %d\n", padCurveY[i]);
-                    printf("MIDI channel: %d\n", midiChannel[i]);
-                #endif
+                //#if MODE_SERIAL > 0
+                    //printf("Pad %d", i+1);
+//
+                    //printf("X send enabled: %d\n", xSendEnabled[i]);
+                    //printf("Y send enabled: %d\n", ySendEnabled[i]);
+                    //printf("Note send enabled: %d\n", noteSendEnabled[i]);
+                    //printf("Aftertouch send enabled: %d\n", aftertouchSendEnabled[i]);
+                    //printf("CC X MIDI ID: %d\n", ccXPad[i]);
+                    //printf("CC Y MIDI ID: %d\n", ccYPad[i]);
+                    //printf("CC X lower limit: %d\n", ccXminPad[i]);
+                    //printf("CC X upper limit: %d\n", ccXmaxPad[i]);
+                    //printf("CC Y lower limit: %d\n", ccYminPad[i]);
+                    //printf("CC Y upper limit: %d\n", ccYmaxPad[i]);
+                    //printf("Pad curve for X: %d\n", padCurveX[i]);
+                    //printf("Pad curve for Y: %d\n", padCurveY[i]);
+                    //printf("MIDI channel: %d\n", midiChannel[i]);
+                //#endif
 
         }
 
@@ -144,9 +140,7 @@ void Pads::getPadParameters()   {
 void Pads::getPresetParameters()    {
 
     #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
         printf("Printing out preset settings\n");
-        printf("----------------------------------------\n");
         printf("Scale: %d\n", activePreset);
     #endif
 
@@ -263,9 +257,7 @@ void Pads::generateScale(scale_t scale)    {
     }
 
     #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
         printf("Printing out notes for pads\n");
-        printf("----------------------------------------\n");
         for (int i=0; i<MAX_PADS; i++)    {
 
             printf("Pad %d: \n", i+1);
@@ -281,9 +273,7 @@ void Pads::generateScale(scale_t scale)    {
 void Pads::getPadLimits()   {
 
     #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
         printf("Printing out limits for pads\n");
-        printf("----------------------------------------\n");
     #endif
 
     getPressureLimits();
@@ -296,9 +286,7 @@ void Pads::getPadLimits()   {
 void Pads::getPressureLimits()  {
 
     #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
         printf("Printing out pressure limits for pads\n");
-        printf("----------------------------------------\n");
     #endif
 
     for (int i=0; i<MAX_PADS; i++) {
@@ -318,9 +306,7 @@ void Pads::getPressureLimits()  {
 void Pads::getXLimits()  {
 
     #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
         printf("Printing out X limits for pads\n");
-        printf("----------------------------------------\n");
     #endif
 
     for (int i=0; i<MAX_PADS; i++) {
@@ -340,9 +326,7 @@ void Pads::getXLimits()  {
 void Pads::getYLimits()  {
 
     #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
         printf("Printing out Y limits for pads\n");
-        printf("----------------------------------------\n");
     #endif
 
     for (int i=0; i<MAX_PADS; i++) {
@@ -362,9 +346,7 @@ void Pads::getYLimits()  {
 void Pads::getAftertouchLimits()    {
 
     #if MODE_SERIAL > 0
-        printf("----------------------------------------\n");
         printf("Printing out aftertouch limits for pads\n");
-        printf("----------------------------------------\n");
     #endif
 
     for (int i=0; i<MAX_PADS; i++)    {
