@@ -1,6 +1,6 @@
 #include "Pads.h"
 
-void Pads::sendX(uint8_t& pad)  {
+void Pads::sendX(uint8_t pad)  {
 
     #if MODE_SERIAL > 0
         printf("X for pad %d: ", pad);
@@ -12,7 +12,7 @@ void Pads::sendX(uint8_t& pad)  {
 
 }
 
-void Pads::sendY(uint8_t& pad)  {
+void Pads::sendY(uint8_t pad)  {
 
     #if MODE_SERIAL > 0
         printf("Y for pad %d: ", pad);
@@ -107,7 +107,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
 }
 
-void Pads::sendAftertouch(uint8_t& pad)  {
+void Pads::sendAftertouch(uint8_t pad)  {
 
     #if MODE_SERIAL < 1
         uint8_t aftertouchValue = lastMIDInoteState[pad] ? lastAftertouchValue[pad] : 0;

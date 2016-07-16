@@ -365,25 +365,25 @@ void Pads::getAftertouchLimits()    {
 
 }
 
-bool Pads::getCCXsendEnabled(uint8_t& padNumber)    {
+bool Pads::getCCXsendEnabled(uint8_t padNumber)    {
 
     return xSendEnabled[padNumber];
 
 }
 
-bool Pads::getCCYsendEnabled(uint8_t& padNumber)    {
+bool Pads::getCCYsendEnabled(uint8_t padNumber)    {
 
     return ySendEnabled[padNumber];
 
 }
 
-bool Pads::getNoteSendEnabled(uint8_t& padNumber)   {
+bool Pads::getNoteSendEnabled(uint8_t padNumber)   {
 
     return noteSendEnabled[padNumber];
 
 }
 
-bool Pads::getAfterTouchSendEnabled(uint8_t& padNumber) {
+bool Pads::getAfterTouchSendEnabled(uint8_t padNumber) {
 
     return aftertouchSendEnabled[padNumber];
 
@@ -462,7 +462,7 @@ uint8_t Pads::getCCvalue(ccType_t type, uint8_t padNumber)  {
 
 }
 
-uint8_t Pads::getMIDIchannel(uint8_t& pad) {
+uint8_t Pads::getMIDIchannel(uint8_t pad) {
 
     return midiChannel[pad];
 
@@ -494,7 +494,7 @@ note_t Pads::getActiveTonic()    {
 
 }
 
-scaleType_t Pads::getScaleType(int8_t& scale) {
+scaleType_t Pads::getScaleType(int8_t scale) {
 
     switch(scale)   {
 
@@ -528,7 +528,7 @@ bool Pads::isPredefinedScale(uint8_t scale) {
 
 }
 
-uint8_t Pads::getPadNote(uint8_t& pad, uint8_t& note) {
+uint8_t Pads::getPadNote(uint8_t pad, uint8_t note) {
 
     if (pad >= MAX_PADS) return 0;
     if (note >= NOTES_PER_PAD) return 0;

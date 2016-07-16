@@ -2,7 +2,7 @@
 
 bool editModeActivated;
 
-void Pads::setupPadEditMode(uint8_t& pad)    {
+void Pads::setupPadEditMode(uint8_t pad)    {
 
     #if MODE_SERIAL > 0
         printf("Editing pad %d\n", pad);
@@ -28,7 +28,7 @@ void Pads::setupPadEditMode(uint8_t& pad)    {
 
 }
 
-void Pads::displayActivePadNotes(uint8_t& pad) {
+void Pads::displayActivePadNotes(uint8_t pad) {
 
     //this will display all active notes currently assigned to pad while in pad edit mode
 

@@ -454,7 +454,7 @@ int8_t TimerObject::getEncoderState(uint8_t encoderNumber)  {
 
 }
 
-void TimerObject::setPWMsteps(uint8_t& steps)    {
+void TimerObject::setPWMsteps(uint8_t steps)    {
 
     pwmSteps = steps;
 

@@ -52,7 +52,7 @@ class Buttons   {
     void setButtonState(uint8_t buttonNumber, uint8_t state);
 
     //getters
-    note_t getTonicFromButton(uint8_t& buttonNumber);
+    note_t getTonicFromButton(uint8_t buttonNumber);
 
     //menu
     void checkMenu(menuType_t type);

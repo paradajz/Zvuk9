@@ -4,7 +4,7 @@
 
 #include "../../midi/MIDI.h"
 
-note_t Buttons::getTonicFromButton(uint8_t& buttonNumber)   {
+note_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
 
     switch(buttonNumber)    {
 
@@ -253,6 +253,8 @@ void Buttons::handleTonicEvent(note_t note) {
 
 void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
+    uint8_t lastTouchedPad = pads.getLastTouchedPad();
+
     if (buttons.getButtonState(BUTTON_OCTAVE_DOWN) && buttons.getButtonState(BUTTON_OCTAVE_UP))   {
 
         ////try to enter pad edit mode
@@ -334,7 +336,6 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
     }   else {
 
         bool editMode = pads.editModeActive();
-        uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
         switch(editMode)    {
 
@@ -367,7 +368,6 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 if (!state)  {
 
                     //change midi channel in case it's pressed
-                    uint8_t lastTouchedPad = lastTouchedPad;
                     uint8_t midiChannel = pads.getMIDIchannel(lastTouchedPad);
 
                     if (direction) midiChannel++;
