@@ -7,6 +7,7 @@
 
 #include "../../../../init/Init.h"
 #include "../../../pads/Pads.h"
+#include "../../../../midi/MIDI.h"
 #include "../Menu.h"
 #include <avr/boot.h>
 

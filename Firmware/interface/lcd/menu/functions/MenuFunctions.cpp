@@ -122,12 +122,6 @@ bool checkCalibration(functionArgument argument) {
 
 }
 
-bool checkRunningStatus(functionArgument argument)    {
-
-    return true;
-
-}
-
 bool checkPressureLevel(functionArgument argument)    {
 
     return true;
@@ -175,7 +169,51 @@ bool checkPressureCurve(functionArgument argument)    {
 
 bool checkNoteOffStatus(functionArgument argument)    {
 
-    return true;
+    switch(argument.argument1)  {
+
+        case noteOffType_noteOnZeroVel:
+        case noteOffType_standardNoteOff:
+        //nothing
+        break;
+
+        default:
+        return false;
+
+    }
+
+    switch(argument.argument2)  {
+
+        case true:
+        //switch option
+        midi.setNoteOffStatus((noteOffType_t)argument.argument1);
+        return true;
+
+        case false:
+        return (midi.noteOffStatus() == argument.argument1);
+
+        default:
+        return false;
+
+    }
+
+}
+
+bool checkRunningStatus(functionArgument argument)  {
+
+    switch(argument.argument2)  {
+
+        case true:
+        //switch option
+        midi.setRunningStatus((bool)argument.argument1);
+        return true;
+
+        case false:
+        return (midi.runningStatusEnabled() == (bool)argument.argument1);
+
+        default:
+        return false;
+
+    }
 
 }
 

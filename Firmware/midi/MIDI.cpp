@@ -9,6 +9,7 @@
 MIDI::MIDI()    {
 
     //default constructor
+    noteOffType = noteOffType_standardNoteOff;
 
 }
 
@@ -31,8 +32,16 @@ void MIDI::sendNoteOn(uint8_t& channel, uint8_t& note, uint8_t& velocity)  {
 
 void MIDI::sendNoteOff(uint8_t& channel, uint8_t& note, uint8_t& velocity)  {
 
-    hwMIDI.sendNoteOff(note, velocity, channel, dinInterface);
-    hwMIDI.sendNoteOff(note, velocity, channel, usbInterface);
+    if (noteOffType == noteOffType_standardNoteOff)    {
+
+        hwMIDI.sendNoteOff(note, velocity, channel, dinInterface);
+        hwMIDI.sendNoteOff(note, velocity, channel, usbInterface);
+
+    }   else {
+
+        sendNoteOn(channel, note, velocity);
+
+    }
 
 }
 
@@ -61,6 +70,30 @@ void MIDI::sendSysEx(uint8_t *sysExArray, uint8_t arraySize)   {
 
     hwMIDI.sendSysEx(arraySize, sysExArray, true, dinInterface);
     hwMIDI.sendSysEx(arraySize, sysExArray, true, usbInterface);
+
+}
+
+noteOffType_t MIDI::noteOffStatus() {
+
+    return noteOffType;
+
+}
+
+void MIDI::setNoteOffStatus(noteOffType_t type) {
+
+    noteOffType = type;
+
+}
+
+bool MIDI::runningStatusEnabled()   {
+
+    return hwMIDI.runningStatusEnabled();
+
+}
+
+void MIDI::setRunningStatus(bool option)    {
+
+    option ? hwMIDI.enableRunningStatus() : hwMIDI.disableRunningStatus();
 
 }
 

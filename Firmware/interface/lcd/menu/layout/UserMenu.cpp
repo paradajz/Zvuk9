@@ -86,12 +86,14 @@ void Menu::createUserMenuLayout()   {
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].stringPointer = enabled_string;
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].level = 321;
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].checkable = true;
-                menuItem[userMenuItem_midiSettings_runningStatus_enabled].function = NULL;
+                menuItem[userMenuItem_midiSettings_runningStatus_enabled].function = checkRunningStatus;
+                menuItem[userMenuItem_midiSettings_runningStatus_enabled].argument.argument1 = (uint8_t)true;
 
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].stringPointer = disabled_string;
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].level = 322;
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].checkable = true;
-                menuItem[userMenuItem_midiSettings_runningStatus_disabled].function = NULL;
+                menuItem[userMenuItem_midiSettings_runningStatus_disabled].function = checkRunningStatus;
+                menuItem[userMenuItem_midiSettings_runningStatus_disabled].argument.argument1 = (uint8_t)false;
             }
 
             menuItem[userMenuItem_midiSettings_noteOff].stringPointer = midiSettings_noteOff;
@@ -102,12 +104,14 @@ void Menu::createUserMenuLayout()   {
                 menuItem[userMenuItem_midiSettings_noteOff_channel].stringPointer = noteOff_offChannel;
                 menuItem[userMenuItem_midiSettings_noteOff_channel].level = 331;
                 menuItem[userMenuItem_midiSettings_noteOff_channel].checkable = true;
-                menuItem[userMenuItem_midiSettings_noteOff_channel].function = NULL;
+                menuItem[userMenuItem_midiSettings_noteOff_channel].function = checkNoteOffStatus;
+                menuItem[userMenuItem_midiSettings_noteOff_channel].argument.argument1 = (uint8_t)noteOffType_standardNoteOff;
 
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].stringPointer = noteOff_zeroVel;
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].level = 332;
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].checkable = true;
-                menuItem[userMenuItem_midiSettings_noteOff_zero_vel].function = NULL;
+                menuItem[userMenuItem_midiSettings_noteOff_zero_vel].function = checkNoteOffStatus;
+                menuItem[userMenuItem_midiSettings_noteOff_zero_vel].argument.argument1 = (uint8_t)noteOffType_noteOnZeroVel;
             }
         }
 

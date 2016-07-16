@@ -236,7 +236,7 @@ class Pads  {
     uint16_t    padPressed;
 
     //parameters from eeprom
-    int8_t      ccXPad[MAX_PADS],
+    uint8_t     ccXPad[MAX_PADS],
                 ccYPad[MAX_PADS],
                 ccXminPad[MAX_PADS],
                 ccXmaxPad[MAX_PADS],

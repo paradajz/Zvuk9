@@ -6,6 +6,7 @@
 #define MIDI_H_
 
 #include <avr/io.h>
+#include "../Types.h"
 
 class MIDI {
 
@@ -20,7 +21,13 @@ class MIDI {
     void sendKeyAftertouch(uint8_t& channel, uint8_t& note, uint8_t& pressure);
     void sendSysEx(uint8_t *sysExArray, uint8_t size);
 
+    bool runningStatusEnabled();
+    noteOffType_t noteOffStatus();
+    void setNoteOffStatus(noteOffType_t type);
+    void setRunningStatus(bool option);
+
     private:
+    noteOffType_t noteOffType;
 
 };
 

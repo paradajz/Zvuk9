@@ -280,4 +280,11 @@ typedef enum {
 
 } swVersion_t;
 
+typedef enum {
+
+    noteOffType_standardNoteOff,
+    noteOffType_noteOnZeroVel
+
+} noteOffType_t;
+
 #endif

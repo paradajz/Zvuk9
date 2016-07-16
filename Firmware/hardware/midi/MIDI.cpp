@@ -218,8 +218,8 @@ void HWmidi::sendProgramChange(uint8_t& inProgramNumber, uint8_t& inChannel, mid
 
     //inProgramNumber:    The Program to select (0 to 127)
     //inChannel:          The channel on which the message will be sent (1 to 16)
-
-    send(midiMessageProgramChange, inProgramNumber, 0, inChannel, type);
+    uint8_t data2 = 0;
+    send(midiMessageProgramChange, inProgramNumber, data2, inChannel, type);
 
 }
 
@@ -247,8 +247,8 @@ void HWmidi::sendAfterTouch(uint8_t& inPressure, uint8_t& inChannel, midiInterfa
 
      //inPressure:  The amount of AfterTouch to apply to all notes
      //inChannel:   The channel on which the message will be sent (1 to 16)
-
-    send(midiMessageAfterTouchChannel, inPressure, 0, inChannel, type);
+    uint8_t data2 = 0;
+    send(midiMessageAfterTouchChannel, inPressure, data2, inChannel, type);
 
 }
 
@@ -260,11 +260,13 @@ void HWmidi::sendPitchBend(int16_t& inPitchValue, uint8_t& inChannel, midiInterf
     //inChannel:    The channel on which the message will be sent (1 to 16)
 
     const unsigned bend = inPitchValue - MIDI_PITCHBEND_MIN;
-    send(midiMessagePitchBend, (bend & 0x7f), (bend >> 7) & 0x7f, inChannel, type);
+    uint8_t data1 = (bend & 0x7f);
+    uint8_t data2 = (bend >> 7) & 0x7f;
+    send(midiMessagePitchBend, data1, data2, inChannel, type);
 
 }
 
-void HWmidi::sendSysEx(uint16_t& inLength, const uint8_t* inArray, bool inArrayContainsBoundaries, midiInterfaceType_t type)   {
+void HWmidi::sendSysEx(uint16_t inLength, const uint8_t* inArray, bool inArrayContainsBoundaries, midiInterfaceType_t type)   {
 
      //inLength:                    The size of the array to send
      //inArray:                     The byte array containing the data to send
@@ -613,7 +615,7 @@ void HWmidi::sendTimeCodeQuarterFrame(uint8_t& inTypeNibble, uint8_t& inValuesNi
      //inTypeNibble     MTC type
      //inValuesNibble   MTC data
 
-    const uint8_t data = (((inTypeNibble & 0x07) << 4) | (inValuesNibble & 0x0f));
+    uint8_t data = (((inTypeNibble & 0x07) << 4) | (inValuesNibble & 0x0f));
     sendTimeCodeQuarterFrame(data, type);
 
 }
@@ -631,7 +633,7 @@ void HWmidi::sendTimeCodeQuarterFrame(uint8_t& inData, midiInterfaceType_t type)
 
 }
 
-void HWmidi::sendSongPosition(uint16_t& inBeats, midiInterfaceType_t type) {
+void HWmidi::sendSongPosition(uint16_t inBeats, midiInterfaceType_t type) {
 
     //inBeats:  The number of beats since the start of the song
 

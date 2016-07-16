@@ -69,16 +69,21 @@ class HWmidi    {
     void sendPitchBend(int16_t& inPitchValue, uint8_t& inChannel, midiInterfaceType_t type);
     void sendPolyPressure(uint8_t& inNoteNumber, uint8_t& inPressure, uint8_t& inChannel, midiInterfaceType_t type);
     void sendAfterTouch(uint8_t& inPressure, uint8_t& inChannel, midiInterfaceType_t type);
-    void sendSysEx(uint16_t &inLength, const uint8_t* inArray, bool inArrayContainsBoundaries, midiInterfaceType_t type);
+    void sendSysEx(uint16_t inLength, const uint8_t* inArray, bool inArrayContainsBoundaries, midiInterfaceType_t type);
     void sendTimeCodeQuarterFrame(uint8_t& inTypeNibble, uint8_t& inValuesNibble, midiInterfaceType_t type);
     void sendTimeCodeQuarterFrame(uint8_t& inData, midiInterfaceType_t type);
-    void sendSongPosition(uint16_t& inBeats, midiInterfaceType_t type);
+    void sendSongPosition(uint16_t inBeats, midiInterfaceType_t type);
     void sendSongSelect(uint8_t& inSongNumber, midiInterfaceType_t type);
     void sendTuneRequest(midiInterfaceType_t type);
     void sendRealTime(midiMessageType_t inType, midiInterfaceType_t type);
 
     void enableRunningStatus();
     void disableRunningStatus();
+    bool runningStatusEnabled() {
+
+        return useRunningStatus;
+
+    }
 
     private:
     void send(midiMessageType_t inType, uint8_t& inData1, uint8_t& inData2, uint8_t& inChannel, midiInterfaceType_t type);

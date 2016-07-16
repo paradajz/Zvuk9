@@ -91,7 +91,8 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
                     #if MODE_SERIAL > 0
                         printf("%d\n", padNote[pad][i]);
                     #else
-                        midi.sendNoteOff(midiChannel[pad], padNote[pad][i], 0);
+                        uint8_t velocity_ = 0;
+                        midi.sendNoteOff(midiChannel[pad], padNote[pad][i], velocity_);
                     #endif
 
                 }
