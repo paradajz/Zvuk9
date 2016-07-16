@@ -4,7 +4,7 @@
 
 #include "../../midi/MIDI.h"
 
-note_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
+note_t Buttons::getTonicFromButton(uint8_t& buttonNumber)   {
 
     switch(buttonNumber)    {
 
@@ -334,6 +334,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
     }   else {
 
         bool editMode = pads.editModeActive();
+        uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
         switch(editMode)    {
 
@@ -346,7 +347,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     display.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
                 #endif
                 #ifdef MODULE_LEDS
-                    leds.displayActiveNoteLEDs(true, pads.getLastTouchedPad());
+                    leds.displayActiveNoteLEDs(true, lastTouchedPad);
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
                 #endif
                 break;
@@ -366,7 +367,8 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 if (!state)  {
 
                     //change midi channel in case it's pressed
-                    uint8_t midiChannel = pads.getMIDIchannel(pads.getLastTouchedPad());
+                    uint8_t lastTouchedPad = lastTouchedPad;
+                    uint8_t midiChannel = pads.getMIDIchannel(lastTouchedPad);
 
                     if (direction) midiChannel++;
                     else           midiChannel--;
@@ -374,10 +376,10 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     if (midiChannel < 1)  midiChannel = 16;
                     if (midiChannel > 16) midiChannel = 1;
 
-                    pads.setMIDIchannel(pads.getLastTouchedPad(), midiChannel);
+                    pads.setMIDIchannel(lastTouchedPad, midiChannel);
 
                     #ifdef MODULE_LCD
-                    display.displayMIDIchannelChange(pads.getMIDIchannel(pads.getLastTouchedPad()), pads.getSplitState(), pads.getLastTouchedPad()+1);
+                    display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
                     #endif
 
                 }
@@ -414,7 +416,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                         //shift single note, but only in predefined presets
                         if (!state)    {
 
-                            if (pads.isPadPressed(pads.getLastTouchedPad()))   {
+                            if (pads.isPadPressed(lastTouchedPad))   {
 
                                 #ifdef MODULE_LCD
                                     display.displayEditModeNotAllowed(padNotReleased);

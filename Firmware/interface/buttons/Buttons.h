@@ -51,11 +51,8 @@ class Buttons   {
     bool buttonDebounced(uint8_t buttonNumber, uint8_t state);
     void setButtonState(uint8_t buttonNumber, uint8_t state);
 
-    //send MIDI transport control
-    void sendTransportControl(uint8_t buttonNumber, bool state);
-
     //getters
-    note_t getTonicFromButton(uint8_t buttonNumber);
+    note_t getTonicFromButton(uint8_t& buttonNumber);
 
     //menu
     void checkMenu(menuType_t type);

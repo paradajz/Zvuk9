@@ -681,7 +681,7 @@ void LCD::displayPad(uint8_t pad)   {
 
 }
 
-void LCD::displayMIDIchannel(uint8_t channel)   {
+void LCD::displayMIDIchannel(uint8_t& channel)   {
 
     strcpy_P(stringBuffer, midiChannel_string);
     uint8_t size = progmemCharArraySize(midiChannel_string);

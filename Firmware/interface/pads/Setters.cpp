@@ -1,6 +1,6 @@
 #include "Pads.h"
 
-void Pads::setCCXsendEnabled(uint8_t padNumber, uint8_t state)    {
+void Pads::setCCXsendEnabled(uint8_t padNumber, bool state)    {
 
     switch(splitState)    {
 
@@ -21,7 +21,7 @@ void Pads::setCCXsendEnabled(uint8_t padNumber, uint8_t state)    {
 
 }
 
-void Pads::setCCYsendEnabled(uint8_t padNumber, uint8_t state)    {
+void Pads::setCCYsendEnabled(uint8_t padNumber, bool state)    {
 
     switch(splitState)    {
 
@@ -42,7 +42,7 @@ void Pads::setCCYsendEnabled(uint8_t padNumber, uint8_t state)    {
 
 }
 
-void Pads::setNoteSendEnabled(uint8_t padNumber, uint8_t state)   {
+void Pads::setNoteSendEnabled(uint8_t padNumber, bool state)   {
 
     switch(splitState)    {
 
@@ -63,7 +63,7 @@ void Pads::setNoteSendEnabled(uint8_t padNumber, uint8_t state)   {
 
 }
 
-void Pads::setAfterTouchSendEnabled(uint8_t padNumber, uint8_t state) {
+void Pads::setAfterTouchSendEnabled(uint8_t padNumber, bool state) {
 
     switch(splitState)    {
 
@@ -186,7 +186,7 @@ void Pads::resetCalibration()   {
 
 }
 
-bool Pads::setActiveProgram(int8_t program)   {
+bool Pads::setActiveProgram(int8_t& program)   {
 
     if (program < 0 || program >= NUMBER_OF_PROGRAMS)    return false;
 
@@ -200,7 +200,7 @@ bool Pads::setActiveProgram(int8_t program)   {
 
 }
 
-bool Pads::setActivePreset(uint8_t preset)  {
+bool Pads::setActivePreset(int8_t& preset)  {
 
     if (preset < 0 || preset > 16)    return false;
 
@@ -265,7 +265,7 @@ void Pads::setAftertouchType(aftertouchType_t type)   {
 
 }
 
-void Pads::changeActiveOctave(bool direction)   {
+void Pads::changeActiveOctave(bool& direction)   {
 
     //used in pad edit mode
     direction ? activeOctave++ : activeOctave--;
@@ -673,7 +673,7 @@ changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate,
 
 }
 
-bool Pads::setMIDIchannel(uint8_t pad, uint8_t channel)  {
+bool Pads::setMIDIchannel(uint8_t& pad, uint8_t& channel)  {
 
     if (channel != midiChannel[pad]) {
 
@@ -699,7 +699,7 @@ bool Pads::setMIDIchannel(uint8_t pad, uint8_t channel)  {
 
 }
 
-changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
+changeOutput_t Pads::assignPadNote(uint8_t& pad, note_t& note)    {
 
     //used in pad edit mode (user scale)
     //add or delete note on pressed pad
@@ -846,7 +846,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
 
 }
 
-changeOutput_t Pads::shiftOctave(bool direction)  {
+changeOutput_t Pads::shiftOctave(bool& direction)  {
 
     //this function shifts octave up or down
     //all pads should shift notes immediately, except for the ones that are still pressed
@@ -1248,7 +1248,7 @@ void Pads::notesOnOff()    {
             for (int i=0; i<MAX_PADS; i++)
                 if (isPadPressed(i)) pressedPads++;
 
-            sendNotes(getLastTouchedPad(), 0, false);
+            sendNotes(lastPressedPad, 0, false);
 
         }
 
@@ -1364,13 +1364,13 @@ void Pads::aftertouchOnOff()    {
 
 }
 
-void Pads::setPadPressed(uint8_t padNumber, bool padState) {
+void Pads::setPadPressed(uint8_t& padNumber, bool padState) {
 
     bitWrite(padPressed, padNumber, padState);
 
 }
 
-void Pads::setFunctionLEDs(uint8_t padNumber)   {
+void Pads::setFunctionLEDs(uint8_t& padNumber)   {
 
     #ifdef MODULE_LEDS
         if (splitState)  {

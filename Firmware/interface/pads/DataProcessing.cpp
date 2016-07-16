@@ -1,6 +1,6 @@
 #include "Pads.h"
 
-void Pads::addXYSamples(uint16_t xValue, uint16_t yValue)    {
+void Pads::addXYSamples(int16_t& xValue, int16_t& yValue)    {
 
     xValueSamples[sampleCounterXY] = xValue;
     yValueSamples[sampleCounterXY] = yValue;
@@ -70,7 +70,7 @@ int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
 
 }
 
-bool Pads::checkX(uint8_t pad)  {
+bool Pads::checkX(uint8_t& pad)  {
 
     int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), ccTypeX);
     if (padCurveX[pad] != 0)  xValue = xyScale[padCurveX[pad]-1][xValue];
@@ -96,7 +96,7 @@ bool Pads::checkX(uint8_t pad)  {
 
 }
 
-bool Pads::checkY(uint8_t pad)  {
+bool Pads::checkY(uint8_t& pad)  {
 
     int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), ccTypeY);
     if (padCurveY[pad] != 0)  yValue = xyScale[padCurveY[pad]-1][yValue];
@@ -122,7 +122,7 @@ bool Pads::checkY(uint8_t pad)  {
 
 }
 
-bool Pads::checkAftertouch(uint8_t pad)  {
+bool Pads::checkAftertouch(uint8_t& pad)  {
 
     int16_t pressure = lastPressureValue[pad]; //latest value
     bool returnValue = false;
@@ -372,7 +372,7 @@ void Pads::update()  {
 
 }
 
-bool Pads::xyUpdated(uint8_t pad)  {
+bool Pads::xyUpdated(uint8_t& pad)  {
 
     //read x/y three times and get median value
 
@@ -476,7 +476,7 @@ bool Pads::xyUpdated(uint8_t pad)  {
 
 }
 
-bool Pads::pressureStable(uint8_t pad, uint8_t pressDetected)  {
+bool Pads::pressureStable(uint8_t& pad, bool& pressDetected)  {
 
     if (pressDetected) {
 
@@ -505,7 +505,7 @@ bool Pads::pressureStable(uint8_t pad, uint8_t pressDetected)  {
 
 }
 
-void Pads::addPressureSamples(uint16_t value) {
+void Pads::addPressureSamples(int16_t& value) {
 
     pressureValueSamples[sampleCounterPressure] = value;
     sampleCounterPressure++;
@@ -540,7 +540,7 @@ bool Pads::pressureUpdated() {
 
 }
 
-bool Pads::checkVelocity(uint8_t pad)  {
+bool Pads::checkVelocity(uint8_t& pad)  {
 
     //we've taken 3 pressure samples so far, get median value
     int16_t medianValue = getMedianValueXYZ(coordinateZ);
@@ -604,7 +604,7 @@ bool Pads::checkVelocity(uint8_t pad)  {
 
 }
 
-void Pads::checkMIDIdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)   {
+void Pads::checkMIDIdata(uint8_t& pad, bool& velocityAvailable, bool& aftertouchAvailable, bool& xAvailable, bool& yAvailable)   {
 
     //send X/Y immediately
     if (xAvailable && xSendEnabled[pad])
@@ -667,7 +667,7 @@ void Pads::checkNoteBuffer()    {
 
 }
 
-void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)   {
+void Pads::checkLCDdata(uint8_t& pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)   {
 
     static bool lcdCleared = false;
     static int8_t lastShownPad = -1;
@@ -764,7 +764,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
 }
 
-void Pads::updateLastPressedPad(uint8_t pad, bool state)   {
+void Pads::updateLastPressedPad(uint8_t& pad, bool state)   {
 
     switch(state)   {
 
@@ -783,7 +783,7 @@ void Pads::updateLastPressedPad(uint8_t pad, bool state)   {
 
 }
 
-void Pads::updatePressHistory(uint8_t pad) {
+void Pads::updatePressHistory(uint8_t& pad) {
 
     //store currently pressed pad in buffer
     uint8_t pressedPads = 0;
@@ -816,7 +816,7 @@ void Pads::updatePressHistory(uint8_t pad) {
 
 }
 
-void Pads::clearTouchHistoryPad(uint8_t pad)    {
+void Pads::clearTouchHistoryPad(uint8_t& pad)    {
 
     uint8_t padPressedCounter = 0;
 
@@ -879,7 +879,7 @@ void Pads::clearTouchHistoryPad(uint8_t pad)    {
 
 }
 
-void Pads::storeNotes(uint8_t pad)  {
+void Pads::storeNotes(uint8_t& pad)  {
 
     //#if MODE_SERIAL > 0
         //vserial.print("Storing notes in buffer for pad ");

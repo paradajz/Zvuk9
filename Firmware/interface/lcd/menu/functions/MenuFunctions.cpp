@@ -48,9 +48,10 @@ bool enableCalibration(functionArgument argument)     {
 bool padEditMode(functionArgument argument)  {
 
     pads.setEditMode(true);
+    uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     //check if last touched pad is pressed
-    if (pads.isPadPressed(pads.getLastTouchedPad()))   {
+    if (pads.isPadPressed(lastTouchedPad))   {
 
         #ifdef MODULE_LCD
             display.displayEditModeNotAllowed(padNotReleased);
@@ -64,7 +65,7 @@ bool padEditMode(functionArgument argument)  {
         #if MODE_SERIAL > 0
             printf("Pad edit mode\n");
         #endif
-        pads.setupPadEditMode(pads.getLastTouchedPad());
+        pads.setupPadEditMode(lastTouchedPad);
 
         leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
         leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);

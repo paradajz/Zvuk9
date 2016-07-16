@@ -22,35 +22,35 @@ void MIDI::init() {
 
 }
 
-void MIDI::sendNoteOn(uint8_t channel, uint8_t note, uint8_t velocity)  {
+void MIDI::sendNoteOn(uint8_t& channel, uint8_t& note, uint8_t& velocity)  {
 
     hwMIDI.sendNoteOn(note, velocity, channel, dinInterface);
     hwMIDI.sendNoteOn(note, velocity, channel, usbInterface);
 
 }
 
-void MIDI::sendNoteOff(uint8_t channel, uint8_t note, uint8_t velocity)  {
+void MIDI::sendNoteOff(uint8_t& channel, uint8_t& note, uint8_t& velocity)  {
 
     hwMIDI.sendNoteOff(note, velocity, channel, dinInterface);
     hwMIDI.sendNoteOff(note, velocity, channel, usbInterface);
 
 }
 
-void MIDI::sendControlChange(uint8_t channel, uint8_t ccNumber, uint8_t ccValue) {
+void MIDI::sendControlChange(uint8_t& channel, uint8_t& ccNumber, uint8_t& ccValue) {
 
     hwMIDI.sendControlChange(ccNumber, ccValue, channel, dinInterface);
     hwMIDI.sendControlChange(ccNumber, ccValue, channel, usbInterface);
 
 }
 
-void MIDI::sendChannelAftertouch(uint8_t channel, uint8_t pressure)   {
+void MIDI::sendChannelAftertouch(uint8_t& channel, uint8_t& pressure)   {
 
     hwMIDI.sendAfterTouch(pressure, channel, dinInterface);
     hwMIDI.sendAfterTouch(pressure, channel, usbInterface);
 
 }
 
-void MIDI::sendKeyAftertouch(uint8_t channel, uint8_t note, uint8_t pressure)   {
+void MIDI::sendKeyAftertouch(uint8_t& channel, uint8_t& note, uint8_t& pressure)   {
 
     hwMIDI.sendPolyPressure(note, pressure, channel, dinInterface);
     hwMIDI.sendPolyPressure(note, pressure, channel, usbInterface);

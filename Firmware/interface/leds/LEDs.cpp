@@ -135,7 +135,7 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad) {
 
         case true:
         //indicate assigned notes in pad edit mode using note leds
-        for (int i=0; i<NOTES_PER_PAD; i++) {
+        for (uint8_t i=0; i<NOTES_PER_PAD; i++) {
 
             padNote = pads.getPadNote(pad, i);
             if (padNote == BLANK_NOTE) continue;

@@ -78,7 +78,7 @@ bool HWmidi::init(bool inputEnabled, bool outputEnabled, midiInterfaceType_t typ
 
 }
 
-void HWmidi::send(midiMessageType_t inType, uint8_t inData1, uint8_t inData2, uint8_t inChannel, midiInterfaceType_t type)  {
+void HWmidi::send(midiMessageType_t inType, uint8_t& inData1, uint8_t& inData2, uint8_t& inChannel, midiInterfaceType_t type)  {
 
     //inType:       MIDI message type
     //inData1:      The first data byte
@@ -194,7 +194,7 @@ void HWmidi::send(midiMessageType_t inType, uint8_t inData1, uint8_t inData2, ui
 
 }
 
-void HWmidi::sendNoteOn(uint8_t inNoteNumber, uint8_t inVelocity, uint8_t inChannel, midiInterfaceType_t type)    {
+void HWmidi::sendNoteOn(uint8_t& inNoteNumber, uint8_t& inVelocity, uint8_t& inChannel, midiInterfaceType_t type)    {
 
     //inNoteNumber:   Pitch value in the MIDI format (0 to 127)
     //inVelocity:     Note attack velocity (0 to 127)
@@ -204,7 +204,7 @@ void HWmidi::sendNoteOn(uint8_t inNoteNumber, uint8_t inVelocity, uint8_t inChan
 
 }
 
-void HWmidi::sendNoteOff(uint8_t inNoteNumber, uint8_t inVelocity, uint8_t inChannel, midiInterfaceType_t type)   {
+void HWmidi::sendNoteOff(uint8_t& inNoteNumber, uint8_t& inVelocity, uint8_t& inChannel, midiInterfaceType_t type)   {
 
     //inNoteNumber:    Pitch value in the MIDI format (0 to 127)
     //inVelocity:      Release velocity (0 to 127)
@@ -214,7 +214,7 @@ void HWmidi::sendNoteOff(uint8_t inNoteNumber, uint8_t inVelocity, uint8_t inCha
 
 }
 
-void HWmidi::sendProgramChange(uint8_t inProgramNumber, uint8_t inChannel, midiInterfaceType_t type)  {
+void HWmidi::sendProgramChange(uint8_t& inProgramNumber, uint8_t& inChannel, midiInterfaceType_t type)  {
 
     //inProgramNumber:    The Program to select (0 to 127)
     //inChannel:          The channel on which the message will be sent (1 to 16)
@@ -223,7 +223,7 @@ void HWmidi::sendProgramChange(uint8_t inProgramNumber, uint8_t inChannel, midiI
 
 }
 
-void HWmidi::sendControlChange(uint8_t inControlNumber, uint8_t inControlValue, uint8_t inChannel, midiInterfaceType_t type)  {
+void HWmidi::sendControlChange(uint8_t& inControlNumber, uint8_t& inControlValue, uint8_t& inChannel, midiInterfaceType_t type)  {
 
     //inControlNumber:    The controller number (0 to 127)
     //inControlValue:     The value for the specified controller (0 to 127)
@@ -233,7 +233,7 @@ void HWmidi::sendControlChange(uint8_t inControlNumber, uint8_t inControlValue, 
 
 }
 
-void HWmidi::sendPolyPressure(uint8_t inNoteNumber, uint8_t inPressure, uint8_t inChannel, midiInterfaceType_t type)  {
+void HWmidi::sendPolyPressure(uint8_t& inNoteNumber, uint8_t& inPressure, uint8_t& inChannel, midiInterfaceType_t type)  {
 
      //inNoteNumber:    The note to apply AfterTouch to (0 to 127)
      //inPressure:      The amount of AfterTouch to apply (0 to 127)
@@ -243,7 +243,7 @@ void HWmidi::sendPolyPressure(uint8_t inNoteNumber, uint8_t inPressure, uint8_t 
 
 }
 
-void HWmidi::sendAfterTouch(uint8_t inPressure, uint8_t inChannel, midiInterfaceType_t type)  {
+void HWmidi::sendAfterTouch(uint8_t& inPressure, uint8_t& inChannel, midiInterfaceType_t type)  {
 
      //inPressure:  The amount of AfterTouch to apply to all notes
      //inChannel:   The channel on which the message will be sent (1 to 16)
@@ -252,7 +252,7 @@ void HWmidi::sendAfterTouch(uint8_t inPressure, uint8_t inChannel, midiInterface
 
 }
 
-void HWmidi::sendPitchBend(int16_t inPitchValue, uint8_t inChannel, midiInterfaceType_t type) {
+void HWmidi::sendPitchBend(int16_t& inPitchValue, uint8_t& inChannel, midiInterfaceType_t type) {
 
     //inPitchValue: The amount of bend to send (in a signed integer format),
                     //between MIDI_PITCHBEND_MIN and MIDI_PITCHBEND_MAX,
@@ -264,7 +264,7 @@ void HWmidi::sendPitchBend(int16_t inPitchValue, uint8_t inChannel, midiInterfac
 
 }
 
-void HWmidi::sendSysEx(uint16_t inLength, const uint8_t* inArray, bool inArrayContainsBoundaries, midiInterfaceType_t type)   {
+void HWmidi::sendSysEx(uint16_t& inLength, const uint8_t* inArray, bool inArrayContainsBoundaries, midiInterfaceType_t type)   {
 
      //inLength:                    The size of the array to send
      //inArray:                     The byte array containing the data to send
@@ -608,7 +608,7 @@ void HWmidi::sendTuneRequest(midiInterfaceType_t type)  {
 
 }
 
-void HWmidi::sendTimeCodeQuarterFrame(uint8_t inTypeNibble, uint8_t inValuesNibble, midiInterfaceType_t type) {
+void HWmidi::sendTimeCodeQuarterFrame(uint8_t& inTypeNibble, uint8_t& inValuesNibble, midiInterfaceType_t type) {
 
      //inTypeNibble     MTC type
      //inValuesNibble   MTC data
@@ -618,7 +618,7 @@ void HWmidi::sendTimeCodeQuarterFrame(uint8_t inTypeNibble, uint8_t inValuesNibb
 
 }
 
-void HWmidi::sendTimeCodeQuarterFrame(uint8_t inData, midiInterfaceType_t type)   {
+void HWmidi::sendTimeCodeQuarterFrame(uint8_t& inData, midiInterfaceType_t type)   {
 
     //inData:   if you want to encode directly the nibbles in your program,
                 //you can send the byte here.
@@ -631,7 +631,7 @@ void HWmidi::sendTimeCodeQuarterFrame(uint8_t inData, midiInterfaceType_t type) 
 
 }
 
-void HWmidi::sendSongPosition(uint16_t inBeats, midiInterfaceType_t type) {
+void HWmidi::sendSongPosition(uint16_t& inBeats, midiInterfaceType_t type) {
 
     //inBeats:  The number of beats since the start of the song
 
@@ -644,7 +644,7 @@ void HWmidi::sendSongPosition(uint16_t inBeats, midiInterfaceType_t type) {
 
 }
 
-void HWmidi::sendSongSelect(uint8_t inSongNumber, midiInterfaceType_t type)   {
+void HWmidi::sendSongSelect(uint8_t& inSongNumber, midiInterfaceType_t type)   {
 
     //inSongNumber: Wanted song number
 
