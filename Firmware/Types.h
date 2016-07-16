@@ -190,8 +190,7 @@ typedef enum {
 typedef enum {
 
     aftertouchPoly,
-    aftertouchChannel,
-    AFTERTOUCH_TYPES
+    aftertouchChannel
 
 } aftertouchType_t;
 

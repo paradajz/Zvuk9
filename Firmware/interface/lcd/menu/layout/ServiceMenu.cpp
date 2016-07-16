@@ -21,17 +21,17 @@ void Menu::createServiceMenuLayout()   {
             menuItem[serviceMenuItem_calibrateX].stringPointer = calibration_x;
             menuItem[serviceMenuItem_calibrateX].level = 11;
             menuItem[serviceMenuItem_calibrateX].function = enableCalibration;
-            menuItem[serviceMenuItem_calibrateX].argument = (uint8_t)coordinateX;
+            menuItem[serviceMenuItem_calibrateX].argument.argument1 = (uint8_t)coordinateX;
 
             menuItem[serviceMenuItem_calibrateY].stringPointer = calibration_y;
             menuItem[serviceMenuItem_calibrateY].level = 12;
             menuItem[serviceMenuItem_calibrateY].function = enableCalibration;
-            menuItem[serviceMenuItem_calibrateY].argument = (uint8_t)coordinateY;
+            menuItem[serviceMenuItem_calibrateY].argument.argument1 = (uint8_t)coordinateY;
 
             menuItem[serviceMenuItem_calibratePressure].stringPointer = calibration_pressure;
             menuItem[serviceMenuItem_calibratePressure].level = 13;
             menuItem[serviceMenuItem_calibratePressure].function = enableCalibration;
-            menuItem[serviceMenuItem_calibratePressure].argument = (uint8_t)coordinateZ;
+            menuItem[serviceMenuItem_calibratePressure].argument.argument1 = (uint8_t)coordinateZ;
 
         }
 
@@ -52,7 +52,7 @@ void Menu::createServiceMenuLayout()   {
                     menuItem[serviceMenuItem_confirmPartialReset].stringPointer = confirm_partial_reset;
                     menuItem[serviceMenuItem_confirmPartialReset].level = 311;
                     menuItem[serviceMenuItem_confirmPartialReset].function = factoryReset;
-                    menuItem[serviceMenuItem_confirmPartialReset].argument = (uint8_t)factoryReset_partial;
+                    menuItem[serviceMenuItem_confirmPartialReset].argument.argument1 = (uint8_t)factoryReset_partial;
                 }
 
             menuItem[serviceMenuItem_fullReset].stringPointer = factoryReset_full_string;
@@ -63,7 +63,7 @@ void Menu::createServiceMenuLayout()   {
                     menuItem[serviceMenuItem_confirmFullReset].stringPointer = confirm_full_reset;
                     menuItem[serviceMenuItem_confirmFullReset].level = 321;
                     menuItem[serviceMenuItem_confirmFullReset].function = factoryReset;
-                    menuItem[serviceMenuItem_confirmFullReset].argument = (uint8_t)factoryReset_wipeRestore;
+                    menuItem[serviceMenuItem_confirmFullReset].argument.argument1 = (uint8_t)factoryReset_wipeRestore;
                 }
         }
 

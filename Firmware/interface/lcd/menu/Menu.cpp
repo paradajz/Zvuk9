@@ -180,6 +180,22 @@ void Menu::updateMenuScreen()   {
         strcpy_P(tempBuffer, menuItem[indexes[i+startPosition]].stringPointer);
         strcat(stringBuffer, tempBuffer);
         size = 1 + strlen_P(menuItem[indexes[i+startPosition]].stringPointer);
+
+        //check for checkable items
+        if (menuItem[indexes[i+startPosition]].checkable)   {
+
+            //checked and unchecked strings have the same size
+            uint8_t checkMarkerSize = progmemCharArraySize(checked_string);
+            uint8_t spaceFill = NUMBER_OF_LCD_COLUMNS - size - checkMarkerSize;
+            addSpaceToCharArray(size, spaceFill);
+            size += checkMarkerSize;
+
+            //place checked/unchecked characters at the end of the screen line
+            (menuItem[indexes[i+startPosition]].function(menuItem[indexes[i+startPosition]].argument)) ? strcpy_P(tempBuffer, checked_string) : strcpy_P(tempBuffer, unchecked_string);
+            strcat(stringBuffer, tempBuffer);
+
+        }
+
         updateDisplay(i+1, text, 0, true, size);
 
     }
@@ -231,7 +247,7 @@ void Menu::changeOption(bool direction) {
 void Menu::exitMenu()   {
 
     #if MODE_SERIAL > 0
-    printf("Exiting menu\n");
+        printf("Exiting menu\n");
     #endif
     //exit menu and restore initial state
     display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());
@@ -300,7 +316,17 @@ void Menu::confirmOption(bool confirm)  {
 
                     //do nothing
 
-                } else return;
+                } else return; //function returned false
+
+            } else if (menuItem[indexes[currentOptionIndex]].checkable) {
+
+                //set second argument to "true" value to switch to new option
+                menuItem[indexes[currentOptionIndex]].argument.argument2 = true;
+                menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
+                //reset switch argument
+                menuItem[indexes[currentOptionIndex]].argument.argument2 = false;
+                //now refresh screen with changed arguments
+                updateMenuScreen();
 
             }   else {
 

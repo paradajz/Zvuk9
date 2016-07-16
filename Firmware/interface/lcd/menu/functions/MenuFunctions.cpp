@@ -2,28 +2,28 @@
 
 #ifdef MENU_FUNCTIONS_H_
 
-bool factoryReset(uint8_t type) {
+bool factoryReset(functionArgument argument) {
 
     #ifdef MODULE_LEDS
         leds.setFadeSpeed(1);
         leds.allLEDsOff();
     #endif
-    configuration.factoryReset((factoryResetType_t)type);
+    configuration.factoryReset((factoryResetType_t)argument.argument1);
     reboot();
     return true;
 
 }
 
-bool deviceInfo(uint8_t arg)   {
+bool deviceInfo(functionArgument argument)   {
 
     display.displayDeviceInfo();
     return true;
 
 }
 
-bool enableCalibration(uint8_t type)     {
+bool enableCalibration(functionArgument argument)     {
 
-    switch(type)    {
+    switch(argument.argument1)    {
 
         case coordinateX:
         case coordinateY:
@@ -37,7 +37,7 @@ bool enableCalibration(uint8_t type)     {
 
     }
 
-    pads.setCalibrationMode(true, (coordinateType_t)type);
+    pads.setCalibrationMode(true, (coordinateType_t)argument.argument1);
     display.clearLine(1);
     display.clearLine(2);
     display.clearLine(3);
@@ -45,7 +45,7 @@ bool enableCalibration(uint8_t type)     {
 
 }
 
-bool padEditMode(uint8_t arg)  {
+bool padEditMode(functionArgument argument)  {
 
     pads.setEditMode(true);
 
@@ -75,9 +75,9 @@ bool padEditMode(uint8_t arg)  {
 
 }
 
-bool changeOctaveButtons(uint8_t arg)   {
+bool changeOctaveButtons(functionArgument argument)   {
 
-    switch((shiftMode_t)arg)    {
+    switch((shiftMode_t)argument.argument1)    {
 
         case shiftMode_note:
         leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
@@ -100,8 +100,8 @@ bool changeOctaveButtons(uint8_t arg)   {
 
     }
 
-    pads.setNoteShiftMode((shiftMode_t)arg);
-    display.displayShiftMode((shiftMode_t)arg);
+    pads.setNoteShiftMode((shiftMode_t)argument.argument1);
+    display.displayShiftMode((shiftMode_t)argument.argument1);
 
     menu.exitMenu();
     return true;
@@ -109,7 +109,7 @@ bool changeOctaveButtons(uint8_t arg)   {
 
 }
 
-bool checkCalibration(uint8_t arg) {
+bool checkCalibration(functionArgument argument) {
 
     if (!pads.allPadsReleased())    {
 
@@ -118,6 +118,63 @@ bool checkCalibration(uint8_t arg) {
         return false;
 
     }   return true;
+
+}
+
+bool checkRunningStatus(functionArgument argument)    {
+
+    return true;
+
+}
+
+bool checkPressureLevel(functionArgument argument)    {
+
+    return true;
+
+}
+
+bool checkAftertouchType(functionArgument argument)   {
+
+    switch((aftertouchType_t)argument.argument1)    {
+
+        case aftertouchPoly:
+        case aftertouchChannel:
+        //nothing
+        break;
+
+        default:
+        return false;
+
+    }
+
+    switch(argument.argument2)  {
+
+        case true:
+        //change option
+        pads.setAftertouchType((aftertouchType_t)argument.argument1);
+        return true;
+        break;
+
+        case false:
+        //check if current aftertouch type is same as received argument
+        return (pads.getAftertouchType() == (aftertouchType_t)argument.argument1);
+
+        default:
+        return false;
+
+    }
+
+}
+
+bool checkPressureCurve(functionArgument argument)    {
+
+    return true;
+
+}
+
+bool checkNoteOffStatus(functionArgument argument)    {
+
+    return true;
 
 }
 

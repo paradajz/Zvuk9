@@ -89,6 +89,35 @@ class LCD   {
     //menu functions
     void displayDeviceInfo();
 
+    //string manipulation
+    inline void addNumberToCharArray(int32_t number, uint8_t &stringSize)  {
+
+        char intToCharArray[7];
+        itoa(number, intToCharArray, 10);
+        stringSize += getNumberOfDigits(number);
+        if (number < 0) stringSize++;
+        strcat(stringBuffer, intToCharArray);
+        stringBuffer[stringSize] = '\0';
+
+    }
+
+    inline void appendText(const char *text, uint8_t &stringSize) {
+
+        stringSize += strlen(text);
+        strcat(stringBuffer, text);
+        stringBuffer[stringSize] = '\0';
+
+    }
+
+    inline void addSpaceToCharArray(uint8_t &stringSize, uint8_t numberOfSpaces) {
+
+        for (int i=0; i<numberOfSpaces; i++)
+        stringBuffer[stringSize+i] = SPACE_CHAR;
+        stringSize += numberOfSpaces;
+        stringBuffer[stringSize] = '\0';
+
+    }
+
     protected:
     char stringBuffer[MAX_TEXT_SIZE+1];
     char tempBuffer[MAX_TEXT_SIZE+1];
@@ -148,34 +177,6 @@ class LCD   {
     } lcdElements_t;
 
     lcdElements_t lcdElements;
-
-    inline void addNumberToCharArray(int32_t number, uint8_t &stringSize)  {
-
-        char intToCharArray[7];
-        itoa(number, intToCharArray, 10);
-        stringSize += getNumberOfDigits(number);
-        if (number < 0) stringSize++;
-        strcat(stringBuffer, intToCharArray);
-        stringBuffer[stringSize] = '\0';
-
-    }
-
-    inline void appendText(const char *text, uint8_t &stringSize) {
-
-        stringSize += strlen(text);
-        strcat(stringBuffer, text);
-        stringBuffer[stringSize] = '\0';
-
-    }
-
-    inline void addSpaceToCharArray(uint8_t &stringSize, uint8_t numberOfSpaces) {
-
-        for (int i=0; i<numberOfSpaces; i++)
-        stringBuffer[stringSize+i] = SPACE_CHAR;
-        stringSize += numberOfSpaces;
-        stringBuffer[stringSize] = '\0';
-
-    }
 
 };
 

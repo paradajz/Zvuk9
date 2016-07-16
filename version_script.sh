@@ -37,5 +37,5 @@ else
 fi
 
 #output $major, $minor and $revision into separate files
-echo "software version: $major.$minor.$revision"
+echo "software version: $major.$minor.$revision.$development"
 echo "$major,$minor,$revision,$development" > version

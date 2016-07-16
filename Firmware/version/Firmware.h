@@ -12,6 +12,6 @@
 #include <inttypes.h>
 
 bool checkNewRevision();
-uint16_t getSWversion(swVersion_t point);
+int16_t getSWversion(swVersion_t point);
 
 #endif

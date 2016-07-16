@@ -68,12 +68,14 @@ void Menu::createUserMenuLayout()   {
                     menuItem[userMenuItem_midiSettings_aftertouchType_channel].stringPointer = aftertouchType_channel;
                     menuItem[userMenuItem_midiSettings_aftertouchType_channel].level = 311;
                     menuItem[userMenuItem_midiSettings_aftertouchType_channel].checkable = true;
-                    menuItem[userMenuItem_midiSettings_aftertouchType_channel].function = NULL;
+                    menuItem[userMenuItem_midiSettings_aftertouchType_channel].function = checkAftertouchType;
+                    menuItem[userMenuItem_midiSettings_aftertouchType_channel].argument.argument1 = (uint8_t)aftertouchChannel;
 
                     menuItem[userMenuItem_midiSettings_aftertouchType_poly].stringPointer = aftertouchType_poly;
                     menuItem[userMenuItem_midiSettings_aftertouchType_poly].level = 312;
                     menuItem[userMenuItem_midiSettings_aftertouchType_poly].checkable = true;
-                    menuItem[userMenuItem_midiSettings_aftertouchType_poly].function = NULL;
+                    menuItem[userMenuItem_midiSettings_aftertouchType_poly].function = checkAftertouchType;
+                    menuItem[userMenuItem_midiSettings_aftertouchType_poly].argument.argument1 = (uint8_t)aftertouchPoly;
                 }
 
             menuItem[userMenuItem_midiSettings_runningStatus].stringPointer = midiSettings_runningStatus;

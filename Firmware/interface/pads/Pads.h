@@ -79,7 +79,7 @@ class Pads  {
     void xOnOff();
     void yOnOff();
     void splitOnOff();
-    void changeAftertouchType();
+    void setAftertouchType(aftertouchType_t type);
 
     //notes
     //getters

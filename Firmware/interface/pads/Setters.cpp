@@ -228,14 +228,24 @@ void Pads::splitOnOff() {
 
 }
 
-void Pads::changeAftertouchType()   {
+void Pads::setAftertouchType(aftertouchType_t type)   {
 
-    aftertouchType++;
-    if (aftertouchType == AFTERTOUCH_TYPES) aftertouchType = 0;
-    configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), aftertouchType);
+    switch(type)    {
+
+        case aftertouchPoly:
+        case aftertouchChannel:
+        //nothing
+        break;
+
+        default:
+        return; //wrong argument
+
+    }
+
+    configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), (uint8_t)type);
 
     #if MODE_SERIAL > 0
-    switch(aftertouchType)    {
+    switch(type)    {
 
         case aftertouchPoly:
         printf("Changed aftertouch mode - Key aftertouch\n");
@@ -250,6 +260,8 @@ void Pads::changeAftertouchType()   {
 
     }
     #endif
+
+    aftertouchType = type;
 
 }
 

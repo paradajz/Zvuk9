@@ -6,9 +6,8 @@
 #define MENU_FUNCTIONS_H_
 
 #include "../../../../init/Init.h"
-
 #include "../../../pads/Pads.h"
-
+#include "../Menu.h"
 #include <avr/boot.h>
 
 //uint16_t dev_signature[20];
@@ -44,17 +43,31 @@
     //SREG = curr_int;
 //}
 
-bool factoryReset(uint8_t type);
+//action functions
 
-bool deviceInfo(uint8_t arg = 0);
+bool factoryReset(functionArgument argument);
 
-bool padEditMode(uint8_t arg = 0);
+bool deviceInfo(functionArgument argument);
 
-bool checkCalibration(uint8_t arg = 0);
+bool padEditMode(functionArgument argument);
 
-bool enableCalibration(uint8_t type);
+bool enableCalibration(functionArgument argument);
 
-bool changeOctaveButtons(uint8_t arg = 0);
+bool changeOctaveButtons(functionArgument argument);
+
+//check functions
+bool checkCalibration(functionArgument argument);
+
+//checkable items functions
+bool checkRunningStatus(functionArgument argument);
+
+bool checkPressureLevel(functionArgument argument);
+
+bool checkAftertouchType(functionArgument argument);
+
+bool checkPressureCurve(functionArgument argument);
+
+bool checkNoteOffStatus(functionArgument argument);
 
 #endif
 #endif

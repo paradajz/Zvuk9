@@ -14,6 +14,13 @@
 
 #define MAX_MENU_OPTIONS    25
 
+typedef struct {
+
+    uint8_t argument1;
+    uint8_t argument2;
+
+} functionArgument;
+
 class Menu : LCD {
 
     public:
@@ -43,7 +50,7 @@ class Menu : LCD {
     void getMenuItems();
     uint8_t getMenuSize();
 
-    typedef bool (*actionPointer)(uint8_t arg);
+    typedef bool (*actionPointer)(functionArgument argument);
 
     typedef struct {
 
@@ -55,7 +62,7 @@ class Menu : LCD {
         const char *stringPointer;
         bool conditionCheck;
         bool checkable;
-        uint8_t argument;
+        functionArgument argument;
 
     } menuItem_t;
 

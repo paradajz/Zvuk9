@@ -25,8 +25,19 @@ bool checkNewRevision() {
 
 }
 
-uint16_t getSWversion(swVersion_t point) {
+int16_t getSWversion(swVersion_t point) {
 
-    return pgm_read_word_far(VERSION_POINT_LOCATION+(uint8_t)point*2);
+    switch(point)   {
+
+        case swVersion_major:
+        case swVersion_minor:
+        case swVersion_revision:
+        case swVersion_development:
+        return pgm_read_word_far(VERSION_POINT_LOCATION+(uint8_t)point*2);
+
+        default:
+        return -1;
+
+    }
 
 }
