@@ -52,14 +52,17 @@ void globalInit() {
     setOutputMacro(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
     setLowMacro(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN_INDEX);
 
-    #if MODE_SERIAL < 1
-    midi.init();
-    #else
+    #if MODE_SERIAL > 0
     vserial.init();
     #endif
 
     //do not change order of initialization!
     configuration.init();
+
+    #if MODE_SERIAL < 1
+    midi.init();
+    #endif
+
     sei();
     timers.init();
 

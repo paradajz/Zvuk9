@@ -7,7 +7,7 @@ void Configuration::createMemoryLayout() {
     {
         blocks[CONF_BLOCK_PROGRAM].sections = PROGRAM_SECTIONS;
 
-        blocks[CONF_BLOCK_PROGRAM].resetEnabled = false;
+        blocks[CONF_BLOCK_PROGRAM].preserveOnPartialReset = false;
 
         blocks[CONF_BLOCK_PROGRAM].sectionParameters[programLastActiveProgramSection] = 1;
         blocks[CONF_BLOCK_PROGRAM].sectionParameterType[programLastActiveProgramSection] = BYTE_PARAMETER;
@@ -27,8 +27,8 @@ void Configuration::createMemoryLayout() {
 
     {
         blocks[CONF_BLOCK_USER_SCALE].sections = USER_SCALE_SECTIONS;
-        
-        blocks[CONF_BLOCK_USER_SCALE].resetEnabled = false;
+
+        blocks[CONF_BLOCK_USER_SCALE].preserveOnPartialReset = false;
 
         blocks[CONF_BLOCK_USER_SCALE].sectionParameters[padNotesSection] = MAX_PADS*NOTES_PER_PAD*NUMBER_OF_USER_SCALES;
         blocks[CONF_BLOCK_USER_SCALE].sectionParameterType[padNotesSection] = BYTE_PARAMETER;
@@ -37,7 +37,7 @@ void Configuration::createMemoryLayout() {
     {
         blocks[CONF_BLOCK_PAD_CALIBRATION].sections = PAD_CALIBRATION_SECTIONS;
 
-        blocks[CONF_BLOCK_PAD_CALIBRATION].resetEnabled = true;
+        blocks[CONF_BLOCK_PAD_CALIBRATION].preserveOnPartialReset = true;
 
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameters[padCalibrationStatus] = 1;
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameterType[padCalibrationStatus] = BYTE_PARAMETER;
@@ -59,6 +59,15 @@ void Configuration::createMemoryLayout() {
 
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameters[padCalibrationYupperSection] = MAX_PADS;
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameterType[padCalibrationYupperSection] = WORD_PARAMETER;
+    }
+
+    {
+        blocks[CONF_BLOCK_MIDI].sections = 1;
+
+        blocks[CONF_BLOCK_MIDI].preserveOnPartialReset = false;
+
+        blocks[CONF_BLOCK_MIDI].sectionParameters[0] = MIDI_SETTINGS;
+        blocks[CONF_BLOCK_MIDI].sectionParameterType[0] = BYTE_PARAMETER;
     }
 
 }

@@ -242,7 +242,7 @@ void Pads::setAftertouchType(aftertouchType_t type)   {
 
     }
 
-    configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), (uint8_t)type);
+    configuration.writeParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_AFTERTOUCH_TYPE_ID, (uint8_t)type);
 
     #if MODE_SERIAL > 0
     switch(type)    {

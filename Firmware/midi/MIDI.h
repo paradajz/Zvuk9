@@ -7,6 +7,7 @@
 
 #include <avr/io.h>
 #include "../Types.h"
+#include "../eeprom/Configuration.h"
 
 class MIDI {
 
@@ -22,7 +23,7 @@ class MIDI {
     void sendSysEx(uint8_t *sysExArray, uint8_t size);
 
     bool runningStatusEnabled();
-    noteOffType_t noteOffStatus();
+    noteOffType_t getNoteOffStatus();
     void setNoteOffStatus(noteOffType_t type);
     void setRunningStatus(bool option);
 

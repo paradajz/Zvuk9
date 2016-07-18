@@ -34,8 +34,8 @@ HWmidi::HWmidi()   {
     mRunningStatus_TX = midiMessageInvalidType;
     mRunningStatus_RX = midiMessageInvalidType;
 
-    dinPendingMessageIndex            = 0;
-    dinPendingMessageExpectedLenght   = 0;
+    dinPendingMessageIndex          = 0;
+    dinPendingMessageExpectedLenght = 0;
 
     dinMessage.valid                = false;
     dinMessage.type                 = midiMessageInvalidType;
@@ -697,6 +697,12 @@ void HWmidi::enableRunningStatus()  {
 void HWmidi::disableRunningStatus() {
 
     useRunningStatus = false;
+
+}
+
+bool HWmidi::runningStatusEnabled() {
+
+    return useRunningStatus;
 
 }
 

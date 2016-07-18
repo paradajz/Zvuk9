@@ -154,10 +154,7 @@ bool checkAftertouchType(functionArgument argument)   {
         //check if current aftertouch type is same as received argument
         return (pads.getAftertouchType() == (aftertouchType_t)argument.argument1);
 
-        default:
-        return false;
-
-    }
+    }   return false;
 
 }
 
@@ -189,12 +186,9 @@ bool checkNoteOffStatus(functionArgument argument)    {
         return true;
 
         case false:
-        return (midi.noteOffStatus() == argument.argument1);
+        return (midi.getNoteOffStatus() == (noteOffType_t)argument.argument1);
 
-        default:
-        return false;
-
-    }
+    }   return false;
 
 }
 
@@ -210,10 +204,7 @@ bool checkRunningStatus(functionArgument argument)  {
         case false:
         return (midi.runningStatusEnabled() == (bool)argument.argument1);
 
-        default:
-        return false;
-
-    }
+    }   return false;
 
 }
 

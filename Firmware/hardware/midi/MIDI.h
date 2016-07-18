@@ -79,11 +79,7 @@ class HWmidi    {
 
     void enableRunningStatus();
     void disableRunningStatus();
-    bool runningStatusEnabled() {
-
-        return useRunningStatus;
-
-    }
+    bool runningStatusEnabled();
 
     private:
     void send(midiMessageType_t inType, uint8_t inData1, uint8_t inData2, uint8_t inChannel, midiInterfaceType_t type);

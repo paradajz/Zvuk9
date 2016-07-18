@@ -203,12 +203,13 @@ void Configuration::initSettings(bool partialReset) {
     initProgramSettings(partialReset);
     initUserScales(partialReset);
     initPadCalibration(partialReset);
+    initMIDIsettings(partialReset);
 
 }
 
 void Configuration::initProgramSettings(bool partialReset) {
 
-    if (partialReset && blocks[CONF_BLOCK_PROGRAM].resetEnabled) return;
+    if (partialReset && blocks[CONF_BLOCK_PROGRAM].preserveOnPartialReset) return;
 
     uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_PROGRAM);
 
@@ -271,7 +272,7 @@ void Configuration::initProgramSettings(bool partialReset) {
 
 void Configuration::initUserScales(bool partialReset)   {
 
-    if (partialReset && blocks[CONF_BLOCK_USER_SCALE].resetEnabled) return;
+    if (partialReset && blocks[CONF_BLOCK_USER_SCALE].preserveOnPartialReset) return;
 
     uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_USER_SCALE);
     uint16_t parameterAddress;
@@ -300,7 +301,7 @@ void Configuration::initUserScales(bool partialReset)   {
 
 void Configuration::initPadCalibration(bool partialReset)   {
 
-    if (partialReset && blocks[CONF_BLOCK_PAD_CALIBRATION].resetEnabled) return;
+    if (partialReset && blocks[CONF_BLOCK_PAD_CALIBRATION].preserveOnPartialReset) return;
 
     uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_PAD_CALIBRATION);
     uint16_t parameterAddress;
@@ -356,6 +357,18 @@ void Configuration::initPadCalibration(bool partialReset)   {
         eeprom_update_word((uint16_t*)parameterAddress, DEFAULT_PAD_Y_LIMIT_UPPER);
 
     }
+
+}
+
+void Configuration::initMIDIsettings(bool partialReset) {
+
+    if (partialReset && blocks[CONF_BLOCK_MIDI].preserveOnPartialReset) return;
+
+    uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_MIDI);
+    uint16_t parameterAddress = blockStartAddress;
+
+    for (int i=0; i<MIDI_SETTINGS; i++)
+        eeprom_update_byte((uint8_t*)parameterAddress+i, defaultMIDIsettingArray[i]);
 
 }
 

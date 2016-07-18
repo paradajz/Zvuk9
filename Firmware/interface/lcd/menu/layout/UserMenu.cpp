@@ -87,13 +87,13 @@ void Menu::createUserMenuLayout()   {
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].level = 321;
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].checkable = true;
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].function = checkRunningStatus;
-                menuItem[userMenuItem_midiSettings_runningStatus_enabled].argument.argument1 = (uint8_t)true;
+                menuItem[userMenuItem_midiSettings_runningStatus_enabled].argument.argument1 = 1;
 
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].stringPointer = disabled_string;
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].level = 322;
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].checkable = true;
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].function = checkRunningStatus;
-                menuItem[userMenuItem_midiSettings_runningStatus_disabled].argument.argument1 = (uint8_t)false;
+                menuItem[userMenuItem_midiSettings_runningStatus_disabled].argument.argument1 = 0;
             }
 
             menuItem[userMenuItem_midiSettings_noteOff].stringPointer = midiSettings_noteOff;

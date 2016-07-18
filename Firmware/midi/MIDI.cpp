@@ -9,7 +9,6 @@
 MIDI::MIDI()    {
 
     //default constructor
-    noteOffType = noteOffType_standardNoteOff;
 
 }
 
@@ -17,9 +16,13 @@ void MIDI::init() {
 
     //enable only midi out
     //listen only on channel 1
+
     hwMIDI.init(false, true, dinInterface);
     hwMIDI.init(false, true, usbInterface);
     hwMIDI.setInputChannel(DEFAULT_MIDI_CHANNEL);
+
+    noteOffType = (noteOffType_t)configuration.readParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_NOTE_OFF_TYPE_ID);
+    configuration.readParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_RUNNING_STATUS_ID) ? hwMIDI.enableRunningStatus() : hwMIDI.disableRunningStatus();
 
 }
 
@@ -73,7 +76,7 @@ void MIDI::sendSysEx(uint8_t *sysExArray, uint8_t arraySize)   {
 
 }
 
-noteOffType_t MIDI::noteOffStatus() {
+noteOffType_t MIDI::getNoteOffStatus() {
 
     return noteOffType;
 
@@ -82,6 +85,7 @@ noteOffType_t MIDI::noteOffStatus() {
 void MIDI::setNoteOffStatus(noteOffType_t type) {
 
     noteOffType = type;
+    configuration.writeParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_NOTE_OFF_TYPE_ID, (uint8_t)type);
 
 }
 
@@ -94,6 +98,7 @@ bool MIDI::runningStatusEnabled()   {
 void MIDI::setRunningStatus(bool option)    {
 
     option ? hwMIDI.enableRunningStatus() : hwMIDI.disableRunningStatus();
+    configuration.writeParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_RUNNING_STATUS_ID, (uint8_t)option);
 
 }
 

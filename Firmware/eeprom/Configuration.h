@@ -50,7 +50,7 @@ typedef struct {
     uint16_t sectionAddress[10];
     uint16_t sectionParameters[10];
     sectionParameterType_t sectionParameterType[10];
-    bool resetEnabled;
+    bool preserveOnPartialReset;
 
 } blockDescriptor;
 
@@ -126,9 +126,10 @@ class Configuration : LCD {
     }
     void initProgramSettings(bool partialReset);
     void initUserScales(bool partialReset);
+    void initPadCalibration(bool partialReset);
+    void initMIDIsettings(bool partialReset);
     void checkReset();
     void writeSignature();
-    void initPadCalibration(bool partialReset);
 
     struct {
 

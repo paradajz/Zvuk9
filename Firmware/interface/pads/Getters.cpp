@@ -8,6 +8,8 @@ void Pads::getConfiguration()   {
     getProgramParameters();
     getPadLimits();
 
+    aftertouchType = configuration.readParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
+
 }
 
 void Pads::getProgramParameters()   {
@@ -18,7 +20,6 @@ void Pads::getProgramParameters()   {
 
     activeProgram = configuration.readParameter(CONF_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
     activePreset = configuration.readParameter(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram);
-    aftertouchType = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, (uint16_t)GLOBAL_PROGRAM_SETTING_AFTERTOUCH_TYPE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #if MODE_SERIAL > 0
         printf("Active program: %d\n", activeProgram+1);
