@@ -8,7 +8,6 @@ const char menuOption_exit[] PROGMEM = "Exit";
 //menu
 const char menuType_user[] PROGMEM = "Settings";
 const char menuType_service[] PROGMEM = "Service menu";
-const char menuType_quick[] PROGMEM = "Quick actions";
 
 const char menuOption_padCalibration[] PROGMEM = "Pad calibration";
 const char menuOption_deviceInfo[] PROGMEM = "Device info";

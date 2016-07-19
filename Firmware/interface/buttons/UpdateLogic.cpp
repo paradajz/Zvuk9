@@ -9,10 +9,7 @@
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         10
-#define STOP_DISABLE_TIMEOUT        500
-#define RESET_ENABLE_TIMEOUT        4000
-
-//#define SOFT_REBOOT                 1
+#define USER_MENU_TIMEOUT           1500
 
 //MCP23017 address bytes
 const uint8_t expanderAddress[] = { 0x21, 0x20 };   //chip address
@@ -30,7 +27,6 @@ Buttons::Buttons()  {
     lastCheckTime               = 0;
     lastButtonDataPress         = 0;
     mcpData                     = 0;
-    modifierActive              = false;
     processingEnabled           = true;
 
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
@@ -184,35 +180,25 @@ void Buttons::update()    {
 
     }
 
-    ////we know stop button is modifier
-    //if (getButtonState(BUTTON_TRANSPORT_STOP) && buttonEnabled[BUTTON_TRANSPORT_STOP])   {
-//
-        ////measure the time the button is pressed
-        //if (!stopDisableTimeout || !pads.allPadsReleased()) stopDisableTimeout = rTimeMillis();
-        //else if ((rTimeMillis() - stopDisableTimeout) > STOP_DISABLE_TIMEOUT) {
-//
-            //buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
-            //stopDisableTimeout = 0;
-            //#ifdef MODULE_LCD
-            //display.displayModifierEnabled();
-            //#endif
-            //#if MODE_SERIAL > 0
-                //printf("Modifier active\n");
-            //#endif
-            //modifierActive = true;
-//
-            //#ifdef MODULE_LEDS
-            //if ((!pads.editModeActive()) && (pads.isPredefinedScale(pads.getActivePreset()))) {
-//
-                //leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
-                //leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-//
-            //} leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityFull);
-            //#endif
-//
-        //}
-//
-    //}  else stopDisableTimeout = 0;
+    //check split button for entering into user menu
+    if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])   {
+
+        //measure the time the button is pressed
+        if (!userMenuTimeout) userMenuTimeout = rTimeMillis();
+        else if (((rTimeMillis() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed()) {
+
+            buttonEnabled[BUTTON_ON_OFF_SPLIT] = false;
+            userMenuTimeout = 0;
+            #ifdef MODULE_LCD
+            menu.displayMenu(userMenu);
+            #endif
+            #if MODE_SERIAL > 0
+                printf("Entering user menu\n");
+            #endif
+
+        }
+
+    }  else userMenuTimeout = 0;
 
     lastCheckTime = rTimeMillis();
 
@@ -253,39 +239,15 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
 
     if (buttonEnabled[buttonNumber])    {
 
-        if (state)    {
-
-            switch(buttonNumber)    {
-
-                case BUTTON_ON_OFF_AFTERTOUCH:
-                case BUTTON_ON_OFF_NOTES:
-                case BUTTON_ON_OFF_X:
-                case BUTTON_ON_OFF_Y:
-                case BUTTON_ON_OFF_SPLIT:
-                handleOnOffEvent(buttonNumber);
-                break;
-
-                case BUTTON_NOTE_C_SHARP:
-                case BUTTON_NOTE_D_SHARP:
-                case BUTTON_NOTE_F_SHARP:
-                case BUTTON_NOTE_G_SHARP:
-                case BUTTON_NOTE_A_SHARP:
-                case BUTTON_NOTE_C:
-                case BUTTON_NOTE_D:
-                case BUTTON_NOTE_E:
-                case BUTTON_NOTE_F:
-                case BUTTON_NOTE_G:
-                case BUTTON_NOTE_A:
-                case BUTTON_NOTE_B:
-                note_t note = getTonicFromButton(buttonNumber);
-                handleTonicEvent(note);
-                break;
-
-            }
-
-        }
-
         switch (buttonNumber)   {
+
+            case BUTTON_ON_OFF_AFTERTOUCH:
+            case BUTTON_ON_OFF_NOTES:
+            case BUTTON_ON_OFF_X:
+            case BUTTON_ON_OFF_Y:
+            case BUTTON_ON_OFF_SPLIT:
+            handleOnOffEvent(buttonNumber, state);
+            break;
 
             case BUTTON_OCTAVE_DOWN:
             handleOctaveEvent(false, state);
@@ -301,27 +263,21 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
             handleTransportControlEvent(buttonNumber, state);
             break;
 
-        }
-
-        }   else {
-
-        //hack!
-        //we know stop button is modifier
-        if (buttonNumber == BUTTON_TRANSPORT_STOP)  {
-
-            //in this case it's disabled
-            //check if it's released
-            if (!state) {
-
-                //restore led states
-                #ifdef MODULE_LEDS
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-                leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
-                #endif
-                modifierActive = false;
-
-            }
+            case BUTTON_NOTE_C_SHARP:
+            case BUTTON_NOTE_D_SHARP:
+            case BUTTON_NOTE_F_SHARP:
+            case BUTTON_NOTE_G_SHARP:
+            case BUTTON_NOTE_A_SHARP:
+            case BUTTON_NOTE_C:
+            case BUTTON_NOTE_D:
+            case BUTTON_NOTE_E:
+            case BUTTON_NOTE_F:
+            case BUTTON_NOTE_G:
+            case BUTTON_NOTE_A:
+            case BUTTON_NOTE_B:
+            note_t note = getTonicFromButton(buttonNumber);
+            handleTonicEvent(note, state);
+            break;
 
         }
 
@@ -346,15 +302,21 @@ void Buttons::setButtonState(uint8_t buttonNumber, uint8_t state) {
 
 }
 
-void Buttons::enable()  {
+void Buttons::enable(int8_t buttonID)  {
 
-    processingEnabled = true;
+    if (buttonID == -1)
+        processingEnabled = true;
+
+    else buttonEnabled[buttonID] = true;
 
 }
 
-void Buttons::disable() {
+void Buttons::disable(int8_t buttonID) {
 
-    processingEnabled = false;
+    if (buttonID == -1)
+        processingEnabled = false;
+
+    else buttonEnabled[buttonID] = false;
 
 }
 

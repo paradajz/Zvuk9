@@ -85,7 +85,6 @@ bool changeOctaveButtons(functionArgument argument)   {
         leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
         break;
 
-
         case shiftMode_octave:
         leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
         leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
@@ -101,7 +100,7 @@ bool changeOctaveButtons(functionArgument argument)   {
 
     }
 
-    pads.setNoteShiftMode((shiftMode_t)argument.argument1);
+    buttons.setShiftMode((shiftMode_t)argument.argument1);
     display.displayShiftMode((shiftMode_t)argument.argument1);
 
     menu.exitMenu();
@@ -123,6 +122,12 @@ bool checkCalibration(functionArgument argument) {
 }
 
 bool checkPressureLevel(functionArgument argument)    {
+
+    return true;
+
+}
+
+bool checkPressureCurve(functionArgument argument)    {
 
     return true;
 
@@ -158,9 +163,19 @@ bool checkAftertouchType(functionArgument argument)   {
 
 }
 
-bool checkPressureCurve(functionArgument argument)    {
+bool checkRunningStatus(functionArgument argument)  {
 
-    return true;
+    switch(argument.argument2)  {
+
+        case true:
+        //switch option
+        midi.setRunningStatus((bool)argument.argument1);
+        return true;
+
+        case false:
+        return (midi.runningStatusEnabled() == (bool)argument.argument1);
+
+    }   return false;
 
 }
 
@@ -187,22 +202,6 @@ bool checkNoteOffStatus(functionArgument argument)    {
 
         case false:
         return (midi.getNoteOffStatus() == (noteOffType_t)argument.argument1);
-
-    }   return false;
-
-}
-
-bool checkRunningStatus(functionArgument argument)  {
-
-    switch(argument.argument2)  {
-
-        case true:
-        //switch option
-        midi.setRunningStatus((bool)argument.argument1);
-        return true;
-
-        case false:
-        return (midi.runningStatusEnabled() == (bool)argument.argument1);
 
     }   return false;
 

@@ -33,10 +33,6 @@ void Menu::displayMenu(menuType_t type) {
         createUserMenuLayout();
         break;
 
-        case quickMenu:
-        createQuickMenuLayout();
-        break;
-
         default:
         break;
 
@@ -86,12 +82,6 @@ void Menu::setMenuTitle(bool rootTitle)   {
             updateDisplay(0, text, 0, true, size);
             break;
 
-            case quickMenu:
-            strcpy_P(stringBuffer, menuType_quick);
-            size = progmemCharArraySize(menuType_quick);
-            updateDisplay(0, text, 0, true, size);
-            break;
-
             default:
             break;
 
@@ -113,12 +103,6 @@ uint8_t Menu::getMenuSize() {
 
         case userMenu:
         menuSize = USER_MENU_ITEMS;
-        break;
-
-        case quickMenu:
-        if (pads.isUserScale(pads.getActivePreset()))
-        menuSize = QUICK_MENU_ITEMS_USER_SCALE;
-        else menuSize = QUICK_MENU_ITEMS_PREDEFINED_SCALE;
         break;
 
         default:
@@ -291,20 +275,6 @@ void Menu::confirmOption(bool confirm)  {
     if (confirm)    {
 
         bool menuLevelPresent = false;
-
-        //special check for jumping to user menu from quick actions
-        if (activeMenu == quickMenu)    {
-
-            if (
-            (indexes[currentOptionIndex] == quickMenuItem_us_userMenu) ||
-            (indexes[currentOptionIndex] == quickMenuItem_ps_userMenu)) {
-
-                displayMenu(userMenu);
-                return;
-
-            }
-
-        }
 
         //check if level has assigned function
         if (menuItem[indexes[currentOptionIndex]].function != NULL) {

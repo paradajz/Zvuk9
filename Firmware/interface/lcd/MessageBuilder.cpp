@@ -310,24 +310,20 @@ void LCD::displayShiftMode(shiftMode_t type)    {
 
 }
 
-void LCD::displayTransportControl(transportControl_t type, bool state)  {
+void LCD::displayTransportControl(transportControl_t type)  {
 
     uint8_t size = 0;
 
     switch(type)    {
 
-        case transportRecord:
-        if (state) {
+        case transportRecordOn:
+        strcpy_P(stringBuffer, (char*)pgm_read_word(&(transportControlChangeArray[2])));
+        size = pgm_read_byte(&transportControlChangeArray_sizes[2]);
+        break;
 
-            strcpy_P(stringBuffer, (char*)pgm_read_word(&(transportControlChangeArray[2])));
-            size = pgm_read_byte(&transportControlChangeArray_sizes[2]);
-
-        } else {
-
-            strcpy_P(stringBuffer, (char*)pgm_read_word(&(transportControlChangeArray[3])));
-            size = pgm_read_byte(&transportControlChangeArray_sizes[3]);
-
-        }
+        case transportRecordOff:
+        strcpy_P(stringBuffer, (char*)pgm_read_word(&(transportControlChangeArray[3])));
+        size = pgm_read_byte(&transportControlChangeArray_sizes[3]);
         break;
 
         case transportPlay:

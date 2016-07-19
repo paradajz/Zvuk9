@@ -5,7 +5,6 @@
 Pads::Pads()  {
 
     //default constructor
-    //only init variables with custom init value (other than 0)
 
     for (int i=0; i<MAX_PADS; i++)        {
 
@@ -27,7 +26,6 @@ Pads::Pads()  {
     octaveShiftPadBuffer = 0;
     scaleShiftPadBuffer = 0;
     calibrationEnabled = false;
-    activeShiftMode = shiftMode_octave;
 
 }
 

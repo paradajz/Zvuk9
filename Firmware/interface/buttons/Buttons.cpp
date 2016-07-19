@@ -48,7 +48,7 @@ note_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
 
 }
 
-void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
+void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
 
     //determine action based on pressed button
 
@@ -60,53 +60,86 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber)    {
     switch (buttonNumber)    {
 
         case BUTTON_ON_OFF_NOTES:
-        pads.notesOnOff();
-        lcdMessageType = featureNotes;
-        ledNumber = LED_ON_OFF_NOTES;
-        if (pads.getNoteSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        if (state)  {
+
+            activeShiftMode = shiftMode_note;
+            return;
+
+        }   else {
+
+            //restore previous shift state
+            //check split button since it's used for midi channel shift mode
+            //if it's pressed, set midi channel shift mode when notes on/off is released
+            //else restore shift mode to default
+            if (getButtonState(BUTTON_ON_OFF_SPLIT))
+                activeShiftMode = shiftMode_channel;
+            else if (activeShiftMode == shiftMode_note)
+                activeShiftMode = shiftMode_octave;
+
+            pads.notesOnOff();
+            lcdMessageType = featureNotes;
+            ledNumber = LED_ON_OFF_NOTES;
+            if (pads.getNoteSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+
+
+        }
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
-        //if (modifierActive) {
-//
-            ////change aftertouch type
-            //lcdMessageType = featureAftertouchType;
-            //pads.changeAftertouchType();
-            ////split and pad number are irrelevant here
-            //#ifdef MODULE_LCD
-                //display.displayOnOff(lcdMessageType, false, (uint8_t)pads.getAftertouchType(), 0);
-            //#endif
-            //return;
-//
-        //}   else {
+        if (!state)  {
 
             pads.aftertouchOnOff();
             lcdMessageType = featureAftertouch;
             ledNumber = LED_ON_OFF_AFTERTOUCH;
             if (pads.getAfterTouchSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
 
-        //}
+        }   else return;
         break;
 
         case BUTTON_ON_OFF_X:
-        pads.xOnOff();
-        lcdMessageType = featureX;
-        ledNumber = LED_ON_OFF_X;
-        if (pads.getCCXsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        if (!state)  {
+
+            pads.xOnOff();
+            lcdMessageType = featureX;
+            ledNumber = LED_ON_OFF_X;
+            if (pads.getCCXsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+
+        }   else return;
         break;
 
         case BUTTON_ON_OFF_Y:
-        pads.yOnOff();
-        lcdMessageType = featureY;
-        ledNumber = LED_ON_OFF_Y;
-        if (pads.getCCYsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+        if (!state)  {
+
+            pads.yOnOff();
+            lcdMessageType = featureY;
+            ledNumber = LED_ON_OFF_Y;
+            if (pads.getCCYsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+
+        }   else return;
         break;
 
         case BUTTON_ON_OFF_SPLIT:
-        pads.splitOnOff();
-        lcdMessageType = featureSplit;
-        ledNumber = LED_ON_OFF_SPLIT;
-        pads.getSplitState() ? ledState = ledIntensityFull : ledState = ledIntensityOff;
+        if (state)  {
+
+            activeShiftMode = shiftMode_channel;
+            return;
+
+        }   else {
+
+            pads.splitOnOff();
+            lcdMessageType = featureSplit;
+            ledNumber = LED_ON_OFF_SPLIT;
+            pads.getSplitState() ? ledState = ledIntensityFull : ledState = ledIntensityOff;
+            //restore previous shift state
+            //check note button since it's used for note shift mode
+            //if it's pressed, set note shift mode when split is released
+            //else restore shift mode to default
+            if (getButtonState(BUTTON_ON_OFF_NOTES))
+                activeShiftMode = shiftMode_note;
+            else if (activeShiftMode == shiftMode_channel)
+                activeShiftMode = shiftMode_octave;
+
+        }
         break;
 
         default:
@@ -130,89 +163,75 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
     #endif
 
-    transportControl_t type = transportStop;
-    bool displayState = true;
+    transportControl_t type;
 
-    switch(buttonNumber)    {
+    if (!state)  {
 
-        case BUTTON_TRANSPORT_PLAY:
-        if (!state) {
+        switch(buttonNumber)    {
 
+            case BUTTON_TRANSPORT_PLAY:
             type = transportPlay;
             #if MODE_SERIAL < 1
-                sysExArray[4] = 0x02;
+            sysExArray[4] = 0x02;
             #endif
             #ifdef MODULE_LEDS
-                leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityFull);
+            leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityFull);
             #endif
+            break;
 
-        } else return;
-        break;
-
-        case BUTTON_TRANSPORT_STOP:
-        if (!state)    {
-
+            case BUTTON_TRANSPORT_STOP:
             type = transportStop;
             #if MODE_SERIAL < 1
-                sysExArray[4] = 0x01;
+            sysExArray[4] = 0x01;
             #endif
             #ifdef MODULE_LEDS
-                leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
-                leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
+            leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
+            leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
             #endif
+            break;
 
-        } else {
+            case BUTTON_TRANSPORT_RECORD:
+            #ifdef MODULE_LEDS
+            if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledIntensityFull) {
 
-            stopDisableTimeout = rTimeMillis();
+                leds.setLEDstate(LED_TRANSPORT_RECORD, ledIntensityOff);
+                type = transportRecordOff;
+                #if MODE_SERIAL < 1
+                sysExArray[4] = 0x07;
+                #endif
+
+            }   else {
+
+                leds.setLEDstate(LED_TRANSPORT_RECORD, ledIntensityFull);
+                type = transportRecordOn;
+                #if MODE_SERIAL < 1
+                sysExArray[4] = 0x06;
+                #endif
+
+            }
+            #endif
+            break;
+
+            default:
             return;
 
         }
-        break;
 
-        case BUTTON_TRANSPORT_RECORD:
-        if (state) {
-
-            #ifdef MODULE_LEDS
-                ledIntensity_t recordState = leds.getLEDstate(LED_TRANSPORT_RECORD);
-                if (recordState == ledIntensityFull) {
-
-                    recordState = ledIntensityOff;
-                    #if MODE_SERIAL < 1
-                        sysExArray[4] = 0x07;
-                    #endif
-                    displayState = false;
-
-                }   else if (recordState == ledIntensityOff) {
-
-                    recordState = ledIntensityFull;
-                    #if MODE_SERIAL < 1
-                        sysExArray[4] = 0x06;
-                    #endif
-                    displayState = true;
-
-                }
-
-                type = transportRecord;
-                leds.setLEDstate(LED_TRANSPORT_RECORD, recordState);
-            #endif
-
-        } else return;
-
-        break;
-
-    }
+    }   else return;
 
     #if MODE_SERIAL < 1
         midi.sendSysEx(sysExArray, SYS_EX_ARRAY_SIZE);
     #endif
 
     #ifdef MODULE_LCD
-        display.displayTransportControl(type, displayState);
+        display.displayTransportControl(type);
     #endif
 
 }
 
-void Buttons::handleTonicEvent(note_t note) {
+void Buttons::handleTonicEvent(note_t note, bool state) {
+
+    if (state) return;
 
     if (!pads.editModeActive())   {
 
@@ -257,83 +276,56 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
     if (buttons.getButtonState(BUTTON_OCTAVE_DOWN) && buttons.getButtonState(BUTTON_OCTAVE_UP))   {
 
-        ////try to enter pad edit mode
-        //if (pads.isUserScale(pads.getActivePreset()))    {
-//
-            //pads.setEditMode(!pads.editModeActive());
-//
-            //if (pads.editModeActive())  {
-//
-                ////check if last touched pad is pressed
-                //if (pads.isPadPressed(pads.getLastTouchedPad()))   {
-//
-                    //#ifdef MODULE_LCD
-                        //display.displayEditModeNotAllowed(padNotReleased);
-                    //#endif
-                    //pads.setEditMode(false);
-//
-                //}   else {
-//
-                    ////normally, this is called in automatically in Pads.cpp
-                    ////but on first occasion call it manually
-                    //#if MODE_SERIAL > 0
-                        //printf("Pad edit mode\n");
-                    //#endif
-                    //pads.setupPadEditMode(pads.getLastTouchedPad());
-//
-                    //leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-                    //leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
-//
-                //}
-//
-            //}   else {
-//
-                //leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-                //leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
-                //pads.exitPadEditMode();
-//
-            //}
-//
-        //}   else {
-//
-                
-//
-        //}
-        #ifdef MODULE_LCD
-        if (!menu.menuDisplayed())  {
+        //try to enter pad edit mode
+        if (pads.isUserScale(pads.getActivePreset()))    {
 
-            menu.displayMenu(quickMenu);
-            leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
-            leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+            pads.setEditMode(!pads.editModeActive());
 
-        }
+            if (pads.editModeActive())  {
 
-        else {  //exit
+                //check if last touched pad is pressed
+                if (pads.isPadPressed(pads.getLastTouchedPad()))   {
 
-            if (pads.editModeActive())
-                pads.exitPadEditMode();
-            if (pads.getShiftMode() == shiftMode_octave)    {
+                    #ifdef MODULE_LCD
+                        display.displayEditModeNotAllowed(padNotReleased);
+                    #endif
+                    pads.setEditMode(false);
+
+                }   else {
+
+                    //normally, this is called in automatically in Pads.cpp
+                    //but on first occasion call it manually
+                    #if MODE_SERIAL > 0
+                        printf("Pad edit mode\n");
+                    #endif
+                    pads.setupPadEditMode(pads.getLastTouchedPad());
+
+                    leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
+
+                }
+
+            }   else {
 
                 leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
                 leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
-
-            } else if (pads.getShiftMode() == shiftMode_note)   {
-
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
+                pads.exitPadEditMode();
 
             }
 
-            menu.exitMenu();
+        }   else {
+
+                display.displayEditModeNotAllowed(notUserPreset);
+                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
 
         }
-        #endif
 
-        //stop buttons temporarily
+        //temporarily disable buttons
         buttonEnabled[BUTTON_OCTAVE_UP] = false;
         buttonEnabled[BUTTON_OCTAVE_DOWN] = false;
 
-    }   else {
+    } else {
 
         bool editMode = pads.editModeActive();
 
@@ -363,100 +355,80 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             break;
 
             case false:
-            if (pads.getShiftMode() == shiftMode_channel)   {
+            if (pads.isUserScale(pads.getActivePreset()) || (pads.isPredefinedScale(pads.getActivePreset()) && activeShiftMode == shiftMode_octave))   {
 
-                if (!state)  {
+                //shift entire octave up or down
+                if (!state)    {
 
-                    //change midi channel in case it's pressed
-                    uint8_t midiChannel = pads.getMIDIchannel(lastTouchedPad);
-
-                    if (direction) midiChannel++;
-                    else           midiChannel--;
-
-                    if (midiChannel < 1)  midiChannel = 16;
-                    if (midiChannel > 16) midiChannel = 1;
-
-                    pads.setMIDIchannel(lastTouchedPad, midiChannel);
-
+                    changeOutput_t shiftResult = pads.shiftOctave(direction);
+                    uint8_t activeOctave = pads.getActiveOctave();
                     #ifdef MODULE_LCD
-                    display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
+                        display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
+                    #endif
+                    #ifdef MODULE_LEDS
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    #endif
+
+                }   else {
+
+                    #ifdef MODULE_LEDS
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
                     #endif
 
                 }
 
-            }   else {
+            }   else if (activeShiftMode == shiftMode_note) {
 
-                    if (pads.isUserScale(pads.getActivePreset()) || 
+                    //shift single note, but only in predefined presets
+                    if (!state)    {
 
-                        (pads.isPredefinedScale(pads.getActivePreset()) && pads.getShiftMode() == shiftMode_octave)
-                    )   {
+                        if (pads.isPadPressed(lastTouchedPad))   {
 
-                        //shift entire octave up or down
-                        if (!state)    {
-
-                            changeOutput_t shiftResult = pads.shiftOctave(direction);
-                            uint8_t activeOctave = pads.getActiveOctave();
                             #ifdef MODULE_LCD
-                                display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
-                            #endif
-                            #ifdef MODULE_LEDS
-                                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                                display.displayEditModeNotAllowed(padNotReleased);
                             #endif
 
-                        }   else {
-
-                            #ifdef MODULE_LEDS
-                                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-                            #endif
+                            return;
 
                         }
+
+                        #ifdef MODULE_LEDS
+                            direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                        #endif
+
+                        buttonEnabled[BUTTON_ON_OFF_NOTES] = false;
+
+                        changeOutput_t shiftResult = pads.shiftNote(direction);
+                        #ifdef MODULE_LCD
+                            display.displayNoteChange(shiftResult, noteShift, direction);
+                        #endif
 
                     }   else {
 
-                        //shift single note, but only in predefined presets
-                        if (!state)    {
-
-                            if (pads.isPadPressed(lastTouchedPad))   {
-
-                                #ifdef MODULE_LCD
-                                    display.displayEditModeNotAllowed(padNotReleased);
-                                #endif
-
-                                return;
-
-                            }
-
-                            #ifdef MODULE_LEDS
-                                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-                            #endif
-
-                            changeOutput_t shiftResult = pads.shiftNote(direction);
-                            #ifdef MODULE_LCD
-                                display.displayNoteChange(shiftResult, noteShift, direction);
-                            #endif
-
-                        }   else {
-
-                            #ifdef MODULE_LEDS
-                                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-                            #endif
-
-                        }
+                        #ifdef MODULE_LEDS
+                            direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                        #endif
 
                     }
 
+                }
+                break;
+
             }
-            break;
 
         }
 
-    }
+}
+
+shiftMode_t Buttons::getShiftMode() {
+
+    return activeShiftMode;
 
 }
 
-bool Buttons::modifierEnabled() {
+void Buttons::setShiftMode(shiftMode_t mode)   {
 
-    return modifierActive;
+    activeShiftMode = mode;
 
 }
 

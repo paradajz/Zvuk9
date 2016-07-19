@@ -89,9 +89,7 @@ class Pads  {
     bool noteActive(note_t note);
     note_t getTonicFromNote(uint8_t note);
     uint8_t getOctaveFromNote(uint8_t note);
-    shiftMode_t getShiftMode();
     //setters
-    void setNoteShiftMode(shiftMode_t mode);
     changeOutput_t shiftOctave(bool direction);
     changeOutput_t shiftNote(bool direction, bool internalChange = false);
     changeOutput_t setTonic(note_t note, bool internalChange = false);
@@ -272,8 +270,6 @@ class Pads  {
 
     int8_t      activePreset,
                 activeProgram;
-
-    shiftMode_t activeShiftMode;
 
     //debouncing
     bool        padDebounceTimerStarted[MAX_PADS],

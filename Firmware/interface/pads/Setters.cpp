@@ -1392,9 +1392,3 @@ void Pads::setFunctionLEDs(uint8_t padNumber)   {
     #endif
 
 }
-
-void Pads::setNoteShiftMode(shiftMode_t mode)   {
-
-    activeShiftMode = mode;
-
-}

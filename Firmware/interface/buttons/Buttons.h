@@ -31,18 +31,21 @@ class Buttons   {
     Buttons();
     void init();
     void update();
-    void enable();
-    void disable();
+    void enable(int8_t buttonID = -1);
+    void disable(int8_t buttonID = -1);
 
     //getters
     bool getButtonState(uint8_t buttonNumber);
-    bool modifierEnabled();
+    shiftMode_t getShiftMode();
+
+    //setters
+    void setShiftMode(shiftMode_t mode);
 
     private:
     //callbacks
-    void handleOnOffEvent(uint8_t buttonNumber);
+    void handleOnOffEvent(uint8_t buttonNumber, bool state);
     void handleTransportControlEvent(uint8_t buttonNumber, bool state);
-    void handleTonicEvent(note_t note);
+    void handleTonicEvent(note_t note, bool state);
     void handleOctaveEvent(bool direction, bool state);
 
     //read/debounce handling
@@ -62,10 +65,9 @@ class Buttons   {
     uint32_t lastButtonDataPress;                           //previous button value
     uint32_t lastCheckTime;                                 //last time buttons were checked
     bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
-    uint32_t stopDisableTimeout;
-    uint32_t resetActivationTimeout;
-    bool modifierActive;
     bool processingEnabled;
+    shiftMode_t activeShiftMode;
+    uint32_t userMenuTimeout;
 
 };
 

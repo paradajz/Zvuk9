@@ -98,35 +98,58 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         else
         #endif
         {
-        if (!padsReleased) {
+            if (!padsReleased) {
 
-            //disable encoders while pads are pressed
-            #ifdef MODULE_LCD
-            display.displayPadReleaseError(changeProgram);
-            #endif
-            return;
+                //disable encoders while pads are pressed
+                #ifdef MODULE_LCD
+                display.displayPadReleaseError(changeProgram);
+                #endif
+                return;
 
-        }
+            }
 
-        int8_t activeProgram = pads.getActiveProgram();
+            if (buttons.getShiftMode() == shiftMode_channel)    {
 
-        if (direction) activeProgram++; else activeProgram--;
-        if (activeProgram == NUMBER_OF_PROGRAMS) activeProgram = 0;
-        else if (activeProgram < 0) activeProgram = (NUMBER_OF_PROGRAMS-1);
-        pads.setActiveProgram(activeProgram);
+                buttons.disable(BUTTON_ON_OFF_SPLIT);
 
-        //get last active preset on current program
-        uint8_t currentPreset = pads.getActivePreset();
+                uint8_t midiChannel = pads.getMIDIchannel(lastTouchedPad);
 
-        //preset is changed
-        #ifdef MODULE_LEDS
-        leds.displayActiveNoteLEDs();
-        #endif
+                if (direction) midiChannel++;
+                else           midiChannel--;
 
-        //display preset on display
-        #ifdef MODULE_LCD
-        display.displayProgramAndPreset(activeProgram+1, currentPreset);
-        #endif
+                if (midiChannel < 1)  midiChannel = 16;
+                if (midiChannel > 16) midiChannel = 1;
+
+                pads.setMIDIchannel(lastTouchedPad, midiChannel);
+
+                #ifdef MODULE_LCD
+                display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
+                #endif
+
+            }   else {
+
+                int8_t activeProgram = pads.getActiveProgram();
+
+                if (direction) activeProgram++; else activeProgram--;
+                if (activeProgram == NUMBER_OF_PROGRAMS) activeProgram = 0;
+                else if (activeProgram < 0) activeProgram = (NUMBER_OF_PROGRAMS-1);
+                pads.setActiveProgram(activeProgram);
+
+                //get last active preset on current program
+                uint8_t currentPreset = pads.getActivePreset();
+
+                //preset is changed
+                #ifdef MODULE_LEDS
+                leds.displayActiveNoteLEDs();
+                #endif
+
+                //display preset on display
+                #ifdef MODULE_LCD
+                display.displayProgramAndPreset(activeProgram+1, currentPreset);
+                #endif
+
+            }
+
         }
         break;
 
@@ -156,22 +179,6 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         else if (activePreset < 0) activePreset = (NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1);
 
         pads.setActivePreset(activePreset);
-
-        if (pads.isUserScale(activePreset)) {
-
-            leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-            leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
-
-        }   else {
-
-            if (pads.getShiftMode() == shiftMode_note)  {
-
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
-
-            }
-
-        }
 
         #ifdef MODULE_LEDS
             leds.displayActiveNoteLEDs();

@@ -646,16 +646,10 @@ call del version</PostBuildEvent>
     <Compile Include="interface\lcd\menu\functions\MenuFunctions.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\menu\items\QuickMenu.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="interface\lcd\menu\items\ServiceMenu.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\menu\items\UserMenu.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="interface\lcd\menu\layout\QuickMenu.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\menu\layout\ServiceMenu.cpp">

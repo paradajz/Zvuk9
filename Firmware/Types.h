@@ -46,7 +46,8 @@ typedef enum {
 
     transportStop,
     transportPlay,
-    transportRecord
+    transportRecordOn,
+    transportRecordOff
 
 } transportControl_t;
 
@@ -154,7 +155,6 @@ typedef enum {
 
     userMenu,
     serviceMenu,
-    quickMenu,
     noMenu
 
 } menuType_t;

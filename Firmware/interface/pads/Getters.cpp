@@ -587,9 +587,3 @@ bool Pads::allPadsReleased()   {
     return true;
 
 }
-
-shiftMode_t Pads::getShiftMode()    {
-
-    return activeShiftMode;
-
-}
