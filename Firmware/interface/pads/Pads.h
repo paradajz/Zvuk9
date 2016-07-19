@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "../../Debug.h"
 #include "../../hardware/pins/Pins.h"
-#include "XYscales.h"
+#include "Curves.h"
 #include "../../midi/MIDI_parameters.h"
 #include "Calibration.h"
 #include "../../Types.h"

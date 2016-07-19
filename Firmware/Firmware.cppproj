@@ -742,7 +742,7 @@ call del version</PostBuildEvent>
     <Compile Include="interface\pads\Setters.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\pads\XYscales.h">
+    <Compile Include="interface\pads\Curves.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="version\Firmware.h">
