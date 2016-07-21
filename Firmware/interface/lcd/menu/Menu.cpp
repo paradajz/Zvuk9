@@ -70,15 +70,15 @@ void Menu::setMenuTitle(bool rootTitle)   {
         switch(activeMenu)  {
 
             case userMenu:
-            strcpy_P(stringBuffer, menuType_user);
-            size = progmemCharArraySize(menuType_user);
+            strcpy_P(stringBuffer, menuType_user_string);
+            size = progmemCharArraySize(menuType_user_string);
             updateDisplay(0, text, 0, true, size);
             break;
             break;
 
             case serviceMenu:
-            strcpy_P(stringBuffer, menuType_service);
-            size = progmemCharArraySize(menuType_service);
+            strcpy_P(stringBuffer, menuType_service_string);
+            size = progmemCharArraySize(menuType_service_string);
             updateDisplay(0, text, 0, true, size);
             break;
 
@@ -300,11 +300,24 @@ void Menu::confirmOption(bool confirm)  {
 
             }   else {
 
+                bool functionStatus = true;
+
                 if (!functionRunning) {
 
-                    setMenuTitle(false);
-                    functionRunning = true;
-                    menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
+                    functionStatus = menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
+
+                    if (functionStatus) {
+
+                        setMenuTitle(false);
+                        functionRunning = true;
+                        menuHierarchyPosition = newLevel;
+
+                    }   else {
+
+                        displayMenu(activeMenu);
+                        return;
+
+                    }
 
                 }
 

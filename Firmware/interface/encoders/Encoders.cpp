@@ -38,7 +38,7 @@ void Encoders::init()   {
 
 }
 
-void Encoders::update() {
+void Encoders::update(bool process) {
 
     for (int i=0; i<NUMBER_OF_ENCODERS; i++)    {
 
@@ -325,6 +325,12 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         break;
 
     }
+
+}
+
+void Encoders::flush()    {
+
+    update(false);
 
 }
 

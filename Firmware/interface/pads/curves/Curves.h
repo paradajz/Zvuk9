@@ -1,12 +1,17 @@
 #ifndef PADXYSCALES_H_
 #define PADXYSCALES_H_
 
+#include <inttypes.h>
+
 #define NUMBER_OF_SCALES 2
 
-const uint8_t xyScale[NUMBER_OF_SCALES][128] = {
+uint8_t toLogarithmicScale(uint8_t value, uint8_t maxValue);
+uint8_t toExponentialScale(uint8_t value, uint8_t maxValue);
 
-    //easier to put scales directly to flash than in progmem
-    //we would have to extract each byte from progmem which results in slower access
+//first half: log
+//second half: exp
+
+const uint8_t xyScale[NUMBER_OF_SCALES][128] = {
 
     //wide middle
     {

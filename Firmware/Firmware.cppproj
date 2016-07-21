@@ -715,6 +715,12 @@ call del version</PostBuildEvent>
     <Compile Include="interface\pads\Calibration.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\pads\curves\Curves.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\pads\curves\Curves.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\pads\DataOutput.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -740,9 +746,6 @@ call del version</PostBuildEvent>
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\pads\Setters.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="interface\pads\Curves.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="version\Firmware.h">
@@ -826,6 +829,7 @@ call del version</PostBuildEvent>
     <Folder Include="interface\lcd\strings\" />
     <Folder Include="interface\leds\" />
     <Folder Include="interface\pads\" />
+    <Folder Include="interface\pads\curves" />
     <Folder Include="midi\" />
     <Folder Include="init" />
     <Folder Include="version" />

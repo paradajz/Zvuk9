@@ -4,13 +4,40 @@
 
 bool factoryReset(functionArgument argument) {
 
-    #ifdef MODULE_LEDS
-        leds.setFadeSpeed(1);
-        leds.allLEDsOff();
-    #endif
-    configuration.factoryReset((factoryResetType_t)argument.argument1);
-    reboot();
-    return true;
+    display.displayFactoryResetWarning();
+
+    uint16_t padsPressed = 0;
+
+    while(1)    {
+
+        pads.update();
+
+        for (int i=0; i<MAX_PADS; i++)
+            if (pads.isPadPressed(i))   {
+
+                if ((i != 6) && (i != 0) && (i != 8)) {
+
+                    //flush all accumulated encoder output if there were any movements
+                    encoders.flush();
+                    return false;
+
+                }
+                bitWrite(padsPressed, i, 1);
+
+            }   else bitWrite(padsPressed, i, 0);
+
+        if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))    {
+
+            #ifdef MODULE_LEDS
+                leds.setFadeSpeed(1);
+                leds.allLEDsOff();
+            #endif
+            configuration.factoryReset(factoryReset_partial);
+            reboot();
+
+        }
+
+    }   return true;
 
 }
 
@@ -169,11 +196,16 @@ bool checkRunningStatus(functionArgument argument)  {
 
         case true:
         //switch option
+        #if MODE_SERIAL < 1
         midi.setRunningStatus((bool)argument.argument1);
+        #endif
         return true;
 
         case false:
+        #if MODE_SERIAL < 1
         return (midi.runningStatusEnabled() == (bool)argument.argument1);
+        #endif
+        break;
 
     }   return false;
 
@@ -197,11 +229,17 @@ bool checkNoteOffStatus(functionArgument argument)    {
 
         case true:
         //switch option
+        #if MODE_SERIAL < 1
         midi.setNoteOffStatus((noteOffType_t)argument.argument1);
+        #endif
         return true;
 
         case false:
+        #if MODE_SERIAL < 1
         return (midi.getNoteOffStatus() == (noteOffType_t)argument.argument1);
+        #else
+        return false;
+        #endif
 
     }   return false;
 

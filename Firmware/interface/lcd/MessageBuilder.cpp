@@ -431,8 +431,8 @@ void LCD::displayFirmwareUpdated()  {
     updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
 
     size = 0;
-    strcpy_P(stringBuffer, deviceInfo_swVersion);
-    size += progmemCharArraySize(deviceInfo_swVersion);
+    strcpy_P(stringBuffer, deviceInfo_swVersion_string);
+    size += progmemCharArraySize(deviceInfo_swVersion_string);
     addNumberToCharArray(getSWversion(swVersion_major), size);
     appendText(".", size);
     addNumberToCharArray(getSWversion(swVersion_minor), size);
@@ -788,8 +788,8 @@ void LCD::clearLine(uint8_t row)    {
 void LCD::displayDeviceInfo()   {
 
     uint8_t size = 0;
-    strcpy_P(stringBuffer, deviceInfo_swVersion);
-    size += progmemCharArraySize(deviceInfo_swVersion);
+    strcpy_P(stringBuffer, deviceInfo_swVersion_string);
+    size += progmemCharArraySize(deviceInfo_swVersion_string);
     addNumberToCharArray(getSWversion(swVersion_major), size);
     appendText(".", size);
     addNumberToCharArray(getSWversion(swVersion_minor), size);
@@ -800,8 +800,8 @@ void LCD::displayDeviceInfo()   {
     updateDisplay(1, text, 0, true, size);
 
     size = 0;
-    strcpy_P(stringBuffer, deviceInfo_hwVersion);
-    size += progmemCharArraySize(deviceInfo_hwVersion);
+    strcpy_P(stringBuffer, deviceInfo_hwVersion_string);
+    size += progmemCharArraySize(deviceInfo_hwVersion_string);
     addNumberToCharArray(hardwareVersion.major, size);
     appendText(".", size);
     addNumberToCharArray(hardwareVersion.minor, size);
@@ -813,6 +813,35 @@ void LCD::displayDeviceInfo()   {
     size = progmemCharArraySize(emptyLine_string);
 
     display.updateDisplay(3, text, 0, true, size);
+
+}
+
+void LCD::displayFactoryResetWarning()   {
+
+    //write directly to screen
+
+    lcd_clrscr();
+
+    lcd_gotoxy(0, 0);
+
+    strcpy_P(stringBuffer, menuOption_factoryReset_string);
+    lcd_puts(stringBuffer);
+    strcpy(lastLCDLine[0], stringBuffer);
+
+    lcd_gotoxy(0, 1);
+    strcpy_P(stringBuffer, factory_reset_warning_1_string);
+    lcd_puts(stringBuffer);
+    strcpy(lastLCDLine[1], stringBuffer);
+
+    lcd_gotoxy(0, 2);
+    strcpy_P(stringBuffer, factory_reset_warning_2_string);
+    lcd_puts(stringBuffer);
+    strcpy(lastLCDLine[2], stringBuffer);
+
+    lcd_gotoxy(0, 3);
+    strcpy_P(stringBuffer, factory_reset_warning_3_string);
+    lcd_puts(stringBuffer);
+    strcpy(lastLCDLine[3], stringBuffer);
 
 }
 

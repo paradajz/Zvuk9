@@ -69,6 +69,7 @@ class LCD   {
     void displayPadEditChangeParametersError();
     void displayPad(uint8_t pad);
     void displayMIDIchannel(uint8_t channel);
+    void displayFactoryResetWarning();
 
     inline uint8_t getNumberOfDigits(int32_t number)  {
 

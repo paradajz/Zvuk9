@@ -30,6 +30,9 @@ typedef enum {
     userMenuItem_midiSettings_runningStatus_enabled,
     userMenuItem_midiSettings_runningStatus_disabled,
 
+    userMenuItem_factoryReset_no,
+    userMenuItem_factoryReset_yes,
+
     USER_MENU_ITEMS
 
 } userMenuItems_t;

@@ -26,7 +26,8 @@ class Encoders  {
     public:
     Encoders();
     void init();
-    void update();
+    void update(bool process = true);
+    void flush();
 
     private:
     void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps);
