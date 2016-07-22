@@ -68,8 +68,13 @@ const char unchecked_string[] PROGMEM = "[ ]";
 const char yes_string[] PROGMEM = "Yes";
 const char no_string[] PROGMEM = "No";
 
-const char factory_reset_warning_1_string[] PROGMEM = "Press pads 1, 7 and";
-const char factory_reset_warning_2_string[] PROGMEM = "9 to proceed. Press";
-const char factory_reset_warning_3_string[] PROGMEM = "any other to go back";
+//hardcoding...
+#define FACTORY_RESET_STRING_PAD_1_LOCATION 8
+#define FACTORY_RESET_STRING_PAD_7_LOCATION 13
+#define FACTORY_RESET_STRING_PAD_9_LOCATION 18
+
+const char factory_reset_warning_1_string[] PROGMEM = "Confirm by pressing";
+const char factory_reset_warning_2_string[] PROGMEM = "pads: 1[ ] 7[ ] 9[ ]";
+const char factory_reset_warning_3_string[] PROGMEM = "Cancel: any other";
 
 #endif

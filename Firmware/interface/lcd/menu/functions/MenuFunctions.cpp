@@ -22,11 +22,70 @@ bool factoryReset(functionArgument argument) {
                     return false;
 
                 }
-                bitWrite(padsPressed, i, 1);
 
-            }   else bitWrite(padsPressed, i, 0);
+                if (!bitRead(padsPressed, i))   {
+
+                    bitWrite(padsPressed, i, 1);
+
+                    switch(i)   {
+
+                        case 0:
+                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
+                        lcd_putc('x');
+                        break;
+
+                        case 6:
+                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_7_LOCATION, 2);
+                        lcd_putc('x');
+                        break;
+
+                        case 8:
+                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_9_LOCATION, 2);
+                        lcd_putc('x');
+                        break;
+
+                        default:
+                        break;
+
+                    }
+
+                }
+
+            }   else {
+
+                if (bitRead(padsPressed, i))    {
+
+                    bitWrite(padsPressed, i, 0);
+
+                    switch(i)   {
+
+                        case 0:
+                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
+                        lcd_putc(' ');
+                        break;
+
+                        case 6:
+                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_7_LOCATION, 2);
+                        lcd_putc(' ');
+                        break;
+
+                        case 8:
+                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_9_LOCATION, 2);
+                        lcd_putc(' ');
+                        break;
+
+                        default:
+                        break;
+
+                    }
+
+                }
+
+            }
 
         if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))    {
+
+            wait(500);
 
             #ifdef MODULE_LEDS
                 leds.setFadeSpeed(1);
