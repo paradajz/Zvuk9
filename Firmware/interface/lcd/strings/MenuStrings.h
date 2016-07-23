@@ -12,6 +12,7 @@ const char menuType_service_string[] PROGMEM = "Service menu";
 const char menuOption_padCalibration_string[] PROGMEM = "Pad calibration";
 const char menuOption_deviceInfo_string[] PROGMEM = "Device info";
 const char menuOption_factoryReset_string[] PROGMEM = "Factory reset";
+const char menuOption_factoryReset_caps_string[] PROGMEM = "***FACTORY RESET***";
 const char menuOption_pressureSensitivity_string[] PROGMEM = "Press. sensitivity";
 const char menuOption_pressureCurve_string[] PROGMEM = "Press. curve";
 const char menuOption_midiSettings_string[] PROGMEM = "MIDI settings";
@@ -69,12 +70,12 @@ const char yes_string[] PROGMEM = "Yes";
 const char no_string[] PROGMEM = "No";
 
 //hardcoding...
-#define FACTORY_RESET_STRING_PAD_1_LOCATION 8
-#define FACTORY_RESET_STRING_PAD_7_LOCATION 13
-#define FACTORY_RESET_STRING_PAD_9_LOCATION 18
+#define FACTORY_RESET_STRING_PAD_1_LOCATION 4
+#define FACTORY_RESET_STRING_PAD_7_LOCATION 9
+#define FACTORY_RESET_STRING_PAD_9_LOCATION 14
 
-const char factory_reset_warning_1_string[] PROGMEM = "Confirm by pressing";
-const char factory_reset_warning_2_string[] PROGMEM = "pads: 1[ ] 7[ ] 9[ ]";
-const char factory_reset_warning_3_string[] PROGMEM = "Cancel: any other";
+const char factory_reset_warning_1_string[] PROGMEM = " Confirm with pads:";
+const char factory_reset_warning_2_string[] PROGMEM = "  1[ ] 7[ ] 9[ ]   ";
+const char factory_reset_warning_3_string[] PROGMEM = " Cancel: any other";
 
 #endif

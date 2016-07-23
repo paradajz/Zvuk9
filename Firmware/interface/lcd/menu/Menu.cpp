@@ -298,31 +298,29 @@ void Menu::confirmOption(bool confirm)  {
                 //now refresh screen with changed arguments
                 updateMenuScreen();
 
-            }   else {
+            }   else {  //regular function
 
                 bool functionStatus = true;
 
                 if (!functionRunning) {
 
                     functionStatus = menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
+                    menuHierarchyPosition = newLevel;
 
                     if (functionStatus) {
 
                         setMenuTitle(false);
                         functionRunning = true;
-                        menuHierarchyPosition = newLevel;
 
-                    }   else {
+                    }   else {  //non-regular exit
 
-                        displayMenu(activeMenu);
-                        return;
+                        confirmOption(false);
 
                     }
 
                 }
 
-                //update level regardless
-                menuHierarchyPosition = newLevel;
+                //exit
                 return;
 
             }

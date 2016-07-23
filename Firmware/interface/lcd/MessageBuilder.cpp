@@ -824,7 +824,7 @@ void LCD::displayFactoryResetWarning()   {
 
     lcd_gotoxy(0, 0);
 
-    strcpy_P(stringBuffer, menuOption_factoryReset_string);
+    strcpy_P(stringBuffer, menuOption_factoryReset_caps_string);
     lcd_puts(stringBuffer);
     strcpy(lastLCDLine[0], stringBuffer);
 

@@ -62,49 +62,6 @@ void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)  {
 
 }
 
-//void Buttons::checkMenu(menuType_t type)   {
-//
-    //if (buttons.getButtonState(BUTTON_TRANSPORT_PLAY) && buttons.getButtonState(BUTTON_TRANSPORT_STOP)) {
-//
-        //if (!menu.menuDisplayed())  {
-//
-            ////we should activate menu now
-            ////disable buttons while in menu
-            //processingEnabled = false;
-            //#ifdef MODULE_LCD
-            //#if MODE_SERIAL > 0
-            //switch(type)    {
-//
-                //case userMenu:
-                //printf("Activating user menu\n");
-                //break;
-//
-                //case serviceMenu:
-                //printf("Activating service menu\n");
-                //break;
-//
-                //default:
-                //break;
-//
-            //}
-            //#endif
-            //menu.displayMenu(type);
-            //#endif
-//
-            //buttonEnabled[BUTTON_TRANSPORT_STOP] = false;
-            //buttonEnabled[BUTTON_TRANSPORT_PLAY] = false;
-//
-        //}   else {
-//
-            //menu.exitMenu();
-            //processingEnabled = true;
-//
-        //}
-//
-    //}
-//
-//}
-
 void Buttons::init()  {
 
     i2c_init();
@@ -195,6 +152,10 @@ void Buttons::update()    {
             #if MODE_SERIAL > 0
                 printf("Entering user menu\n");
             #endif
+            //reset shift mode
+            buttons.setShiftMode(shiftMode_octave);
+            //disable buttons while in menu
+            buttons.disable();
 
         }
 
