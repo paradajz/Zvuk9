@@ -41,31 +41,8 @@ void Menu::createServiceMenuLayout()   {
 
     menuItem[serviceMenuItem_factoryReset].stringPointer = menuOption_factoryReset_string;
     menuItem[serviceMenuItem_factoryReset].level = 3;
-    menuItem[serviceMenuItem_factoryReset].function = NULL;
-
-        {
-            menuItem[serviceMenuItem_partialReset].stringPointer = factoryReset_partial_string;
-            menuItem[serviceMenuItem_partialReset].level = 31;
-            menuItem[serviceMenuItem_partialReset].function = NULL;
-
-                {
-                    menuItem[serviceMenuItem_confirmPartialReset].stringPointer = confirm_string;
-                    menuItem[serviceMenuItem_confirmPartialReset].level = 311;
-                    menuItem[serviceMenuItem_confirmPartialReset].function = factoryReset;
-                    menuItem[serviceMenuItem_confirmPartialReset].argument.argument1 = (uint8_t)factoryReset_partial;
-                }
-
-            menuItem[serviceMenuItem_fullReset].stringPointer = factoryReset_full_string;
-            menuItem[serviceMenuItem_fullReset].level = 32;
-            menuItem[serviceMenuItem_fullReset].function = NULL;
-
-                {
-                    //menuItem[serviceMenuItem_confirmFullReset].stringPointer = confirm_full_reset;
-                    //menuItem[serviceMenuItem_confirmFullReset].level = 321;
-                    //menuItem[serviceMenuItem_confirmFullReset].function = factoryReset;
-                    //menuItem[serviceMenuItem_confirmFullReset].argument.argument1 = (uint8_t)factoryReset_wipeRestore;
-                }
-        }
+    menuItem[serviceMenuItem_factoryReset].function = factoryReset;
+    menuItem[serviceMenuItem_factoryReset].argument.argument1 = (uint8_t)factoryReset_restore;
 
 }
 #endif

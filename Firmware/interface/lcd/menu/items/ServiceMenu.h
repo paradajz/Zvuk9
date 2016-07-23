@@ -11,12 +11,6 @@ typedef enum {
     serviceMenuItem_calibrateY,
     serviceMenuItem_calibratePressure,
 
-    serviceMenuItem_partialReset,
-    serviceMenuItem_fullReset,
-
-    serviceMenuItem_confirmPartialReset,
-    serviceMenuItem_confirmFullReset,
-
     SERVICE_MENU_ITEMS
 
 } serviceMenuItems_t;

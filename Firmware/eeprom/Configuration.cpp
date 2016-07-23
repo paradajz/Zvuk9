@@ -21,30 +21,10 @@ void Configuration::factoryReset(factoryResetType_t type)   {
         _delay_ms(2000);
     #endif
 
-    switch(type)    {
-
-        case factoryReset_wipeRestore:
+    if (type == factoryReset_wipeRestore)
         clearEEPROM();
-        break;
 
-        default:
-        //nothing
-        break;
-
-    }
-
-    switch(type)    {
-
-        case factoryReset_wipeRestore:
-        case factoryReset_restore:
-        initSettings(false);
-        break;
-
-        case factoryReset_partial:
-        initSettings(true);
-        break;
-
-    }
+    initSettings(type == factoryReset_partial);
 
     writeSignature();
 

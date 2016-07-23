@@ -85,13 +85,13 @@ bool factoryReset(functionArgument argument) {
 
         if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))    {
 
-            wait(500);
+            wait(500); //don't clear lcd immediately
 
             #ifdef MODULE_LEDS
                 leds.setFadeSpeed(1);
                 leds.allLEDsOff();
             #endif
-            configuration.factoryReset(factoryReset_partial);
+            configuration.factoryReset((factoryResetType_t)argument.argument1);
             reboot();
 
         }
