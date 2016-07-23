@@ -15,7 +15,7 @@ typedef enum {
 
     userMenuItem_pressureCurve_linear,
     userMenuItem_pressureCurve_log,
-    userMenuItem_pressureCurve_inv_log,
+    userMenuItem_pressureCurve_exp,
 
     userMenuItem_midiSettings_aftertouchType,
     userMenuItem_midiSettings_runningStatus,
@@ -29,9 +29,6 @@ typedef enum {
 
     userMenuItem_midiSettings_runningStatus_enabled,
     userMenuItem_midiSettings_runningStatus_disabled,
-
-    userMenuItem_factoryReset_no,
-    userMenuItem_factoryReset_yes,
 
     USER_MENU_ITEMS
 

@@ -49,10 +49,10 @@ void Menu::createUserMenuLayout()   {
             menuItem[userMenuItem_pressureCurve_log].checkable = true;
             menuItem[userMenuItem_pressureCurve_log].function = NULL;
 
-            menuItem[userMenuItem_pressureCurve_inv_log].stringPointer = pressure_curve_inv_exp_string;
-            menuItem[userMenuItem_pressureCurve_inv_log].level = 23;
-            menuItem[userMenuItem_pressureCurve_inv_log].checkable = true;
-            menuItem[userMenuItem_pressureCurve_inv_log].function = NULL;
+            menuItem[userMenuItem_pressureCurve_exp].stringPointer = pressure_curve_inv_exp_string;
+            menuItem[userMenuItem_pressureCurve_exp].level = 23;
+            menuItem[userMenuItem_pressureCurve_exp].checkable = true;
+            menuItem[userMenuItem_pressureCurve_exp].function = NULL;
         }
 
     menuItem[userMenuItem_midiSettings].stringPointer = menuOption_midiSettings_string;
@@ -122,7 +122,7 @@ void Menu::createUserMenuLayout()   {
     menuItem[userMenuItem_factoryReset].stringPointer = menuOption_factoryReset_string;
     menuItem[userMenuItem_factoryReset].level = 5;
     menuItem[userMenuItem_factoryReset].function = factoryReset;
-    menuItem[userMenuItem_factoryReset_yes].argument.argument1 = (uint8_t)factoryReset_partial;
+    menuItem[userMenuItem_factoryReset].argument.argument1 = (uint8_t)factoryReset_partial;
 
 }
 #endif

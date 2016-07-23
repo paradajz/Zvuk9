@@ -166,7 +166,7 @@ void Menu::updateMenuScreen()   {
         size = 1 + strlen_P(menuItem[indexes[i+startPosition]].stringPointer);
 
         //check for checkable items
-        if (menuItem[indexes[i+startPosition]].checkable)   {
+        if (menuItem[indexes[i+startPosition]].checkable && menuItem[indexes[i+startPosition]].function != NULL)   {
 
             //checked and unchecked strings have the same size
             uint8_t checkMarkerSize = progmemCharArraySize(checked_string);
