@@ -905,8 +905,8 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
             //predefined scale
             uint16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset;
             uint8_t currentOctave_predefinedScale = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale);
-            uint8_t newOctave = (direction) ? currentOctave_predefinedScale++ : currentOctave_predefinedScale--;
-
+            uint8_t newOctave = currentOctave_predefinedScale;
+            (direction) ? newOctave+=1 : newOctave-=1;
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, newOctave);
             for (int i=0; i<MAX_PADS; i++)  {
 
