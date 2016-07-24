@@ -125,7 +125,6 @@ void Pads::sendAftertouch(uint8_t pad)  {
                     midi.sendKeyAftertouch(midiChannel[pad], padNote[pad][i], aftertouchValue);
 
         }
-        if (!lastMIDInoteState[pad]) aftertouchActivated[pad] = false;
         #endif
         break;
 
@@ -137,7 +136,9 @@ void Pads::sendAftertouch(uint8_t pad)  {
         #endif
         break;
 
-    }
+        }
+
+    if (!lastMIDInoteState[pad]) aftertouchActivated[pad] = false;
 
 }
 

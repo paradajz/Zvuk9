@@ -18,9 +18,9 @@
 //change aftertouch step difference after this timeout
 #define AFTERTOUCH_SEND_TIMEOUT             50
 //ignore aftertouch reading change below this timeout
-#define AFTERTOUCH_SEND_TIMEOUT_IGNORE      10
+#define AFTERTOUCH_SEND_TIMEOUT_IGNORE      25
 //threshold difference between current and last aftertouch value after AFTERTOUCH_SEND_TIMEOUT of no movement
-#define AFTERTOUCH_SEND_TIMEOUT_STEP        2
+#define AFTERTOUCH_SEND_TIMEOUT_STEP        4
 //don't check aftertouch when pad is just pressed for AFTERTOUCH_INITIAL_VALUE_DELAYms
 #define AFTERTOUCH_INITIAL_VALUE_DELAY      100
 

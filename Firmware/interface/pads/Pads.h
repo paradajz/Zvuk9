@@ -112,6 +112,7 @@ class Pads  {
     uint8_t getLastTouchedPad();
     bool isPadPressed(uint8_t padNumber);
     bool allPadsReleased();
+    uint8_t padsPressed();
 
     //scale info
     bool isUserScale(uint8_t scale);
@@ -168,7 +169,7 @@ class Pads  {
     bool xyUpdated(uint8_t pad);
 
     //data availability checks
-    bool checkAftertouch(uint8_t pad);
+    bool checkAftertouch(uint8_t pad, bool velocityAvailable);
     bool checkX(uint8_t pad);
     bool checkY(uint8_t pad);
     bool checkVelocity(uint8_t pad);
@@ -280,7 +281,7 @@ class Pads  {
                 firstPressureValueDelayTimer[MAX_PADS],
                 xSendTimer[MAX_PADS],
                 ySendTimer[MAX_PADS],
-                afterTouchSendTimer[MAX_PADS],
+                lastAftertouchUpdateTime[MAX_PADS],
                 aftertouchActivationDelay[MAX_PADS];
 
     uint8_t     sampleCounterPressure,

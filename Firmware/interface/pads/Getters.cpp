@@ -587,3 +587,14 @@ bool Pads::allPadsReleased()   {
     return true;
 
 }
+
+uint8_t Pads::padsPressed() {
+
+    uint8_t numberOfPressedPads = 0;
+    for (int i=0; i<MAX_PADS; i++)
+        if (isPadPressed(i))
+            numberOfPressedPads++;
+
+    return numberOfPressedPads;
+
+}
