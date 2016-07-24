@@ -32,4 +32,13 @@ typedef enum {
 
 } userScaleSection;
 
+typedef enum {
+
+    pressureSensitivitySection,
+    pressureCurveSection,
+
+    PRESSURE_SETTINGS_SECTIONS
+
+} pressureSettingsSection;
+
 #endif

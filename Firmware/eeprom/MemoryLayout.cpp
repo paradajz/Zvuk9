@@ -70,4 +70,17 @@ void Configuration::createMemoryLayout() {
         blocks[CONF_BLOCK_MIDI].sectionParameterType[0] = BYTE_PARAMETER;
     }
 
+    {
+        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sections = PRESSURE_SETTINGS_SECTIONS;
+
+        blocks[CONF_BLOCK_PRESSURE_SETTINGS].preserveOnPartialReset = false;
+
+        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameters[pressureSensitivitySection] = 1;
+        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameterType[pressureSensitivitySection] = BYTE_PARAMETER;
+
+        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameters[pressureCurveSection] = 1;
+        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameterType[pressureCurveSection] = BYTE_PARAMETER;
+
+    }
+
 }
