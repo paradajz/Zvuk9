@@ -196,6 +196,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)  {
 
                         if (!isPadPressed(i)) continue;
                         if (!aftertouchActivated[i]) continue;
+                        if (!aftertouchSendEnabled[i])
                         if (lastAftertouchValue[i] > tempMaxValue)
                             tempMaxValue = lastAftertouchValue[i];
 
@@ -238,7 +239,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)  {
                 for (int i=0; i<MAX_PADS; i++)  {
 
                     //count how many pads are pressed with activated aftertouch
-                    if (aftertouchActivated[i] && isPadPressed(i))
+                    if (aftertouchActivated[i] && isPadPressed(i) && aftertouchSendEnabled[i])
                         pressedPadCounter++;
 
                 }
