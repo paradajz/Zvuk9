@@ -27,6 +27,17 @@ Pads::Pads()  {
     scaleShiftPadBuffer = 0;
     calibrationEnabled = false;
 
+    for (int i=0; i<PAD_NOTE_BUFFER_SIZE; i++)  {
+
+        pad_note_timer_buffer[i]    = 0;
+        velocity_buffer[i]          = 0;
+        pad_buffer[i]               = 0;
+
+    }
+
+    note_buffer_head = 0;
+    note_buffer_tail = 0;
+
 }
 
 void Pads::init()   {

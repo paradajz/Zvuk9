@@ -647,30 +647,35 @@ void Pads::checkMIDIdata(uint8_t pad, bool velocityAvailable, bool aftertouchAva
 
 }
 
-void Pads::checkNoteBuffer()    {
+bool Pads::checkNoteBuffer()    {
 
     //notes are stored in buffer and they're sent after PAD_NOTE_SEND_DELAY
     //to avoid glide effect while sending x/y + notes
-    while (note_buffer_head != note_buffer_tail)   {
 
-        uint8_t i = note_buffer_tail + 1;
-        if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
+    if (note_buffer_head == note_buffer_tail)   {
 
-        //check buffer until it's empty
-        uint32_t noteTime = pad_note_timer_buffer[i];
-        //this is fifo (circular) buffer
-        //check first element in buffer
-        //if first element (note) can't pass this condition, none of the other elements can, so return
-        if ((rTimeMillis() - noteTime) < PAD_NOTE_SEND_DELAY) return;
-        note_buffer_tail = i;
-
-        if (noteSendEnabled[pad_buffer[i]]) {
-
-            sendNotes(pad_buffer[i], velocity_buffer[i], true);
-
-        }
+        //buffer is empty
+        return true;
 
     }
+
+    //there is something in buffer
+    uint8_t index = note_buffer_tail + 1;
+    if (index >= PAD_NOTE_BUFFER_SIZE) index = 0;
+    uint32_t noteTime = pad_note_timer_buffer[index];
+    //this is fifo (circular) buffer
+    //check first element in buffer
+    //if first element (note) can't pass this condition, none of the other elements can, so return
+    if ((rTimeMillis() - noteTime) < PAD_NOTE_SEND_DELAY) return false;
+    //send
+    if (noteSendEnabled[pad_buffer[index]]) {
+
+        sendNotes(pad_buffer[index], velocity_buffer[index], true);
+
+    }
+
+    note_buffer_tail = index;
+    return true;
 
 }
 
@@ -901,9 +906,19 @@ void Pads::storeNotes(uint8_t pad)  {
         //vserial.println(pad);
     //#endif
 
-    //store midi note on in circular buffer
     uint8_t i = note_buffer_head + 1;
     if (i >= PAD_NOTE_BUFFER_SIZE) i = 0;
+    //if buffer is full, wait until there is some space
+    if (note_buffer_tail == i)  {
+
+        #if MODE_SERIAL > 0
+            printf("Oops, buffer full. Waiting...\n");
+        #endif
+
+        while (checkNoteBuffer());
+
+    }
+
     pad_buffer[i] = pad;
     velocity_buffer[i] = lastVelocityValue[pad];
     pad_note_timer_buffer[i] = rTimeMillis();

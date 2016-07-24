@@ -27,12 +27,14 @@
 
 #ifdef HW_MIDI_H
 
+USB_ClassInfo_MIDI_Device_t MIDI_Interface;
+
 HWmidi::HWmidi()   {
 
     //default constructor
 
-    mRunningStatus_TX = midiMessageInvalidType;
-    mRunningStatus_RX = midiMessageInvalidType;
+    mRunningStatus_TX               = midiMessageInvalidType;
+    mRunningStatus_RX               = midiMessageInvalidType;
 
     dinPendingMessageIndex          = 0;
     dinPendingMessageExpectedLenght = 0;
@@ -53,6 +55,16 @@ HWmidi::HWmidi()   {
     mThruActivated                  = false;
     useRunningStatus                = false;
     use1byteParsing                 = true;
+
+    MIDI_Interface.Config.StreamingInterfaceNumber = INTERFACE_ID_AudioStream;
+
+    MIDI_Interface.Config.DataINEndpoint.Address = MIDI_STREAM_IN_EPADDR;
+    MIDI_Interface.Config.DataINEndpoint.Size = MIDI_STREAM_EPSIZE;
+    MIDI_Interface.Config.DataINEndpoint.Banks = 1;
+
+    MIDI_Interface.Config.DataOUTEndpoint.Address = MIDI_STREAM_OUT_EPADDR;
+    MIDI_Interface.Config.DataOUTEndpoint.Size = MIDI_STREAM_EPSIZE;
+    MIDI_Interface.Config.DataOUTEndpoint.Banks = 1;
 
 }
 
@@ -163,29 +175,26 @@ void HWmidi::send(midiMessageType_t inType, uint8_t inData1, uint8_t inData2, ui
 
         if (type == usbInterface)   {
 
-            Endpoint_SelectEndpoint(MIDI_STREAM_IN_EPADDR);
+            uint8_t midiEvent = (uint8_t)inType >> 4;
+            uint8_t data1 = getStatus(inType, inChannel);
 
-            if (Endpoint_IsINReady())   {
+            MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t)
+            {
+                .Event       = midiEvent,
 
-                uint8_t midiEvent = (uint8_t)inType >> 4;
-                uint8_t data1 = getStatus(inType, inChannel);
+                .Data1       = data1,
+                .Data2       = inData1,
+                .Data3       = inData2,
+            };
 
-                MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t)
-                {
-                    .Event       = midiEvent,
+            //write the MIDI event packet to the endpoint
+            //Endpoint_Write_Stream_LE(&MIDIEvent, sizeof(MIDIEvent), NULL);
 
-                    .Data1       = data1,
-                    .Data2       = inData1,
-                    .Data3       = inData2,
-                };
+            //send the data in the endpoint to the host
+            //Endpoint_ClearIN();
 
-                //write the MIDI event packet to the endpoint
-                Endpoint_Write_Stream_LE(&MIDIEvent, sizeof(MIDIEvent), NULL);
-
-                //send the data in the endpoint to the host
-                Endpoint_ClearIN();
-
-            }
+            MIDI_Device_SendEventPacket(&MIDI_Interface, &MIDIEvent);
+            MIDI_Device_Flush(&MIDI_Interface);
 
         }
 
@@ -290,8 +299,8 @@ void HWmidi::sendSysEx(uint16_t inLength, const uint8_t* inArray, bool inArrayCo
         break;
 
         case usbInterface:
-        Endpoint_SelectEndpoint(MIDI_STREAM_IN_EPADDR);
-        if (!Endpoint_IsINReady()) return;
+        //Endpoint_SelectEndpoint(MIDI_STREAM_IN_EPADDR);
+        //if (!Endpoint_IsINReady()) return;
         if (!inArrayContainsBoundaries)   {
 
             //append sysex start (0xF0) and stop (0xF7) bytes to array
@@ -312,11 +321,8 @@ void HWmidi::sendSysEx(uint16_t inLength, const uint8_t* inArray, bool inArrayCo
                         .Data3       = inArray[1],
                     };
 
-                    //write the MIDI event packet to the endpoint
-                    Endpoint_Write_Stream_LE(&MIDIEvent, sizeof(MIDIEvent), NULL);
-
-                    //send the data in the endpoint to the host
-                    Endpoint_ClearIN();
+                    MIDI_Device_SendEventPacket(&MIDI_Interface, &MIDIEvent);
+                    MIDI_Device_Flush(&MIDI_Interface);
 
                     firstByte = false;
                     startSent = true;

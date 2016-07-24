@@ -31,7 +31,7 @@
 #define NUMBER_OF_SAMPLES       3
 
 #define DEFAULT_XY_AT_VALUE     255
-#define PAD_NOTE_BUFFER_SIZE    32
+#define PAD_NOTE_BUFFER_SIZE    64
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
@@ -196,7 +196,7 @@ class Pads  {
 
     //MIDI send
     void checkMIDIdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
-    void checkNoteBuffer();
+    bool checkNoteBuffer();
     void checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
     void sendAftertouch(uint8_t pad);
     void sendX(uint8_t pad);
