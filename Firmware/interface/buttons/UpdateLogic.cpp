@@ -8,7 +8,7 @@
 #include <util/delay.h>
 
 //time after which expanders are checked in ms
-#define EXPANDER_CHECK_TIME         10
+#define EXPANDER_CHECK_TIME         5
 #define USER_MENU_TIMEOUT           1500
 
 //MCP23017 address bytes

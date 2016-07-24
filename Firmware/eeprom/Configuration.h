@@ -35,6 +35,12 @@ EEPROM addresses of parameters.
 #define EEPROM_SIZE     4096
 #define START_OFFSET    5
 
+#define ENABLE_ASYNC_UPDATE
+
+#ifdef ENABLE_ASYNC_UPDATE
+#define EEPROM_UPDATE_BUFFER_SIZE   64
+#endif
+
 typedef enum {
 
     BIT_PARAMETER,
@@ -60,6 +66,9 @@ class Configuration : LCD {
 
     public:
     Configuration();
+    #ifdef ENABLE_ASYNC_UPDATE
+    bool update();
+    #endif
     void clearEEPROM();
     void init();
     void initSettings(bool partialReset);
@@ -105,7 +114,7 @@ class Configuration : LCD {
         }   return 0;
 
     };
-    bool writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue);
+    bool writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue, bool async = false);
     blockDescriptor blocks[CONF_BLOCKS];
 
     private:
@@ -130,6 +139,9 @@ class Configuration : LCD {
     void initMIDIsettings(bool partialReset);
     void checkReset();
     void writeSignature();
+    #ifdef ENABLE_ASYNC_UPDATE
+    void queueData(uint16_t eepromAddress, uint16_t data, uint8_t parameterType);
+    #endif
 
     struct {
 
@@ -139,6 +151,15 @@ class Configuration : LCD {
         uint16_t crc;
 
     } firmwareVersion;
+
+    #ifdef ENABLE_ASYNC_UPDATE
+    //update buffer
+    uint8_t     eeprom_update_bufer_param_type[EEPROM_UPDATE_BUFFER_SIZE];
+    uint16_t    eeprom_update_bufer_value[EEPROM_UPDATE_BUFFER_SIZE];
+    uint16_t    eeprom_update_bufer_address[EEPROM_UPDATE_BUFFER_SIZE];
+    uint8_t     eeprom_update_buffer_head;
+    uint8_t     eeprom_update_buffer_tail;
+    #endif
 
 };
 

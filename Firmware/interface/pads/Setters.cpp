@@ -957,7 +957,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
                     if (padNote[i][j] != BLANK_NOTE)    {
 
                         newNote = (direction) ? padNote[i][j] + MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES) : padNote[i][j] - MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES);
-                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote);
+                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote, true);    //async write
 
                         #if MODE_SERIAL > 0
                             printf("%d ", newNote);
@@ -1096,7 +1096,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
         uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
         if (isPredefinedScale(activePreset) && !internalChange)
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
 
         for (int i=0; i<MAX_PADS; i++)    {
 
@@ -1118,7 +1118,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
                     if (isUserScale(activePreset) && !internalChange)  {
 
-                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote);
+                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote, true); //async write
 
                     }
 

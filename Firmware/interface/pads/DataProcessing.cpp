@@ -655,7 +655,7 @@ bool Pads::checkNoteBuffer()    {
     if (note_buffer_head == note_buffer_tail)   {
 
         //buffer is empty
-        return true;
+        return false;
 
     }
 
@@ -915,7 +915,7 @@ void Pads::storeNotes(uint8_t pad)  {
             printf("Oops, buffer full. Waiting...\n");
         #endif
 
-        while (checkNoteBuffer());
+        while (!checkNoteBuffer());
 
     }
 

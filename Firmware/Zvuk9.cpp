@@ -32,6 +32,12 @@ int main()    {
         vserial.update();
         #endif
 
+        #ifdef ENABLE_ASYNC_UPDATE
+        //write to eeprom when all pads are released
+        if (pads.allPadsReleased())
+            configuration.update();
+        #endif
+
     }
 
     return 0;

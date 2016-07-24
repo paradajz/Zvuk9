@@ -49,6 +49,18 @@ void Configuration::writeSignature()    {
 Configuration::Configuration()    {
 
     //def const
+    #ifdef ENABLE_ASYNC_UPDATE
+    for (int i=0; i<EEPROM_UPDATE_BUFFER_SIZE; i++) {
+
+        eeprom_update_bufer_param_type[i] = 0;
+        eeprom_update_bufer_value[i] = 0;
+        eeprom_update_bufer_address[i] = 0;
+
+    }
+
+    eeprom_update_buffer_head = 0;
+    eeprom_update_buffer_tail = 0;
+    #endif
 
 }
 
@@ -352,7 +364,7 @@ void Configuration::initMIDIsettings(bool partialReset) {
 
 }
 
-bool Configuration::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue)    {
+bool Configuration::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue, bool async)    {
 
     uint16_t startAddress = getSectionAddress(blockID, sectionID);
 
@@ -378,23 +390,122 @@ bool Configuration::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t p
         parameterIndex = parameterID - 8*arrayIndex;
         arrayValue = eeprom_read_byte((uint8_t*)startAddress+arrayIndex);
         bitWrite(arrayValue, parameterIndex, newValue);
+        #ifdef ENABLE_ASYNC_UPDATE
+        if (async)  {
+
+            queueData(startAddress+arrayIndex, arrayValue, BIT_PARAMETER);
+            return true;
+
+        } else {
+
+            eeprom_update_byte((uint8_t*)startAddress+arrayIndex, arrayValue);
+            return (arrayValue == eeprom_read_byte((uint8_t*)startAddress+arrayIndex));
+
+        }
+        #else
         eeprom_update_byte((uint8_t*)startAddress+arrayIndex, arrayValue);
         return (arrayValue == eeprom_read_byte((uint8_t*)startAddress+arrayIndex));
+        #endif
         break;
 
         case BYTE_PARAMETER:
+        #ifdef ENABLE_ASYNC_UPDATE
+        if (async)  {
+
+            queueData(startAddress+parameterID, newValue, BYTE_PARAMETER);
+            return true;
+
+        }   else {
+
+            eeprom_update_byte((uint8_t*)startAddress+parameterID, newValue);
+            return (newValue == eeprom_read_byte((uint8_t*)startAddress+parameterID));
+
+        }
+        #else
         eeprom_update_byte((uint8_t*)startAddress+parameterID, newValue);
         return (newValue == eeprom_read_byte((uint8_t*)startAddress+parameterID));
+        #endif
         break;
 
         case WORD_PARAMETER:
+        #ifdef ENABLE_ASYNC_UPDATE
+        if (async)  {
+
+            queueData(startAddress+parameterID, newValue, WORD_PARAMETER);
+            return true;
+
+        }   else {
+
+            eeprom_update_word((uint16_t*)startAddress+parameterID, newValue);
+            return (newValue == (int16_t)eeprom_read_word((uint16_t*)startAddress+parameterID));
+
+        }
+        #else
         eeprom_update_word((uint16_t*)startAddress+parameterID, newValue);
         return (newValue == (int16_t)eeprom_read_word((uint16_t*)startAddress+parameterID));
+        #endif
         break;
 
     }   return 0;
 
 }
+
+#ifdef ENABLE_ASYNC_UPDATE
+void Configuration::queueData(uint16_t eepromAddress, uint16_t data, uint8_t parameterType)    {
+
+    uint8_t index = eeprom_update_buffer_head + 1;
+    if (index >= EEPROM_UPDATE_BUFFER_SIZE) index = 0;
+    //if buffer is full, wait until there is some space
+    if (eeprom_update_buffer_tail == index)  {
+
+        #if MODE_SERIAL > 0
+        printf("Oops, buffer full. Waiting...\n");
+        #endif
+
+        while (!update());
+
+    }
+
+    eeprom_update_bufer_param_type[index] = parameterType;
+    eeprom_update_bufer_value[index] = data;
+    eeprom_update_bufer_address[index] = eepromAddress;
+    eeprom_update_buffer_head = index;
+
+}
+
+bool Configuration::update()    {
+
+    //write queued data to eeprom
+
+    if (eeprom_update_buffer_head == eeprom_update_buffer_tail)   {
+
+        //buffer is empty
+        return false;
+
+    }
+
+    //there is something in buffer
+    uint8_t index = eeprom_update_buffer_tail + 1;
+    if (index >= EEPROM_UPDATE_BUFFER_SIZE) index = 0;
+    //write
+    switch(eeprom_update_bufer_param_type[index])   {
+
+        case BIT_PARAMETER:
+        case BYTE_PARAMETER:
+        eeprom_update_byte((uint8_t*)eeprom_update_bufer_address[index], eeprom_update_bufer_value[index]);
+        break;
+
+        case WORD_PARAMETER:
+        eeprom_update_word((uint16_t*)eeprom_update_bufer_address[index], eeprom_update_bufer_value[index]);
+        break;
+
+    }
+
+    eeprom_update_buffer_tail = index;
+    return true;
+
+}
+#endif
 
 Configuration configuration;
 

@@ -31,7 +31,7 @@
 #define NUMBER_OF_SAMPLES       3
 
 #define DEFAULT_XY_AT_VALUE     255
-#define PAD_NOTE_BUFFER_SIZE    64
+#define PAD_NOTE_BUFFER_SIZE    32
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
