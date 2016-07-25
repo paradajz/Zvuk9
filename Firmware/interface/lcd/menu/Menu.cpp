@@ -315,6 +315,8 @@ void Menu::confirmOption(bool confirm)  {
 
                     }   else {  //non-regular exit
 
+                        //in this case, increase menu level first so that we can decrease it properly
+                        menuHierarchyPosition = newLevel;
                         confirmOption(false);
 
                     }
