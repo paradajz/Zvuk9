@@ -305,12 +305,13 @@ void Menu::confirmOption(bool confirm)  {
                 if (!functionRunning) {
 
                     functionStatus = menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
-                    menuHierarchyPosition = newLevel;
 
                     if (functionStatus) {
 
                         setMenuTitle(false);
                         functionRunning = true;
+                        //update level regardless
+                        menuHierarchyPosition = newLevel;
 
                     }   else {  //non-regular exit
 
