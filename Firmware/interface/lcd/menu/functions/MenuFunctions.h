@@ -54,8 +54,6 @@ bool padEditMode(functionArgument argument);
 
 bool enableCalibration(functionArgument argument);
 
-bool changeOctaveButtons(functionArgument argument);
-
 //check functions
 bool checkCalibration(functionArgument argument);
 

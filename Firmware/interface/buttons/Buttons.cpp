@@ -60,29 +60,14 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
     switch (buttonNumber)    {
 
         case BUTTON_ON_OFF_NOTES:
-        if (state)  {
-
-            activeShiftMode = shiftMode_note;
-            return;
-
-        }   else {
-
-            //restore previous shift state
-            //check split button since it's used for midi channel shift mode
-            //if it's pressed, set midi channel shift mode when notes on/off is released
-            //else restore shift mode to default
-            if (getButtonState(BUTTON_ON_OFF_SPLIT))
-                activeShiftMode = shiftMode_channel;
-            else if (activeShiftMode == shiftMode_note)
-                activeShiftMode = shiftMode_octave;
+        if (!state)  {
 
             pads.notesOnOff();
             lcdMessageType = featureNotes;
             ledNumber = LED_ON_OFF_NOTES;
             if (pads.getNoteSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
 
-
-        }
+        }   else return;
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
@@ -119,27 +104,14 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
         break;
 
         case BUTTON_ON_OFF_SPLIT:
-        if (state)  {
-
-            activeShiftMode = shiftMode_channel;
-            return;
-
-        }   else {
+        if (!state)  {
 
             pads.splitOnOff();
             lcdMessageType = featureSplit;
             ledNumber = LED_ON_OFF_SPLIT;
             pads.getSplitState() ? ledState = ledIntensityFull : ledState = ledIntensityOff;
-            //restore previous shift state
-            //check note button since it's used for note shift mode
-            //if it's pressed, set note shift mode when split is released
-            //else restore shift mode to default
-            if (getButtonState(BUTTON_ON_OFF_NOTES))
-                activeShiftMode = shiftMode_note;
-            else if (activeShiftMode == shiftMode_channel)
-                activeShiftMode = shiftMode_octave;
 
-        }
+        }   else return;
         break;
 
         default:
@@ -355,7 +327,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             break;
 
             case false:
-            if (pads.isUserScale(pads.getActivePreset()) || (pads.isPredefinedScale(pads.getActivePreset()) && activeShiftMode == shiftMode_octave))   {
+            if (pads.isUserScale(pads.getActivePreset()) || (pads.isPredefinedScale(pads.getActivePreset()) && !getButtonState(BUTTON_ON_OFF_NOTES)))   {
 
                 //shift entire octave up or down
                 if (!state)    {
@@ -377,7 +349,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                 }
 
-            }   else if (activeShiftMode == shiftMode_note) {
+            }   else if (getButtonState(BUTTON_ON_OFF_NOTES)) {
 
                     //shift single note, but only in predefined presets
                     if (!state)    {
@@ -417,18 +389,6 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             }
 
         }
-
-}
-
-shiftMode_t Buttons::getShiftMode() {
-
-    return activeShiftMode;
-
-}
-
-void Buttons::setShiftMode(shiftMode_t mode)   {
-
-    activeShiftMode = mode;
 
 }
 

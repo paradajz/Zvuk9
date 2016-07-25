@@ -162,39 +162,6 @@ bool padEditMode(functionArgument argument)  {
 
 }
 
-bool changeOctaveButtons(functionArgument argument)   {
-
-    switch((shiftMode_t)argument.argument1)    {
-
-        case shiftMode_note:
-        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
-        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim);
-        break;
-
-        case shiftMode_octave:
-        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
-        break;
-
-        case shiftMode_channel:
-        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
-        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
-        break;
-
-        default:
-        return false;
-
-    }
-
-    buttons.setShiftMode((shiftMode_t)argument.argument1);
-    display.displayShiftMode((shiftMode_t)argument.argument1);
-
-    menu.exitMenu();
-    return true;
-
-
-}
-
 bool checkCalibration(functionArgument argument) {
 
     if (!pads.allPadsReleased())    {

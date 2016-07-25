@@ -152,8 +152,6 @@ void Buttons::update()    {
             #if MODE_SERIAL > 0
                 printf("Entering user menu\n");
             #endif
-            //reset shift mode
-            buttons.setShiftMode(shiftMode_octave);
             //disable buttons while in menu
             buttons.disable();
 

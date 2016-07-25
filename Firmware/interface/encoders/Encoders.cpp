@@ -108,7 +108,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
             }
 
-            if (buttons.getShiftMode() == shiftMode_channel)    {
+            if (buttons.getButtonState(BUTTON_ON_OFF_SPLIT))    {   //change midi channel
 
                 buttons.disable(BUTTON_ON_OFF_SPLIT);
 

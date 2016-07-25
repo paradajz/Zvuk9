@@ -36,10 +36,6 @@ class Buttons   {
 
     //getters
     bool getButtonState(uint8_t buttonNumber);
-    shiftMode_t getShiftMode();
-
-    //setters
-    void setShiftMode(shiftMode_t mode);
 
     private:
     //callbacks
@@ -66,7 +62,6 @@ class Buttons   {
     uint32_t lastCheckTime;                                 //last time buttons were checked
     bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
     bool processingEnabled;
-    shiftMode_t activeShiftMode;
     uint32_t userMenuTimeout;
 
 };
