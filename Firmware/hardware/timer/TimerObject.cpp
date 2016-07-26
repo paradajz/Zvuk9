@@ -1,6 +1,8 @@
 #include "TimerObject.h"
 #include "../../interface/leds/LEDsettings.h"
 #include "../../interface/encoders/EncoderSettings.h"
+#include "../../vserial/Serial.h"
+#include "../../Debug.h"
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
@@ -12,6 +14,8 @@ volatile int8_t                     activeColumnInterrupt = 0;
 uint8_t                             ledState[NUMBER_OF_LEDS];
 int16_t                             transitionCounter[NUMBER_OF_LEDS];
 volatile uint8_t                    pwmSteps = DEFAULT_FADE_SPEED;
+uint32_t                            ledBlinking = 0;
+uint16_t                            ledBlinkTimer[NUMBER_OF_LEDS];
 
 //encoders
 volatile int8_t                     encoderMoving[NUMBER_OF_ENCODERS];
@@ -79,6 +83,28 @@ volatile uint8_t *encoderPin2Array[] = {
 
 };
 
+uint8_t ledStateToValue(ledState_t state)  {
+
+    switch(state)   {
+
+        case ledStateOff:
+        return 0;
+
+        case ledStateDim:
+        return LED_INTENSITY_HALF;
+
+        case ledStateFull:
+        return LED_INTENSITY_FULL;
+
+        case ledStateBlink:
+        return LED_INTENSITY_FULL;
+
+        default:
+        return 0;
+
+    }
+
+}
 
 inline void updateEncoder(uint8_t encoderID)    {
 
@@ -185,15 +211,16 @@ ISR(TIMER0_COMPA_vect)    {
 
     #ifdef MODULE_LEDS
 
-        static uint8_t ledUpdateCounter = 0;
+        //static uint8_t ledUpdateCounter = 0;
 
-        if (ledUpdateCounter == 2)  {
+        //if (ledUpdateCounter == 2)  {
 
-                ledUpdateCounter = 0;
+                //ledUpdateCounter = 0;
 
                 //LEDs
                 ledRowsOff();
-                if (activeColumnInterrupt == NUMBER_OF_LED_COLUMNS) activeColumnInterrupt = 0;
+                if (activeColumnInterrupt == NUMBER_OF_LED_COLUMNS)
+                    activeColumnInterrupt = 0;
                 activateColumn(activeColumnInterrupt);
 
                 uint8_t ledNumber;
@@ -205,6 +232,7 @@ ISR(TIMER0_COMPA_vect)    {
                 for (int i=0; i<NUMBER_OF_LED_ROWS; i++)  {
 
                     ledNumber = activeColumnInterrupt+i*NUMBER_OF_LED_COLUMNS;
+
                     ledStateSingle = ledState[ledNumber];
                     currentStepValue = transitionCounter[ledNumber];
                     stepUpdate = currentStepValue != ledStateSingle;
@@ -238,9 +266,9 @@ ISR(TIMER0_COMPA_vect)    {
 
             activeColumnInterrupt++;
 
-        }
+        //}
 
-        ledUpdateCounter++;
+        //ledUpdateCounter++;
 
     #endif
 
@@ -253,6 +281,25 @@ ISR(TIMER0_COMPA_vect)    {
         ms++;
         //update run time
         rTime_ms = ms;
+
+        for (int i=0; i<NUMBER_OF_LEDS; i++)    {
+
+            if (bitRead(ledBlinking, i))    {
+
+                ledBlinkTimer[i]++;
+
+                if (ledBlinkTimer[i] == LED_BLINK_TIME)    {
+
+                    if (ledState[i] == LED_INTENSITY_FULL)
+                        ledState[i] = LED_INTENSITY_OFF;
+                    else ledState[i] = LED_INTENSITY_FULL;
+                        ledBlinkTimer[i] = 0;
+
+                }
+
+            }
+
+        }
 
     }   updateMillis = !updateMillis;
 
@@ -270,26 +317,46 @@ ISR(TIMER3_COMPA_vect)  {
 
 }
 
-ledIntensity_t TimerObject::getLEDstate(uint8_t ledNumber)  {
+ledState_t TimerObject::getLEDstate(uint8_t ledNumber)  {
+
+    if (bitRead(ledBlinking, ledNumber))
+        return ledStateBlink;
 
     switch(ledState[ledNumber]) {
 
         case LED_INTENSITY_FULL:
-        return ledIntensityFull;
+        return ledStateFull;
 
         case LED_INTENSITY_HALF:
-        return ledIntensityDim;
+        return ledStateDim;
 
         default:
-        return ledIntensityOff;
+        return ledStateOff;
 
     }
 
 }
 
-void TimerObject::setLEDstate(uint8_t ledNumber, uint8_t intensity) {
+void TimerObject::setLEDstate(uint8_t ledNumber, ledState_t state) {
 
-    ledState[ledNumber] = intensity;
+    uint8_t value = ledStateToValue(state);
+
+    if (state == ledStateBlink) {
+
+        bitWrite(ledBlinking, ledNumber, 1);
+        //make sure led starts blinking immediately
+        if ((ledState[ledNumber] == LED_INTENSITY_FULL) || (ledState[ledNumber] == LED_INTENSITY_HALF))
+            value = LED_INTENSITY_OFF;
+        else value = LED_INTENSITY_FULL;
+
+    } else if (bitRead(ledBlinking, ledNumber))   {
+
+        bitWrite(ledBlinking, ledNumber, 0);
+        ledBlinkTimer[ledNumber] = 0;
+
+    }
+
+    ledState[ledNumber] = value;
 
 }
 
@@ -342,7 +409,7 @@ void TimerObject::init() {
     TCCR2B |= (1<<CS20);
 
     //configure timer0
-    //used for delay/millis/encoders
+    //used for delay/millis/leds
     TCCR0A = 0;
     TCCR0B = 0;
     TCNT0 = 0;

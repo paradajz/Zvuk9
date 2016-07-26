@@ -3,26 +3,6 @@
 #include "../../hardware/timer/TimerObject.h"
 #include "../pads/Pads.h"
 
-uint8_t intensity2value(ledIntensity_t intensity)  {
-
-    switch(intensity)   {
-
-        case ledIntensityOff:
-        return 0;
-
-        case ledIntensityDim:
-        return LED_INTENSITY_HALF;
-
-        case ledIntensityFull:
-        return LED_INTENSITY_FULL;
-
-        default:
-        return 0;
-
-    }
-
-}
-
 const uint8_t ledNoteArray[] = {
 
     LED_NOTE_C,
@@ -69,20 +49,20 @@ void LEDs::init()   {
 void LEDs::allLEDsOff() {
 
     for (int i=0; i<NUMBER_OF_LEDS; i++)
-        timers.setLEDstate(i, LED_INTENSITY_OFF);
+        timers.setLEDstate(i, ledStateOff);
 
 }
 
 void LEDs::allLEDsOn() {
 
     for (int i=0; i<NUMBER_OF_LEDS; i++)
-        timers.setLEDstate(i, LED_INTENSITY_FULL);
+        timers.setLEDstate(i, ledStateFull);
 
 }
 
-void LEDs::setLEDstate(uint8_t ledNumber, ledIntensity_t state)    {
+void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state)    {
 
-    timers.setLEDstate(ledNumber, intensity2value(state));
+    timers.setLEDstate(ledNumber, state);
 
 }
 
@@ -92,7 +72,7 @@ uint8_t LEDs::getLEDnumberFromTonic(note_t note)  {
 
 }
 
-ledIntensity_t LEDs::getLEDstate(uint8_t ledNumber)    {
+ledState_t LEDs::getLEDstate(uint8_t ledNumber)    {
 
     return timers.getLEDstate(ledNumber);
 
@@ -107,18 +87,18 @@ void LEDs::setFadeSpeed(uint8_t speed)  {
 void LEDs::tonicLEDsOff()   {
 
     for (int i=0; i<MIDI_NOTES; i++)
-        timers.setLEDstate(ledNoteArray[i], LED_INTENSITY_OFF);
+        timers.setLEDstate(ledNoteArray[i], ledStateOff);
 
 }
 
-void LEDs::setNoteLEDstate(note_t note, ledIntensity_t state)   {
+void LEDs::setNoteLEDstate(note_t note, ledState_t state)   {
 
     uint8_t ledNumber = getLEDnumberFromTonic(note);
-    timers.setLEDstate(ledNumber, intensity2value(state));
+    timers.setLEDstate(ledNumber, state);
 
 }
 
-ledIntensity_t LEDs::getTonicLEDstate(note_t note)   {
+ledState_t LEDs::getTonicLEDstate(note_t note)   {
 
     return timers.getLEDstate(getLEDnumberFromTonic(note));
 
@@ -148,17 +128,17 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad) {
 
         //turn off all LEDs
         for (int i=0; i<MIDI_NOTES; i++)
-            setNoteLEDstate((note_t)i, ledIntensityOff);
+            setNoteLEDstate((note_t)i, ledStateOff);
 
         //set dim led state for assigned notes on current pad
         for (int i=0; i<noteCounter; i++)
-            setNoteLEDstate((note_t)tonicArray[i], ledIntensityDim);
+            setNoteLEDstate((note_t)tonicArray[i], ledStateDim);
 
         //set full led state for assigned notes on current pad if note matches current octave
         for (int i=0; i<noteCounter; i++) {
 
             if (octaveArray[i] == pads.getActiveOctave())
-                setNoteLEDstate((note_t)tonicArray[i], ledIntensityFull);
+                setNoteLEDstate((note_t)tonicArray[i], ledStateFull);
 
         }
         break;
@@ -170,7 +150,7 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad) {
 
             //turn tonic LED on only if corresponding note is active
             if (pads.noteActive((note_t)i))
-                leds.setNoteLEDstate((note_t)i, ledIntensityDim);
+                leds.setNoteLEDstate((note_t)i, ledStateDim);
 
         }
         break;

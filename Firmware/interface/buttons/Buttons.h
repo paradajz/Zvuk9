@@ -52,6 +52,10 @@ class Buttons   {
 
     //getters
     note_t getTonicFromButton(uint8_t buttonNumber);
+    uint8_t getLEDnumberFromButton(uint8_t buttonNumber);
+
+    //button-to-led mapping
+    void mapButtonsToLEDs();
 
     //menu
     void checkMenu(menuType_t type);

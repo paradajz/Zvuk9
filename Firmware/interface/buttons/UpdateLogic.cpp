@@ -64,6 +64,8 @@ void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)  {
 
 void Buttons::init()  {
 
+    mapButtonsToLEDs();
+
     i2c_init();
 
     //ensure that we know the configuration
@@ -144,7 +146,7 @@ void Buttons::update()    {
         if (!userMenuTimeout) userMenuTimeout = rTimeMillis();
         else if (((rTimeMillis() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed()) {
 
-            buttonEnabled[BUTTON_ON_OFF_SPLIT] = false;
+            //buttonEnabled[BUTTON_ON_OFF_SPLIT] = false;
             userMenuTimeout = 0;
             #ifdef MODULE_LCD
             menu.displayMenu(userMenu);
@@ -154,6 +156,8 @@ void Buttons::update()    {
             #endif
             //disable buttons while in menu
             buttons.disable();
+            //turn off blinky led
+            leds.setLEDstate(LED_ON_OFF_SPLIT, ledStateOff);
 
         }
 
@@ -248,6 +252,10 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
         if (!buttonEnabled[i] && !getButtonState(i)) {
 
             buttonEnabled[i] = true;
+            //reset blinking
+            uint8_t ledNumber = getLEDnumberFromButton(i);
+            if (leds.getLEDstate(ledNumber) == ledStateBlink)
+                leds.setLEDstate(ledNumber, ledStateOff);
 
         }
 

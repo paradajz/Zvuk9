@@ -1190,7 +1190,7 @@ void Pads::checkRemainingNoteShift()    {
                 note_t note = getTonicFromNote(tempPadNotes[i][j]);
                 #ifdef MODULE_LEDS
                 if (!noteActive(note))
-                    leds.setNoteLEDstate(note, ledIntensityOff);
+                    leds.setNoteLEDstate(note, ledStateOff);
                 #endif
 
             }
@@ -1377,16 +1377,16 @@ void Pads::setFunctionLEDs(uint8_t padNumber)   {
 
             //split is on
             //turn off function LEDs first
-            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledIntensityOff);
-            leds.setLEDstate(LED_ON_OFF_NOTES, ledIntensityOff);
-            leds.setLEDstate(LED_ON_OFF_X, ledIntensityOff);
-            leds.setLEDstate(LED_ON_OFF_Y, ledIntensityOff);
+            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_NOTES, ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
 
             //turn on feature LEDs depending on enabled features for last touched pad
-            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
-            leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
-            leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
-            leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(padNumber) ? ledIntensityFull : ledIntensityOff);
+            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(padNumber) ? ledStateFull : ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(padNumber) ? ledStateFull : ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(padNumber) ? ledStateFull : ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(padNumber) ? ledStateFull : ledStateOff);
 
         }
     #endif

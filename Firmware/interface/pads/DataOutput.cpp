@@ -168,7 +168,7 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
 
             tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
             #ifdef MODULE_LEDS
-                leds.setNoteLEDstate((note_t)tonicArray[i], ledIntensityFull);
+                leds.setNoteLEDstate((note_t)tonicArray[i], ledStateFull);
             #endif
 
         }
@@ -205,7 +205,7 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
             }   if (!noteActive)    {
 
                     #ifdef MODULE_LEDS
-                        leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledIntensityDim);
+                        leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledStateDim);
                     #endif
 
             }

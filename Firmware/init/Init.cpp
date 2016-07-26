@@ -7,14 +7,14 @@ void startUpAnimation() {
     #ifdef MODULE_LEDS
     leds.setFadeSpeed(1);
 
-    ledIntensity_t tempLedStateArray[NUMBER_OF_LEDS];
+    ledState_t tempLedStateArray[NUMBER_OF_LEDS];
 
     for (int i=0; i<NUMBER_OF_LEDS; i++)    {
 
         //copy ledstates to temp field
         tempLedStateArray[i] = leds.getLEDstate(i);
         //turn all leds off
-        leds.setLEDstate(i, ledIntensityOff);
+        leds.setLEDstate(i, ledStateOff);
 
     }
 

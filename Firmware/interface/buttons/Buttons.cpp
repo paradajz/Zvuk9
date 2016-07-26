@@ -54,20 +54,25 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
 
     uint8_t ledNumber = 0;
     functionsOnOff_t lcdMessageType;
-    ledIntensity_t ledState = ledIntensityOff;
+    ledState_t ledState = ledStateOff;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     switch (buttonNumber)    {
 
         case BUTTON_ON_OFF_NOTES:
+        ledNumber = LED_ON_OFF_NOTES;
         if (!state)  {
 
             pads.notesOnOff();
             lcdMessageType = featureNotes;
-            ledNumber = LED_ON_OFF_NOTES;
-            if (pads.getNoteSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+            if (pads.getNoteSendEnabled(lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
 
-        }   else return;
+        }   else {
+
+            leds.setLEDstate(ledNumber, ledStateBlink);
+            return;
+
+        }
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
@@ -76,7 +81,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
             pads.aftertouchOnOff();
             lcdMessageType = featureAftertouch;
             ledNumber = LED_ON_OFF_AFTERTOUCH;
-            if (pads.getAfterTouchSendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+            if (pads.getAfterTouchSendEnabled(lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
 
         }   else return;
         break;
@@ -87,7 +92,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
             pads.xOnOff();
             lcdMessageType = featureX;
             ledNumber = LED_ON_OFF_X;
-            if (pads.getCCXsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+            if (pads.getCCXsendEnabled(lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
 
         }   else return;
         break;
@@ -98,20 +103,25 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
             pads.yOnOff();
             lcdMessageType = featureY;
             ledNumber = LED_ON_OFF_Y;
-            if (pads.getCCYsendEnabled(lastTouchedPad)) ledState = ledIntensityFull; else ledState = ledIntensityOff;
+            if (pads.getCCYsendEnabled(lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
 
         }   else return;
         break;
 
         case BUTTON_ON_OFF_SPLIT:
+        ledNumber = LED_ON_OFF_SPLIT;
         if (!state)  {
 
             pads.splitOnOff();
             lcdMessageType = featureSplit;
-            ledNumber = LED_ON_OFF_SPLIT;
-            pads.getSplitState() ? ledState = ledIntensityFull : ledState = ledIntensityOff;
+            pads.getSplitState() ? ledState = ledStateFull : ledState = ledStateOff;
 
-        }   else return;
+        }   else {
+
+            leds.setLEDstate(ledNumber, ledStateBlink);
+            return;
+
+        }
         break;
 
         default:
@@ -147,7 +157,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             sysExArray[4] = 0x02;
             #endif
             #ifdef MODULE_LEDS
-            leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityFull);
+            leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateFull);
             #endif
             break;
 
@@ -157,16 +167,16 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             sysExArray[4] = 0x01;
             #endif
             #ifdef MODULE_LEDS
-            leds.setLEDstate(LED_TRANSPORT_PLAY, ledIntensityOff);
-            leds.setLEDstate(LED_TRANSPORT_STOP, ledIntensityOff);
+            leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateOff);
+            leds.setLEDstate(LED_TRANSPORT_STOP, ledStateOff);
             #endif
             break;
 
             case BUTTON_TRANSPORT_RECORD:
             #ifdef MODULE_LEDS
-            if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledIntensityFull) {
+            if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull) {
 
-                leds.setLEDstate(LED_TRANSPORT_RECORD, ledIntensityOff);
+                leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
                 type = transportRecordOff;
                 #if MODE_SERIAL < 1
                 sysExArray[4] = 0x07;
@@ -174,7 +184,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
             }   else {
 
-                leds.setLEDstate(LED_TRANSPORT_RECORD, ledIntensityFull);
+                leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
                 type = transportRecordOn;
                 #if MODE_SERIAL < 1
                 sysExArray[4] = 0x06;
@@ -272,15 +282,15 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     #endif
                     pads.setupPadEditMode(pads.getLastTouchedPad());
 
-                    leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
-                    leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
+                    leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
+                    leds.setLEDstate(LED_OCTAVE_UP, ledStateFull);
 
                 }
 
             }   else {
 
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
+                leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
+                leds.setLEDstate(LED_OCTAVE_UP, ledStateOff);
                 pads.exitPadEditMode();
 
             }
@@ -288,8 +298,8 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
         }   else {
 
                 display.displayEditModeNotAllowed(notUserPreset);
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
-                leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff);
+                leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
+                leds.setLEDstate(LED_OCTAVE_UP, ledStateOff);
 
         }
 
@@ -313,13 +323,13 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 #endif
                 #ifdef MODULE_LEDS
                     leds.displayActiveNoteLEDs(true, lastTouchedPad);
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
                 #endif
                 break;
 
                 case true:
                 #ifdef MODULE_LEDS
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                 #endif
                 break;
 
@@ -338,13 +348,13 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                         display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
                     #endif
                     #ifdef MODULE_LEDS
-                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                     #endif
 
                 }   else {
 
                     #ifdef MODULE_LEDS
-                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityDim);
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateDim);
                     #endif
 
                 }
@@ -365,7 +375,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                         }
 
                         #ifdef MODULE_LEDS
-                            direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityOff);
+                            direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                         #endif
 
                         buttonEnabled[BUTTON_ON_OFF_NOTES] = false;
@@ -378,7 +388,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                     }   else {
 
                         #ifdef MODULE_LEDS
-                            direction ? leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
+                            direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
                         #endif
 
                     }

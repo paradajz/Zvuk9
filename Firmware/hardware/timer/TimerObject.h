@@ -14,8 +14,8 @@ class TimerObject {
     public:
     TimerObject();
     void init();
-    ledIntensity_t getLEDstate(uint8_t ledNumber);
-    void setLEDstate(uint8_t ledNumber, uint8_t intensity);
+    ledState_t getLEDstate(uint8_t ledNumber);
+    void setLEDstate(uint8_t ledNumber, ledState_t state);
     int8_t getEncoderState(uint8_t encoderID);
     void setPWMsteps(uint8_t steps);
 

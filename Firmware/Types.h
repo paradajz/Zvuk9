@@ -25,11 +25,12 @@ typedef enum {
 
 typedef enum {
 
-    ledIntensityOff,
-    ledIntensityDim,
-    ledIntensityFull
+    ledStateOff,
+    ledStateDim,
+    ledStateFull,
+    ledStateBlink
 
-} ledIntensity_t;
+} ledState_t;
 
 typedef enum {
 

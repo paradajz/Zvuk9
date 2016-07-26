@@ -153,8 +153,8 @@ bool padEditMode(functionArgument argument)  {
         #endif
         pads.setupPadEditMode(lastTouchedPad);
 
-        leds.setLEDstate(LED_OCTAVE_DOWN, ledIntensityFull);
-        leds.setLEDstate(LED_OCTAVE_UP, ledIntensityFull);
+        leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
+        leds.setLEDstate(LED_OCTAVE_UP, ledStateFull);
 
     }
 

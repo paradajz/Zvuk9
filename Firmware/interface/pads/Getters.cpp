@@ -129,11 +129,11 @@ void Pads::getPadParameters()   {
     uint8_t lastTouchedPad = getLastTouchedPad();
 
     #ifdef MODULE_LEDS
-        leds.setLEDstate(LED_ON_OFF_SPLIT, splitState ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
-        leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledIntensityFull : ledIntensityOff);
+        leds.setLEDstate(LED_ON_OFF_SPLIT, splitState ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledStateFull : ledStateOff);
     #endif
 
 }

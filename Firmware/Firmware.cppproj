@@ -616,6 +616,9 @@ call del version</PostBuildEvent>
     <Compile Include="interface\buttons\Buttons.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\buttons\Map.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\buttons\UpdateLogic.cpp">
       <SubType>compile</SubType>
     </Compile>
