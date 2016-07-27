@@ -70,6 +70,7 @@ class LCD   {
     void displayPad(uint8_t pad);
     void displayMIDIchannel(uint8_t channel);
     void displayFactoryResetWarning();
+    void displayNoteShiftLevel(int8_t level);
 
     inline uint8_t getNumberOfDigits(int32_t number)  {
 
@@ -174,6 +175,7 @@ class LCD   {
         lcdElement_t messageText1;
         lcdElement_t messageText2;
         lcdElement_t padCalibration;
+        lcdElement_t noteShiftLevel;
 
     } lcdElements_t;
 

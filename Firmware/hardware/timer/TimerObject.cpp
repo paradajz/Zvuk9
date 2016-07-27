@@ -1,8 +1,6 @@
 #include "TimerObject.h"
 #include "../../interface/leds/LEDsettings.h"
 #include "../../interface/encoders/EncoderSettings.h"
-#include "../../vserial/Serial.h"
-#include "../../Debug.h"
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
@@ -211,11 +209,11 @@ ISR(TIMER0_COMPA_vect)    {
 
     #ifdef MODULE_LEDS
 
-        //static uint8_t ledUpdateCounter = 0;
+        static uint8_t ledUpdateCounter = 0;
 
-        //if (ledUpdateCounter == 2)  {
+        if (ledUpdateCounter == 2)  {
 
-                //ledUpdateCounter = 0;
+                ledUpdateCounter = 0;
 
                 //LEDs
                 ledRowsOff();
@@ -266,9 +264,9 @@ ISR(TIMER0_COMPA_vect)    {
 
             activeColumnInterrupt++;
 
-        //}
+        }
 
-        //ledUpdateCounter++;
+        ledUpdateCounter++;
 
     #endif
 

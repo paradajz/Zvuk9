@@ -140,10 +140,10 @@ void Pads::getPadParameters()   {
 
 void Pads::getPresetParameters()    {
 
-    #if MODE_SERIAL > 0
-        printf("Printing out preset settings\n");
-        printf("Scale: %d\n", activePreset);
-    #endif
+    //#if MODE_SERIAL > 0
+        //printf("Printing out preset settings\n");
+        //printf("Scale: %d\n", activePreset);
+    //#endif
 
     //clear all pad notes before assigning new ones
     for (int i=0; i<MAX_PADS; i++)
@@ -179,13 +179,13 @@ void Pads::generateScale(scale_t scale)    {
         uint8_t notesPerScale = getNotesPerScale(scale);
         uint8_t octave = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
         note_t tonic = (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
-        int8_t shift = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
+        noteShiftLevel = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
 
-        #if MODE_SERIAL > 0
-            printf("Octave: %d\n", octave);
-            printf("Tonic: %d\n", tonic);
-            printf("Shift: %d\n", shift);
-        #endif
+        //#if MODE_SERIAL > 0
+            //printf("Octave: %d\n", octave);
+            //printf("Tonic: %d\n", tonic);
+            //printf("Shift: %d\n", noteShiftLevel);
+        //#endif
 
         uint8_t noteCounter = 0;
 
@@ -224,24 +224,24 @@ void Pads::generateScale(scale_t scale)    {
         setTonic((note_t)tonic, true); //internal change, do not write anything to eeprom
 
         //finally, apply note shift
-        if (shift < 0)  {
+        if (noteShiftLevel < 0)  {
 
-            shift *= -1;
-            for (int i=0; i<shift; i++)
+            noteShiftLevel *= -1;
+            for (int i=0; i<noteShiftLevel; i++)
                 shiftNote(false, true);
 
         }   else {
 
-            for (int i=0; i<shift; i++)
+            for (int i=0; i<noteShiftLevel; i++)
                 shiftNote(true, true);
 
         }
 
     }   else {  //user scales
 
-        #if MODE_SERIAL > 0
-            printf("User preset %d\n", scale-NUMBER_OF_PREDEFINED_SCALES);
-        #endif
+        //#if MODE_SERIAL > 0
+            //printf("User preset %d\n", scale-NUMBER_OF_PREDEFINED_SCALES);
+        //#endif
 
         uint16_t noteID = (scale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
@@ -257,25 +257,25 @@ void Pads::generateScale(scale_t scale)    {
 
     }
 
-    #if MODE_SERIAL > 0
-        printf("Printing out notes for pads\n");
-        for (int i=0; i<MAX_PADS; i++)    {
-
-            printf("Pad %d: \n", i+1);
-
-            for (int j=0; j<NOTES_PER_PAD; j++)
-                printf("%d\n", padNote[i][j]);
-
-        }
-    #endif
+    //#if MODE_SERIAL > 0
+        //printf("Printing out notes for pads\n");
+        //for (int i=0; i<MAX_PADS; i++)    {
+//
+            //printf("Pad %d: \n", i+1);
+//
+            //for (int j=0; j<NOTES_PER_PAD; j++)
+                //printf("%d\n", padNote[i][j]);
+//
+        //}
+    //#endif
 
 }
 
 void Pads::getPadLimits()   {
 
-    #if MODE_SERIAL > 0
-        printf("Printing out limits for pads\n");
-    #endif
+    //#if MODE_SERIAL > 0
+        //printf("Printing out limits for pads\n");
+    //#endif
 
     getPressureLimits();
     getXLimits();
@@ -286,19 +286,19 @@ void Pads::getPadLimits()   {
 
 void Pads::getPressureLimits()  {
 
-    #if MODE_SERIAL > 0
-        printf("Printing out pressure limits for pads\n");
-    #endif
+    //#if MODE_SERIAL > 0
+        //printf("Printing out pressure limits for pads\n");
+    //#endif
 
     for (int i=0; i<MAX_PADS; i++) {
 
         padPressureLimitLower[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureLowerSection, i);
         padPressureLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
 
-        #if MODE_SERIAL > 0
-            printf("Lower pressure limit for pad %d: %d\n", i, padPressureLimitLower[i]);
-            printf("Upper pressure limit for pad %d: %d\n", i, padPressureLimitUpper[i]);
-        #endif
+        //#if MODE_SERIAL > 0
+            //printf("Lower pressure limit for pad %d: %d\n", i, padPressureLimitLower[i]);
+            //printf("Upper pressure limit for pad %d: %d\n", i, padPressureLimitUpper[i]);
+        //#endif
 
     }
 
@@ -306,19 +306,19 @@ void Pads::getPressureLimits()  {
 
 void Pads::getXLimits()  {
 
-    #if MODE_SERIAL > 0
-        printf("Printing out X limits for pads\n");
-    #endif
+    //#if MODE_SERIAL > 0
+        //printf("Printing out X limits for pads\n");
+    //#endif
 
     for (int i=0; i<MAX_PADS; i++) {
 
         padXLimitLower[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXlowerSection, i);
         padXLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, i);
 
-        #if MODE_SERIAL > 0
-            printf("Lower X limit for pad %d: %d\n", i, padXLimitLower[i]);
-            printf("Upper X limit for pad %d: %d\n", i, padXLimitUpper[i]);
-        #endif
+        //#if MODE_SERIAL > 0
+            //printf("Lower X limit for pad %d: %d\n", i, padXLimitLower[i]);
+            //printf("Upper X limit for pad %d: %d\n", i, padXLimitUpper[i]);
+        //#endif
 
     }
 
@@ -326,19 +326,19 @@ void Pads::getXLimits()  {
 
 void Pads::getYLimits()  {
 
-    #if MODE_SERIAL > 0
-        printf("Printing out Y limits for pads\n");
-    #endif
+    //#if MODE_SERIAL > 0
+        //printf("Printing out Y limits for pads\n");
+    //#endif
 
     for (int i=0; i<MAX_PADS; i++) {
 
         padYLimitLower[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYlowerSection, i);
         padYLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, i);
 
-        #if MODE_SERIAL > 0
-            printf("Lower Y limit for pad %d: %d\n", i, padYLimitLower[i]);
-            printf("Upper Y limit for pad %d: %d\n", i, padYLimitUpper[i]);
-        #endif
+        //#if MODE_SERIAL > 0
+            //printf("Lower Y limit for pad %d: %d\n", i, padYLimitLower[i]);
+            //printf("Upper Y limit for pad %d: %d\n", i, padYLimitUpper[i]);
+        //#endif
 
     }
 
@@ -346,9 +346,9 @@ void Pads::getYLimits()  {
 
 void Pads::getAftertouchLimits()    {
 
-    #if MODE_SERIAL > 0
-        printf("Printing out aftertouch limits for pads\n");
-    #endif
+    //#if MODE_SERIAL > 0
+        //printf("Printing out aftertouch limits for pads\n");
+    //#endif
 
     for (int i=0; i<MAX_PADS; i++)    {
 
@@ -357,10 +357,10 @@ void Pads::getAftertouchLimits()    {
         padAftertouchLimitLower[i] = lowerLimit;
         padAftertouchLimitUpper[i] = upperLimit;
 
-        #if MODE_SERIAL > 0
-            printf("Lower aftertouch limit for pad %d: %d\n", i, padAftertouchLimitLower[i]);
-            printf("Upper aftertouch limit for pad %d: %d\n", i, padAftertouchLimitUpper[i]);
-        #endif
+        //#if MODE_SERIAL > 0
+            //printf("Lower aftertouch limit for pad %d: %d\n", i, padAftertouchLimitLower[i]);
+            //printf("Upper aftertouch limit for pad %d: %d\n", i, padAftertouchLimitUpper[i]);
+        //#endif
 
     }
 

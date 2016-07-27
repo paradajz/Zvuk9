@@ -582,14 +582,20 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
 
     uint8_t size = 0;
 
-    //always clear notes first since they can have large size
+    //always clear notes first since they can have large size (user scale only)
     //issues are raised if we don't do this
     //a bit hacky...
-    strcpy_P(stringBuffer, notesClear_string);
-    size = progmemCharArraySize(notesClear_string);
-    padEditMode ?   updateDisplay(lcdElements.notes.row, text, 0, false, size, true) : 
-                    updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
+    //if (pads.isUserScale(pads.getActivePreset()))   {
+//
+        //strcpy_P(stringBuffer, notesClear_string);
+        //size = progmemCharArraySize(notesClear_string);
+        //padEditMode ?   updateDisplay(lcdElements.notes.row, text, 0, false, size, true) :
+                        //updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
+//
+    //}
 
+    //pad edit mode and regular mode differ in start index of notes
+    //change scroll start index depending on whether pad edit mode is active
     if (!pads.editModeActive())
         display.setScrollStart(lcdElements.notes.row, lcdElements.notes.startIndex);
     else display.setScrollStart(lcdElements.notes.row, 0);
@@ -613,7 +619,9 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
             }
 
             addNumberToCharArray(octaves[i], size);
-            addSpaceToCharArray(size, 1);
+            //don't add space on last note
+            if (i != numberOfNotes-1)
+                addSpaceToCharArray(size, 1);
 
         }
 
@@ -842,6 +850,16 @@ void LCD::displayFactoryResetWarning()   {
     strcpy_P(stringBuffer, factory_reset_warning_3_string);
     lcd_puts(stringBuffer);
     strcpy(lastLCDLine[3], stringBuffer);
+
+}
+
+void LCD::displayNoteShiftLevel(int8_t level)   {
+
+    uint8_t size = 0;
+    strcpy_P(stringBuffer, noteShift_string);
+    size += progmemCharArraySize(noteShift_string);
+    addNumberToCharArray(level, size);
+    updateDisplay(lcdElements.noteShiftLevel.row, text, lcdElements.noteShiftLevel.startIndex, false, size);
 
 }
 

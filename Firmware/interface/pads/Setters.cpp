@@ -796,9 +796,6 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
     if (currentScaleType == userScale) return notAllowed;
     int16_t tempNoteArray[MAX_PADS];
 
-    //get current shiftAmount
-    int8_t shiftAmount = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
-
     switch(direction)   {
 
         case true:
@@ -811,7 +808,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
             tempNoteArray[i] = padNote[i+1][0];
 
         }
-        shiftAmount++;
+        noteShiftLevel++;
         break;
 
         case false:
@@ -824,19 +821,19 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
             tempNoteArray[i+1] = padNote[i][0];
 
         }
-        shiftAmount--;
+        noteShiftLevel--;
         break;
 
     }
 
-    if (abs(shiftAmount) == (uint8_t)currentScaleType)
-        shiftAmount = 0;
+    if (abs(noteShiftLevel) == (uint8_t)currentScaleType)
+        noteShiftLevel = 0;
 
     if (!internalChange)
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset), shiftAmount);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset), noteShiftLevel);
 
     #if MODE_SERIAL > 0
-        printf("Shifted note: %d\n", shiftAmount);
+        printf("Shifted note: %d\n", noteShiftLevel);
     #endif
 
     for (int i=0; i<MAX_PADS; i++)

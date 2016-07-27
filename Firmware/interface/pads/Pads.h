@@ -267,7 +267,8 @@ class Pads  {
 
     bool        splitState;
 
-    int8_t      activeOctave;
+    int8_t      activeOctave,
+                noteShiftLevel;
 
     int8_t      activePreset,
                 activeProgram;

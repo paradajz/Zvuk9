@@ -182,7 +182,7 @@ void LCD::checkScroll(uint8_t row) {
 
     if (scrollDirection[row])    {
 
-        if (((int8_t)strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (NUMBER_OF_LCD_COLUMNS - scrollStartIndex[row])) {
+        if (((int8_t)strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (NUMBER_OF_LCD_COLUMNS - scrollStartIndex[row] - 1)) {
 
             scrollIndex[row]++;
 
@@ -234,14 +234,14 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 
         }
 
-        //now we need to determine whether we need to change current EOL index
-        bool changeEOLindex = (size+startIndex) > currentStringSize;
-
         if (endOfLine)  {
 
             lcdLine[row][startIndex] = '\0';
 
         }   else {
+
+            //we need to determine whether we need to change current EOL index
+            bool changeEOLindex = (size+startIndex) > currentStringSize;
 
             switch(changeEOLindex)  {
 
@@ -263,7 +263,7 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 
     lineChange[row] = true;
 
-    if (size > NUMBER_OF_LCD_COLUMNS) {
+    if (size >= NUMBER_OF_LCD_COLUMNS) {
 
         scrollEnabled[row] = true;
         scrollDirection[row] = true;

@@ -15,6 +15,9 @@ void LCD::setupLCDlayout()  {
 
         lcdElements.notes.row = 1;
         lcdElements.notes.startIndex = 5;
+
+        lcdElements.noteShiftLevel.row = 1;
+        lcdElements.noteShiftLevel.startIndex = 17;
     }
 
     {
