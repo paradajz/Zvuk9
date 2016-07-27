@@ -637,6 +637,12 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
             size = strlen_P(noNotes_string);
             updateDisplay(lcdElements.notes.row, text, 0, true, size);
 
+        }   else {
+
+            strcpy_P(stringBuffer, notesClear_string);
+            size = progmemCharArraySize(notesClear_string);
+            updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
+
         }
 
     }
