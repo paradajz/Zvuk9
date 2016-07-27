@@ -694,7 +694,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
                 display.displayXYposition(lastXMIDIvalue[pad], ccTypeX);
                 display.displayXYcc(ccXPad[pad], ccTypeX);
 
-            }   else {
+                }   else {
 
                 display.clearXYposition(ccTypeX);
                 display.clearXYcc(ccTypeX);
@@ -710,7 +710,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
                 display.displayXYposition(lastYMIDIvalue[pad], ccTypeY);
                 display.displayXYcc(ccYPad[pad], ccTypeY);
 
-            }   else {
+                }   else {
 
                 display.clearXYposition(ccTypeY);
                 display.clearXYcc(ccTypeY);
@@ -740,7 +740,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
             else display.clearAftertouch();
 
         }   else if (velocityAvailable && !aftertouchActivated[pad])
-            display.clearAftertouch();
+        display.clearAftertouch();
         #endif
 
         if (velocityAvailable)  {

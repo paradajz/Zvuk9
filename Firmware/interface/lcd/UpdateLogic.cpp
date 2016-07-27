@@ -263,7 +263,7 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 
     lineChange[row] = true;
 
-    if (size >= NUMBER_OF_LCD_COLUMNS) {
+    if (size > NUMBER_OF_LCD_COLUMNS) {
 
         scrollEnabled[row] = true;
         scrollDirection[row] = true;
