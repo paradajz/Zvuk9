@@ -50,6 +50,8 @@ note_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
 
 void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
 
+    if (pads.editModeActive()) return;
+
     //determine action based on pressed button
 
     uint8_t ledNumber = 0;
@@ -140,6 +142,8 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
 }
 
 void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
+
+    if (pads.editModeActive()) return;
 
     #if MODE_SERIAL < 1
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
