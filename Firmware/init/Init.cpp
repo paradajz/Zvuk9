@@ -35,7 +35,7 @@ void startUpAnimation() {
     for (int i=0; i<NUMBER_OF_LEDS; i++)
     leds.setLEDstate(i, tempLedStateArray[i]);
 
-    wait(800);
+    wait(1500);
 
     //restore normal fade speed
     leds.setFadeSpeed(DEFAULT_FADE_SPEED);
