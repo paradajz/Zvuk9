@@ -96,9 +96,9 @@ typedef enum {
 
 typedef enum {
 
-    curveTypeLinear = 50,
-    curveTypeWideMiddle = 10,
-    curveTypeWideEnds = 90
+    curveTypeLinear = 5,
+    curveTypeWideMiddle = 1,
+    curveTypeWideEnds = 9
 
 } curveType_t;
 

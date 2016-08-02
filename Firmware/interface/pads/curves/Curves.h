@@ -10,13 +10,6 @@
 
 #define CURVE_STEPS 10
 
-const uint8_t PROGMEM gain_0[] PROGMEM = {
-
-    0xFF,
-    0xFF
-
-};
-
 class Curves {
 
     public:

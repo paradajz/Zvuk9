@@ -76,16 +76,37 @@ void LCD::displayCCchange(coordinateType_t type, bool _splitState, uint8_t ccVal
 
 }
 
-void LCD::displayCurveChange(coordinateType_t coordinate, bool _splitState, uint8_t curveValue, uint8_t padNumber)  {
+void LCD::displayCurveChange(coordinateType_t coordinate, bool _splitState, int8_t curveValue, uint8_t padNumber)  {
 
     uint8_t size = 0;
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
-    //strcpy_P(tempBuffer, (char*)pgm_read_word(&(curveNameArray[type])));
-    addNumberToCharArray(curveValue, size);
+    size = pgm_read_byte(&curveCoordinateArray_sizes[(uint8_t)coordinate]);
 
-    //strcat(stringBuffer, tempBuffer);
+    switch(curveValue)  {
 
-    //size = pgm_read_byte(&curveCoordinateArray_sizes[(uint8_t)coordinate]) + pgm_read_byte(&curveNameArray_sizes[type]);
+        case curveTypeLinear:
+        strcpy_P(stringBuffer, curveTypeLinear_string);
+        size += progmemCharArraySize(curveTypeLinear_string);
+        break;
+
+        case curveTypeWideEnds:
+        strcpy_P(stringBuffer, curveTypeWideEnds_string);
+        size += progmemCharArraySize(curveTypeWideEnds_string);
+        break;
+
+        case curveTypeWideMiddle:
+        strcpy_P(stringBuffer, curveTypeWideMiddle_string);
+        size += progmemCharArraySize(curveTypeWideMiddle_string);
+        break;
+
+        default:
+        if (curveValue > (uint8_t)curveTypeLinear)
+            curveValue -= (uint8_t)curveTypeLinear;
+        else curveValue *= -1;
+        addNumberToCharArray(curveValue, size);
+        break;
+
+    }
 
     updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
 

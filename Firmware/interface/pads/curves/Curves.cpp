@@ -17,7 +17,7 @@ uint8_t Curves::getCurveValue(uint8_t gain, uint8_t index, uint8_t min, uint8_t 
     if (gain != lastGain)   {
 
         //only copy bytes from flash if received gain differs from last one
-        memcpy_P(scale, (uint8_t*)pgm_read_word(&scaleArray[gain/10]), sizeof(scaleArray[0]));
+        memcpy_P(scale, (uint8_t*)pgm_read_word(&scaleArray[gain]), sizeof(scaleArray[0]));
 
         lastGain = gain;
 

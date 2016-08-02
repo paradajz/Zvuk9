@@ -53,7 +53,7 @@ class LCD   {
 
     void displayTransportControl(transportControl_t type);
     void displayOnOff(onOff_t type, bool _splitState, uint8_t functionState, uint8_t padNumber);
-    void displayCurveChange(coordinateType_t coordinate, bool _splitState, uint8_t curveValue, uint8_t padNumber);
+    void displayCurveChange(coordinateType_t coordinate, bool _splitState, int8_t curveValue, uint8_t padNumber);
     void displayCClimitChange(coordinateType_t coordinate, ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
     void displayCCchange(coordinateType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
     void displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t padNumber);

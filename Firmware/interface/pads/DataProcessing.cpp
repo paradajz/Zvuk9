@@ -73,7 +73,7 @@ int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
 bool Pads::checkX(uint8_t pad)  {
 
     int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), coordinateX);
-    if (padCurveX[pad] != (int8_t)curveTypeLinear)
+    if (padCurveX[pad] != (uint8_t)curveTypeLinear)
         xValue = curves.getCurveValue(padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
     bool xChanged = false;
@@ -100,7 +100,7 @@ bool Pads::checkX(uint8_t pad)  {
 bool Pads::checkY(uint8_t pad)  {
 
     int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), coordinateY);
-    if (padCurveY[pad] != (int8_t)curveTypeLinear)
+    if (padCurveY[pad] != (uint8_t)curveTypeLinear)
         yValue = curves.getCurveValue(padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
 
     bool yChanged = false;
