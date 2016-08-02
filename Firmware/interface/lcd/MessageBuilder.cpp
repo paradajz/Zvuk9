@@ -85,24 +85,27 @@ void LCD::displayCurveChange(coordinateType_t coordinate, bool _splitState, int8
     switch(curveValue)  {
 
         case curveTypeLinear:
-        strcpy_P(stringBuffer, curveTypeLinear_string);
+        strcpy_P(tempBuffer, curveTypeLinear_string);
+        strcat(stringBuffer, tempBuffer);
         size += progmemCharArraySize(curveTypeLinear_string);
         break;
 
         case curveTypeWideEnds:
-        strcpy_P(stringBuffer, curveTypeWideEnds_string);
+        strcpy_P(tempBuffer, curveTypeWideEnds_string);
+        strcat(stringBuffer, tempBuffer);
         size += progmemCharArraySize(curveTypeWideEnds_string);
         break;
 
         case curveTypeWideMiddle:
-        strcpy_P(stringBuffer, curveTypeWideMiddle_string);
+        strcpy_P(tempBuffer, curveTypeWideMiddle_string);
+        strcat(stringBuffer, tempBuffer);
         size += progmemCharArraySize(curveTypeWideMiddle_string);
         break;
 
         default:
         if (curveValue > (uint8_t)curveTypeLinear)
             curveValue -= (uint8_t)curveTypeLinear;
-        else curveValue *= -1;
+        else curveValue = (curveTypeLinear - curveValue)*-1;
         addNumberToCharArray(curveValue, size);
         break;
 

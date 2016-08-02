@@ -422,7 +422,7 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
     int8_t *variablePointer;
     uint16_t configurationID;
 
-    if (!direction) { steps *= -1; compareValue = 0; }
+    if (!direction) { steps *= -1; compareValue = 1; }
 
     switch(coordinate)   {
 

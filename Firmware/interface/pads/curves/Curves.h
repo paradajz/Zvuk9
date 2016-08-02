@@ -8,7 +8,7 @@
 
 #include "../../../Types.h"
 
-#define CURVE_STEPS 10
+#define CURVE_STEPS 9
 
 class Curves {
 
