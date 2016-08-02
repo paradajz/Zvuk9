@@ -15,13 +15,14 @@ class Curves {
     public:
     Curves();
     void init();
-    uint8_t getCurveValue(uint8_t gain, uint8_t index, uint8_t min, uint8_t max);
+    uint8_t getCurveValue(coordinateType_t coordinate, uint8_t gain, uint8_t index, uint8_t min, uint8_t max);
 
     private:
+    void setupCurve(uint8_t curveGain, uint8_t min, uint8_t max);
     uint8_t scale[128];
-    int8_t  lastGain,
-            lastMin,
-            lastMax;
+    int8_t  lastGain[2],
+            lastMin[2],
+            lastMax[2];
 
 };
 

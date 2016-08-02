@@ -6,6 +6,7 @@
 #include "../midi/MIDI_parameters.h"
 #include "../version/Firmware.h"
 #include "../BitManipulation.h"
+#include "../interface/buttons/Buttons.h"
 
 void Configuration::factoryReset(factoryResetType_t type)   {
 
