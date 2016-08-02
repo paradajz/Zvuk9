@@ -234,7 +234,7 @@ void Menu::exitMenu()   {
         printf("Exiting menu\n");
     #endif
     //exit menu and restore initial state
-    display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());
+    display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());
     //disable calibration if active
     pads.setCalibrationMode(false);
     //re-enable buttons

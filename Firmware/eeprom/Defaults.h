@@ -27,8 +27,8 @@ typedef enum {  //list of IDs for global program settings for access
     GLOBAL_PROGRAM_SETTING_X_MAX_ID,
     GLOBAL_PROGRAM_SETTING_Y_MIN_ID,
     GLOBAL_PROGRAM_SETTING_Y_MAX_ID,
-    GLOBAL_PROGRAM_SETTING_X_CURVE_ID,
-    GLOBAL_PROGRAM_SETTING_Y_CURVE_ID,
+    GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID,
+    GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID,
     GLOBAL_PROGRAM_SETTINGS
 
 } globalProgramSettings;
@@ -51,8 +51,8 @@ typedef enum {  //list of IDs for global program settings for access
 #define GLOBAL_PROGRAM_SETTING_X_MAX                MAX_MIDI_VALUE
 #define GLOBAL_PROGRAM_SETTING_Y_MIN                MIN_MIDI_VALUE
 #define GLOBAL_PROGRAM_SETTING_Y_MAX                MAX_MIDI_VALUE
-#define GLOBAL_PROGRAM_SETTING_X_CURVE              curveTypeLinear
-#define GLOBAL_PROGRAM_SETTING_Y_CURVE              curveTypeLinear
+#define GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN         curveTypeLinear
+#define GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN         curveTypeLinear
 
 //put global settings in array for easier access
 const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] = {
@@ -74,8 +74,8 @@ const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] = {
     GLOBAL_PROGRAM_SETTING_X_MAX,
     GLOBAL_PROGRAM_SETTING_Y_MIN,
     GLOBAL_PROGRAM_SETTING_Y_MAX,
-    GLOBAL_PROGRAM_SETTING_X_CURVE,
-    GLOBAL_PROGRAM_SETTING_Y_CURVE
+    GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN,
+    GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN
 
 };
 
@@ -92,8 +92,8 @@ typedef enum {
     LOCAL_PROGRAM_SETTING_X_MAX_ID,
     LOCAL_PROGRAM_SETTING_Y_MIN_ID,
     LOCAL_PROGRAM_SETTING_Y_MAX_ID,
-    LOCAL_PROGRAM_SETTING_X_CURVE_ID,
-    LOCAL_PROGRAM_SETTING_Y_CURVE_ID,
+    LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID,
+    LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID,
     LOCAL_PROGRAM_SETTINGS
 
 } localProgramSettings;
@@ -109,8 +109,8 @@ typedef enum {
 #define LOCAL_PROGRAM_SETTING_X_MAX                MAX_MIDI_VALUE
 #define LOCAL_PROGRAM_SETTING_Y_MIN                MIN_MIDI_VALUE
 #define LOCAL_PROGRAM_SETTING_Y_MAX                MAX_MIDI_VALUE
-#define LOCAL_PROGRAM_SETTING_X_CURVE              curveTypeLinear
-#define LOCAL_PROGRAM_SETTING_Y_CURVE              curveTypeLinear
+#define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN         curveTypeLinear
+#define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN         curveTypeLinear
 
 const uint8_t defaultLocalProgramSettingArray[] = {
 
@@ -125,8 +125,8 @@ const uint8_t defaultLocalProgramSettingArray[] = {
     LOCAL_PROGRAM_SETTING_X_MAX,
     LOCAL_PROGRAM_SETTING_Y_MIN,
     LOCAL_PROGRAM_SETTING_Y_MAX,
-    LOCAL_PROGRAM_SETTING_X_CURVE,
-    LOCAL_PROGRAM_SETTING_Y_CURVE
+    LOCAL_PROGRAM_SETTING_X_CURVE_GAIN,
+    LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN
 
 };
 

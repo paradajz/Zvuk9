@@ -66,7 +66,7 @@ void Pads::exitPadEditMode()    {
     editModeActivated = false;
     #ifdef MODULE_LCD
     display.clearPadEditMode();
-    display.displayProgramAndPreset(activeProgram+1, activePreset);
+    display.displayProgramAndScale(activeProgram+1, activeScale);
     #endif
     //after exiting from pad edit mode, restore note led states
     #ifdef MODULE_LEDS

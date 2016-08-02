@@ -9,19 +9,10 @@ Define custom data types.
 
 typedef enum {
 
-    ccLimitTypeXmin,
-    ccLimitTypeXmax,
-    ccLimitTypeYmin,
-    ccLimitTypeYmax
+    ccLimitTypeMin,
+    ccLimitTypeMax
 
 } ccLimitType_t;
-
-typedef enum {
-
-    ccTypeX,
-    ccTypeY
-
-} ccType_t;
 
 typedef enum {
 
@@ -34,23 +25,22 @@ typedef enum {
 
 typedef enum {
 
-    featureNotes,
-    featureAftertouch,
-    featureX,
-    featureY,
-    featureSplit,
-    featureAftertouchType
-
-} functionsOnOff_t;
-
-typedef enum {
-
     transportStop,
     transportPlay,
     transportRecordOn,
     transportRecordOff
 
 } transportControl_t;
+
+typedef enum {
+
+    onOff_notes,
+    onOff_aftertouch,
+    onOff_x,
+    onOff_y,
+    onOff_split
+
+} onOff_t;
 
 typedef enum {
 
@@ -74,9 +64,9 @@ typedef enum {
 
 typedef enum {
 
-    coordinateZ,
     coordinateX,
-    coordinateY
+    coordinateY,
+    coordinateZ,
 
 } coordinateType_t;
 
@@ -106,18 +96,9 @@ typedef enum {
 
 typedef enum {
 
-    curveCoordinateX,
-    curveCoordinateY,
-    curveCoordinateInvalid
-
-} curveCoordinate_t;
-
-typedef enum {
-
-    curveTypeLinear,
-    curveTypeWideMiddle,
-    curveTypeWideEnds,
-    curveTypeInvalid
+    curveTypeLinear = 50,
+    curveTypeWideMiddle = 10,
+    curveTypeWideEnds = 90
 
 } curveType_t;
 
@@ -259,18 +240,10 @@ typedef enum {
 typedef enum {
 
     factoryReset_wipeRestore, //clear eeprom, restore defaults
-    factoryReset_restore, //restore defaults
+    factoryReset_restore, //update eeprom with defaults
     factoryReset_partial //partially restore defaults
 
 } factoryResetType_t;
-
-typedef enum {
-
-    shiftMode_octave,
-    shiftMode_note,
-    shiftMode_channel
-
-} shiftMode_t;
 
 typedef enum {
 

@@ -72,8 +72,9 @@ int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
 
 bool Pads::checkX(uint8_t pad)  {
 
-    int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), ccTypeX);
-    if (padCurveX[pad] != 0)  xValue = xyScale[padCurveX[pad]-1][xValue];
+    int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), coordinateX);
+    if (padCurveX[pad] != (int8_t)curveTypeLinear)
+        xValue = curves.getCurveValue(padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
     bool xChanged = false;
 
@@ -98,8 +99,9 @@ bool Pads::checkX(uint8_t pad)  {
 
 bool Pads::checkY(uint8_t pad)  {
 
-    int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), ccTypeY);
-    if (padCurveY[pad] != 0)  yValue = xyScale[padCurveY[pad]-1][yValue];
+    int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), coordinateY);
+    if (padCurveY[pad] != (int8_t)curveTypeLinear)
+        yValue = curves.getCurveValue(padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
 
     bool yChanged = false;
 
@@ -691,13 +693,13 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
             if (xSendEnabled[pad])  {
 
-                display.displayXYposition(lastXMIDIvalue[pad], ccTypeX);
-                display.displayXYcc(ccXPad[pad], ccTypeX);
+                display.displayXYposition(lastXMIDIvalue[pad], coordinateX);
+                display.displayXYcc(ccXPad[pad], coordinateX);
 
-                }   else {
+            }   else {
 
-                display.clearXYposition(ccTypeX);
-                display.clearXYcc(ccTypeX);
+                display.clearXYposition(coordinateX);
+                display.clearXYcc(coordinateX);
 
             }
 
@@ -707,13 +709,13 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
             if (ySendEnabled[pad])  {
 
-                display.displayXYposition(lastYMIDIvalue[pad], ccTypeY);
-                display.displayXYcc(ccYPad[pad], ccTypeY);
+                display.displayXYposition(lastYMIDIvalue[pad], coordinateY);
+                display.displayXYcc(ccYPad[pad], coordinateY);
 
-                }   else {
+            }   else {
 
-                display.clearXYposition(ccTypeY);
-                display.clearXYcc(ccTypeY);
+                display.clearXYposition(coordinateY);
+                display.clearXYcc(coordinateY);
 
             }
 
@@ -790,8 +792,12 @@ void Pads::updateLastPressedPad(uint8_t pad, bool state)   {
 
         case true:
         //pad is pressed, add it to touch history buffer
-        if (pad != getLastTouchedPad())
+        if (pad != getLastTouchedPad()) {
+
             updatePressHistory(pad);
+            //setup curve?
+
+        }
         break;
 
         case false:

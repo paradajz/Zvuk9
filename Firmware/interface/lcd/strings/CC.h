@@ -29,6 +29,7 @@ const char xyCCclear_string[] PROGMEM = "      ";
 
 PGM_P const curveCoordinateArray[] PROGMEM = {
 
+    //match order with coordinateType_t enum
     curveCoordinateX_string,
     curveCoordinateY_string
 
@@ -36,47 +37,15 @@ PGM_P const curveCoordinateArray[] PROGMEM = {
 
 const uint8_t curveCoordinateArray_sizes[] PROGMEM = {
 
+    //match order with coordinateType_t enum
     sizeof(curveCoordinateX_string) - 1,
     sizeof(curveCoordinateY_string) - 1
 
 };
 
-PGM_P const curveNameArray[] PROGMEM = {
-
-    curveTypeLinear_string,
-    curveTypeWideMiddle_string,
-    curveTypeWideEnds_string
-
-};
-
-const uint8_t curveNameArray_sizes[] PROGMEM = {
-
-    sizeof(curveTypeLinear_string) - 1,
-    sizeof(curveTypeWideMiddle_string) - 1,
-    sizeof(curveTypeWideEnds_string) - 1
-
-};
-
-PGM_P const ccLimitArray[] PROGMEM = {
-
-    xMin_string,
-    xMax_string,
-    yMin_string,
-    yMax_string
-
-};
-
-const uint8_t ccLimitArray_sizes[] PROGMEM = {
-
-    sizeof(xMin_string) - 1,
-    sizeof(xMax_string) - 1,
-    sizeof(yMin_string) - 1,
-    sizeof(yMax_string) - 1
-
-};
-
 PGM_P const ccArray[] PROGMEM = {
 
+    //match order with coordinateType_t enum
     xCC_string,
     yCC_string
 
@@ -84,6 +53,7 @@ PGM_P const ccArray[] PROGMEM = {
 
 const uint8_t ccArray_sizes[] PROGMEM = {
 
+    //match order with coordinateType_t enum
     sizeof(xCC_string) - 1,
     sizeof(yCC_string) - 1
 

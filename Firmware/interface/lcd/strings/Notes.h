@@ -22,10 +22,6 @@ const char tonic_string[] PROGMEM = "Tonic ";
 const char octave_string[] PROGMEM = "Octave ";
 const char activeOctave_string[] PROGMEM = "Active octave: ";
 
-const char shiftMode_note_string[] PROGMEM = "Note shift mode";
-const char shiftMode_octave_string[] PROGMEM = "Octave shift mode";
-const char shiftMode_midiChannel_string[] PROGMEM = "Channel shift mode";
-
 const char padEditMode_string[] PROGMEM = "Pad edit mode";
 
 const char noteDown_string[] PROGMEM = "One note down";

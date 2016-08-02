@@ -724,6 +724,9 @@ call del version</PostBuildEvent>
     <Compile Include="interface\pads\curves\Curves.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\pads\curves\Values.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\pads\DataOutput.cpp">
       <SubType>compile</SubType>
     </Compile>

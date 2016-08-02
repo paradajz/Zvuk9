@@ -55,7 +55,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
     //determine action based on pressed button
 
     uint8_t ledNumber = 0;
-    functionsOnOff_t lcdMessageType;
+    onOff_t lcdMessageType;
     ledState_t ledState = ledStateOff;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
@@ -65,9 +65,9 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
         ledNumber = LED_ON_OFF_NOTES;
         if (!state)  {
 
-            pads.notesOnOff();
-            lcdMessageType = featureNotes;
-            if (pads.getNoteSendEnabled(lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
+            pads.midiSendOnOff(onOff_notes);
+            lcdMessageType = onOff_notes;
+            if (pads.getMIDISendState(onOff_notes, lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
 
         }   else {
 
@@ -80,10 +80,10 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
         case BUTTON_ON_OFF_AFTERTOUCH:
         if (!state)  {
 
-            pads.aftertouchOnOff();
-            lcdMessageType = featureAftertouch;
+            pads.midiSendOnOff(onOff_aftertouch);
+            lcdMessageType = onOff_aftertouch;
             ledNumber = LED_ON_OFF_AFTERTOUCH;
-            if (pads.getAfterTouchSendEnabled(lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
+            if (pads.getMIDISendState(onOff_aftertouch, lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
 
         }   else return;
         break;
@@ -91,10 +91,10 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
         case BUTTON_ON_OFF_X:
         if (!state)  {
 
-            pads.xOnOff();
-            lcdMessageType = featureX;
+            pads.midiSendOnOff(onOff_x);
+            lcdMessageType = onOff_x;
             ledNumber = LED_ON_OFF_X;
-            if (pads.getCCXsendEnabled(lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
+            if (pads.getMIDISendState(onOff_x, lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
 
         }   else return;
         break;
@@ -102,10 +102,10 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
         case BUTTON_ON_OFF_Y:
         if (!state)  {
 
-            pads.yOnOff();
-            lcdMessageType = featureY;
+            pads.midiSendOnOff(onOff_y);
+            lcdMessageType = onOff_y;
             ledNumber = LED_ON_OFF_Y;
-            if (pads.getCCYsendEnabled(lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
+            if (pads.getMIDISendState(onOff_y, lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
 
         }   else return;
         break;
@@ -115,7 +115,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
         if (!state)  {
 
             pads.splitOnOff();
-            lcdMessageType = featureSplit;
+            lcdMessageType = onOff_split;
             pads.getSplitState() ? ledState = ledStateFull : ledState = ledStateOff;
 
         }   else {
@@ -263,7 +263,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
     if (buttons.getButtonState(BUTTON_OCTAVE_DOWN) && buttons.getButtonState(BUTTON_OCTAVE_UP))   {
 
         //try to enter pad edit mode
-        if (pads.isUserScale(pads.getActivePreset()))    {
+        if (pads.isUserScale(pads.getActiveScale()))    {
 
             pads.setEditMode(!pads.editModeActive());
 
@@ -341,7 +341,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
             break;
 
             case false:
-            if (pads.isUserScale(pads.getActivePreset()) || (pads.isPredefinedScale(pads.getActivePreset()) && !getButtonState(BUTTON_ON_OFF_NOTES)))   {
+            if (pads.isUserScale(pads.getActiveScale()) || (pads.isPredefinedScale(pads.getActiveScale()) && !getButtonState(BUTTON_ON_OFF_NOTES)))   {
 
                 //shift entire octave up or down
                 if (!state)    {

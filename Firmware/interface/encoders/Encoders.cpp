@@ -84,10 +84,12 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
     bool _splitState = pads.getSplitState();
-    curveType_t activeCurve = curveTypeInvalid;
+    uint8_t activeCurve = 0;
     uint8_t value;
     int8_t activePreset;
     bool padsReleased = pads.allPadsReleased();
+    coordinateType_t coordinate = coordinateX;
+    ccLimitType_t limit = ccLimitTypeMin;
 
     switch(encoderNumber)   {
 
@@ -136,7 +138,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
                 pads.setActiveProgram(activeProgram);
 
                 //get last active preset on current program
-                uint8_t currentPreset = pads.getActivePreset();
+                uint8_t currentPreset = pads.getActiveScale();
 
                 //preset is changed
                 #ifdef MODULE_LEDS
@@ -145,7 +147,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
                 //display preset on display
                 #ifdef MODULE_LCD
-                display.displayProgramAndPreset(activeProgram+1, currentPreset);
+                display.displayProgramAndScale(activeProgram+1, currentPreset);
                 #endif
 
             }
@@ -173,12 +175,12 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
         }
 
-        activePreset = pads.getActivePreset();
+        activePreset = pads.getActiveScale();
         if (direction) activePreset++; else activePreset--;
         if (activePreset == (NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES)) activePreset = 0;
         else if (activePreset < 0) activePreset = (NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1);
 
-        pads.setActivePreset(activePreset);
+        pads.setActiveScale(activePreset);
 
         #ifdef MODULE_LEDS
             leds.displayActiveNoteLEDs();
@@ -186,27 +188,24 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
 
         //display preset on display
         #ifdef MODULE_LCD
-            display.displayProgramAndPreset(pads.getActiveProgram()+1, activePreset);
+            display.displayProgramAndScale(pads.getActiveProgram()+1, activePreset);
         #endif
         break;
 
         case X_CC_ENCODER:
-        if (!padsReleased) {
-
-            //disable encoders while pads are pressed
-            #ifdef MODULE_LCD
-            display.displayPadReleaseError(changeCCnumber);
-            #endif
-            return;
-
-        }
-        pads.changeCC(direction, ccTypeX, steps);
-        #ifdef MODULE_LCD
-            display.displayCCchange(ccTypeX,  _splitState, pads.getCCvalue(ccTypeX, lastTouchedPad), lastTouchedPad+1);
-        #endif
-        break;
-
         case Y_CC_ENCODER:
+        switch(encoderNumber)   {
+
+            case X_CC_ENCODER:
+            coordinate = coordinateX;
+            break;
+
+            case Y_CC_ENCODER:
+            coordinate = coordinateY;
+            break;
+
+        }
+
         if (!padsReleased) {
 
             //disable encoders while pads are pressed
@@ -216,64 +215,41 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
             return;
 
         }
-        pads.changeCC(direction, ccTypeY, steps);
+
+        pads.changeCC(direction, coordinate, steps);
         #ifdef MODULE_LCD
-            display.displayCCchange(ccTypeY,  _splitState, pads.getCCvalue(ccTypeY, lastTouchedPad), lastTouchedPad+1);
-        #endif
-        break;
-
-        case X_MAX_ENCODER:
-        if (!padsReleased) {
-
-            //disable encoders while pads are pressed
-            #ifdef MODULE_LCD
-            display.displayPadReleaseError(changeCClimit);
-            #endif
-            return;
-
-        }
-        pads.changeCClimits(direction, ccLimitTypeXmax, steps);
-        value = pads.getCClimitValue(ccTypeX, ccLimitTypeXmax, lastTouchedPad);
-        #ifdef MODULE_LCD
-            display.displayCClimitChange(ccLimitTypeXmax, _splitState, value, lastTouchedPad+1);
+            display.displayCCchange(coordinate,  _splitState, pads.getCCvalue(coordinate, lastTouchedPad), lastTouchedPad+1);
         #endif
         break;
 
         case X_MIN_ENCODER:
-        if (!padsReleased) {
-
-            //disable encoders while pads are pressed
-            #ifdef MODULE_LCD
-            display.displayPadReleaseError(changeCClimit);
-            #endif
-            return;
-
-        }
-        pads.changeCClimits(direction, ccLimitTypeXmin, steps);
-        value = pads.getCClimitValue(ccTypeX, ccLimitTypeXmin, lastTouchedPad);
-        #ifdef MODULE_LCD
-            display.displayCClimitChange(ccLimitTypeXmin, _splitState, value, lastTouchedPad+1);
-        #endif
-        break;
-
-        case Y_MAX_ENCODER:
-        if (!padsReleased) {
-
-            //disable encoders while pads are pressed
-            #ifdef MODULE_LCD
-            display.displayPadReleaseError(changeCClimit);
-            #endif
-            return;
-
-        }
-        pads.changeCClimits(direction, ccLimitTypeYmax, steps);
-        value = pads.getCClimitValue(ccTypeY, ccLimitTypeYmax, lastTouchedPad);
-        #ifdef MODULE_LCD
-            display.displayCClimitChange(ccLimitTypeYmax, _splitState, value, lastTouchedPad+1);
-        #endif
-        break;
-
+        case X_MAX_ENCODER:
         case Y_MIN_ENCODER:
+        case Y_MAX_ENCODER:
+        switch(encoderNumber)   {
+
+            case X_MIN_ENCODER:
+            coordinate = coordinateX;
+            limit = ccLimitTypeMin;
+            break;
+
+            case X_MAX_ENCODER:
+            coordinate = coordinateX;
+            limit = ccLimitTypeMax;
+            break;
+
+            case Y_MIN_ENCODER:
+            coordinate = coordinateY;
+            limit = ccLimitTypeMin;
+            break;
+
+            case Y_MAX_ENCODER:
+            coordinate = coordinateY;
+            limit = ccLimitTypeMax;
+            break;
+
+        }
+
         if (!padsReleased) {
 
             //disable encoders while pads are pressed
@@ -283,31 +259,28 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
             return;
 
         }
-        pads.changeCClimits(direction, ccLimitTypeYmin, steps);
-        value = pads.getCClimitValue(ccTypeY, ccLimitTypeYmin, lastTouchedPad);
+
+        pads.changeCClimits(direction, coordinate, limit, steps);
+        value = pads.getCClimitValue(coordinate, limit, lastTouchedPad);
         #ifdef MODULE_LCD
-            display.displayCClimitChange(ccLimitTypeYmin, _splitState, value, lastTouchedPad+1);
+            display.displayCClimitChange(coordinate, limit, _splitState, value, lastTouchedPad+1);
         #endif
         break;
 
         case X_CURVE_ENCODER:
-        if (!padsReleased) {
-
-            //disable encoders while pads are pressed
-            #ifdef MODULE_LCD
-            display.displayPadReleaseError(changeCurve);
-            #endif
-            return;
-
-        }
-        pads.changeCCcurve(direction, curveCoordinateX);
-        activeCurve = pads.getCCcurve(curveCoordinateX, lastTouchedPad);
-        #ifdef MODULE_LCD
-            display.displayCurveChange(curveCoordinateX, _splitState, activeCurve, lastTouchedPad+1);
-        #endif
-        break;
-
         case Y_CURVE_ENCODER:
+        switch(encoderNumber)   {
+
+            case X_CURVE_ENCODER:
+            coordinate = coordinateX;
+            break;
+
+            case Y_CURVE_ENCODER:
+            coordinate = coordinateY;
+            break;
+
+        }
+
         if (!padsReleased) {
 
             //disable encoders while pads are pressed
@@ -317,10 +290,11 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
             return;
 
         }
-        pads.changeCCcurve(direction, curveCoordinateY);
-        activeCurve = pads.getCCcurve(curveCoordinateY, lastTouchedPad);
+
+        pads.setCCcurve(direction, coordinate);
+        activeCurve = pads.getCCcurve(coordinate, lastTouchedPad);
         #ifdef MODULE_LCD
-            display.displayCurveChange(curveCoordinateY, _splitState, activeCurve, lastTouchedPad+1);
+            display.displayCurveChange(coordinate, _splitState, activeCurve, lastTouchedPad+1);
         #endif
         break;
 

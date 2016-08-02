@@ -19,28 +19,28 @@ void Pads::getProgramParameters()   {
     #endif
 
     activeProgram = configuration.readParameter(CONF_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
-    activePreset = configuration.readParameter(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram);
+    activeScale = configuration.readParameter(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram);
 
     #if MODE_SERIAL > 0
         printf("Active program: %d\n", activeProgram+1);
-        printf("Active preset: %d\n", activePreset);
+        printf("Active scale: %d\n", activeScale);
     #endif
 
     getPadParameters();
-    //preset is contained within program, apply new parameters
-    getPresetParameters();
+    //scale is contained within program, apply new parameters
+    getScaleParameters();
 
 }
 
 void Pads::getPadParameters()   {
 
-    splitState = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+    splitEnabled = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #if MODE_SERIAL > 0
         printf("Printing out pad configuration\n");
     #endif
 
-    if (!splitState)  {   //split off
+    if (!splitEnabled)  {   //split off
 
         //apply global settings to pads
         #if MODE_SERIAL > 0
@@ -59,8 +59,8 @@ void Pads::getPadParameters()   {
             ccXmaxPad[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccYminPad[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccYmaxPad[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            padCurveX[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            padCurveY[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            padCurveX[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            padCurveY[i]                    = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             midiChannel[i]                  = configuration.readParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
         }
@@ -100,8 +100,8 @@ void Pads::getPadParameters()   {
                 ccXmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
                 ccYminPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
                 ccYmaxPad[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-                padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-                padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
+                padCurveX[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
+                padCurveY[i]                = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
                 midiChannel[i]              = configuration.readParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
 
                 //#if MODE_SERIAL > 0
@@ -129,20 +129,20 @@ void Pads::getPadParameters()   {
     uint8_t lastTouchedPad = getLastTouchedPad();
 
     #ifdef MODULE_LEDS
-        leds.setLEDstate(LED_ON_OFF_SPLIT, splitState ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(lastTouchedPad) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(lastTouchedPad) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(lastTouchedPad) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(lastTouchedPad) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_SPLIT, splitEnabled ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(onOff_aftertouch, lastTouchedPad) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_notes, lastTouchedPad) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(onOff_x, lastTouchedPad) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(onOff_y, lastTouchedPad) ? ledStateFull : ledStateOff);
     #endif
 
 }
 
-void Pads::getPresetParameters()    {
+void Pads::getScaleParameters()    {
 
     //#if MODE_SERIAL > 0
-        //printf("Printing out preset settings\n");
-        //printf("Scale: %d\n", activePreset);
+        //printf("Printing out scale settings\n");
+        //printf("Scale: %d\n", activeScale);
     //#endif
 
     //clear all pad notes before assigning new ones
@@ -150,7 +150,7 @@ void Pads::getPresetParameters()    {
         for (int j=0; j<NOTES_PER_PAD; j++)
             padNote[i][j] = BLANK_NOTE;
 
-    generateScale((scale_t)activePreset);
+    generateScale((scale_t)activeScale);
 
     //reset this variable first
     activeOctave = DEFAULT_OCTAVE;
@@ -177,9 +177,9 @@ void Pads::generateScale(scale_t scale)    {
 
         //predefined scale
         uint8_t notesPerScale = getNotesPerScale(scale);
-        uint8_t octave = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
-        note_t tonic = (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
-        noteShiftLevel = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset);
+        uint8_t octave = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+        note_t tonic = (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+        noteShiftLevel = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
 
         //#if MODE_SERIAL > 0
             //printf("Octave: %d\n", octave);
@@ -240,7 +240,7 @@ void Pads::generateScale(scale_t scale)    {
     }   else {  //user scales
 
         //#if MODE_SERIAL > 0
-            //printf("User preset %d\n", scale-NUMBER_OF_PREDEFINED_SCALES);
+            //printf("User scale %d\n", scale-NUMBER_OF_PREDEFINED_SCALES);
         //#endif
 
         uint16_t noteID = (scale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
@@ -366,27 +366,26 @@ void Pads::getAftertouchLimits()    {
 
 }
 
-bool Pads::getCCXsendEnabled(uint8_t padNumber)    {
+bool Pads::getMIDISendState(onOff_t type, uint8_t padNumber)    {
 
-    return xSendEnabled[padNumber];
+    switch(type)    {
 
-}
+        case onOff_aftertouch:
+        return aftertouchSendEnabled[padNumber];
 
-bool Pads::getCCYsendEnabled(uint8_t padNumber)    {
+        case onOff_notes:
+        return noteSendEnabled[padNumber];
 
-    return ySendEnabled[padNumber];
+        case onOff_x:
+        return xSendEnabled[padNumber];
 
-}
+        case onOff_y:
+        return ySendEnabled[padNumber];
 
-bool Pads::getNoteSendEnabled(uint8_t padNumber)   {
+        default:
+        return false;
 
-    return noteSendEnabled[padNumber];
-
-}
-
-bool Pads::getAfterTouchSendEnabled(uint8_t padNumber) {
-
-    return aftertouchSendEnabled[padNumber];
+    }
 
 }
 
@@ -398,7 +397,7 @@ aftertouchType_t Pads::getAftertouchType()  {
 
 bool Pads::getSplitState()    {
 
-    return splitState;
+    return splitEnabled;
 
 }
 
@@ -408,58 +407,62 @@ uint8_t Pads::getActiveProgram()    {
 
 }
 
-uint8_t Pads::getActivePreset()    {
+uint8_t Pads::getActiveScale()    {
 
-    return activePreset;
+    return activeScale;
 
 }
 
-curveType_t Pads::getCCcurve(curveCoordinate_t coordinate, uint8_t padNumber)    {
+uint8_t Pads::getCCcurve(coordinateType_t coordinate, uint8_t padNumber)    {
 
     switch(coordinate)   {
 
-        case curveCoordinateX:
-        return (curveType_t)padCurveX[padNumber];
+        case coordinateX:
+        return padCurveX[padNumber];
 
-        case curveCoordinateY:
-        return (curveType_t)padCurveY[padNumber];
+        case coordinateY:
+        return padCurveY[padNumber];
 
         default:
-        return curveTypeInvalid;
+        return 0;
 
     }
 
 }
 
-uint8_t Pads::getCClimitValue(ccType_t type, ccLimitType_t limitType, uint8_t padNumber)   {
+uint8_t Pads::getCClimitValue(coordinateType_t type, ccLimitType_t limitType, uint8_t padNumber)   {
 
     switch(type)  {
 
-        case ccTypeX:
-        if (limitType == ccLimitTypeXmax) return ccXmaxPad[padNumber];
+        case coordinateX:
+        if (limitType == ccLimitTypeMax) return ccXmaxPad[padNumber];
         else return ccXminPad[padNumber];
 
-        case ccTypeY:
-        if (limitType == ccLimitTypeYmax) return ccYmaxPad[padNumber];
+        case coordinateY:
+        if (limitType == ccLimitTypeMax) return ccYmaxPad[padNumber];
         else return ccYminPad[padNumber];
+
+        default:
+        return 0;
 
     }
 
-    return 0;
-
 }
 
-uint8_t Pads::getCCvalue(ccType_t type, uint8_t padNumber)  {
+uint8_t Pads::getCCvalue(coordinateType_t type, uint8_t padNumber)  {
 
     switch(type)  {
 
-        case ccTypeX:
+        case coordinateX:
         return ccXPad[padNumber];
 
-        case ccTypeY:
+        case coordinateY:
         return ccYPad[padNumber];
 
-    }   return 0;
+        default:
+        return 0;
+
+    }
 
 }
 
@@ -477,9 +480,9 @@ uint8_t Pads::getActiveOctave()    {
 
 note_t Pads::getActiveTonic()    {
 
-    if (isUserScale(activePreset)) {
+    if (isUserScale(activeScale)) {
 
-        //currentScaleTonic is first found note on first pad on user presets
+        //currentScaleTonic is first found note on first pad on user scales
 
         for (int i=0; i<NOTES_PER_PAD; i++)
             if (padNote[0][i] != BLANK_NOTE)
@@ -488,7 +491,7 @@ note_t Pads::getActiveTonic()    {
     }   else  {
 
         //predefined scale tonic is written in eeprom
-        uint16_t tonicIndex = PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset;
+        uint16_t tonicIndex = PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
         return (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, tonicIndex);
 
     }   return MIDI_NOTES;
@@ -540,7 +543,7 @@ uint8_t Pads::getPadNote(uint8_t pad, uint8_t note) {
 
 bool Pads::noteActive(note_t note) {
 
-    //return true if received tonic is among active notes on some pad
+    //return true if received note is among active notes on some pad
 
     for (int i=0; i<MAX_PADS; i++)
         for (int j=0; j<NOTES_PER_PAD; j++)
@@ -589,6 +592,8 @@ bool Pads::allPadsReleased()   {
 }
 
 uint8_t Pads::padsPressed() {
+
+    //returns number of pressed pads
 
     uint8_t numberOfPressedPads = 0;
     for (int i=0; i<MAX_PADS; i++)

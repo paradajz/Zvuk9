@@ -30,23 +30,26 @@ inline uint8_t invertRange(uint8_t value, uint8_t min, uint8_t max) {
 
 }
 
-uint8_t Pads::scaleXY(uint8_t pad, int16_t xyValue, ccType_t type) {
+uint8_t Pads::scaleXY(uint8_t pad, int16_t xyValue, coordinateType_t type) {
 
     switch (type)   {
 
-        case ccTypeX:
+        case coordinateX:
         #if XY_FLIP_VALUES > 0
-            return invertRange(map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], ccXminPad[pad], ccXmaxPad[pad]), ccXminPad[pad], ccXmaxPad[pad]);
+            return invertRange(map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, 127), 0, 127);
         #else
-            return map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], ccXminPad[pad], ccXmaxPad[pad]);
+            return map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, 127);
         #endif
-        case ccTypeY:
+        case coordinateY:
         #if XY_FLIP_VALUES > 0
             return map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], ccYminPad[pad], ccYmaxPad[pad]);
         #else
-            return invertRange(map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], ccYminPad[pad], ccYmaxPad[pad]), ccYminPad[pad], ccYmaxPad[pad]);
+            return invertRange(map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, 127), 0, 127);
         #endif
 
-    }   return 0;
+        default:
+        return 0;
+
+    }
 
 }

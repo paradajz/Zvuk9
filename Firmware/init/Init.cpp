@@ -88,7 +88,7 @@ void globalInit() {
     #endif
 
     #ifdef MODULE_LCD
-    display.displayProgramAndPreset(pads.getActiveProgram()+1, pads.getActivePreset());
+    display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());
     #endif
 
     #ifdef MODULE_BUTTONS

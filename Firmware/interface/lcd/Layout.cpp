@@ -5,8 +5,8 @@
 void LCD::setupLCDlayout()  {
 
     {
-        lcdElements.programAndPreset.row = 0;
-        lcdElements.programAndPreset.startIndex = 0;
+        lcdElements.programAndScale.row = 0;
+        lcdElements.programAndScale.startIndex = 0;
     }
 
     {

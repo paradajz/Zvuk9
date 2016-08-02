@@ -1,90 +1,73 @@
 #include "Pads.h"
 
-void Pads::setCCXsendEnabled(uint8_t padNumber, bool state)    {
+void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)    {
 
-    switch(splitState)    {
+    bool *variablePointer;
+    uint16_t configurationID;
+
+    switch(type)    {
+
+        case onOff_notes:
+        variablePointer = noteSendEnabled;
+        configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID;
+        break;
+
+        case onOff_aftertouch:
+        variablePointer = aftertouchSendEnabled;
+        configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID;
+        break;
+
+        case onOff_x:
+        variablePointer = xSendEnabled;
+        configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_X_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_X_ENABLE_ID;
+        break;
+
+        case onOff_y:
+        variablePointer = ySendEnabled;
+        configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_Y_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID;
+        break;
+
+        default:
+        return;
+
+    }
+
+    switch(splitEnabled)    {
 
         case false:
         //global
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
         for (int i=0; i<MAX_PADS; i++)
-            xSendEnabled[i] = state;
+            variablePointer[i] = state;
         break;
 
         case true:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
-        xSendEnabled[padNumber] = state;
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
+            variablePointer[padNumber] = state;
         break;
 
     }
 
 }
 
-void Pads::setCCYsendEnabled(uint8_t padNumber, bool state)    {
+void Pads::splitOnOff() {
 
-    switch(splitState)    {
+    splitEnabled = !splitEnabled;
 
-        case false:
-        //global
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
-        for (int i=0; i<MAX_PADS; i++)
-            ySendEnabled[i] = state;
-        break;
+    configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitEnabled);
+    getPadParameters();
 
-        case true:
-        //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
-        ySendEnabled[padNumber] = state;
-        break;
-
-    }
-
-}
-
-void Pads::setNoteSendEnabled(uint8_t padNumber, bool state)   {
-
-    switch(splitState)    {
-
-        case false:
-        //global
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
-        for (int i=0; i<MAX_PADS; i++)
-            noteSendEnabled[i] = state;
-        break;
-
-        case true:
-        //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
-        noteSendEnabled[padNumber] = state;
-        break;
-
-    }
-
-}
-
-void Pads::setAfterTouchSendEnabled(uint8_t padNumber, bool state) {
-
-    switch(splitState)    {
-
-        case false:
-        //global
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
-        for (int i=0; i<MAX_PADS; i++)
-            aftertouchSendEnabled[i] = state;
-        break;
-
-        case true:
-        //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
-        aftertouchSendEnabled[padNumber] = state;
-        break;
-
-    }
+    #if MODE_SERIAL > 0
+    splitEnabled ? printf("Split on\n") : printf("Split off\n");
+    #endif
 
 }
 
 bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint8_t pad, uint16_t limit)   {
+
+    int16_t *variablePointer;
+    uint8_t configurationSection;
 
     switch(type) {
 
@@ -93,24 +76,17 @@ bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint
         switch(direction)   {
 
             case lower:
-            if ((int)limit != padPressureLimitLower[pad])    {
-
-                padPressureLimitLower[pad] = limit;
-                configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureLowerSection, (uint16_t)pad, limit);
-                return true;
-
-            }   return false;
+            variablePointer = padPressureLimitLower;
+            configurationSection = padCalibrationPressureLowerSection;
             break;
 
             case upper:
-            if ((int)limit != padPressureLimitUpper[pad])    {
-
-                padPressureLimitUpper[pad] = limit;
-                configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, (uint16_t)pad, limit);
-                return true;
-
-            }   return false;
+            variablePointer = padPressureLimitUpper;
+            configurationSection = padCalibrationPressureUpperSection;
             break;
+
+            default:
+            return false;
 
         }
         break;
@@ -119,24 +95,17 @@ bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint
         switch(direction)   {
 
             case lower:
-            if ((int)limit != padXLimitLower[pad])    {
-
-                padXLimitLower[pad] = limit;
-                configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXlowerSection, (uint16_t)pad, limit);
-                return true;
-
-            }   return false;
+            variablePointer = padXLimitLower;
+            configurationSection = padCalibrationXlowerSection;
             break;
 
             case upper:
-            if ((int)limit != padXLimitUpper[pad])    {
-
-                padXLimitUpper[pad] = limit;
-                configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, (uint16_t)pad, limit);
-                return true;
-
-            }   return false;
+            variablePointer = padXLimitUpper;
+            configurationSection = padCalibrationXupperSection;
             break;
+
+            default:
+            return false;
 
         }
         break;
@@ -145,27 +114,31 @@ bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint
         switch(direction)   {
 
             case lower:
-            if ((int)limit != padYLimitLower[pad])    {
-
-                padYLimitLower[pad] = limit;
-                configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYlowerSection, (uint16_t)pad, limit);
-                return true;
-
-            }   return false;
+            variablePointer = padYLimitLower;
+            configurationSection = padCalibrationYlowerSection;
             break;
 
             case upper:
-            if ((int)limit != padYLimitUpper[pad])    {
-
-                padYLimitUpper[pad] = limit;
-                configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, (uint16_t)pad, limit);
-                return true;
-
-            }   return false;
+            variablePointer = padYLimitUpper;
+            configurationSection = padCalibrationYupperSection;
             break;
+
+            default:
+            return false;
 
         }
         break;
+
+        default:
+        return false;
+
+    }
+
+    if ((int)limit != variablePointer[pad])    {
+
+        variablePointer[pad] = limit;
+        configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, configurationSection, (uint16_t)pad, limit);
+        return true;
 
     }   return false;
 
@@ -200,31 +173,18 @@ bool Pads::setActiveProgram(int8_t program)   {
 
 }
 
-bool Pads::setActivePreset(int8_t preset)  {
+bool Pads::setActiveScale(int8_t scale)  {
 
-    if (preset < 0 || preset > 16)    return false;
+    if (scale < 0 || scale > 16)    return false;
 
-    if (activePreset != preset) {
+    if (activeScale != scale) {
 
-        activePreset = preset;
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram, preset);
-        getPresetParameters();
+        activeScale = scale;
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram, scale);
+        getScaleParameters();
         return true;
 
     }   return false;
-
-}
-
-void Pads::splitOnOff() {
-
-    splitState = !splitState;
-
-    configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitState);
-    getPadParameters();
-
-    #if MODE_SERIAL > 0
-        splitState ? printf("Split on\n") : printf("Split off\n");
-    #endif
 
 }
 
@@ -276,93 +236,69 @@ void Pads::changeActiveOctave(bool direction)   {
 
 }
 
-changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
+changeOutput_t Pads::changeCC(bool direction, coordinateType_t type, int8_t steps)  {
 
     //public function
 
-    bool globalShift = (splitState == 0);
     changeOutput_t result = outputChanged;
-    uint8_t startPad = globalShift ? 0 : getLastTouchedPad();
+    uint8_t startPad = !splitEnabled ? 0 : getLastTouchedPad();
     uint8_t compareValue = 127;
     bool compareResult;
     uint8_t changedValue = 0;
     bool changeAllowed = true;
+    uint8_t *variablePointer;
+    uint16_t configurationID;
 
     if (!direction) {steps *= -1; compareValue = 0; }
 
     switch (type) {
 
-        case ccTypeX:
-        if (direction)  compareResult = ccXPad[startPad] + steps > compareValue;
-        else            compareResult = ccXPad[startPad] + steps < compareValue;
-
-        if (!compareResult) changedValue = ccXPad[startPad]+steps;
-        else {
-
-            //result out of range
-            //just assign compareValue if it's not already assigned
-            if (ccXPad[startPad] != compareValue)
-            changedValue = compareValue;
-            else { changeAllowed = false; result = noChange; }
-
-        }
-
-        if (changeAllowed)  {
-
-            switch(globalShift) {
-
-                case false:
-                //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
-                ccXPad[startPad] = changedValue;
-                break;
-
-                case true:
-                //global
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_X_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<MAX_PADS; i++)
-                    ccXPad[i] = changedValue;
-
-            }
-
-        }
+        case coordinateX:
+        variablePointer = ccXPad;
+        configurationID = !splitEnabled ? (uint8_t)GLOBAL_PROGRAM_SETTING_CC_X_ID : (uint8_t)LOCAL_PROGRAM_SETTING_CC_X_ID;
         break;
 
-        case ccTypeY:
-        if (direction)  compareResult = ccYPad[startPad] + steps > compareValue;
-        else            compareResult = ccYPad[startPad] + steps < compareValue;
-
-        if (!compareResult) changedValue = ccYPad[startPad]+steps;
-        else {
-
-            //result out of range
-            //just assign compareValue if it's not already assigned
-            if (ccYPad[startPad] != compareValue)
-            changedValue = compareValue;
-            else { changeAllowed = false; result = noChange; }
-
-        }
-
-        if (changeAllowed)  {
-
-            switch(globalShift) {
-
-                case false:
-                //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
-                ccYPad[startPad] = changedValue;
-                break;
-
-                case true:
-                //global
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_Y_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<MAX_PADS; i++)
-                    ccYPad[i] = changedValue;
-
-            }
-
-        }
+        case coordinateY:
+        variablePointer = ccYPad;
+        configurationID = !splitEnabled ? (uint8_t)GLOBAL_PROGRAM_SETTING_CC_Y_ID : (uint8_t)LOCAL_PROGRAM_SETTING_CC_Y_ID;
         break;
+
+        default:
+        return noChange;
+
+    }
+
+    if (direction)  compareResult = variablePointer[startPad] + steps > compareValue;
+    else            compareResult = variablePointer[startPad] + steps < compareValue;
+
+    if (!compareResult) changedValue = variablePointer[startPad]+steps;
+    else {
+
+        //result out of range
+        //just assign compareValue if it's not already assigned
+        if (variablePointer[startPad] != compareValue)
+            changedValue = compareValue;
+        else { changeAllowed = false; result = noChange; }
+
+    }
+
+    if (changeAllowed)  {
+
+        switch(splitEnabled) {
+
+            case true:
+            //local
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
+            variablePointer[startPad] = changedValue;
+            break;
+
+            case false:
+            //global
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
+            for (int i=0; i<MAX_PADS; i++)
+                variablePointer[i] = changedValue;
+
+        }
 
     }
 
@@ -370,192 +306,103 @@ changeOutput_t Pads::changeCC(bool direction, ccType_t type, int8_t steps)  {
 
 }
 
-changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t steps)  {
+changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate, ccLimitType_t limitType, int8_t steps)  {
 
-    bool globalShift = (splitState == 0);
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
-    uint8_t startPad = globalShift ? 0 : lastPressedPad;
+    uint8_t startPad = !splitEnabled ? 0 : lastPressedPad;
     uint8_t compareValue = 127;
     bool compareResult;
     uint8_t changedValue = 0;
     bool changeAllowed = true;
+    uint16_t configurationID;
+    uint8_t *variablePointer;
 
     if (!direction) {steps *= -1; compareValue = 0; }
 
-    switch(ccType)  {
+    switch(coordinate)  {
 
-        case ccLimitTypeXmax:
-        if (direction)  compareResult = ccXmaxPad[startPad] + steps > compareValue;
-        else            compareResult = ccXmaxPad[startPad] + steps < compareValue;
+        case coordinateX:
+        switch(limitType)   {
 
-        if (!compareResult) changedValue = ccXmaxPad[lastPressedPad]+steps;
-        else {
+            case ccLimitTypeMax:
+            variablePointer = ccXmaxPad;
+            configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_MAX_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_MAX_ID;
+            break;
 
-            //result out of range
-            //just assign compareValue if it's not already assigned
-            if (ccXmaxPad[startPad] != compareValue)
-            changedValue = compareValue;
-            else { changeAllowed = false; result = noChange; }
+            case ccLimitTypeMin:
+            variablePointer = ccXminPad;
+            configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_MIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_MIN_ID;
+            break;
 
-        }
-
-        if (changeAllowed)  {
-
-            switch(globalShift) {
-
-                case false:
-                //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
-                ccXmaxPad[startPad] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("X max for %d pad: %d\n", startPad, changedValue);
-                #endif
-                break;
-
-                case true:
-                //global
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<MAX_PADS; i++)
-                    ccXmaxPad[i] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("X max for all pads: %d\n", changedValue);
-                #endif
-                break;
-
-            }
+            default:
+            return noChange;
 
         }
         break;
 
-        case ccLimitTypeXmin:
-        if (direction)  compareResult = ccXminPad[startPad] + steps > compareValue;
-        else            compareResult = ccXminPad[startPad] + steps < compareValue;
+        case coordinateY:
+        switch(limitType)   {
 
-        if (!compareResult) changedValue = ccXminPad[lastPressedPad]+steps;
-        else {
+            case ccLimitTypeMax:
+            variablePointer = ccYmaxPad;
+            configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_MAX_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_MAX_ID;
+            break;
 
-            //result out of range
-            //just assign compareValue if it's not already assigned
-            if (ccXminPad[startPad] != compareValue)
-            changedValue = compareValue;
-            else { changeAllowed = false; result = noChange; }
+            case ccLimitTypeMin:
+            variablePointer = ccYminPad;
+            configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_MIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_MIN_ID;
+            break;
 
-        }
-
-        if (changeAllowed)  {
-
-            switch(globalShift) {
-
-                case false:
-                //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
-                ccXminPad[startPad] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("X min for %d pad: %d\n", startPad, changedValue);
-                #endif
-                break;
-
-                case true:
-                //global
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<MAX_PADS; i++)
-                    ccXminPad[i] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("X min for all pads: %d\n", changedValue);
-                #endif
-                break;
-
-            }
+            default:
+            return noChange;
 
         }
         break;
 
-        case ccLimitTypeYmax:
-        if (direction)  compareResult = ccYmaxPad[startPad] + steps > compareValue;
-        else            compareResult = ccYmaxPad[startPad] + steps < compareValue;
+        default:
+        return noChange;
 
-        if (!compareResult) changedValue = ccYmaxPad[lastPressedPad]+steps;
-        else {
+    }
 
-            //result out of range
-            //just assign compareValue if it's not already assigned
-            if (ccYmaxPad[startPad] != compareValue)
+    if (direction)  compareResult = variablePointer[lastPressedPad] + steps > compareValue;
+    else            compareResult = variablePointer[lastPressedPad] + steps < compareValue;
+
+    if (!compareResult) changedValue = variablePointer[lastPressedPad]+steps;
+    else {
+
+        //result out of range
+        //just assign compareValue if it's not already assigned
+        if (variablePointer[lastPressedPad] != compareValue)
             changedValue = compareValue;
-            else { changeAllowed = false; result = noChange; }
+        else { changeAllowed = false; result = noChange; }
+
+    }
+
+    if (changeAllowed)  {
+
+        switch(splitEnabled) {
+
+            case true:
+            //local
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
+            variablePointer[startPad] = changedValue;
+            #if MODE_SERIAL > 0
+                printf("Y min for %d pad: %d\n", startPad, changedValue);
+            #endif
+            break;
+
+            case false:
+            //global
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
+            for (int i=0; i<MAX_PADS; i++)
+                variablePointer[i] = changedValue;
+            #if MODE_SERIAL > 0
+            printf("Y min for all pads: %d\n", changedValue);
+            #endif
+            break;
 
         }
-
-        if (changeAllowed)  {
-
-            switch(globalShift) {
-
-                case false:
-                //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
-                ccYmaxPad[startPad] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("Y max for %d pad: %d\n", startPad, changedValue);
-                #endif
-                break;
-
-                case true:
-                //global
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<MAX_PADS; i++)
-                    ccYmaxPad[i] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("Y max for all pads: %d\n", changedValue);
-                #endif
-                break;
-
-            }
-
-        }
-        break;
-
-        case ccLimitTypeYmin:
-        if (direction)  compareResult = ccYminPad[lastPressedPad] + steps > compareValue;
-        else            compareResult = ccYminPad[lastPressedPad] + steps < compareValue;
-
-        if (!compareResult) changedValue = ccYminPad[lastPressedPad]+steps;
-        else {
-
-            //result out of range
-            //just assign compareValue if it's not already assigned
-            if (ccYminPad[lastPressedPad] != compareValue)
-            changedValue = compareValue;
-            else { changeAllowed = false; result = noChange; }
-
-        }
-
-        if (changeAllowed)  {
-
-            switch(globalShift) {
-
-                case false:
-                //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
-                    ccYminPad[startPad] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("Y min for %d pad: %d\n", startPad, changedValue);
-                #endif
-                break;
-
-                case true:
-                //global
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<MAX_PADS; i++)
-                    ccYminPad[i] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("Y min for all pads: %d\n", changedValue);
-                #endif
-                break;
-
-            }
-
-        }
-        break;
 
     }
 
@@ -563,109 +410,82 @@ changeOutput_t Pads::changeCClimits(bool direction, ccLimitType_t ccType, int8_t
 
 }
 
-changeOutput_t Pads::changeCCcurve(bool direction, curveCoordinate_t coordinate, int8_t steps)  {
+changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int8_t steps)  {
 
-    bool globalShift = (splitState == 0);
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
-    uint8_t startPad = globalShift ? 0 : lastPressedPad;
-    uint8_t compareValue = NUMBER_OF_SCALES;
+    uint8_t startPad = !splitEnabled ? 0 : lastPressedPad;
+    uint8_t compareValue = CURVE_STEPS;
     bool compareResult;
     uint8_t changedValue = 0;
     bool changeAllowed = true;
+    int8_t *variablePointer;
+    uint8_t *minPointer;
+    uint8_t *maxPointer;
+    uint16_t configurationID;
 
-    if (!direction) {steps *= -1; compareValue = 0; }
+    if (!direction) { steps *= -1; compareValue = 0; }
 
     switch(coordinate)   {
 
-        case curveCoordinateX:
-        if (direction)  compareResult = padCurveX[startPad] + steps > compareValue;
-        else            compareResult = padCurveX[startPad] + steps < compareValue;
-
-        if (!compareResult) changedValue = padCurveX[startPad]+steps;
-        else {
-
-            //result out of range
-            //just assign compareValue if it's not already assigned
-            if (padCurveX[startPad] != compareValue)
-            changedValue = compareValue;
-            else { changeAllowed = false; result = noChange; }
-
-        }
-
-        if (changeAllowed)  {
-
-            switch(globalShift) {
-
-                case false:
-                //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_X_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
-                    padCurveX[startPad] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("X curve for %d pad: %d\n", startPad, changedValue);
-                #endif
-                break;
-
-                case true:
-                //global
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<MAX_PADS; i++)
-                    padCurveX[i] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("X curve for all pads: %d\n", changedValue);
-                #endif
-                break;
-
-            }
-
-        }
+        case coordinateX:
+        variablePointer = padCurveX;
+        minPointer = ccXminPad;
+        maxPointer = ccXmaxPad;
+        configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID;
         break;
 
-        case curveCoordinateY:
-        if (direction)  compareResult = padCurveY[startPad] + steps > compareValue;
-        else            compareResult = padCurveY[startPad] + steps < compareValue;
-
-        if (!compareResult) changedValue = padCurveY[startPad]+steps;
-        else {
-
-            //result out of range
-            //just assign compareValue if it's not already assigned
-            if (padCurveY[startPad] != compareValue)
-            changedValue = compareValue;
-            else { changeAllowed = false; result = noChange; }
-
-        }
-
-        if (changeAllowed)  {
-
-            switch(globalShift) {
-
-                case false:
-                //local
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+LOCAL_PROGRAM_SETTING_Y_CURVE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
-                padCurveY[startPad] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("Y curve for %d pad: %d\n", startPad, changedValue);
-                #endif
-                break;
-
-                case true:
-                //global
-                configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-                for (int i=0; i<MAX_PADS; i++)
-                    padCurveY[i] = changedValue;
-                #if MODE_SERIAL > 0
-                    printf("Y curve for all pads: %d\n", changedValue);
-                #endif
-                break;
-
-            }
-
-        }
+        case coordinateY:
+        variablePointer = padCurveY;
+        minPointer = ccYminPad;
+        maxPointer = ccYmaxPad;
+        configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID;
         break;
 
-        case curveCoordinateInvalid:
+        default:
         return notAllowed;
+
+    }
+
+    if (direction)  compareResult = variablePointer[startPad] + steps > compareValue;
+    else            compareResult = variablePointer[startPad] + steps < compareValue;
+
+    if (!compareResult) changedValue = variablePointer[startPad]+steps;
+    else {
+
+        //result out of range
+        //just assign compareValue if it's not already assigned
+        if (variablePointer[startPad] != compareValue)
+            changedValue = compareValue;
+        else { changeAllowed = false; result = noChange; }
+
+    }
+
+    if (changeAllowed)  {
+
+        switch(splitEnabled) {
+
+            case true:
+            //local
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
+            variablePointer[startPad] = changedValue;
+            #if MODE_SERIAL > 0
+            printf("Y curve for %d pad: %d\n", startPad, changedValue);
+            #endif
+            break;
+
+            case false:
+            //global
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
+            for (int i=0; i<MAX_PADS; i++)
+                variablePointer[i] = changedValue;
+            curves.setupCurve(changedValue, minPointer[startPad], maxPointer[startPad]);
+            #if MODE_SERIAL > 0
+            printf("Y curve for all pads: %d\n", changedValue);
+            #endif
+            break;
+
+        }
 
     }
 
@@ -677,7 +497,7 @@ bool Pads::setMIDIchannel(uint8_t pad, uint8_t channel)  {
 
     if (channel != midiChannel[pad]) {
 
-        if (!splitState)    {
+        if (!splitEnabled)    {
 
             //apply to all pads
             for (int i=0; i<MAX_PADS; i++)
@@ -722,7 +542,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
     for (int i=0; i<NOTES_PER_PAD; i++)
         if (padNote[pad][i] == newNote) { addOrRemove = false; noteIndex = i; break; }
 
-    uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+    uint16_t noteID = ((uint16_t)activeScale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
     //if it isn't, add it
     if (addOrRemove)    {
@@ -792,7 +612,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
     //shift scale one note up or down
     //tonic remains the same, it just gets shifted to other pad
 
-    scaleType_t currentScaleType = getScaleType(activePreset);
+    scaleType_t currentScaleType = getScaleType(activeScale);
     if (currentScaleType == userScale) return notAllowed;
     int16_t tempNoteArray[MAX_PADS];
 
@@ -830,7 +650,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
         noteShiftLevel = 0;
 
     if (!internalChange)
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset), noteShiftLevel);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale), noteShiftLevel);
 
     #if MODE_SERIAL > 0
         printf("Shifted note: %d\n", noteShiftLevel);
@@ -897,10 +717,10 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
             direction ? printf("Octave up\n") : printf("Octave down\n");
         #endif
 
-        if (isPredefinedScale(activePreset))    {
+        if (isPredefinedScale(activeScale))    {
 
             //predefined scale
-            uint16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset;
+            uint16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
             uint8_t currentOctave_predefinedScale = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale);
             uint8_t newOctave = currentOctave_predefinedScale;
             (direction) ? newOctave+=1 : newOctave-=1;
@@ -924,7 +744,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
             }
 
-            //octave is ALWAYS first note on pad in predefined presets
+            //octave is ALWAYS first note on pad in predefined scales
             activeOctave = getOctaveFromNote(padNote[0][0]+(octaveShiftAmount[0]*MIDI_NOTES));
 
             #if MODE_SERIAL > 0
@@ -934,7 +754,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
         }   else {
 
             //user scale
-            uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+            uint16_t noteID = ((uint16_t)activeScale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
             uint8_t newNote;
             for (int i=0; i<MAX_PADS; i++)    {
 
@@ -973,7 +793,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
             }
 
-            //activeOctave in user presets is always first found note on first pad
+            //activeOctave in user scales is always first found note on first pad
             //if pad has no assigned notes, active octave is DEFAULT_OCTAVE
 
             activeOctave = DEFAULT_OCTAVE;
@@ -1039,7 +859,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
         //internal change means that this function got called on startup
         //on startup, tonic isn't applied yet, so it's first note on first pad by default
-        //this never gets called on startup for user presets
+        //this never gets called on startup for user scales
         currentScaleTonic = getTonicFromNote(padNote[0][0]);
 
     }   else currentScaleTonic = getActiveTonic();
@@ -1090,10 +910,10 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
         result = outputChanged;
 
-        uint16_t noteID = ((uint16_t)activePreset - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+        uint16_t noteID = ((uint16_t)activeScale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
-        if (isPredefinedScale(activePreset) && !internalChange)
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activePreset)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
+        if (isPredefinedScale(activeScale) && !internalChange)
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
 
         for (int i=0; i<MAX_PADS; i++)    {
 
@@ -1113,7 +933,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
                     if (shiftDirection) newNote = padNote[i][j] + changeDifference + noteShiftAmount[i];
                     else                newNote = padNote[i][j] - changeDifference + noteShiftAmount[i];
 
-                    if (isUserScale(activePreset) && !internalChange)  {
+                    if (isUserScale(activeScale) && !internalChange)  {
 
                         configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote, true); //async write
 
@@ -1194,31 +1014,55 @@ void Pads::checkRemainingNoteShift()    {
 
 }
 
-void Pads::notesOnOff()    {
+void Pads::midiSendOnOff(onOff_t type)    {
 
-    bool newNotesState;
+    bool newState;
+    bool *variablePointer;
 
-    if (!splitState)   {   //feature splitting is off
+    switch(type)    {
 
-        newNotesState = !noteSendEnabled[0];
+        case onOff_notes:
+        variablePointer = noteSendEnabled;
+        break;
+
+        case onOff_x:
+        variablePointer = xSendEnabled;
+        break;
+
+        case onOff_y:
+        variablePointer = ySendEnabled;
+        break;
+
+        case onOff_aftertouch:
+        variablePointer = aftertouchSendEnabled;
+        break;
+
+        default:
+        return;
+
+    }
+
+    if (!splitEnabled)   {   //feature splitting is off
+
+        newState = !variablePointer[0];
 
         for (int i=0; i<MAX_PADS; i++)
-            setNoteSendEnabled(i, newNotesState);
+            setMIDISendState(type, i, newState);
 
         #if MODE_SERIAL > 0
             printf("Notes ");
-            newNotesState ? printf("on") : printf("off");
+            newState ? printf("on") : printf("off");
             printf(" for all pads\n");
         #endif
 
-        if (!newNotesState) {
+        if (!newState && (type == onOff_notes)) {
 
             //we have turned notes off for all pads
             //if there are pressed pads, send notes off
             for (int i=0; i<MAX_PADS; i++)    {
 
                 if (!isPadPressed(i)) continue; //only send note off for released pads
-                sendNotes(i, 0, false);
+                    sendNotes(i, 0, false);
 
             }
 
@@ -1229,17 +1073,17 @@ void Pads::notesOnOff()    {
     else {  //feature splitting is on
 
         uint8_t lastPressedPad = getLastTouchedPad();
-        newNotesState = !noteSendEnabled[lastPressedPad];
+        newState = !variablePointer[lastPressedPad];
 
-        setNoteSendEnabled(lastPressedPad, newNotesState);
+        setMIDISendState(type, lastPressedPad, newState);
 
         #if MODE_SERIAL > 0
             printf("Notes ");
-            newNotesState ? printf("on") : printf("off");
+            newState ? printf("on") : printf("off");
             printf(" for pad %d\n", lastPressedPad);
         #endif
 
-        if (!newNotesState) {
+        if (!newState && (type == onOff_notes)) {
 
             uint8_t pressedPads = 0;
             for (int i=0; i<MAX_PADS; i++)
@@ -1248,114 +1092,6 @@ void Pads::notesOnOff()    {
             sendNotes(lastPressedPad, 0, false);
 
         }
-
-    }
-
-}
-
-void Pads::xOnOff()    {
-
-    bool newXState;
-
-    if (!splitState)   {   //feature splitting is off
-
-        newXState = !xSendEnabled[0];
-
-        for (int i=0; i<MAX_PADS; i++)
-            setCCXsendEnabled(i, newXState);
-
-        #if MODE_SERIAL > 0
-            printf("X ");
-            newXState ? printf("on") : printf("off");
-            printf(" for all pads\n");
-        #endif
-
-    }
-
-    else {  //feature splitting is on
-
-        uint8_t lastPressedPad = getLastTouchedPad();
-        newXState = !xSendEnabled[lastPressedPad];
-
-        setCCXsendEnabled(lastPressedPad, newXState);
-
-        #if MODE_SERIAL > 0
-            printf("X ");
-            newXState ? printf("on") : printf("off");
-            printf(" for pad %d\n", lastPressedPad);
-        #endif
-
-    }
-
-}
-
-void Pads::yOnOff()    {
-
-    bool newYState;
-
-    if (!splitState)   {   //feature splitting is off
-
-        newYState = !ySendEnabled[0];
-
-        for (int i=0; i<MAX_PADS; i++)
-            setCCYsendEnabled(i, newYState);
-
-        #if MODE_SERIAL > 0
-            printf("Y ");
-            newYState ? printf("on") : printf("off");
-            printf(" for all pads\n");
-        #endif
-
-    }
-
-    else {  //feature splitting is on
-
-        uint8_t lastPressedPad = getLastTouchedPad();
-        newYState = !ySendEnabled[lastPressedPad];
-
-        setCCYsendEnabled(lastPressedPad, newYState);
-
-        #if MODE_SERIAL > 0
-            printf("Y ");
-            newYState ? printf("on") : printf("off");
-            printf(" for pad %d\n", lastPressedPad);
-        #endif
-
-    }
-
-}
-
-void Pads::aftertouchOnOff()    {
-
-    bool newAfterTouchState;
-
-    if (!splitState)   {   //feature splitting is off
-
-        newAfterTouchState = !aftertouchSendEnabled[0];
-
-        for (int i=0; i<MAX_PADS; i++)
-            setAfterTouchSendEnabled(i, newAfterTouchState);
-
-        #if MODE_SERIAL > 0
-            printf("Aftertouch ");
-            newAfterTouchState ? printf("on ") : printf("off ");
-            printf("for all pads\n");
-        #endif
-
-    }
-
-    else {  //feature splitting is on
-
-        uint8_t lastPressedPad = getLastTouchedPad();
-        newAfterTouchState = !aftertouchSendEnabled[lastPressedPad];
-
-        setAfterTouchSendEnabled(lastPressedPad, newAfterTouchState);
-
-        #if MODE_SERIAL > 0
-            printf("Aftertouch ");
-            newAfterTouchState ? printf("on") : printf("off");
-            printf(" for pad %d\n", lastPressedPad);
-        #endif
 
     }
 
@@ -1370,7 +1106,7 @@ void Pads::setPadPressed(uint8_t padNumber, bool padState) {
 void Pads::setFunctionLEDs(uint8_t padNumber)   {
 
     #ifdef MODULE_LEDS
-        if (splitState)  {
+        if (splitEnabled)  {
 
             //split is on
             //turn off function LEDs first
@@ -1380,10 +1116,10 @@ void Pads::setFunctionLEDs(uint8_t padNumber)   {
             leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
 
             //turn on feature LEDs depending on enabled features for last touched pad
-            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getAfterTouchSendEnabled(padNumber) ? ledStateFull : ledStateOff);
-            leds.setLEDstate(LED_ON_OFF_NOTES, getNoteSendEnabled(padNumber) ? ledStateFull : ledStateOff);
-            leds.setLEDstate(LED_ON_OFF_X, getCCXsendEnabled(padNumber) ? ledStateFull : ledStateOff);
-            leds.setLEDstate(LED_ON_OFF_Y, getCCYsendEnabled(padNumber) ? ledStateFull : ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(onOff_aftertouch, padNumber) ? ledStateFull : ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_aftertouch, padNumber) ? ledStateFull : ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(onOff_x, padNumber) ? ledStateFull : ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(onOff_y, padNumber) ? ledStateFull : ledStateOff);
 
         }
     #endif

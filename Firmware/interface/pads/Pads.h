@@ -48,13 +48,13 @@ class Pads  {
     void init();
     void update();
 
-    //program/preset
+    //program/scale
     //getters
     uint8_t getActiveProgram();
-    uint8_t getActivePreset();
+    uint8_t getActiveScale();
     //setters
     bool setActiveProgram(int8_t program);
-    bool setActivePreset(int8_t preset);
+    bool setActiveScale(int8_t scale);
 
     //pad edit mode
     void setEditMode(bool state);
@@ -67,17 +67,11 @@ class Pads  {
 
     //functions on/off
     //getters
-    bool getNoteSendEnabled(uint8_t padNumber);
-    bool getAfterTouchSendEnabled(uint8_t padNumber);
-    bool getCCXsendEnabled(uint8_t padNumber);
-    bool getCCYsendEnabled(uint8_t padNumber);
+    bool getMIDISendState(onOff_t type, uint8_t padNumber);
     aftertouchType_t getAftertouchType();
     bool getSplitState();
     //setters
-    void notesOnOff();
-    void aftertouchOnOff();
-    void xOnOff();
-    void yOnOff();
+    void midiSendOnOff(onOff_t type);
     void splitOnOff();
     void setAftertouchType(aftertouchType_t type);
 
@@ -96,13 +90,13 @@ class Pads  {
 
     //CC
     //getters
-    uint8_t getCCvalue(ccType_t type, uint8_t padNumber);
-    uint8_t getCClimitValue(ccType_t type, ccLimitType_t limitType, uint8_t padNumber);
-    curveType_t getCCcurve(curveCoordinate_t curve, uint8_t padNumber);
+    uint8_t getCCvalue(coordinateType_t type, uint8_t padNumber);
+    uint8_t getCClimitValue(coordinateType_t type, ccLimitType_t limitType, uint8_t padNumber);
+    uint8_t getCCcurve(coordinateType_t curve, uint8_t padNumber);
     //setters
-    changeOutput_t changeCC(bool direction, ccType_t type, int8_t steps);
-    changeOutput_t changeCClimits(bool direction, ccLimitType_t ccType, int8_t steps);
-    changeOutput_t changeCCcurve(bool direction, curveCoordinate_t coordinate, int8_t steps=1);
+    changeOutput_t changeCC(bool direction, coordinateType_t type, int8_t steps);
+    changeOutput_t changeCClimits(bool direction, coordinateType_t coordinate, ccLimitType_t limitType, int8_t steps);
+    changeOutput_t setCCcurve(bool direction, coordinateType_t coordinate, int8_t steps=1);
 
     //midi channel
     uint8_t getMIDIchannel(uint8_t pad);
@@ -117,6 +111,8 @@ class Pads  {
     //scale info
     bool isUserScale(uint8_t scale);
     bool isPredefinedScale(uint8_t scale);
+
+    uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
 
     //calibration
     bool calibrate(coordinateType_t type, calibrationDirection direction, uint8_t pad, uint16_t limit);
@@ -133,7 +129,7 @@ class Pads  {
     //EEPROM config read
     void getConfiguration();
     void getProgramParameters();
-    void getPresetParameters();
+    void getScaleParameters();
     void getPadLimits();
     void getPressureLimits();
     void getXLimits();
@@ -153,8 +149,7 @@ class Pads  {
 
     //midi scaling
     uint8_t scalePressure(uint8_t pad, int16_t pressure, pressureType_t type);
-    uint8_t scaleXY(uint8_t pad, int16_t xyValue, ccType_t type);
-    uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
+    uint8_t scaleXY(uint8_t pad, int16_t xyValue, coordinateType_t type);
 
     //data sampling/debouncing
     void addPressureSamples(int16_t pressure);
@@ -188,10 +183,7 @@ class Pads  {
     void generateScale(scale_t scale);
 
     //features on/off
-    void setNoteSendEnabled(uint8_t padNumber, bool state);
-    void setCCXsendEnabled(uint8_t padNumber, bool state);
-    void setCCYsendEnabled(uint8_t padNumber, bool state);
-    void setAfterTouchSendEnabled(uint8_t padNumber, bool state);
+    void setMIDISendState(onOff_t type, uint8_t padNumber, bool state);
     void setFunctionLEDs(uint8_t padNumber);
 
     //MIDI send
@@ -265,12 +257,12 @@ class Pads  {
     uint8_t     aftertouchType;
     uint8_t     maxAftertouchValue;
 
-    bool        splitState;
+    bool        splitEnabled;
 
     int8_t      activeOctave,
                 noteShiftLevel;
 
-    int8_t      activePreset,
+    int8_t      activeScale,
                 activeProgram;
 
     //debouncing

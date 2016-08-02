@@ -21,7 +21,7 @@ Pads::Pads()  {
     }
 
     activeProgram = -1;
-    activePreset = -1;
+    activeScale = -1;
     activeOctave = 0;
     octaveShiftPadBuffer = 0;
     scaleShiftPadBuffer = 0;
