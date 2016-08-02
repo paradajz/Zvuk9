@@ -420,8 +420,6 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
     uint8_t changedValue = 0;
     bool changeAllowed = true;
     int8_t *variablePointer;
-    uint8_t *minPointer;
-    uint8_t *maxPointer;
     uint16_t configurationID;
 
     if (!direction) { steps *= -1; compareValue = 0; }
@@ -430,15 +428,11 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
 
         case coordinateX:
         variablePointer = padCurveX;
-        minPointer = ccXminPad;
-        maxPointer = ccXmaxPad;
         configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID;
         break;
 
         case coordinateY:
         variablePointer = padCurveY;
-        minPointer = ccYminPad;
-        maxPointer = ccYmaxPad;
         configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID;
         break;
 
@@ -479,7 +473,6 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
             for (int i=0; i<MAX_PADS; i++)
                 variablePointer[i] = changedValue;
-            curves.setupCurve(changedValue, minPointer[startPad], maxPointer[startPad]);
             #if MODE_SERIAL > 0
             printf("Y curve for all pads: %d\n", changedValue);
             #endif

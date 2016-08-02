@@ -22,7 +22,6 @@ class Curves {
     public:
     Curves();
     void init();
-    void setupCurve(uint8_t curveGain, uint8_t min, uint8_t max);
     uint8_t getCurveValue(uint8_t gain, uint8_t index, uint8_t min, uint8_t max);
 
     private:

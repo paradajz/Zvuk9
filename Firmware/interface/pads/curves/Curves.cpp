@@ -12,61 +12,6 @@ Curves::Curves()    {
 
 }
 
-void Curves::setupCurve(uint8_t curveGain, uint8_t min, uint8_t max)   {
-
-    //todo
-
-}
-
-
-const uint8_t PROGMEM playIcon[] PROGMEM = {
-
-    0b10000,
-    0b11000,
-    0b11100,
-    0b11110,
-    0b11100,
-    0b11000,
-    0b10000,
-    0b00000
-
-};
-
-const uint8_t PROGMEM recordIcon[] PROGMEM = {
-
-    0b01110,
-    0b10001,
-    0b10101,
-    0b11011,
-    0b10101,
-    0b10001,
-    0b01110,
-    0b00000
-
-};
-
-const uint8_t PROGMEM stopIcon[] PROGMEM = {
-
-    0b01110,
-    0b10001,
-    0b11111,
-    0b11111,
-    0b11111,
-    0b10001,
-    0b01110,
-    0b00000
-
-};
-
-const uint8_t* const iconArray[] PROGMEM = {
-
-    playIcon,
-    recordIcon,
-    stopIcon
-
-};
-
-
 uint8_t Curves::getCurveValue(uint8_t gain, uint8_t index, uint8_t min, uint8_t max)    {
 
     if (gain != lastGain)   {

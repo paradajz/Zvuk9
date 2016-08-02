@@ -102,9 +102,6 @@ bool factoryReset(functionArgument argument) {
 
 bool deviceInfo(functionArgument argument)   {
 
-    //TEMP!!!
-    curves.setupCurve(80, 50, 127);
-
     display.displayDeviceInfo();
     return true;
 
