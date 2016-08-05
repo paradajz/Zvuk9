@@ -5,6 +5,7 @@
 #include "MIDI_parameters.h"
 #include "../hardware/midi/MIDI.h"
 #include "../interface/pads/Pads.h"
+#include "../sysex/SysEx.h"
 
 MIDI::MIDI()    {
 
@@ -23,6 +24,34 @@ void MIDI::init() {
 
     noteOffType = (noteOffType_t)configuration.readParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_NOTE_OFF_TYPE_ID);
     configuration.readParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_RUNNING_STATUS_ID) ? hwMIDI.enableRunningStatus() : hwMIDI.disableRunningStatus();
+
+}
+
+void MIDI::checkInput()   {
+
+    if (hwMIDI.read(usbInterface))   {   //new message on usb
+
+        midiMessageType_t messageType = hwMIDI.getType(usbInterface);
+        uint8_t data1 = hwMIDI.getData1(usbInterface);
+        uint8_t data2 = hwMIDI.getData2(usbInterface);
+
+        switch(messageType) {
+
+            case midiMessageSystemExclusive:
+            sysEx.handleSysEx(hwMIDI.getSysExArray(usbInterface), hwMIDI.getSysExArrayLength(usbInterface));
+            lastSysExMessageTime = rTimeMillis();
+            break;
+
+            default:
+            break;
+
+        }
+
+    }
+
+    //disable sysex config after inactivity
+    if (rTimeMillis() - lastSysExMessageTime > CONFIG_TIMEOUT)
+        sysEx.disableConf();
 
 }
 

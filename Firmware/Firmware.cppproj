@@ -754,6 +754,24 @@ call del version</PostBuildEvent>
     <Compile Include="interface\pads\Setters.cpp">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="sysex\Errors.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sysex\ManufacturerID.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sysex\SpecialStrings.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sysex\SysEx.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sysex\SysEx.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sysex\Version.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="version\Firmware.h">
       <SubType>compile</SubType>
     </Compile>
@@ -838,6 +856,7 @@ call del version</PostBuildEvent>
     <Folder Include="interface\pads\curves" />
     <Folder Include="midi\" />
     <Folder Include="init" />
+    <Folder Include="sysex" />
     <Folder Include="version" />
     <Folder Include="vserial" />
   </ItemGroup>
