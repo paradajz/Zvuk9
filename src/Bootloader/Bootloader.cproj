@@ -311,9 +311,6 @@
     <None Include="BootloaderMassStorage.txt">
       <SubType>compile</SubType>
     </None>
-    <None Include="doxyfile">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\LUFA\LUFA\Drivers\USB\Class\Device\HIDClassDevice.h">
       <SubType>compile</SubType>
     </None>
