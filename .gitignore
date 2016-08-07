@@ -7,3 +7,4 @@ src/Bootloader/Bootloader.componentinfo.xml
 src/Bootloader/Debug/
 src/Bootloader/doxyfile
 src/FLASH.bin
+tools/tmp/*
