@@ -1,3 +1,7 @@
+#include "../Debug.h"
+
+#if MODE_SERIAL < 1
+
 #ifndef SYSEX_H_
 #define SYSEX_H_
 
@@ -160,4 +164,5 @@ class SysEx {
 
 extern SysEx sysEx;
 
+#endif
 #endif

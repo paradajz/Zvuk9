@@ -31,6 +31,9 @@ Curves::Curves()    {
 
     }
 
+    //set linear scale by default
+    memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[(uint8_t)curveTypeLinear-1])), 128);
+
 }
 
 void Curves::setupCurve(uint8_t curveGain, uint8_t min, uint8_t max)   {

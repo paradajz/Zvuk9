@@ -7,7 +7,10 @@
 */
 
 #include "init/Init.h"
+
+#if MODE_SERIAL < 1
 #include "sysex/SysEx.h"
+#endif
 
 void onReboot()  {
 
@@ -44,7 +47,7 @@ uint8_t onGet(uint8_t messageType, uint8_t messageSubtype, uint8_t parameter) {
         case CONF_BLOCK_PRESSURE_SETTINGS:
         break;
 
-    } return INVALID_VALUE;
+    } return 0;
 
 }
 
@@ -98,11 +101,13 @@ int main()    {
 
     globalInit();
 
+    #if MODE_SERIAL < 1
     sysEx.setHandleReboot(onReboot);
     sysEx.setHandleGet(onGet);
     sysEx.setHandleSet(onSet);
     sysEx.setHandleReset(onReset);
     sysEx.setHandleFactoryReset(onFactoryReset);
+    #endif
 
     while(1) {
 
@@ -130,7 +135,9 @@ int main()    {
             configuration.update();
         #endif
 
+        #if MODE_SERIAL < 1
         midi.checkInput();
+        #endif
 
     }
 

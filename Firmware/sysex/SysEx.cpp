@@ -1,5 +1,7 @@
-#include <avr/eeprom.h>
 #include "SysEx.h"
+
+#ifdef SYSEX_H_
+#include <avr/eeprom.h>
 
 SysEx::SysEx()  {
 
@@ -484,3 +486,4 @@ bool SysEx::configurationEnabled()  {
 }
 
 SysEx sysEx;
+#endif

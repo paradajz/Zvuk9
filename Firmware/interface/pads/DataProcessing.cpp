@@ -99,7 +99,7 @@ bool Pads::checkX(uint8_t pad)  {
 bool Pads::checkY(uint8_t pad)  {
 
     int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), coordinateY);
-    curves.getCurveValue(coordinateY, padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
+    //curves.getCurveValue(coordinateY, padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
 
     bool yChanged = false;
 
