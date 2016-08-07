@@ -1,7 +1,7 @@
 src/Firmware/Debug/
 src/Firmware/Release/
 src/Firmware/__vm/
-src/.vs/
+.vs/
 src/Firmware/Firmware.componentinfo.xml
 src/Bootloader/Bootloader.componentinfo.xml
 src/Bootloader/Debug/
