@@ -32,7 +32,6 @@ EEPROM addresses of parameters.
 #ifndef EEPROM_H_
 #define EEPROM_H_
 
-#define EEPROM_SIZE     4096
 #define START_OFFSET    5
 
 #define ENABLE_ASYNC_UPDATE

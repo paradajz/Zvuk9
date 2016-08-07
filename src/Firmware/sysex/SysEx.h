@@ -7,11 +7,11 @@
 
 #include <avr/io.h>
 #include "../Types.h"
-#include "Version.h"
 #include "ManufacturerID.h"
 #include "../midi/MIDI.h"
 #include "Errors.h"
 #include "SpecialStrings.h"
+#include "../version/Firmware.h"
 
 #define MAX_NUMBER_OF_MESSAGES  7
 #define MAX_NUMBER_OF_SUBTYPES  7
