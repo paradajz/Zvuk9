@@ -6,5 +6,5 @@ src/Firmware/Firmware.componentinfo.xml
 src/Bootloader/Bootloader.componentinfo.xml
 src/Bootloader/Debug/
 src/Bootloader/doxyfile
-src/FLASH.bin
+FLASH.bin
 tools/tmp/*
