@@ -2,7 +2,16 @@
 
 void Configuration::createMemoryLayout() {
 
-    //create memory layout
+    /*
+        *BLOCK CONTENT DEFINITON*
+
+        section             number of sections inside block
+        subsectionType      value formatting of parameters inside block
+                                *BIT_PARAMETER   8 parameters per byte
+                                *BYTE_PARAMETER  1 parameter per byte
+        defaultValue        any value 0-127 or AUTO_INCREMENT (next value gets increased by 1)
+        sectionParameters   number of parameters in section
+    */
 
     {
         blocks[CONF_BLOCK_PROGRAM].sections = PROGRAM_SECTIONS;
@@ -38,9 +47,6 @@ void Configuration::createMemoryLayout() {
         blocks[CONF_BLOCK_PAD_CALIBRATION].sections = PAD_CALIBRATION_SECTIONS;
 
         blocks[CONF_BLOCK_PAD_CALIBRATION].preserveOnPartialReset = true;
-
-        blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameters[padCalibrationStatus] = 1;
-        blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameterType[padCalibrationStatus] = BYTE_PARAMETER;
 
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameters[padCalibrationPressureLowerSection] = MAX_PADS;
         blocks[CONF_BLOCK_PAD_CALIBRATION].sectionParameterType[padCalibrationPressureLowerSection] = WORD_PARAMETER;

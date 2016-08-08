@@ -79,7 +79,6 @@ static uint8_t TicksSinceLastCommand = 0;
 //check whether we should jump to bootloader or application
 void Application_Jump_Check(void)
 {
-    //getCurrentCRC();
     bool JumpToApplication = false;
 
     //make sure bootloader button is configured as input

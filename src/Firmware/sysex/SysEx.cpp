@@ -48,11 +48,11 @@ void SysEx::addMessageType(uint8_t messageID, uint8_t subTypes) {
 
 }
 
-void SysEx::addMessageSubType(uint8_t messageID, uint8_t subTypeId, uint8_t numberOfParameters, uint8_t minValue, uint8_t maxValue) {
+void SysEx::addMessageSubType(uint8_t messageID, uint8_t subTypeId, uint16_t numberOfParameters, uint16_t minValue, uint16_t maxValue) {
 
-    messageInfo[messageID].subTypeInfo[subTypeId][0] = numberOfParameters;
-    messageInfo[messageID].subTypeInfo[subTypeId][1] = minValue;
-    messageInfo[messageID].subTypeInfo[subTypeId][2] = maxValue;
+    messageInfo[messageID].subTypeInfo[subTypeId][messageInfo_parameters] = numberOfParameters;
+    messageInfo[messageID].subTypeInfo[subTypeId][messageInfo_lowValue] = minValue;
+    messageInfo[messageID].subTypeInfo[subTypeId][messageInfo_highValue] = maxValue;
 
 }
 
@@ -265,13 +265,13 @@ bool SysEx::checkNewParameter(uint8_t messageType, uint8_t messageSubType, uint8
     uint8_t minValue = messageInfo[messageType].subTypeInfo[messageSubType][NEW_VALUE_MIN_BYTE];
     uint8_t maxValue = messageInfo[messageType].subTypeInfo[messageSubType][NEW_VALUE_MAX_BYTE];
 
-    if ((minValue != IGNORE_NEW_VALUE) && (maxValue != IGNORE_NEW_VALUE))
+    if ((minValue != CUSTOM_VALUE_CHECK) && (maxValue != CUSTOM_VALUE_CHECK))
         return ((newParameter >= minValue) && (newParameter <= maxValue));
-    else if ((minValue != IGNORE_NEW_VALUE) && (maxValue == IGNORE_NEW_VALUE))
+    else if ((minValue != CUSTOM_VALUE_CHECK) && (maxValue == CUSTOM_VALUE_CHECK))
         return (newParameter >= minValue); //check only min value
-    else if ((minValue == IGNORE_NEW_VALUE) && (maxValue != IGNORE_NEW_VALUE))
+    else if ((minValue == CUSTOM_VALUE_CHECK) && (maxValue != CUSTOM_VALUE_CHECK))
         return (newParameter <= maxValue);   //check only max value
-    else if ((minValue == IGNORE_NEW_VALUE) && (maxValue == IGNORE_NEW_VALUE))
+    else if ((minValue == CUSTOM_VALUE_CHECK) && (maxValue == CUSTOM_VALUE_CHECK))
         return true; //don't check new parameter
 
     return false;

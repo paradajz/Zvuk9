@@ -15,6 +15,7 @@
 #include "../../midi/MIDI.h"
 #include "../lcd/Macros.h"
 #include "../../hardware/timer/TimerObject.h"
+#include "../../sysex/SysEx.h"
 
 #ifdef MODULE_LEDS
 #include "../leds/LEDs.h"
@@ -125,6 +126,7 @@ class Pads  {
     //init
     void initPadPins();
     void initHardware();
+    void setupSysEx();
 
     //EEPROM config read
     void getConfiguration();

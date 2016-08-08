@@ -22,15 +22,15 @@
 #define NEW_VALUE_MAX_BYTE      2
 
 #define INVALID_VALUE           128
-#define IGNORE_NEW_VALUE        255
+#define CUSTOM_VALUE_CHECK      255
 
 typedef struct {
 
-    uint8_t parameters;
-    uint8_t lowValue;
-    uint8_t highValue;
+    uint16_t parameters;
+    uint16_t lowValue;
+    uint16_t highValue;
 
-} subtype;
+} sysExSection;
 
 #define CONFIG_TIMEOUT          60000   //1 minute
 
@@ -111,7 +111,7 @@ class SysEx {
     void setHandleReset(bool(*fptr)(uint8_t messageID, uint8_t messageSubtype, uint8_t parameterID));
 
     void addMessageType(uint8_t messageID, uint8_t subTypes);
-    void addMessageSubType(uint8_t messageID, uint8_t subTypeId, uint8_t numberOfParameters, uint8_t minValue, uint8_t maxValue);
+    void addMessageSubType(uint8_t messageID, uint8_t subTypeId, uint16_t numberOfParameters, uint16_t minValue, uint16_t maxValue);
 
     bool checkMessageValidity(uint8_t *sysExArray, uint8_t arrSize);
     void sendResponse(uint8_t sysExArray[], uint8_t arraySize);
@@ -133,9 +133,17 @@ class SysEx {
 
         uint8_t messageTypeID;
         uint8_t numberOfSubtypes;
-        uint8_t subTypeInfo[MAX_NUMBER_OF_SUBTYPES][SUBTYPE_FIELDS];
+        uint16_t subTypeInfo[MAX_NUMBER_OF_SUBTYPES][SUBTYPE_FIELDS];
 
     } sysExMessageTypeInfo;
+
+    typedef enum {
+
+        messageInfo_parameters,
+        messageInfo_lowValue,
+        messageInfo_highValue
+
+    } messageInfo_elements;
 
     bool checkID(sysExManufacturerID id);
     bool checkSpecial(uint8_t *array, uint8_t size);
