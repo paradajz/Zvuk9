@@ -760,10 +760,10 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="interface\pads\Setters.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="sysex\Errors.h">
+    <Compile Include="sysex\Config.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="sysex\ManufacturerID.h">
+    <Compile Include="sysex\Errors.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="sysex\SpecialStrings.h">

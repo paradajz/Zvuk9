@@ -21,7 +21,7 @@ class MIDI {
     void sendControlChange(uint8_t channel, uint8_t ccNumber, uint8_t value);
     void sendChannelAftertouch(uint8_t channel, uint8_t pressure);
     void sendKeyAftertouch(uint8_t channel, uint8_t note, uint8_t pressure);
-    void sendSysEx(uint8_t *sysExArray, uint8_t size);
+    void sendSysEx(uint8_t *sysExArray, uint8_t size, bool arrayContainsBoundaries);
 
     bool runningStatusEnabled();
     noteOffType_t getNoteOffStatus();

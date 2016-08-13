@@ -8,31 +8,72 @@
 
 #include "init/Init.h"
 
-#if MODE_SERIAL < 1
-#include "sysex/SysEx.h"
-#endif
+#define FIRMWARE_VERSION_STRING 0x56
+#define HARDWARE_VERSION_STRING 0x42
+#define REBOOT_STRING           0x7F
+#define FACTORY_RESET_STRING    0x44
 
-void onReboot()  {
+bool onCustom(uint8_t value) {
 
-    //ledsOff_slow();
-    ////this will reset the board into bootloader mode
-    //reboot(BTLDR_REBOOT);
+    switch(value)   {
+
+        case FIRMWARE_VERSION_STRING:
+        sysEx.addToResponse(getSWversion(swVersion_major));
+        sysEx.addToResponse(getSWversion(swVersion_minor));
+        sysEx.addToResponse(getSWversion(swVersion_revision));
+        return true;
+
+        case HARDWARE_VERSION_STRING:
+        sysEx.addToResponse(hardwareVersion.major);
+        sysEx.addToResponse(hardwareVersion.minor);
+        sysEx.addToResponse(hardwareVersion.revision);
+        return true;
+
+        case REBOOT_STRING:
+        leds.setFadeSpeed(1);
+        leds.allLEDsOff();
+        wait(1500);
+        reboot();
+        return true; //pointless, but we're making compiler happy
+
+        case FACTORY_RESET_STRING:
+        leds.setFadeSpeed(1);
+        leds.allLEDsOff();
+        wait(1500);
+        configuration.factoryReset(factoryReset_partial);
+        reboot();
+        return true;
+
+    }   return false;
 
 }
 
-void onFactoryReset()   {
+sysExParameter_t onGet(uint8_t block, uint8_t section, sysExParameter_t index) {
 
-    //ledsOff_slow();
-    //configuration.factoryReset();
-    //reboot(APP_REBOOT);
-
-}
-
-uint8_t onGet(uint8_t messageType, uint8_t messageSubtype, uint8_t parameter) {
-
-    switch(messageType) {
+    switch(block) {
 
         case CONF_BLOCK_PROGRAM:
+        switch(section) {
+
+            case programLastActiveProgramSection:
+            //ignore index in this case
+            return configuration.readParameter(CONF_BLOCK_PROGRAM, section, 0);
+            break;
+
+            case programLastActiveScaleSection:
+            return configuration.readParameter(CONF_BLOCK_PROGRAM, section, index);
+            break;
+
+            case programGlobalSettingsSection:
+            break;
+
+            case programLocalSettingsSection:
+            break;
+
+            case programScalePredefinedSection:
+            break;
+
+        }
         break;
 
         case CONF_BLOCK_USER_SCALE:
@@ -51,9 +92,9 @@ uint8_t onGet(uint8_t messageType, uint8_t messageSubtype, uint8_t parameter) {
 
 }
 
-bool onSet(uint8_t messageType, uint8_t messageSubtype, uint8_t parameter, uint8_t newParameter)   {
+bool onSet(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue)   {
 
-    switch(messageType) {
+    switch(block) {
 
         case CONF_BLOCK_PROGRAM:
         break;
@@ -74,9 +115,9 @@ bool onSet(uint8_t messageType, uint8_t messageSubtype, uint8_t parameter, uint8
 
 }
 
-bool onReset(uint8_t messageType, uint8_t messageSubtype, uint8_t parameter) {
+bool onReset(uint8_t block, uint8_t section, sysExParameter_t index) {
 
-    switch(messageType) {
+    switch(block) {
 
         case CONF_BLOCK_PROGRAM:
         break;
@@ -102,11 +143,43 @@ int main()    {
     globalInit();
 
     #if MODE_SERIAL < 1
-    sysEx.setHandleReboot(onReboot);
     sysEx.setHandleGet(onGet);
     sysEx.setHandleSet(onSet);
     sysEx.setHandleReset(onReset);
-    sysEx.setHandleFactoryReset(onFactoryReset);
+    sysEx.setHandleCustom(onCustom);
+
+    if (!sysEx.addCustomString(FIRMWARE_VERSION_STRING))    {
+
+        #if MODE_SERIAL > 0
+        printf("Error while adding custom string for SysEx\n");
+        #endif
+
+    }
+
+    if (!sysEx.addCustomString(HARDWARE_VERSION_STRING))    {
+
+        #if MODE_SERIAL > 0
+        printf("Error while adding custom string for SysEx\n");
+        #endif
+
+    }
+
+    if (!sysEx.addCustomString(REBOOT_STRING))    {
+
+        #if MODE_SERIAL > 0
+        printf("Error while adding custom string for SysEx\n");
+        #endif
+
+    }
+
+    if (!sysEx.addCustomString(FACTORY_RESET_STRING))    {
+
+        #if MODE_SERIAL > 0
+        printf("Error while adding custom string for SysEx\n");
+        #endif
+
+    }
+
     #endif
 
     while(1) {

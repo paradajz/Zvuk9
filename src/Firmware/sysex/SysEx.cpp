@@ -1,31 +1,36 @@
 #include "SysEx.h"
 
 #ifdef SYSEX_H_
-#include <avr/eeprom.h>
 
 SysEx::SysEx()  {
 
-    sendRebootCallback          = NULL;
-    sendFactoryResetCallback    = NULL;
     sendGetCallback             = NULL;
     sendSetCallback             = NULL;
     sendResetCallback           = NULL;
+    sendCustomCallback          = NULL;
 
     sysExEnabled = false;
 
-    for (int i=0; i<MAX_NUMBER_OF_MESSAGES; i++)    {
+    for (int i=0; i<MAX_NUMBER_OF_BLOCKS; i++)    {
 
-        messageInfo[i].messageTypeID = INVALID_VALUE;
-        messageInfo[i].numberOfSubtypes = INVALID_VALUE;
+        sysExMessage[i].block = INVALID_VALUE;
+        sysExMessage[i].numberOfSections = INVALID_VALUE;
 
-        for (int j=0; j<MAX_NUMBER_OF_SUBTYPES; j++)    {
+        for (int j=0; j<MAX_NUMBER_OF_SECTIONS; j++)    {
 
-            for (int k=0; k<SUBTYPE_FIELDS; k++)
-                messageInfo[i].subTypeInfo[j][k] = INVALID_VALUE;
+            sysExMessage[i].section[j].numberOfParameters = INVALID_VALUE;
+            sysExMessage[i].section[j].minValue = INVALID_VALUE;
+            sysExMessage[i].section[j].maxValue = INVALID_VALUE;
 
         }
 
     }
+
+    for (int i=0; i<MAX_CUSTOM_STRINGS; i++)
+        customStrings[i] = INVALID_VALUE;
+
+    customStringCounter = 0;
+    customReponseSize = 0;
 
 }
 
@@ -41,41 +46,104 @@ void SysEx::disableConf()   {
 
 }
 
-void SysEx::addMessageType(uint8_t messageID, uint8_t subTypes) {
+bool SysEx::addCustomString(uint8_t value)  {
 
-    messageInfo[messageID].messageTypeID = messageID;
-    messageInfo[messageID].numberOfSubtypes = subTypes;
+    if (customStringCounter >= MAX_CUSTOM_STRINGS) return false;
+
+    //don't add custom string if it's already defined as one of default strings
+    for (uint16_t i=0; i<sizeof(specialStringArray); i++)
+        if (specialStringArray[i] == value)
+            return false;
+
+    customStrings[customStringCounter] = value;
+    customStringCounter++;
+    return true;
 
 }
 
-void SysEx::addMessageSubType(uint8_t messageID, uint8_t subTypeId, uint16_t numberOfParameters, uint16_t minValue, uint16_t maxValue) {
+void SysEx::addBlock(uint8_t block, uint8_t sections) {
 
-    messageInfo[messageID].subTypeInfo[subTypeId][messageInfo_parameters] = numberOfParameters;
-    messageInfo[messageID].subTypeInfo[subTypeId][messageInfo_lowValue] = minValue;
-    messageInfo[messageID].subTypeInfo[subTypeId][messageInfo_highValue] = maxValue;
+    //user is responsible for setting block ID
+    sysExMessage[block].block = block;
+    sysExMessage[block].numberOfSections = sections;
+
+}
+
+void SysEx::addSection(uint8_t block, uint8_t section, sysExParameter_t numberOfParameters, sysExParameter_t minValue, sysExParameter_t maxValue) {
+
+    sysExMessage[block].section[section].numberOfParameters = numberOfParameters;
+    sysExMessage[block].section[section].minValue = minValue;
+    sysExMessage[block].section[section].maxValue = maxValue;
 
 }
 
 bool SysEx::checkSpecial(uint8_t *array, uint8_t size) {
 
-    if (size == ML_SPECIAL)   {
+    if (size == MIN_MESSAGE_LENGTH)   {
 
-        if (array[size-2] == REBOOT_STRING)  {   //reset message
+        uint16_t size = 0;
 
-            if (sysExEnabled)
-                sendRebootCallback();
-            else sendError(ERROR_HANDSHAKE);
-            return true;
+        switch(array[wishByte])  {
 
-        }   else if (array[size-2] == HELLO_STRING)   {
-
+            case HELLO_STRING:
             //hello message, necessary for allowing configuration
+
             sendHelloResponse();
             return true;
 
-        }   else if (array[size-2] == FACTORY_RESET_STRING) {
+            case PROTOCOL_VERSION_STRING:
+            if (sysExEnabled)   {
 
-            sendFactoryResetCallback();
+                size = 0; //just in case
+                addByte(defaultID.byte1, size, false);
+                addByte(defaultID.byte2, size, false);
+                addByte(defaultID.byte3, size, false);
+                addByte(ack, size, false);
+                addByte(PARAM_SIZE, size, false);
+                sysExEnabled = true;
+                midi.sendSysEx(sysExResponse, size, false);
+                return true;
+
+            }   else sendError(ERROR_HANDSHAKE);
+            return true;
+
+            default:
+            //check for custom string
+            for (int i=0; i<MAX_CUSTOM_STRINGS; i++) {
+
+                if (customStrings[i] != INVALID_VALUE)  {
+
+                    if (customStrings[i] == array[wishByte])    {
+
+                        if (sysExEnabled)   {
+
+                            size = 0;
+
+                            //build first part of response manually
+                            addByte(defaultID.byte1, size, false);
+                            addByte(defaultID.byte2, size, false);
+                            addByte(defaultID.byte3, size, false);
+                            addByte(ack, size, false);
+                            addByte(array[wishByte], size, false);
+                            customReponseSize = size;
+                            //now call callback handler
+                            sendCustomCallback(customStrings[i]);
+                            //send response
+                            sysExEnabled = true;
+                            midi.sendSysEx(sysExResponse, customReponseSize, false);
+                            customReponseSize = 0;
+
+                        }   else sendError(ERROR_HANDSHAKE);
+                        return true;
+
+                    }
+
+                }
+
+            }
+            sendError(ERROR_WISH);
+            return true;
+            break;
 
         }
 
@@ -85,20 +153,18 @@ bool SysEx::checkSpecial(uint8_t *array, uint8_t size) {
 
 void SysEx::handleSysEx(uint8_t *sysExArray, uint8_t size)    {
 
-    //we have new data
-    dataAvailable = true;
+    if (size < MIN_MESSAGE_LENGTH) return; //ignore small messages
 
-    //ignore messages shorter than absolute minimum
-    if (size < ML_SPECIAL) return;
     //don't respond to sysex message if device ID is wrong
     sysExManufacturerID id;
-    id.byte1 = sysExArray[MS_M_ID_0];
-    id.byte2 = sysExArray[MS_M_ID_1];
-    id.byte3 = sysExArray[MS_M_ID_2];
+    id.byte1 = sysExArray[idByte_1];
+    id.byte2 = sysExArray[idByte_2];
+    id.byte3 = sysExArray[idByte_3];
 
     if (!checkID(id)) return;
 
     if (checkSpecial(sysExArray, size)) return;
+
     //message appears to be fine for now
     //check if hello message has been received by now
     if (!sysExEnabled) {
@@ -109,18 +175,26 @@ void SysEx::handleSysEx(uint8_t *sysExArray, uint8_t size)    {
 
     }
 
-    if (!checkMessageValidity(sysExArray, size)) return; //message not valid
-        sendResponse(sysExArray, size);
+    if (!checkRequest(sysExArray, size)) return; //request not valid
+    if (!checkParameters(sysExArray, size)) return; //invalid parameters
 
-    //data is processed
-    dataAvailable = false;
+    //message is ok
+    sendResponse(sysExArray, size);
 
 }
 
-bool SysEx::checkMessageValidity(uint8_t sysExArray[], uint8_t arrSize)  {
+bool SysEx::checkRequest(uint8_t sysExArray[], uint8_t arrSize)  {
+
+    //first, check message length
+    if (arrSize < generateMinMessageLenght((sysExWish)sysExArray[wishByte], (sysExAmount)sysExArray[amountByte], sysExArray[blockByte], sysExArray[sectionByte]))    {
+
+        sendError(ERROR_MESSAGE_LENGTH);
+        return false;
+
+    }
 
     //check wish validity
-    if (!checkWish(sysExArray[MS_WISH]))    {
+    if (!checkWish((sysExWish)sysExArray[(uint8_t)wishByte]))    {
 
         sendError(ERROR_WISH);
         return false;
@@ -128,7 +202,7 @@ bool SysEx::checkMessageValidity(uint8_t sysExArray[], uint8_t arrSize)  {
     }
 
     //check if wanted amount is correct
-    if (!checkAmount(sysExArray[MS_AMOUNT]))    {
+    if (!checkAmount((sysExAmount)sysExArray[(uint8_t)amountByte]))    {
 
         sendError(ERROR_AMOUNT);
         return false;
@@ -136,35 +210,44 @@ bool SysEx::checkMessageValidity(uint8_t sysExArray[], uint8_t arrSize)  {
     }
 
     //check if message type is correct
-    if (!checkBlock(sysExArray[MS_BLOCK]))    {
+    if (!checkBlock(sysExArray[(uint8_t)blockByte]))    {
 
         sendError(ERROR_BLOCK);
         return false;
 
-    } else {
-
-        //determine minimum message length based on asked parameters
-        if (arrSize < generateMinMessageLenght(sysExArray[MS_WISH], sysExArray[MS_AMOUNT],sysExArray[MS_BLOCK], sysExArray[MS_SECTION]))    {
-
-            sendError(ERROR_MESSAGE_LENGTH);
-            return false;
-
-        }
-
     }
 
     //check if subtype is correct
-    if (!checkSection(sysExArray[MS_BLOCK], sysExArray[MS_SECTION])) {
+    if (!checkSection(sysExArray[(uint8_t)blockByte], sysExArray[(uint8_t)sectionByte])) {
 
         sendError(ERROR_SECTION);
         return false;
 
     }
 
-    //check if wanted parameter is valid only if single parameter is specified
-    if (sysExArray[MS_AMOUNT] == AMOUNT_SINGLE)   {
+    return true;
 
-        if (!checkParameterID(sysExArray[MS_BLOCK], sysExArray[MS_SECTION], sysExArray[MS_PARAMETER_ID]))  {
+}
+
+bool SysEx::checkParameters(uint8_t *sysExArray, uint8_t arrSize)   {
+
+    //sysex request is fine
+
+    sysExParameter_t index;
+
+    //check if wanted parameter is valid only if single parameter is specified
+    if (sysExArray[amountByte] == sysExAmount_single)   {
+
+        #if PARAM_SIZE == 2
+        encDec_14bit decoded;
+        decoded.high = sysExArray[indexByte_higher];
+        decoded.low = sysExArray[indexByte_lower];
+        index = decoded.decode14bit();
+        #elif PARAM_SIZE == 1
+        index = sysExArray[indexByte];
+        #endif
+
+        if (!checkParameterIndex(sysExArray[blockByte], sysExArray[sectionByte], index))  {
 
             sendError(ERROR_PARAMETER);
             return false;
@@ -172,9 +255,20 @@ bool SysEx::checkMessageValidity(uint8_t sysExArray[], uint8_t arrSize)  {
         }
 
         //if message wish is set, check new parameter
-        if (sysExArray[MS_WISH] == WISH_SET) {
+        if (sysExArray[wishByte] == sysExWish_set) {
 
-            if (!checkNewParameter(sysExArray[MS_BLOCK], sysExArray[MS_SECTION], sysExArray[MS_PARAMETER_ID], sysExArray[MS_NEW_PARAMETER_ID_SINGLE]))  {
+            sysExParameter_t newValue;
+            #if PARAM_SIZE == 2
+            encDec_14bit decoded;
+            decoded.high = sysExArray[newValueByte_higher_single];
+            decoded.low = sysExArray[newValueByte_lower_single];
+            newValue = decoded.decode14bit();
+            #elif PARAM_SIZE == 1
+            newValue = sysExArray[newValueByte_single];
+            #endif
+
+
+            if (!checkNewValue(sysExArray[blockByte], sysExArray[sectionByte], index, newValue))  {
 
                 sendError(ERROR_NEW_PARAMETER);
                 return false;
@@ -188,16 +282,34 @@ bool SysEx::checkMessageValidity(uint8_t sysExArray[], uint8_t arrSize)  {
         //all parameters
 
         //check each new parameter for set command
-        if (sysExArray[MS_WISH] == WISH_SET) {
+        if (sysExArray[wishByte] == sysExWish_set) {
 
-            uint8_t arrayIndex = MS_NEW_PARAMETER_ID_ALL;
+            uint8_t arrayIndex = 0;
+            sysExParameter_t newValue;
 
-            for (int i=0; i<(arrSize - arrayIndex)-1; i++)
+            #if PARAM_SIZE == 2
+            arrayIndex = newValueByte_higher_all;
+            #elif PARAM_SIZE == 1
+            arrayIndex = newValueByte_all;
+            #endif
 
-            if (!checkNewParameter(sysExArray[MS_BLOCK], sysExArray[MS_SECTION], i, sysExArray[arrayIndex+i]))   {
+            for (int i=0; i<(arrSize - arrayIndex)-1; i+=sizeof(sysExParameter_t))  {
 
-                sendError(ERROR_NEW_PARAMETER);
-                return false;
+                #if PARAM_SIZE == 2
+                encDec_14bit decoded;
+                decoded.high = sysExArray[arrayIndex];
+                decoded.low = sysExArray[arrayIndex+1];
+                newValue = decoded.decode14bit();
+                #elif PARAM_SIZE == 1
+                newValue = sysExArray[arrayIndex];
+                #endif
+
+                if (!checkNewValue(sysExArray[blockByte], sysExArray[sectionByte], i, newValue))   {
+
+                    sendError(ERROR_NEW_PARAMETER);
+                    return false;
+
+                }
 
             }
 
@@ -213,64 +325,82 @@ bool SysEx::checkID(sysExManufacturerID id)   {
 
     return  (
 
-    (id.byte1  == SYS_EX_M_ID_0)   &&
-    (id.byte2 == SYS_EX_M_ID_1)   &&
-    (id.byte3  == SYS_EX_M_ID_2)
+        (id.byte1  == defaultID.byte1)   &&
+        (id.byte2 == defaultID.byte2)   &&
+        (id.byte3== defaultID.byte3)
 
     );
 
 }
 
-bool SysEx::checkWish(uint8_t wish)   {
+bool SysEx::checkWish(sysExWish wish)   {
 
-    return ((wish >= WISH_START) && (wish < WISH_END));
+    switch(wish)    {
+
+        case sysExWish_get:
+        case sysExWish_set:
+        case sysExWish_restore:
+        return true;
+
+        default:
+        return false;
+
+    }
 
 }
 
-bool SysEx::checkAmount(uint8_t amount)    {
+bool SysEx::checkAmount(sysExAmount amount)    {
 
-    return ((amount >= AMOUNT_START) && (amount < AMOUNT_END));
+    switch(amount)  {
+
+        case sysExAmount_all:
+        case sysExAmount_single:
+        return true;
+
+        default:
+        return false;
+
+    }
 
 }
 
-
-//component specific
-
-bool SysEx::checkBlock(uint8_t messageType) {
+bool SysEx::checkBlock(uint8_t block) {
 
     //check if message type is valid
-    for (int i=0; i<MAX_NUMBER_OF_MESSAGES; i++)
-        if (messageInfo[messageType].messageTypeID == messageType)
+    for (int i=0; i<MAX_NUMBER_OF_BLOCKS; i++)
+        if (sysExMessage[i].block == block)
             return true;
 
     return false;
 
 }
 
-bool SysEx::checkSection(uint8_t messageType, uint8_t messageSubType)    {
+bool SysEx::checkSection(uint8_t block, uint8_t section)    {
 
-    return (messageSubType < messageInfo[messageType].numberOfSubtypes);
-
-}
-
-bool SysEx::checkParameterID(uint8_t messageType, uint8_t messageSubType, uint8_t parameter)   {
-
-    //message type and subtype passed validation, check parameter ID
-    return (parameter < messageInfo[messageType].subTypeInfo[messageSubType][PARAMETERS_BYTE]);
+    return (section < sysExMessage[block].numberOfSections);
 
 }
 
-bool SysEx::checkNewParameter(uint8_t messageType, uint8_t messageSubType, uint8_t parameter, uint8_t newParameter) {
 
-    uint8_t minValue = messageInfo[messageType].subTypeInfo[messageSubType][NEW_VALUE_MIN_BYTE];
-    uint8_t maxValue = messageInfo[messageType].subTypeInfo[messageSubType][NEW_VALUE_MAX_BYTE];
+
+bool SysEx::checkParameterIndex(uint8_t block, uint8_t section, sysExParameter_t parameter)   {
+
+    //block and section passed validation, check parameter index
+    return (parameter < sysExMessage[block].section[section].numberOfParameters);
+
+}
+
+bool SysEx::checkNewValue(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue) {
+
+    sysExParameter_t minValue = sysExMessage[block].section[section].minValue;
+    sysExParameter_t maxValue = sysExMessage[block].section[section].maxValue;
 
     if ((minValue != CUSTOM_VALUE_CHECK) && (maxValue != CUSTOM_VALUE_CHECK))
-        return ((newParameter >= minValue) && (newParameter <= maxValue));
+        return ((newValue >= minValue) && (newValue <= maxValue));
     else if ((minValue != CUSTOM_VALUE_CHECK) && (maxValue == CUSTOM_VALUE_CHECK))
-        return (newParameter >= minValue); //check only min value
+        return (newValue >= minValue); //check only min value
     else if ((minValue == CUSTOM_VALUE_CHECK) && (maxValue != CUSTOM_VALUE_CHECK))
-        return (newParameter <= maxValue);   //check only max value
+        return (newValue <= maxValue);   //check only max value
     else if ((minValue == CUSTOM_VALUE_CHECK) && (maxValue == CUSTOM_VALUE_CHECK))
         return true; //don't check new parameter
 
@@ -278,27 +408,73 @@ bool SysEx::checkNewParameter(uint8_t messageType, uint8_t messageSubType, uint8
 
 }
 
-uint8_t SysEx::generateMinMessageLenght(uint8_t wish, uint8_t amount, uint8_t messageType, uint8_t messageSubType)    {
+void SysEx::addByte(sysExParameter_t value, uint16_t &size, bool parameter)   {
+
+    #if PARAM_SIZE == 2
+        if (parameter)  {
+
+            sysExResponse[size] = highByte_7bit(value);
+            size++;
+            sysExResponse[size] = lowByte_7bit(value);
+            size++;
+
+        }   else {
+
+            sysExResponse[size] = value;
+            size++;
+
+        }
+    #elif PARAM_SIZE == 1
+        sysExResponse[size] = value;
+        size++;
+    #endif
+
+}
+
+void SysEx::addToResponse(sysExParameter_t value)    {
+
+    //public function used to append bytes to response
+    //first part of the message is already built - 3 ID bytes and custom string
+    addByte(value, customReponseSize, false);
+
+}
+
+uint16_t SysEx::generateMinMessageLenght(sysExWish wish, sysExAmount amount, uint8_t block, uint8_t section)    {
 
     //single parameter
-    if (amount == AMOUNT_SINGLE)  {
+    if (amount == sysExAmount_single)  {
 
-        if ((wish == WISH_GET) ||
-        (wish == WISH_RESTORE)) return ML_REQ_STANDARD + 1;  //get   //add 1 to length for parameter
-        else                    return ML_REQ_STANDARD + 2;  //set   //add 2 to length for parameter and new value
+        if ((wish == sysExWish_get) ||
+        (wish == sysExWish_restore))    return ML_REQ_STANDARD + sizeof(sysExParameter_t);      //get   //add parameter length
+        else                            return ML_REQ_STANDARD + 2*sizeof(sysExParameter_t);    //set   //add parameter length and new value length
 
-    }   else if (amount == AMOUNT_ALL)   {
+    }   else if (amount == sysExAmount_all)   {
 
-        if ((wish == WISH_GET) || (wish == WISH_RESTORE))             //get/restore
+        if ((wish == sysExWish_get) || (wish == sysExWish_restore))             //get/restore
             return ML_REQ_STANDARD;
 
         else    {                                                                   //set
 
-            return ML_REQ_STANDARD + messageInfo[messageType].subTypeInfo[messageSubType][PARAMETERS_BYTE];
+            return ML_REQ_STANDARD + (sysExMessage[block].section[section].numberOfParameters*sizeof(sysExParameter_t));
 
         }
 
     }   else return 0;
+
+}
+
+void SysEx::sendHelloResponse()   {
+
+    uint16_t size = 0;
+
+    addByte(defaultID.byte1, size, false);
+    addByte(defaultID.byte2, size, false);
+    addByte(defaultID.byte3, size, false);
+    addByte(ack, size, false);
+    addByte(HELLO_STRING, size, false);
+
+    sysExEnabled = true;
+    midi.sendSysEx(sysExResponse, size, false);
 
 }
 
@@ -307,175 +483,145 @@ void SysEx::sendError(sysExError errorID)  {
     //public function, interface objects can use this function directly
     //to override internal error checking
 
-    uint8_t sysExResponse[5];
+    uint16_t size = 0;
 
-    sysExResponse[0] = SYS_EX_M_ID_0;
-    sysExResponse[1] = SYS_EX_M_ID_1;
-    sysExResponse[2] = SYS_EX_M_ID_2;
-    sysExResponse[3] = RESPONSE_NACK;
-    sysExResponse[4] = errorID;
+    addByte(defaultID.byte1, size, false);
+    addByte(defaultID.byte2, size, false);
+    addByte(defaultID.byte3, size, false);
+    addByte(nack, size, false);
+    addByte(errorID, size, false);
 
-    midi.sendSysEx(sysExResponse, 5);
-    dataAvailable = false;
-
-}
-
-void SysEx::sendHelloResponse()   {
-
-    uint8_t sysExAckResponse[7];
-
-    sysExAckResponse[0] = SYS_EX_M_ID_0;
-    sysExAckResponse[1] = SYS_EX_M_ID_1;
-    sysExAckResponse[2] = SYS_EX_M_ID_2;
-    sysExAckResponse[3] = RESPONSE_ACK;
-    sysExAckResponse[4] = getSWversion(swVersion_major);
-    sysExAckResponse[5] = getSWversion(swVersion_minor);
-    sysExAckResponse[6] = getSWversion(swVersion_minor);
-
-    sysExEnabled = true;
-
-    midi.sendSysEx(sysExAckResponse, 7);
+    midi.sendSysEx(sysExResponse, size, false);
 
 }
 
-void SysEx::sendComponentID(uint8_t blockID, uint8_t componentID)   {
+void SysEx::sendComponentID(uint8_t block, sysExParameter_t index)   {
 
-    uint8_t sysExResponse[6];
+    uint16_t size = 0;
 
-    sysExResponse[0] = SYS_EX_M_ID_0;
-    sysExResponse[1] = SYS_EX_M_ID_1;
-    sysExResponse[2] = SYS_EX_M_ID_2;
-    sysExResponse[3] = COMPONENT_INFO_STRING;
-    sysExResponse[4] = blockID;
-    sysExResponse[5] = componentID;
+    addByte(defaultID.byte1, size, false);
+    addByte(defaultID.byte2, size, false);
+    addByte(defaultID.byte3, size, false);
+    addByte(COMPONENT_INFO_STRING, size, false);
+    addByte(block, size, false);
+    addByte(index, size, true);
 
-    midi.sendSysEx(sysExResponse, 6);
+    midi.sendSysEx(sysExResponse, size, false);
 
 }
 
 void SysEx::sendResponse(uint8_t sysExArray[], uint8_t arraySize)  {
 
-    uint8_t componentNr     = 1,
-            _parameter      = 0;
+    uint8_t numberOfParameters  = 1,
+            _parameter          = 0;
 
-    //create basic response
-    uint8_t sysExResponse[64+ML_RES_BASIC];
-    uint8_t arrayLength = 0;
+    uint16_t size = 0;
     uint8_t arrayIndex = 0;
     bool eepromError = false;
 
-    sysExResponse[0] = SYS_EX_M_ID_0;
-    sysExResponse[1] = SYS_EX_M_ID_1;
-    sysExResponse[2] = SYS_EX_M_ID_2;
-    sysExResponse[3] = RESPONSE_ACK;
+    //build basic response
+    addByte(defaultID.byte1, size, false);
+    addByte(defaultID.byte2, size, false);
+    addByte(defaultID.byte3, size, false);
+    addByte(ack, size, false);
 
-    if (sysExArray[MS_AMOUNT] == AMOUNT_ALL) {
+    if (sysExArray[amountByte] == sysExAmount_all) {
 
-        uint8_t messageType = sysExArray[MS_BLOCK];
-        uint8_t messageSubtype = sysExArray[MS_SECTION];
-        componentNr = messageInfo[messageType].subTypeInfo[messageSubtype][PARAMETERS_BYTE];
+        uint8_t block = sysExArray[blockByte];
+        uint8_t section = sysExArray[sectionByte];
+        numberOfParameters = sysExMessage[block].section[section].numberOfParameters;
 
     }
 
     //create response based on wanted message type
-    switch(sysExArray[MS_WISH]) {
+    switch(sysExArray[wishByte]) {
 
-        case WISH_GET:
-        if (sysExArray[MS_AMOUNT] == AMOUNT_ALL)    _parameter = 0;
-        else                                        _parameter = sysExArray[MS_PARAMETER_ID];
+        case sysExWish_get:
+        if (sysExArray[amountByte] == sysExAmount_all)  _parameter = 0;
+        else                                            _parameter = sysExArray[indexByte_higher];
 
-        for (int i=0; i<componentNr; i++) {
+        for (int i=0; i<numberOfParameters; i++) {
 
-            sysExResponse[i+ML_SET_RESTORE] = sendGetCallback(sysExArray[MS_BLOCK], sysExArray[MS_SECTION], _parameter);
+            addByte(sendGetCallback(sysExArray[blockByte], sysExArray[sectionByte], _parameter), size, true);
             _parameter++;
-
-        }   arrayLength = ML_SET_RESTORE+componentNr;
-        break;
-
-        case WISH_SET:
-        if (sysExArray[MS_AMOUNT] == AMOUNT_ALL) {
-
-            _parameter = 0;
-            arrayIndex = MS_NEW_PARAMETER_ID_ALL;
-
-            }   else    {
-
-            _parameter = sysExArray[MS_PARAMETER_ID];
-            arrayIndex = MS_NEW_PARAMETER_ID_SINGLE;
 
         }
-
-        for (int i=0; i<componentNr; i++)   {
-
-            if (!sendSetCallback(sysExArray[MS_BLOCK], sysExArray[MS_SECTION], _parameter, sysExArray[arrayIndex+i]))  {
-
-                eepromError = true;
-                break;
-
-            }
-
-            _parameter++;
-
-        }   arrayLength = ML_SET_RESTORE;
         break;
 
-        case WISH_RESTORE:
-        if (sysExArray[MS_AMOUNT] == AMOUNT_ALL)
-        _parameter = 0;
-        else _parameter = sysExArray[MS_PARAMETER_ID];
-
-        for (int i=0; i<componentNr; i++)   {
-
-            if (!sendResetCallback(sysExArray[MS_BLOCK], sysExArray[MS_SECTION], _parameter))  {
-
-                eepromError = true;
-                break;
-
-            }   _parameter++;
-
-        }   arrayLength = ML_SET_RESTORE;
-        break;
+        //case sysExWish_set:
+        //if (sysExArray[amountByte] == sysExAmount_all) {
+//
+            //_parameter = 0;
+            //arrayIndex = MS_NEW_PARAMETER_ID_ALL;
+//
+            //}   else    {
+//
+            //_parameter = sysExArray[MS_PARAMETER_ID];
+            //arrayIndex = MS_NEW_PARAMETER_ID_SINGLE;
+//
+        //}
+//
+        //for (int i=0; i<componentNr; i++)   {
+//
+            //if (!sendSetCallback(sysExArray[blockByte], sysExArray[sectionByte], _parameter, sysExArray[arrayIndex+i]))  {
+//
+                //eepromError = true;
+                //break;
+//
+            //}
+//
+            //_parameter++;
+//
+        //}   arrayLength = ML_SET_RESTORE;
+        //break;
+//
+        //case sysExWish_restore:
+        //if (sysExArray[amountByte] == sysExAmount_all)
+        //_parameter = 0;
+        //else _parameter = sysExArray[MS_PARAMETER_ID];
+//
+        //for (int i=0; i<componentNr; i++)   {
+//
+            //if (!sendResetCallback(sysExArray[blockByte], sysExArray[sectionByte], _parameter))  {
+//
+                //eepromError = true;
+                //break;
+//
+            //}   _parameter++;
+//
+        //}   arrayLength = ML_SET_RESTORE;
+        //break;
 
     }
 
-    if (dataAvailable)  {
-
-        if (!eepromError)   midi.sendSysEx(sysExResponse, arrayLength);
-        else                sendError(ERROR_EEPROM);
-
-    }
+    if (!eepromError)   midi.sendSysEx(sysExResponse, size, false);
+    else                sendError(ERROR_EEPROM);
 
 }
 
 //callbacks
 
-void SysEx::setHandleReboot(void (*fptr)(void)) {
-
-    sendRebootCallback = fptr;
-
-}
-
-void SysEx::setHandleFactoryReset(void (*fptr)(void))   {
-
-    sendFactoryResetCallback = fptr;
-
-}
-
-void SysEx::setHandleGet(uint8_t(*fptr)(uint8_t messageID, uint8_t messageSubtype, uint8_t parameter))    {
+void SysEx::setHandleGet(sysExParameter_t(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index))    {
 
     sendGetCallback = fptr;
 
 }
 
-void SysEx::setHandleSet(bool(*fptr)(uint8_t messageType, uint8_t messageSubType, uint8_t parameterID, uint8_t newParameterID))    {
+void SysEx::setHandleSet(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue))    {
 
     sendSetCallback = fptr;
 
 }
 
-void SysEx::setHandleReset(bool(*fptr)(uint8_t messageID, uint8_t messageSubtype, uint8_t parameter))    {
+void SysEx::setHandleReset(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index))    {
 
     sendResetCallback = fptr;
+
+}
+
+void SysEx::setHandleCustom(bool(*fptr)(uint8_t value))  {
+
+    sendCustomCallback = fptr;
 
 }
 

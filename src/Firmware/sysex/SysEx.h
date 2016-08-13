@@ -6,83 +6,19 @@
 #define SYSEX_H_
 
 #include <avr/io.h>
-#include "../Types.h"
-#include "ManufacturerID.h"
 #include "../midi/MIDI.h"
 #include "Errors.h"
 #include "SpecialStrings.h"
-#include "../version/Firmware.h"
+#include "Config.h"
 
-#define MAX_NUMBER_OF_MESSAGES  7
-#define MAX_NUMBER_OF_SUBTYPES  7
-#define SUBTYPE_FIELDS          4
-
-#define PARAMETERS_BYTE         0
-#define NEW_VALUE_MIN_BYTE      1
-#define NEW_VALUE_MAX_BYTE      2
+#define MAX_NUMBER_OF_BLOCKS    7
+#define MAX_NUMBER_OF_SECTIONS  7
+#define MAX_CUSTOM_STRINGS      5
 
 #define INVALID_VALUE           128
 #define CUSTOM_VALUE_CHECK      255
 
-typedef struct {
-
-    uint16_t parameters;
-    uint16_t lowValue;
-    uint16_t highValue;
-
-} sysExSection;
-
 #define CONFIG_TIMEOUT          60000   //1 minute
-
-//message length
-#define ML_SPECIAL              0x06
-#define ML_REQ_STANDARD         0x09
-#define ML_RES_BASIC            0x08
-#define ML_SET_RESTORE          0x04
-
-#define ENABLE                  0x01
-#define DISABLE                 0x00
-
-#define RESPONSE_ACK            0x41
-#define RESPONSE_NACK           0x46
-
-//definitions
-
-typedef enum {
-
-    //message wish
-    WISH_START,
-    WISH_GET = WISH_START,
-    WISH_SET,
-    WISH_RESTORE,
-    WISH_END
-
-} sysExWish;
-
-typedef enum {
-
-    //wanted data amount
-    AMOUNT_START,
-    AMOUNT_SINGLE = AMOUNT_START,
-    AMOUNT_ALL,
-    AMOUNT_END
-
-} sysExAmount;
-
-typedef enum {
-
-    MS_M_ID_0 = 1,
-    MS_M_ID_1 = 2,
-    MS_M_ID_2 = 3,
-    MS_WISH = 4,
-    MS_AMOUNT = 5,
-    MS_BLOCK = 6,
-    MS_SECTION = 7,
-    MS_PARAMETER_ID = 8,
-    MS_NEW_PARAMETER_ID_SINGLE = 9,
-    MS_NEW_PARAMETER_ID_ALL = 8,
-
-} sysExMessageByteOrder;
 
 typedef struct {
 
@@ -91,6 +27,30 @@ typedef struct {
     uint8_t byte3;
 
 } sysExManufacturerID;
+
+const sysExManufacturerID defaultID = {
+
+    SYS_EX_M_ID_0,
+    SYS_EX_M_ID_1,
+    SYS_EX_M_ID_2
+
+};
+
+#if PARAM_SIZE == 2
+typedef uint16_t sysExParameter_t;
+#elif PARAM_SIZE == 1
+typedef uint8_t sysExParameter_t;
+#else
+#error Incorrect parameter size for SysEx
+#endif
+
+typedef struct {
+
+    sysExParameter_t numberOfParameters;
+    sysExParameter_t minValue;
+    sysExParameter_t maxValue;
+
+} sysExSection;
 
 //class
 
@@ -103,70 +63,118 @@ class SysEx {
     void enableConf();
     bool configurationEnabled();
     void sendError(sysExError errorID);
+    bool addCustomString(uint8_t value);
+    void addToResponse(sysExParameter_t value);
 
-    void setHandleReboot(void(*fptr)(void));
-    void setHandleFactoryReset(void(*fptr)(void));
-    void setHandleGet(uint8_t(*fptr)(uint8_t messageID, uint8_t messageSubtype, uint8_t parameterID));
-    void setHandleSet(bool(*fptr)(uint8_t messageID, uint8_t messageSubtype, uint8_t parameterID, uint8_t newParameter));
-    void setHandleReset(bool(*fptr)(uint8_t messageID, uint8_t messageSubtype, uint8_t parameterID));
+    void setHandleGet(sysExParameter_t(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index));
+    void setHandleSet(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue));
+    void setHandleReset(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index));
+    void setHandleCustom(bool(*fptr)(uint8_t value));
 
-    void addMessageType(uint8_t messageID, uint8_t subTypes);
-    void addMessageSubType(uint8_t messageID, uint8_t subTypeId, uint16_t numberOfParameters, uint16_t minValue, uint16_t maxValue);
+    void addBlock(uint8_t block, uint8_t sections);
+    void addSection(uint8_t block, uint8_t section, sysExParameter_t numberOfParameters, sysExParameter_t minValue, sysExParameter_t maxValue);
 
-    bool checkMessageValidity(uint8_t *sysExArray, uint8_t arrSize);
+    bool checkRequest(uint8_t *sysExArray, uint8_t arrSize);
+    bool checkParameters(uint8_t *sysExArray, uint8_t arrSize);
     void sendResponse(uint8_t sysExArray[], uint8_t arraySize);
 
-    void sendComponentID(uint8_t blockID, uint8_t componentID);
+    void sendComponentID(uint8_t block, sysExParameter_t index);
 
     private:
 
-    typedef struct {
+    typedef enum {
 
-        //a struct containing entire info for message type
-        //first variable is message ID
-        //second variable is total subtype number for message
-        //subTypeInfo array has following layout:
-        //index 0: subtype index
-        //index 1: number of parameters in subtype
-        //index 2: minimum value for new parameter
-        //index 3: maximum value for new parameter
+        startByte,
+        idByte_1,
+        idByte_2,
+        idByte_3,
+        wishByte,
+        amountByte,
+        blockByte,
+        sectionByte,
+        MIN_MESSAGE_LENGTH = wishByte + 1 + 1, //add next byte and end
+        ML_REQ_STANDARD = MIN_MESSAGE_LENGTH + 1 + 1 + 1 //min length + amount + block + section
 
-        uint8_t messageTypeID;
-        uint8_t numberOfSubtypes;
-        uint16_t subTypeInfo[MAX_NUMBER_OF_SUBTYPES][SUBTYPE_FIELDS];
-
-    } sysExMessageTypeInfo;
+    } sysExRequestByteOrder;
 
     typedef enum {
 
-        messageInfo_parameters,
-        messageInfo_lowValue,
-        messageInfo_highValue
+        #if PARAM_SIZE == 2
+        indexByte_higher = sectionByte+1,
+        indexByte_lower = indexByte_higher+1,
+        newValueByte_higher_single = indexByte_lower+1,
+        newValueByte_lower_single = newValueByte_higher_single+1,
+        newValueByte_higher_all = indexByte_higher,
+        newValueByte_lower_all = indexByte_lower
+        #elif PARAM_SIZE == 1
+        indexByte = sectionByte+1,
+        newValueByte_single = indexByte+1,
+        newValueByte_all = indexByte
+        #endif
 
-    } messageInfo_elements;
+    } sysExParameterByteOrder;
+
+    typedef enum {
+
+        //message wish
+        sysExWish_get,
+        sysExWish_set,
+        sysExWish_restore,
+        sysExWish_special
+
+    } sysExWish;
+
+    typedef enum {
+
+        //wanted data amount
+        sysExAmount_single,
+        sysExAmount_all
+
+    } sysExAmount;
+
+    typedef struct {
+
+        //a struct containing entire info for block/message type
+
+        uint8_t block;
+        uint8_t numberOfSections;
+        sysExSection section[MAX_NUMBER_OF_SECTIONS];
+
+    } sysExBlock;
+
+    typedef enum {
+
+        ack = 0x41,
+        nack = 0x46
+
+    } sysExStatus;
+
+    uint8_t sysExResponse[MIDI_SYSEX_ARRAY_SIZE];
+    uint8_t customStrings[MAX_CUSTOM_STRINGS];
+    uint8_t customStringCounter;
+    uint16_t customReponseSize;
 
     bool checkID(sysExManufacturerID id);
     bool checkSpecial(uint8_t *array, uint8_t size);
-    bool checkWish(uint8_t wish);
-    bool checkAmount(uint8_t amount);
-    bool checkBlock(uint8_t messageType);
-    bool checkSection(uint8_t messageType, uint8_t messageSubType);
-    bool checkParameterID(uint8_t messageType, uint8_t messageSubType, uint8_t parameter);
-    bool checkNewParameter(uint8_t messageType, uint8_t messageSubType, uint8_t parameter, uint8_t newParameter);
+    bool checkWish(sysExWish wish);
+    bool checkAmount(sysExAmount amount);
+    bool checkBlock(uint8_t block);
+    bool checkSection(uint8_t block, uint8_t section);
+    bool checkParameterIndex(uint8_t block, uint8_t section, sysExParameter_t index);
+    bool checkNewValue(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue);
 
-    uint8_t generateMinMessageLenght(uint8_t wish, uint8_t amount, uint8_t messageType, uint8_t messageSubType);
+    void addByte(sysExParameter_t value, uint16_t &size, bool parameter);
+
+    uint16_t generateMinMessageLenght(sysExWish wish, sysExAmount amount, uint8_t block, uint8_t section);
     void sendHelloResponse();
 
-    void (*sendRebootCallback)(void);
-    void (*sendFactoryResetCallback)(void);
-    uint8_t (*sendGetCallback)(uint8_t messageID, uint8_t messageSubtype, uint8_t parameter);
-    bool (*sendSetCallback)(uint8_t messageID, uint8_t messageSubtype, uint8_t parameter, uint8_t newParameter);
-    bool (*sendResetCallback)(uint8_t messageID, uint8_t messageSubtype, uint8_t parameter);
+    sysExParameter_t (*sendGetCallback)(uint8_t block, uint8_t section, sysExParameter_t index);
+    bool (*sendSetCallback)(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue);
+    bool (*sendResetCallback)(uint8_t block, uint8_t section, sysExParameter_t index);
+    bool (*sendCustomCallback)(uint8_t value);
 
-    bool                    sysExEnabled;
-    bool                    specialMessageChecked;
-    bool                    dataAvailable;
-    sysExMessageTypeInfo    messageInfo[MAX_NUMBER_OF_MESSAGES];
+    bool        sysExEnabled;
+    sysExBlock  sysExMessage[MAX_NUMBER_OF_BLOCKS];
 
 };
 

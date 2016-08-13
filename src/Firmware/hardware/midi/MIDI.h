@@ -33,6 +33,7 @@
 #include "../../midi/MIDI_parameters.h"
 #include "../../hardware/uart/UART.h"
 #include "../../Types.h"
+#include "../../BitManipulation.h"
 
 #include <avr/io.h>
 #include <avr/wdt.h>

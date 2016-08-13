@@ -206,7 +206,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
     }   else return;
 
     #if MODE_SERIAL < 1
-        midi.sendSysEx(sysExArray, SYS_EX_ARRAY_SIZE);
+        midi.sendSysEx(sysExArray, 6, true);
     #endif
 
     #ifdef MODULE_LCD

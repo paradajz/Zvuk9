@@ -34,6 +34,9 @@
 #include <util/delay.h>
 #include <avr/wdt.h>
 #include "../midi/MIDI.h"
+#include "../version/Firmware.h"
+#include "../version/Hardware.h"
+#include "../sysex/SysEx.h"
 
 #define START_UP_ANIMATION  1
 

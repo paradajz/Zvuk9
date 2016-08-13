@@ -32,8 +32,6 @@ void MIDI::checkInput()   {
     if (hwMIDI.read(usbInterface))   {   //new message on usb
 
         midiMessageType_t messageType = hwMIDI.getType(usbInterface);
-        uint8_t data1 = hwMIDI.getData1(usbInterface);
-        uint8_t data2 = hwMIDI.getData2(usbInterface);
 
         switch(messageType) {
 
@@ -43,6 +41,7 @@ void MIDI::checkInput()   {
             break;
 
             default:
+            //discard all other messages
             break;
 
         }
@@ -98,10 +97,10 @@ void MIDI::sendKeyAftertouch(uint8_t channel, uint8_t note, uint8_t pressure)   
 
 }
 
-void MIDI::sendSysEx(uint8_t *sysExArray, uint8_t arraySize)   {
+void MIDI::sendSysEx(uint8_t *sysExArray, uint8_t arraySize, bool arrayContainsBoundaries)   {
 
-    hwMIDI.sendSysEx(arraySize, sysExArray, true, dinInterface);
-    hwMIDI.sendSysEx(arraySize, sysExArray, true, usbInterface);
+    hwMIDI.sendSysEx(arraySize, sysExArray, arrayContainsBoundaries, dinInterface);
+    hwMIDI.sendSysEx(arraySize, sysExArray, arrayContainsBoundaries, usbInterface);
 
 }
 
