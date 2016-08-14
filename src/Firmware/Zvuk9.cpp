@@ -50,68 +50,13 @@ bool onCustom(uint8_t value) {
 
 sysExParameter_t onGet(uint8_t block, uint8_t section, sysExParameter_t index) {
 
-    switch(block) {
-
-        case CONF_BLOCK_PROGRAM:
-        switch(section) {
-
-            case programLastActiveProgramSection:
-            //ignore index in this case
-            return configuration.readParameter(CONF_BLOCK_PROGRAM, section, 0);
-            break;
-
-            case programLastActiveScaleSection:
-            return configuration.readParameter(CONF_BLOCK_PROGRAM, section, index);
-            break;
-
-            case programGlobalSettingsSection:
-            break;
-
-            case programLocalSettingsSection:
-            break;
-
-            case programScalePredefinedSection:
-            break;
-
-        }
-        break;
-
-        case CONF_BLOCK_USER_SCALE:
-        break;
-
-        case CONF_BLOCK_PAD_CALIBRATION:
-        break;
-
-        case CONF_BLOCK_MIDI:
-        break;
-
-        case CONF_BLOCK_PRESSURE_SETTINGS:
-        break;
-
-    } return 0;
+    return configuration.readParameter(block, section, index);
 
 }
 
 bool onSet(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue)   {
 
-    switch(block) {
-
-        case CONF_BLOCK_PROGRAM:
-        break;
-
-        case CONF_BLOCK_USER_SCALE:
-        break;
-
-        case CONF_BLOCK_PAD_CALIBRATION:
-        break;
-
-        case CONF_BLOCK_MIDI:
-        break;
-
-        case CONF_BLOCK_PRESSURE_SETTINGS:
-        break;
-
-    }   return false;
+    return configuration.writeParameter(block, section, index, newValue);
 
 }
 

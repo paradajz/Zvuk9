@@ -554,14 +554,14 @@ void SysEx::sendResponse(uint8_t sysExArray[], uint8_t arraySize)  {
             //_parameter = 0;
             //arrayIndex = MS_NEW_PARAMETER_ID_ALL;
 //
-            //}   else    {
+        //}   else    {
 //
             //_parameter = sysExArray[MS_PARAMETER_ID];
             //arrayIndex = MS_NEW_PARAMETER_ID_SINGLE;
 //
         //}
 //
-        //for (int i=0; i<componentNr; i++)   {
+        //for (int i=0; i<numberOfParameters; i++)   {
 //
             //if (!sendSetCallback(sysExArray[blockByte], sysExArray[sectionByte], _parameter, sysExArray[arrayIndex+i]))  {
 //
@@ -574,7 +574,7 @@ void SysEx::sendResponse(uint8_t sysExArray[], uint8_t arraySize)  {
 //
         //}   arrayLength = ML_SET_RESTORE;
         //break;
-//
+
         //case sysExWish_restore:
         //if (sysExArray[amountByte] == sysExAmount_all)
         //_parameter = 0;
