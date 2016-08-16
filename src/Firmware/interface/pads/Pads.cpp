@@ -50,6 +50,14 @@ void Pads::init()   {
 
 void Pads::setupSysEx() {
 
+    for (int i=0; i<CONF_BLOCKS; i++)   {
+
+        uint8_t sections = configuration.getBlockSections(i);
+
+        sysEx.addBlock(sections);
+
+    }
+
     uint16_t parameters, minValue, maxValue;
 
     //program block
@@ -62,7 +70,7 @@ void Pads::setupSysEx() {
         sysExSection lastActiveProgram_section      = { parameters, minValue, maxValue };
 
 
-        parameters = NUMBER_OF_PROGRAMS-1;
+        parameters = NUMBER_OF_PROGRAMS;
         minValue = 0;
         maxValue = NUMBER_OF_PROGRAMS-1;
 
@@ -100,13 +108,10 @@ void Pads::setupSysEx() {
 
         };
 
-        //define message for sysex configuration
-        sysEx.addBlock(CONF_BLOCK_PROGRAM, PROGRAM_SECTIONS);
-
         for (int i=0; i<PROGRAM_SECTIONS; i++)   {
 
             //define subtype messages
-            sysEx.addSection(CONF_BLOCK_PROGRAM, i, programSectionsArray[i]->numberOfParameters, programSectionsArray[i]->minValue, programSectionsArray[i]->maxValue);
+            sysEx.addSection(CONF_BLOCK_PROGRAM, programSectionsArray[i]->numberOfParameters, programSectionsArray[i]->minValue, programSectionsArray[i]->maxValue);
 
         }
 
@@ -121,7 +126,7 @@ void Pads::setupSysEx() {
 
         sysExSection padNotes_section               = { parameters, minValue, maxValue };
 
-        sysEx.addSection(CONF_BLOCK_USER_SCALE, 0, padNotes_section.numberOfParameters, padNotes_section.minValue, padNotes_section.maxValue);
+        sysEx.addSection(CONF_BLOCK_USER_SCALE, padNotes_section.numberOfParameters, padNotes_section.minValue, padNotes_section.maxValue);
     }
 
     //pad calibration block
@@ -174,13 +179,10 @@ void Pads::setupSysEx() {
 
         };
 
-        //define message for sysex configuration
-        sysEx.addBlock(CONF_BLOCK_PAD_CALIBRATION, PAD_CALIBRATION_SECTIONS);
-
         for (int i=0; i<PAD_CALIBRATION_SECTIONS; i++)   {
 
             //define subtype messages
-            sysEx.addSection(CONF_BLOCK_PAD_CALIBRATION, i, padCalibrationSectionArray[i]->numberOfParameters, padCalibrationSectionArray[i]->minValue, padCalibrationSectionArray[i]->maxValue);
+            sysEx.addSection(CONF_BLOCK_PAD_CALIBRATION, padCalibrationSectionArray[i]->numberOfParameters, padCalibrationSectionArray[i]->minValue, padCalibrationSectionArray[i]->maxValue);
 
         }
 
@@ -195,8 +197,7 @@ void Pads::setupSysEx() {
 
         sysExSection midiSettings_section           = { parameters, minValue, maxValue };
 
-        sysEx.addBlock(CONF_BLOCK_MIDI, 1);
-        sysEx.addSection(CONF_BLOCK_MIDI, 0, midiSettings_section.numberOfParameters, midiSettings_section.minValue, midiSettings_section.maxValue);
+        sysEx.addSection(CONF_BLOCK_MIDI, midiSettings_section.numberOfParameters, midiSettings_section.minValue, midiSettings_section.maxValue);
     }
 
     //pressure settings block
@@ -214,9 +215,6 @@ void Pads::setupSysEx() {
 
         sysExSection pressureCurve_section          = { parameters, minValue, maxValue };
 
-        //define message for sysex configuration
-        sysEx.addBlock(CONF_BLOCK_PRESSURE_SETTINGS, PRESSURE_SETTINGS_SECTIONS);
-
         sysExSection *pressureSettingsSectionArray[] = {
 
             &pressureSensitivity_section,
@@ -227,7 +225,7 @@ void Pads::setupSysEx() {
         for (int i=0; i<PRESSURE_SETTINGS_SECTIONS; i++)   {
 
             //define subtype messages
-            sysEx.addSection(CONF_BLOCK_PRESSURE_SETTINGS, i, pressureSettingsSectionArray[i]->numberOfParameters, pressureSettingsSectionArray[i]->minValue, pressureSettingsSectionArray[i]->maxValue);
+            sysEx.addSection(CONF_BLOCK_PRESSURE_SETTINGS, pressureSettingsSectionArray[i]->numberOfParameters, pressureSettingsSectionArray[i]->minValue, pressureSettingsSectionArray[i]->maxValue);
 
         }
 

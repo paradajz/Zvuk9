@@ -91,17 +91,9 @@ int main()    {
     sysEx.setHandleGet(onGet);
     sysEx.setHandleSet(onSet);
     sysEx.setHandleReset(onReset);
-    sysEx.setHandleCustom(onCustom);
+    sysEx.setHandleCustomRequest(onCustom);
 
-    if (!sysEx.addCustomString(FIRMWARE_VERSION_STRING))    {
-
-        #if MODE_SERIAL > 0
-        printf("Error while adding custom string for SysEx\n");
-        #endif
-
-    }
-
-    if (!sysEx.addCustomString(HARDWARE_VERSION_STRING))    {
+    if (!sysEx.addCustomRequest(FIRMWARE_VERSION_STRING))    {
 
         #if MODE_SERIAL > 0
         printf("Error while adding custom string for SysEx\n");
@@ -109,7 +101,7 @@ int main()    {
 
     }
 
-    if (!sysEx.addCustomString(REBOOT_STRING))    {
+    if (!sysEx.addCustomRequest(HARDWARE_VERSION_STRING))    {
 
         #if MODE_SERIAL > 0
         printf("Error while adding custom string for SysEx\n");
@@ -117,7 +109,15 @@ int main()    {
 
     }
 
-    if (!sysEx.addCustomString(FACTORY_RESET_STRING))    {
+    if (!sysEx.addCustomRequest(REBOOT_STRING))    {
+
+        #if MODE_SERIAL > 0
+        printf("Error while adding custom string for SysEx\n");
+        #endif
+
+    }
+
+    if (!sysEx.addCustomRequest(FACTORY_RESET_STRING))    {
 
         #if MODE_SERIAL > 0
         printf("Error while adding custom string for SysEx\n");

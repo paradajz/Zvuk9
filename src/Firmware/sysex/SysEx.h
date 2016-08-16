@@ -7,18 +7,9 @@
 
 #include <avr/io.h>
 #include "../midi/MIDI.h"
-#include "Errors.h"
-#include "SpecialStrings.h"
+#include "Status.h"
+#include "SpecialRequests.h"
 #include "Config.h"
-
-#define MAX_NUMBER_OF_BLOCKS    7
-#define MAX_NUMBER_OF_SECTIONS  7
-#define MAX_CUSTOM_STRINGS      5
-
-#define INVALID_VALUE           128
-#define CUSTOM_VALUE_CHECK      255
-
-#define CONFIG_TIMEOUT          60000   //1 minute
 
 typedef struct {
 
@@ -27,14 +18,6 @@ typedef struct {
     uint8_t byte3;
 
 } sysExManufacturerID;
-
-const sysExManufacturerID defaultID = {
-
-    SYS_EX_M_ID_0,
-    SYS_EX_M_ID_1,
-    SYS_EX_M_ID_2
-
-};
 
 #if PARAM_SIZE == 2
 typedef uint16_t sysExParameter_t;
@@ -49,6 +32,7 @@ typedef struct {
     sysExParameter_t numberOfParameters;
     sysExParameter_t minValue;
     sysExParameter_t maxValue;
+    uint8_t parts;
 
 } sysExSection;
 
@@ -62,55 +46,49 @@ class SysEx {
     void disableConf();
     void enableConf();
     bool configurationEnabled();
-    void sendError(sysExError errorID);
-    bool addCustomString(uint8_t value);
+    bool addCustomRequest(uint8_t value);
     void addToResponse(sysExParameter_t value);
 
     void setHandleGet(sysExParameter_t(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index));
     void setHandleSet(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue));
     void setHandleReset(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index));
-    void setHandleCustom(bool(*fptr)(uint8_t value));
+    void setHandleCustomRequest(bool(*fptr)(uint8_t value));
 
-    void addBlock(uint8_t block, uint8_t sections);
-    void addSection(uint8_t block, uint8_t section, sysExParameter_t numberOfParameters, sysExParameter_t minValue, sysExParameter_t maxValue);
+    bool addBlock(uint8_t sections);
+    bool addSection(uint8_t block, sysExParameter_t numberOfParameters, sysExParameter_t minValue, sysExParameter_t maxValue);
 
-    bool checkRequest(uint8_t *sysExArray, uint8_t arrSize);
-    bool checkParameters(uint8_t *sysExArray, uint8_t arrSize);
-    void sendResponse(uint8_t sysExArray[], uint8_t arraySize);
+    bool checkRequest();
+    bool checkParameters();
+    void sendResponse();
 
-    void sendComponentID(uint8_t block, sysExParameter_t index);
+    void sendCustomMessage(uint8_t id, sysExParameter_t value);
 
     private:
 
     typedef enum {
 
-        startByte,
-        idByte_1,
-        idByte_2,
-        idByte_3,
-        wishByte,
-        amountByte,
-        blockByte,
-        sectionByte,
+        startByte,      //0
+        idByte_1,       //1
+        idByte_2,       //2
+        idByte_3,       //3
+        statusByte,     //4
+        partByte,       //5
+        wishByte,       //6
+        amountByte,     //7
+        blockByte,      //8
+        sectionByte,    //9
+        REQUEST_SIZE,
+        RESPONSE_SIZE = partByte + 1,
         MIN_MESSAGE_LENGTH = wishByte + 1 + 1, //add next byte and end
-        ML_REQ_STANDARD = MIN_MESSAGE_LENGTH + 1 + 1 + 1 //min length + amount + block + section
+        ML_REQ_STANDARD = REQUEST_SIZE + 1 //add end byte
 
     } sysExRequestByteOrder;
 
     typedef enum {
 
-        #if PARAM_SIZE == 2
-        indexByte_higher = sectionByte+1,
-        indexByte_lower = indexByte_higher+1,
-        newValueByte_higher_single = indexByte_lower+1,
-        newValueByte_lower_single = newValueByte_higher_single+1,
-        newValueByte_higher_all = indexByte_higher,
-        newValueByte_lower_all = indexByte_lower
-        #elif PARAM_SIZE == 1
-        indexByte = sectionByte+1,
-        newValueByte_single = indexByte+1,
+        indexByte = REQUEST_SIZE,
+        newValueByte_single = indexByte+sizeof(sysExParameter_t),
         newValueByte_all = indexByte
-        #endif
 
     } sysExParameterByteOrder;
 
@@ -120,7 +98,8 @@ class SysEx {
         sysExWish_get,
         sysExWish_set,
         sysExWish_restore,
-        sysExWish_special
+        sysExWish_backup,
+        SYSEX_WISH_MAX
 
     } sysExWish;
 
@@ -128,7 +107,8 @@ class SysEx {
 
         //wanted data amount
         sysExAmount_single,
-        sysExAmount_all
+        sysExAmount_all,
+        SYSEX_AMOUNT_MAX
 
     } sysExAmount;
 
@@ -136,45 +116,53 @@ class SysEx {
 
         //a struct containing entire info for block/message type
 
-        uint8_t block;
         uint8_t numberOfSections;
+        uint8_t sectionCounter;
         sysExSection section[MAX_NUMBER_OF_SECTIONS];
 
     } sysExBlock;
 
-    typedef enum {
+    typedef struct {
 
-        ack = 0x41,
-        nack = 0x46
+        sysExManufacturerID id;
+        sysExStatus_t status;
+        sysExWish wish;
+        sysExAmount amount;
+        uint8_t block;
+        uint8_t section;
+        uint8_t part;
+        sysExParameter_t index;
+        sysExParameter_t newValue;
 
-    } sysExStatus;
+    } decodedMessage_t;
 
-    uint8_t sysExResponse[MIDI_SYSEX_ARRAY_SIZE];
-    uint8_t customStrings[MAX_CUSTOM_STRINGS];
-    uint8_t customStringCounter;
-    uint16_t customReponseSize;
+    bool checkID();
+    bool checkSpecialRequests();
+    bool checkWish();
+    bool checkAmount();
+    bool checkBlock();
+    bool checkSection();
+    bool checkPart();
+    bool checkParameterIndex();
+    bool checkNewValue();
 
-    bool checkID(sysExManufacturerID id);
-    bool checkSpecial(uint8_t *array, uint8_t size);
-    bool checkWish(sysExWish wish);
-    bool checkAmount(sysExAmount amount);
-    bool checkBlock(uint8_t block);
-    bool checkSection(uint8_t block, uint8_t section);
-    bool checkParameterIndex(uint8_t block, uint8_t section, sysExParameter_t index);
-    bool checkNewValue(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue);
-
-    void addByte(sysExParameter_t value, uint16_t &size, bool parameter);
-
-    uint16_t generateMinMessageLenght(sysExWish wish, sysExAmount amount, uint8_t block, uint8_t section);
-    void sendHelloResponse();
+    uint8_t generateMinMessageLenght();
+    void setStatus(sysExStatus_t status);
 
     sysExParameter_t (*sendGetCallback)(uint8_t block, uint8_t section, sysExParameter_t index);
     bool (*sendSetCallback)(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue);
     bool (*sendResetCallback)(uint8_t block, uint8_t section, sysExParameter_t index);
-    bool (*sendCustomCallback)(uint8_t value);
+    bool (*sendCustomRequestCallback)(uint8_t value);
 
-    bool        sysExEnabled;
-    sysExBlock  sysExMessage[MAX_NUMBER_OF_BLOCKS];
+    bool                sysExEnabled;
+    sysExBlock          sysExMessage[MAX_NUMBER_OF_BLOCKS];
+    decodedMessage_t    decodedMessage;
+    uint8_t             *sysExArray,
+                        sysExArraySize,
+                        customRequests[MAX_CUSTOM_REQUESTS],
+                        customRequestCounter,
+                        sysExBlockCounter,
+                        responseSize;
 
 };
 

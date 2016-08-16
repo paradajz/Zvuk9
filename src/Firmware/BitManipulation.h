@@ -13,19 +13,14 @@ typedef struct {
 
     uint8_t high;
     uint8_t low;
+    uint16_t value;
 
-    uint16_t encodeTo14bit()    {
+    void encodeTo14bit()    {
 
-        uint8_t newLow = low & 0x7F;
-        uint8_t newHigh = (high << 1) & 0x7F;
-        bitWrite(newHigh, 0, bitRead(low, 7));
-
-        uint16_t joined;
-        joined = newHigh;
-        joined <<= 8;
-        joined |= newLow;
-
-        return joined;
+        low = value & 0x7F;
+        high = (value >> 8) & 0xFF;
+        high = (high << 1) & 0x7F;
+        bitWrite(high, 0, bitRead(low, 7));
 
     }
 

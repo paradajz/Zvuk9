@@ -18,6 +18,6 @@
 #define DEFAULT_MIDI_CHANNEL    1
 
 //max sysex array size
-#define MIDI_SYSEX_ARRAY_SIZE   255
+#define MIDI_SYSEX_ARRAY_SIZE   128
 
 #endif

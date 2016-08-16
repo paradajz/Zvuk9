@@ -1,14 +1,25 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+#define MAX_NUMBER_OF_BLOCKS    7
+#define MAX_NUMBER_OF_SECTIONS  7
+#define MAX_CUSTOM_REQUESTS     5
+
+#define INVALID_VALUE           128
+#define CUSTOM_VALUE_CHECK      255
+
+#define CONFIG_TIMEOUT          60000   //1 minute
+
+#define PARAMETERS_PER_MESSAGE  32
+
 //1 - one byte size for parameter index and new value (uint8_t)
 //2 - two byte size (uint16_t)
 
-#define PARAM_SIZE  2
+#define PARAM_SIZE              2
 
 //manufacturer ID bytes
-#define SYS_EX_M_ID_0   0x41 //A
-#define SYS_EX_M_ID_1   0x44 //D
-#define SYS_EX_M_ID_2   0x42 //B
+#define SYS_EX_M_ID_0           0x41 //A
+#define SYS_EX_M_ID_1           0x44 //D
+#define SYS_EX_M_ID_2           0x42 //B
 
 #endif

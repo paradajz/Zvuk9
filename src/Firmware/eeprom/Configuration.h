@@ -27,7 +27,6 @@ EEPROM addresses of parameters.
 #include "Defaults.h"
 #include "../Scales.h"
 #include "Blocks.h"
-#include "Sections.h"
 
 #ifndef EEPROM_H_
 #define EEPROM_H_
@@ -59,6 +58,15 @@ typedef struct {
 
 } blockDescriptor;
 
+typedef enum {
+
+    sections,
+    parameters,
+    parameterType,
+    preserveOnPartialreset
+
+} blockInfo_t;
+
 //default controller settings
 
 class Configuration : LCD {
@@ -75,6 +83,7 @@ class Configuration : LCD {
     friend void factory_reset(factoryResetType_t type);
     void createMemoryLayout();
     void createSectionAddresses();
+    uint8_t getBlockSections(uint8_t block);
     inline uint16_t readParameter(uint8_t blockID, uint8_t sectionID, uint16_t parameterID = 0)  {
 
         uint16_t startAddress = getSectionAddress(blockID, sectionID);
