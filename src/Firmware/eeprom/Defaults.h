@@ -10,11 +10,6 @@
 
 typedef enum {  //list of IDs for global program settings for access
 
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_ID,
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_TYPE_ID,
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_OCTAVE_ID,
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_TONIC_ID,
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_SHIFT_ID,
     GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID,
     GLOBAL_PROGRAM_SETTING_X_ENABLE_ID,
     GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID,
@@ -34,11 +29,6 @@ typedef enum {  //list of IDs for global program settings for access
 } globalProgramSettings;
 
 //define default global program settings
-#define GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE         0x00
-#define GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_TYPE    scaleNaturalMinor
-#define GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_OCTAVE  DEFAULT_OCTAVE
-#define GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_TONIC   C
-#define GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_SHIFT   0x00
 #define GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE       0x00
 #define GLOBAL_PROGRAM_SETTING_X_ENABLE             0x01
 #define GLOBAL_PROGRAM_SETTING_Y_ENABLE             0x01
@@ -57,11 +47,6 @@ typedef enum {  //list of IDs for global program settings for access
 //put global settings in array for easier access
 const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] = {
 
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE,
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_TYPE,
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_OCTAVE,
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_TONIC,
-    GLOBAL_PROGRAM_SETTING_ACTIVE_SCALE_SHIFT,
     GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE,
     GLOBAL_PROGRAM_SETTING_X_ENABLE,
     GLOBAL_PROGRAM_SETTING_Y_ENABLE,
@@ -98,19 +83,19 @@ typedef enum {
 
 } localProgramSettings;
 
-#define LOCAL_PROGRAM_SETTING_X_ENABLE             0x01
-#define LOCAL_PROGRAM_SETTING_Y_ENABLE             0x01
-#define LOCAL_PROGRAM_SETTING_NOTE_ENABLE          0x01
-#define LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE    0x01
-#define LOCAL_PROGRAM_SETTING_MIDI_CHANNEL         DEFAULT_MIDI_CHANNEL
-#define LOCAL_PROGRAM_SETTING_CC_X                 0x14
-#define LOCAL_PROGRAM_SETTING_CC_Y                 0x15
-#define LOCAL_PROGRAM_SETTING_X_MIN                MIN_MIDI_VALUE
-#define LOCAL_PROGRAM_SETTING_X_MAX                MAX_MIDI_VALUE
-#define LOCAL_PROGRAM_SETTING_Y_MIN                MIN_MIDI_VALUE
-#define LOCAL_PROGRAM_SETTING_Y_MAX                MAX_MIDI_VALUE
-#define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN         curveTypeLinear
-#define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN         curveTypeLinear
+#define LOCAL_PROGRAM_SETTING_X_ENABLE              0x01
+#define LOCAL_PROGRAM_SETTING_Y_ENABLE              0x01
+#define LOCAL_PROGRAM_SETTING_NOTE_ENABLE           0x01
+#define LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE     0x01
+#define LOCAL_PROGRAM_SETTING_MIDI_CHANNEL          DEFAULT_MIDI_CHANNEL
+#define LOCAL_PROGRAM_SETTING_CC_X                  0x14
+#define LOCAL_PROGRAM_SETTING_CC_Y                  0x15
+#define LOCAL_PROGRAM_SETTING_X_MIN                 MIN_MIDI_VALUE
+#define LOCAL_PROGRAM_SETTING_X_MAX                 MAX_MIDI_VALUE
+#define LOCAL_PROGRAM_SETTING_Y_MIN                 MIN_MIDI_VALUE
+#define LOCAL_PROGRAM_SETTING_Y_MAX                 MAX_MIDI_VALUE
+#define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN          curveTypeLinear
+#define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN          curveTypeLinear
 
 const uint8_t defaultLocalProgramSettingArray[] = {
 
@@ -139,9 +124,9 @@ typedef enum {
 
 } midiSettings;
 
-#define MIDI_SETTING_AFTERTOUCH_TYPE    aftertouchChannel
-#define MIDI_SETTING_RUNNING_STATUS     0x00
-#define MIDI_SETTING_NOTE_OFF_TYPE      noteOffType_standardNoteOff
+#define MIDI_SETTING_AFTERTOUCH_TYPE                aftertouchChannel
+#define MIDI_SETTING_RUNNING_STATUS                 0x00
+#define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_standardNoteOff
 
 const uint8_t defaultMIDIsettingArray[] = {
 

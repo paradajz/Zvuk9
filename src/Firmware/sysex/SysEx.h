@@ -59,7 +59,6 @@ class SysEx {
 
     bool checkRequest();
     bool checkParameters();
-    void sendResponse();
 
     void sendCustomMessage(uint8_t id, sysExParameter_t value);
 

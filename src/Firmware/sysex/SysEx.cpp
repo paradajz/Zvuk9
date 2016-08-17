@@ -145,7 +145,7 @@ void SysEx::handleSysEx(uint8_t *array, uint8_t size)    {
                         decodedMessage.block = sysExArray[(uint8_t)blockByte];
                         decodedMessage.section = sysExArray[(uint8_t)sectionByte];
 
-                        if (checkRequest()) {
+                            if (checkRequest()) {
 
                             if (size < generateMinMessageLenght())    {
 
@@ -312,7 +312,7 @@ bool SysEx::checkParameters()   {
     //start building response
     setStatus(ACK);
 
-    uint8_t numberOfParameters = 1;
+    uint8_t numberOfParameters = 1, startIndex = 0;
 
     if (decodedMessage.wish == sysExWish_backup)    {
 
@@ -329,6 +329,15 @@ bool SysEx::checkParameters()   {
     if (decodedMessage.amount == sysExAmount_all)   {
 
         numberOfParameters = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
+
+        if (numberOfParameters >= PARAMETERS_PER_MESSAGE) {
+
+            startIndex = PARAMETERS_PER_MESSAGE*decodedMessage.part;
+            numberOfParameters = startIndex + (PARAMETERS_PER_MESSAGE-1);
+            if (numberOfParameters > sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters)
+                numberOfParameters = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
+
+        }
 
     }   else {
 
@@ -358,7 +367,7 @@ bool SysEx::checkParameters()   {
 
     }
 
-    for (int i=0; i<numberOfParameters; i++)    {
+    for (int i=startIndex; i<numberOfParameters; i++)    {
 
         switch(decodedMessage.wish) {
 
@@ -552,7 +561,7 @@ bool SysEx::checkPart() {
     switch(decodedMessage.wish) {
 
         case sysExWish_get:
-        if (decodedMessage.part != 0)   {
+        if (decodedMessage.part >= sysExMessage[decodedMessage.block].section[decodedMessage.section].parts)   {
 
             setStatus(ERROR_STATUS);
             return false;
