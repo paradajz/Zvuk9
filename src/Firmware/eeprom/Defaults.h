@@ -10,7 +10,7 @@
 
 typedef enum {  //list of IDs for global program settings for access
 
-    GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE_ID,
+    GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID,
     GLOBAL_PROGRAM_SETTING_X_ENABLE_ID,
     GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID,
     GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID,
@@ -29,7 +29,7 @@ typedef enum {  //list of IDs for global program settings for access
 } globalProgramSettings;
 
 //define default global program settings
-#define GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE       0x00
+#define GLOBAL_PROGRAM_SETTING_SPLIT_STATE          0x00
 #define GLOBAL_PROGRAM_SETTING_X_ENABLE             0x01
 #define GLOBAL_PROGRAM_SETTING_Y_ENABLE             0x01
 #define GLOBAL_PROGRAM_SETTING_NOTE_ENABLE          0x01
@@ -47,7 +47,7 @@ typedef enum {  //list of IDs for global program settings for access
 //put global settings in array for easier access
 const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] = {
 
-    GLOBAL_PROGRAM_SETTING_XY_SPLIT_STATE,
+    GLOBAL_PROGRAM_SETTING_SPLIT_STATE,
     GLOBAL_PROGRAM_SETTING_X_ENABLE,
     GLOBAL_PROGRAM_SETTING_Y_ENABLE,
     GLOBAL_PROGRAM_SETTING_NOTE_ENABLE,

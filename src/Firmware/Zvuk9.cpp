@@ -12,7 +12,7 @@
 #define HARDWARE_VERSION_STRING 0x42
 #define REBOOT_STRING           0x7F
 #define FACTORY_RESET_STRING    0x44
- 
+
 bool onCustom(uint8_t value) {
 
     switch(value)   {

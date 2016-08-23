@@ -153,7 +153,8 @@ class SysEx {
     bool (*sendResetCallback)(uint8_t block, uint8_t section, sysExParameter_t index);
     bool (*sendCustomRequestCallback)(uint8_t value);
 
-    bool                sysExEnabled;
+    bool                sysExEnabled,
+                        forcedSend;
     sysExBlock          sysExMessage[MAX_NUMBER_OF_BLOCKS];
     decodedMessage_t    decodedMessage;
     uint8_t             *sysExArray,

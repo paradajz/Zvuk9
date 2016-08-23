@@ -1,16 +1,14 @@
 #ifndef SPECIALREQUESTS_H_
 #define SPECIALREQUESTS_H_
 
-#define HELLO_REQUEST            0x48
-#define COMPONENT_INFO_REQUEST   0x49
-#define PROTOCOL_VERSION_REQUEST 0x50
+typedef enum {
 
-const uint8_t specialRequestArray[] = {
+    HELLO_REQUEST,              //00
+    COMPONENT_INFO_REQUEST,     //01
+    PROTOCOL_VERSION_REQUEST,   //02
+    PARAMS_PER_MESSAGE_REQUEST, //03
+    SPECIAL_PARAMETERS
 
-    HELLO_REQUEST,
-    COMPONENT_INFO_REQUEST,
-    PROTOCOL_VERSION_REQUEST
-
-};
+} sysEx_specialRequestID;
 
 #endif

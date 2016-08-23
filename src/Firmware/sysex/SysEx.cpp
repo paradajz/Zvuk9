@@ -18,6 +18,7 @@ SysEx::SysEx()  {
     sendCustomRequestCallback   = NULL;
 
     sysExEnabled = false;
+    forcedSend = false;
 
     for (int i=0; i<MAX_NUMBER_OF_BLOCKS; i++)    {
 
@@ -65,9 +66,7 @@ bool SysEx::addCustomRequest(uint8_t value)  {
     if (customRequestCounter >= MAX_CUSTOM_REQUESTS) return false;
 
     //don't add custom string if it's already defined as one of default strings
-    for (uint16_t i=0; i<sizeof(specialRequestArray); i++)
-        if (specialRequestArray[i] == value)
-            return false;
+    if (value < SPECIAL_PARAMETERS) return false;
 
     customRequests[customRequestCounter] = value;
     customRequestCounter++;
@@ -182,10 +181,16 @@ void SysEx::handleSysEx(uint8_t *array, uint8_t size)    {
 
     }
 
-    sysExArray[responseSize] = 0xF7;
-    responseSize++;
+    if (!forcedSend)    {
 
-    midi.sendSysEx(sysExArray, responseSize, true);
+        sysExArray[responseSize] = 0xF7;
+        responseSize++;
+
+        midi.sendSysEx(sysExArray, responseSize, true);
+
+    }
+
+    forcedSend = false;
 
 }
 
@@ -220,7 +225,6 @@ bool SysEx::checkSpecialRequests() {
 
                 setStatus(ACK);
                 addToResponse(PARAM_SIZE);
-                sysExEnabled = true;
 
             }   else {
 
@@ -228,6 +232,18 @@ bool SysEx::checkSpecialRequests() {
 
             }
             return true;
+
+            case PARAMS_PER_MESSAGE_REQUEST:
+            if (sysExEnabled)   {
+
+                setStatus(ACK);
+                addToResponse(PARAMETERS_PER_MESSAGE);
+
+            }   else {
+
+                setStatus(ERROR_HANDSHAKE);
+
+            }
 
             default:
             //check for custom string
@@ -312,7 +328,8 @@ bool SysEx::checkParameters()   {
     //start building response
     setStatus(ACK);
 
-    uint8_t numberOfParameters = 1, startIndex = 0;
+    uint8_t loops = 1, responseSize_ = responseSize;
+    uint16_t startIndex = 0, endIndex = 1;
 
     if (decodedMessage.wish == sysExWish_backup)    {
 
@@ -321,21 +338,19 @@ bool SysEx::checkParameters()   {
         //now convert wish to set
         sysExArray[(uint8_t)wishByte] = (uint8_t)sysExWish_set;
         decodedMessage.wish = sysExWish_get;
-        //make sure to make response the same size as request
-        responseSize = sysExArraySize - 1; //needed to overwrite end byte
 
     }
 
     if (decodedMessage.amount == sysExAmount_all)   {
 
-        numberOfParameters = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
+        endIndex = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
 
-        if (numberOfParameters >= PARAMETERS_PER_MESSAGE) {
+        if (endIndex >= PARAMETERS_PER_MESSAGE) {
 
             startIndex = PARAMETERS_PER_MESSAGE*decodedMessage.part;
-            numberOfParameters = startIndex + (PARAMETERS_PER_MESSAGE-1);
-            if (numberOfParameters > sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters)
-                numberOfParameters = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
+            endIndex = startIndex + PARAMETERS_PER_MESSAGE;
+            if (endIndex >= sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters)
+                endIndex = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
 
         }
 
@@ -367,117 +382,156 @@ bool SysEx::checkParameters()   {
 
     }
 
-    for (int i=startIndex; i<numberOfParameters; i++)    {
+    if  (
+    (
+    (decodedMessage.wish == sysExWish_backup) ||
+    (decodedMessage.wish == sysExWish_get)
+    ) && (decodedMessage.part == 127))  {
 
-        switch(decodedMessage.wish) {
+        loops = sysExMessage[decodedMessage.block].section[decodedMessage.section].parts;
+        forcedSend = true;
+        responseSize_ = sysExArraySize - 1; //don't overwrite anything
 
-            case sysExWish_get:
-            if (decodedMessage.amount == sysExAmount_single)    {
+    }
 
-                if (!checkParameterIndex())  {
+    for (int j=0; j<loops; j++) {
 
-                    setStatus(ERROR_PARAMETER);
-                    return false;
+        responseSize = responseSize_;
+
+        if  (forcedSend)  {
+
+            decodedMessage.part = j;
+            startIndex = PARAMETERS_PER_MESSAGE*decodedMessage.part;
+            endIndex = startIndex + PARAMETERS_PER_MESSAGE;
+            if (endIndex >= sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters)
+                endIndex = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
+            sysExArray[partByte] = decodedMessage.part;
+
+        }
+
+        for (uint16_t i=startIndex; i<endIndex; i++)    {
+
+            switch(decodedMessage.wish) {
+
+                case sysExWish_get:
+                if (decodedMessage.amount == sysExAmount_single)    {
+
+                    if (!checkParameterIndex())  {
+
+                        setStatus(ERROR_PARAMETER);
+                        return false;
+
+                    }   else {
+
+                        addToResponse(sendGetCallback(decodedMessage.block, decodedMessage.section, decodedMessage.index));
+
+                    }
 
                 }   else {
 
-                    addToResponse(sendGetCallback(decodedMessage.block, decodedMessage.section, decodedMessage.index));
+                    //get all params - no index is specified
+                    addToResponse(sendGetCallback(decodedMessage.block, decodedMessage.section, i));
 
                 }
+                break;
 
-            }   else {
+                case sysExWish_set:
+                if (decodedMessage.amount == sysExAmount_single)    {
 
-                //get all params - no index is specified
-                addToResponse(sendGetCallback(decodedMessage.block, decodedMessage.section, i));
+                    if (!checkParameterIndex())  {
+
+                        setStatus(ERROR_PARAMETER);
+                        return false;
+
+                    }
+
+                    if (!checkNewValue())   {
+
+                        setStatus(ERROR_NEW_PARAMETER);
+                        return false;
+
+                    }
+
+                    if (sendSetCallback(decodedMessage.block, decodedMessage.section, decodedMessage.index, decodedMessage.newValue))   {
+
+                        return true;
+
+                    }
+
+                }   else {
+
+                    uint8_t arrayIndex = newValueByte_all + (i-startIndex);
+
+                    #if PARAM_SIZE == 2
+                    if ((i-startIndex)%2) arrayIndex++;
+                    encDec_14bit decoded;
+                    decoded.high = sysExArray[arrayIndex];
+                    decoded.low = sysExArray[arrayIndex+1];
+                    decodedMessage.newValue = decoded.decode14bit();
+                    #elif PARAM_SIZE == 1
+                    decodedMessage.newValue = sysExArray[arrayIndex];
+                    #endif
+
+                    if (!checkNewValue())   {
+
+                        setStatus(ERROR_NEW_PARAMETER);
+                        return false;
+
+                    }
+
+                    if (!sendSetCallback(decodedMessage.block, decodedMessage.section, i, decodedMessage.newValue))  {
+
+                        setStatus(ERROR_WRITE);
+                        return false;
+
+                    }
+
+                }
+                break;
+
+                case sysExWish_restore:
+                if (decodedMessage.amount == sysExAmount_single)    {
+
+                    if (!checkParameterIndex())  {
+
+                        setStatus(ERROR_PARAMETER);
+                        return false;
+
+                    }
+
+                    if (!sendResetCallback(decodedMessage.block, decodedMessage.section, decodedMessage.index))  {
+
+                        setStatus(ERROR_WRITE);
+                        return false;
+
+                    }
+
+                    }   else {
+
+                    if (!sendResetCallback(decodedMessage.block, decodedMessage.section, i))  {
+
+                        setStatus(ERROR_WRITE);
+                        return false;
+
+                    }
+
+                }
+                break;
+
+                default:
+                setStatus(ERROR_WISH);
+                return false;
 
             }
-            break;
 
-            case sysExWish_set:
-            if (decodedMessage.amount == sysExAmount_single)    {
+        }
 
-                if (!checkParameterIndex())  {
+        if (forcedSend) {
 
-                    setStatus(ERROR_PARAMETER);
-                    return false;
+            sysExArray[responseSize] = 0xF7;
+            responseSize++;
 
-                }
-
-                if (!checkNewValue())   {
-
-                    setStatus(ERROR_NEW_PARAMETER);
-                    return false;
-
-                }
-
-                if (sendSetCallback(decodedMessage.block, decodedMessage.section, decodedMessage.index, decodedMessage.newValue))   {
-
-                    return true;
-
-                }
-
-            }   else {
-
-                uint8_t arrayIndex = newValueByte_all + i*sizeof(sysExParameter_t);
-
-                #if PARAM_SIZE == 2
-                encDec_14bit decoded;
-                decoded.high = sysExArray[arrayIndex];
-                decoded.low = sysExArray[arrayIndex+1];
-                decodedMessage.newValue= decoded.decode14bit();
-                #elif PARAM_SIZE == 1
-                decodedMessage.newValue = sysExArray[arrayIndex];
-                #endif
-
-                if (!checkNewValue())   {
-
-                    setStatus(ERROR_NEW_PARAMETER);
-                    return false;
-
-                }
-
-                if (!sendSetCallback(decodedMessage.block, decodedMessage.section, i, decodedMessage.newValue))  {
-
-                    setStatus(ERROR_WRITE);
-                    return false;
-
-                }
-
-            }
-            break;
-
-            case sysExWish_restore:
-            if (decodedMessage.amount == sysExAmount_single)    {
-
-                if (!checkParameterIndex())  {
-
-                    setStatus(ERROR_PARAMETER);
-                    return false;
-
-                }
-
-                if (!sendResetCallback(decodedMessage.block, decodedMessage.section, decodedMessage.index))  {
-
-                    setStatus(ERROR_WRITE);
-                    return false;
-
-                }
-
-            }   else {
-
-                if (!sendResetCallback(decodedMessage.block, decodedMessage.section, i))  {
-
-                    setStatus(ERROR_WRITE);
-                    return false;
-
-                }
-
-            }
-            break;
-
-            default:
-            setStatus(ERROR_WISH);
-            return false;
+            midi.sendSysEx(sysExArray, responseSize, true);
 
         }
 
@@ -489,6 +543,8 @@ bool SysEx::checkParameters()   {
 
 uint8_t SysEx::generateMinMessageLenght()    {
 
+    uint16_t size = 0;
+
     switch(decodedMessage.amount)   {
 
         case sysExAmount_single:
@@ -497,13 +553,13 @@ uint8_t SysEx::generateMinMessageLenght()    {
             case sysExWish_get:
             case sysExWish_restore:
             case sysExWish_backup:
-            return ML_REQ_STANDARD + sizeof(sysExParameter_t); //add parameter length
+            size = ML_REQ_STANDARD + sizeof(sysExParameter_t); //add parameter length
 
             case sysExWish_set:
-            return ML_REQ_STANDARD + 2*sizeof(sysExParameter_t); //add parameter length and new value length
+            size = ML_REQ_STANDARD + 2*sizeof(sysExParameter_t); //add parameter length and new value length
 
             default:
-            return 0;
+            break;
 
         }
         break;
@@ -514,21 +570,40 @@ uint8_t SysEx::generateMinMessageLenght()    {
             case sysExWish_get:
             case sysExWish_restore:
             case sysExWish_backup:
-            return ML_REQ_STANDARD;
+            size = ML_REQ_STANDARD;
+            break;
 
             case sysExWish_set:
-            return ML_REQ_STANDARD + (sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters*sizeof(sysExParameter_t));
+            size = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
+            if (size > PARAMETERS_PER_MESSAGE) {
+
+                if ((decodedMessage.part+1) == sysExMessage[decodedMessage.block].section[decodedMessage.section].parts)    {
+
+                    size = size - ((sysExMessage[decodedMessage.block].section[decodedMessage.section].parts-1)*PARAMETERS_PER_MESSAGE);
+
+                } else {
+
+                    size = PARAMETERS_PER_MESSAGE;
+
+                }
+
+            }
+            size *= sizeof(sysExParameter_t);
+            size += ML_REQ_STANDARD;
+            break;
 
             default:
-            return 0;
+            break;
 
         }
         break;
 
         default:
-        return 0;
+        break;
 
     }
+
+    return size;
 
 }
 
@@ -561,6 +636,7 @@ bool SysEx::checkPart() {
     switch(decodedMessage.wish) {
 
         case sysExWish_get:
+        if (decodedMessage.part == 127) return true;
         if (decodedMessage.part >= sysExMessage[decodedMessage.block].section[decodedMessage.section].parts)   {
 
             setStatus(ERROR_STATUS);
@@ -575,6 +651,8 @@ bool SysEx::checkPart() {
 
         case sysExWish_set:
         case sysExWish_backup:
+        if (decodedMessage.wish == sysExWish_backup)
+            if (decodedMessage.part == 127) return true;
         if (decodedMessage.amount == sysExAmount_all)   {
 
             if (decodedMessage.part < sysExMessage[decodedMessage.block].section[decodedMessage.section].parts) {
@@ -640,7 +718,7 @@ void SysEx::addToResponse(sysExParameter_t value)    {
 
     #if PARAM_SIZE == 2
     encDec_14bit encoded;
-    encoded.value = (uint16_t)value;
+    encoded.value = value;
     encoded.encodeTo14bit();
     sysExArray[responseSize] = encoded.high;
     responseSize++;

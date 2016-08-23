@@ -6,7 +6,7 @@
 #define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 #define invertByte(value) ((value) ^ 0xFF)
-#define lowByte_7bit(value) ((value) & 0x7f)
+#define lowByte_7bit(value) ((value) & 0x7F)
 #define highByte_7bit(value) ((value >> 7) & 0x7f)
 
 typedef struct {
@@ -17,10 +17,13 @@ typedef struct {
 
     void encodeTo14bit()    {
 
-        low = value & 0x7F;
-        high = (value >> 8) & 0xFF;
-        high = (high << 1) & 0x7F;
-        bitWrite(high, 0, bitRead(low, 7));
+        uint8_t newHigh = (value >> 8) & 0xFF;
+        uint8_t newLow = value & 0xFF;
+        newHigh = (newHigh << 1) & 0x7F;
+        bitWrite(newHigh, 0, bitRead(newLow, 7));
+        newLow = lowByte_7bit(newLow);
+        high = newHigh;
+        low = newLow;
 
     }
 

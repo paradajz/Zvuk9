@@ -105,7 +105,7 @@ void globalInit() {
 
 void reboot()   {
 
-    wdt_enable(WDTO_30MS);
+    wdt_enable(WDTO_250MS);
     while(1) {};
 
 }

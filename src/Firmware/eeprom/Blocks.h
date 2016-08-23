@@ -26,6 +26,13 @@ typedef enum {
 
 typedef enum {
 
+    padNotesSection,
+    USER_SCALE_SECTIONS
+
+} userScaleSection;
+
+typedef enum {
+
     padCalibrationPressureLowerSection,
     padCalibrationPressureUpperSection,
     padCalibrationXlowerSection,
@@ -38,16 +45,8 @@ typedef enum {
 
 typedef enum {
 
-    padNotesSection,
-    USER_SCALE_SECTIONS
-
-} userScaleSection;
-
-typedef enum {
-
     pressureSensitivitySection,
     pressureCurveSection,
-
     PRESSURE_SETTINGS_SECTIONS
 
 } pressureSettingsSection;
