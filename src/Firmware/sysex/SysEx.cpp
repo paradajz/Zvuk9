@@ -144,7 +144,7 @@ void SysEx::handleSysEx(uint8_t *array, uint8_t size)    {
                         decodedMessage.block = sysExArray[(uint8_t)blockByte];
                         decodedMessage.section = sysExArray[(uint8_t)sectionByte];
 
-                            if (checkRequest()) {
+                        if (checkRequest()) {
 
                             if (size < generateMinMessageLenght())    {
 
@@ -341,20 +341,7 @@ bool SysEx::checkParameters()   {
 
     }
 
-    if (decodedMessage.amount == sysExAmount_all)   {
-
-        endIndex = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
-
-        if (endIndex >= PARAMETERS_PER_MESSAGE) {
-
-            startIndex = PARAMETERS_PER_MESSAGE*decodedMessage.part;
-            endIndex = startIndex + PARAMETERS_PER_MESSAGE;
-            if (endIndex >= sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters)
-                endIndex = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
-
-        }
-
-    }   else {
+    if (decodedMessage.amount == sysExAmount_single)   {
 
         #if PARAM_SIZE == 2
         encDec_14bit decoded;
@@ -398,14 +385,20 @@ bool SysEx::checkParameters()   {
 
         responseSize = responseSize_;
 
-        if  (forcedSend)  {
+        if (forcedSend)  {
 
             decodedMessage.part = j;
+            sysExArray[partByte] = j;
+
+        }
+
+        if (decodedMessage.amount == sysExAmount_all)   {
+
             startIndex = PARAMETERS_PER_MESSAGE*decodedMessage.part;
             endIndex = startIndex + PARAMETERS_PER_MESSAGE;
-            if (endIndex >= sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters)
+
+            if (endIndex > sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters)
                 endIndex = sysExMessage[decodedMessage.block].section[decodedMessage.section].numberOfParameters;
-            sysExArray[partByte] = decodedMessage.part;
 
         }
 
@@ -460,10 +453,11 @@ bool SysEx::checkParameters()   {
 
                 }   else {
 
-                    uint8_t arrayIndex = newValueByte_all + (i-startIndex);
+                    uint8_t arrayIndex = (i-startIndex);
 
                     #if PARAM_SIZE == 2
-                    if ((i-startIndex)%2) arrayIndex++;
+                    arrayIndex *= sizeof(sysExParameter_t);
+                    arrayIndex += newValueByte_all;
                     encDec_14bit decoded;
                     decoded.high = sysExArray[arrayIndex];
                     decoded.low = sysExArray[arrayIndex+1];
@@ -506,7 +500,7 @@ bool SysEx::checkParameters()   {
 
                     }
 
-                    }   else {
+                }   else {
 
                     if (!sendResetCallback(decodedMessage.block, decodedMessage.section, i))  {
 
@@ -771,19 +765,19 @@ void SysEx::setStatus(sysExStatus_t status)    {
 
 //callbacks
 
-void SysEx::setHandleGet(sysExParameter_t(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index))    {
+void SysEx::setHandleGet(sysExParameter_t(*fptr)(uint8_t block, uint8_t section, uint16_t index))    {
 
     sendGetCallback = fptr;
 
 }
 
-void SysEx::setHandleSet(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue))    {
+void SysEx::setHandleSet(bool(*fptr)(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue))    {
 
     sendSetCallback = fptr;
 
 }
 
-void SysEx::setHandleReset(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index))    {
+void SysEx::setHandleReset(bool(*fptr)(uint8_t block, uint8_t section, uint16_t index))    {
 
     sendResetCallback = fptr;
 

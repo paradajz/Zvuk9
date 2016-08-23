@@ -199,6 +199,9 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="eeprom\Configuration.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="eeprom\Init.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="eeprom\MemoryLayout.cpp">
       <SubType>compile</SubType>
     </Compile>

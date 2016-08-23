@@ -49,9 +49,9 @@ class SysEx {
     bool addCustomRequest(uint8_t value);
     void addToResponse(sysExParameter_t value);
 
-    void setHandleGet(sysExParameter_t(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index));
-    void setHandleSet(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue));
-    void setHandleReset(bool(*fptr)(uint8_t block, uint8_t section, sysExParameter_t index));
+    void setHandleGet(sysExParameter_t(*fptr)(uint8_t block, uint8_t section, uint16_t index));
+    void setHandleSet(bool(*fptr)(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue));
+    void setHandleReset(bool(*fptr)(uint8_t block, uint8_t section, uint16_t index));
     void setHandleCustomRequest(bool(*fptr)(uint8_t value));
 
     bool addBlock(uint8_t sections);
@@ -148,9 +148,9 @@ class SysEx {
     uint8_t generateMinMessageLenght();
     void setStatus(sysExStatus_t status);
 
-    sysExParameter_t (*sendGetCallback)(uint8_t block, uint8_t section, sysExParameter_t index);
-    bool (*sendSetCallback)(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue);
-    bool (*sendResetCallback)(uint8_t block, uint8_t section, sysExParameter_t index);
+    sysExParameter_t (*sendGetCallback)(uint8_t block, uint8_t section, uint16_t index);
+    bool (*sendSetCallback)(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue);
+    bool (*sendResetCallback)(uint8_t block, uint8_t section, uint16_t index);
     bool (*sendCustomRequestCallback)(uint8_t value);
 
     bool                sysExEnabled,

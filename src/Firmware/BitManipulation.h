@@ -29,14 +29,13 @@ typedef struct {
 
     uint16_t decode14bit()  {
 
-        uint16_t newHigh = (high >> 1) & 0x7F;
-        uint16_t newLow = low;
-        bitWrite(newLow, 7, bitRead(high, 0));
+        bitWrite(low, 7, bitRead(high, 0));
+        high >>= 1;
 
         uint16_t joined;
-        joined = newHigh;
+        joined = high;
         joined <<= 8;
-        joined |= newLow;
+        joined |= low;
 
         return joined;
 

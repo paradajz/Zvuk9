@@ -72,7 +72,7 @@ void Pads::setupSysEx() {
 
         parameters = NUMBER_OF_PROGRAMS;
         minValue = 0;
-        maxValue = NUMBER_OF_PROGRAMS-1;
+        maxValue = NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES - 1;
 
         sysExSection lastActiveScale_section        = { parameters, minValue, maxValue };
 
@@ -122,7 +122,7 @@ void Pads::setupSysEx() {
     {
         parameters = MAX_PADS*NOTES_PER_PAD*NUMBER_OF_USER_SCALES;
         minValue = 0;
-        maxValue = 127;
+        maxValue = 128; //128 = blank note
 
         sysExSection padNotes_section               = { parameters, minValue, maxValue };
 

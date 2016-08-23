@@ -13,11 +13,11 @@
 #define DEFAULT_OCTAVE          4
 
 #define DEFAULT_NOTE            (DEFAULT_OCTAVE*MIDI_NOTES)
-#define BLANK_NOTE              0x80
+#define BLANK_NOTE              128
 
 #define DEFAULT_MIDI_CHANNEL    1
 
 //max sysex array size
-#define MIDI_SYSEX_ARRAY_SIZE   128
+#define MIDI_SYSEX_ARRAY_SIZE   100
 
 #endif
