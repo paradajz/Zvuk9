@@ -171,9 +171,9 @@ inline void ledRowsOff() {
 
 inline void activateColumn(uint8_t column) {
 
-    bitRead(column, 0) ? setHighMacro(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX) : setLowMacro(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX);
-    bitRead(column, 1) ? setHighMacro(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN_INDEX) : setLowMacro(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN_INDEX);
-    bitRead(column, 2) ? setHighMacro(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN_INDEX) : setLowMacro(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN_INDEX);
+    bitRead(column, 0) ? setHigh(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX) : setLowMacro(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX);
+    bitRead(column, 1) ? setHigh(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN_INDEX) : setLowMacro(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN_INDEX);
+    bitRead(column, 2) ? setHigh(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN_INDEX) : setLowMacro(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN_INDEX);
 
 }
 
@@ -496,11 +496,11 @@ void TimerObject::init() {
 
         for (int i=0; i<NUMBER_OF_ENCODERS; i++)    {
 
-            setInputMacro(*(encoderDDR1Array[i]), encoderPinIndex1Array[i]);
-            setInputMacro(*(encoderDDR2Array[i]), encoderPinIndex2Array[i]);
+            setInput(*(encoderDDR1Array[i]), encoderPinIndex1Array[i]);
+            setInput(*(encoderDDR2Array[i]), encoderPinIndex2Array[i]);
 
-            setHighMacro(*(encoderPort1Array[i]), encoderPinIndex1Array[i]);
-            setHighMacro(*(encoderPort2Array[i]), encoderPinIndex2Array[i]);
+            setHigh(*(encoderPort1Array[i]), encoderPinIndex1Array[i]);
+            setHigh(*(encoderPort2Array[i]), encoderPinIndex2Array[i]);
 
             encoderData[i] |= ((uint16_t)0 << 8);
             encoderData[i] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);   //set number of pulses to 8

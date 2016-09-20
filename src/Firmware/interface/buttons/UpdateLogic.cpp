@@ -151,7 +151,7 @@ void Buttons::update()    {
             #ifdef MODULE_LCD
             menu.displayMenu(userMenu);
             #endif
-            #if MODE_SERIAL > 0
+            #ifdef DEBUG
                 printf("Entering user menu\n");
             #endif
             //disable buttons while in menu

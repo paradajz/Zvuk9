@@ -9,7 +9,6 @@ Button control using two MPC23017 expanders.
 #ifdef MODULE_BUTTONS
 #ifndef BUTTONS_H_
 #define BUTTONS_H_
-#include "../../Debug.h"
 #include "../../midi/MIDI_parameters.h"
 #include "../../Types.h"
 #include "../pads/Pads.h"

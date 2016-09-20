@@ -695,16 +695,9 @@ bool SysEx::checkNewValue() {
     sysExParameter_t minValue = sysExMessage[decodedMessage.block].section[decodedMessage.section].minValue;
     sysExParameter_t maxValue = sysExMessage[decodedMessage.block].section[decodedMessage.section].maxValue;
 
-    if ((minValue != CUSTOM_VALUE_CHECK) && (maxValue != CUSTOM_VALUE_CHECK))
-        return ((decodedMessage.newValue >= minValue) && (decodedMessage.newValue <= maxValue));
-    else if ((minValue != CUSTOM_VALUE_CHECK) && (maxValue == CUSTOM_VALUE_CHECK))
-        return (decodedMessage.newValue >= minValue); //check only min value
-    else if ((minValue == CUSTOM_VALUE_CHECK) && (maxValue != CUSTOM_VALUE_CHECK))
-        return (decodedMessage.newValue <= maxValue);   //check only max value
-    else if ((minValue == CUSTOM_VALUE_CHECK) && (maxValue == CUSTOM_VALUE_CHECK))
-        return true; //don't check new parameter
-
-    return false;
+    if (minValue != maxValue)
+    return ((decodedMessage.newValue >= minValue) && (decodedMessage.newValue <= maxValue));
+    else return true; //don't check new value if min and max are the same
 
 }
 

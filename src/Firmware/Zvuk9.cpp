@@ -87,44 +87,16 @@ int main()    {
 
     globalInit();
 
-    #if MODE_SERIAL < 1
+    #ifdef NDEBUG
     sysEx.setHandleGet(onGet);
     sysEx.setHandleSet(onSet);
     sysEx.setHandleReset(onReset);
     sysEx.setHandleCustomRequest(onCustom);
 
-    if (!sysEx.addCustomRequest(FIRMWARE_VERSION_STRING))    {
-
-        #if MODE_SERIAL > 0
-        printf("Error while adding custom string for SysEx\n");
-        #endif
-
-    }
-
-    if (!sysEx.addCustomRequest(HARDWARE_VERSION_STRING))    {
-
-        #if MODE_SERIAL > 0
-        printf("Error while adding custom string for SysEx\n");
-        #endif
-
-    }
-
-    if (!sysEx.addCustomRequest(REBOOT_STRING))    {
-
-        #if MODE_SERIAL > 0
-        printf("Error while adding custom string for SysEx\n");
-        #endif
-
-    }
-
-    if (!sysEx.addCustomRequest(FACTORY_RESET_STRING))    {
-
-        #if MODE_SERIAL > 0
-        printf("Error while adding custom string for SysEx\n");
-        #endif
-
-    }
-
+    sysEx.addCustomRequest(FIRMWARE_VERSION_STRING);
+    sysEx.addCustomRequest(HARDWARE_VERSION_STRING);
+    sysEx.addCustomRequest(REBOOT_STRING);
+    sysEx.addCustomRequest(FACTORY_RESET_STRING);
     #endif
 
     while(1) {
@@ -143,7 +115,7 @@ int main()    {
         display.update();
         #endif
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
         vserial.update();
         #endif
 
@@ -153,7 +125,7 @@ int main()    {
             configuration.update();
         #endif
 
-        #if MODE_SERIAL < 1
+        #ifdef DEBUG
         midi.checkInput();
         #endif
 

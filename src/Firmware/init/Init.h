@@ -26,8 +26,6 @@
 #endif
 
 #include "../hardware/timer/TimerObject.h"
-
-#include "../Debug.h"
 #include "../eeprom/Configuration.h"
 #include "../Types.h"
 #include "../hardware/reset/Reset.h"

@@ -1,6 +1,4 @@
-#include "../Debug.h"
-
-#if MODE_SERIAL < 1
+#ifdef NDEBUG
 
 #ifndef MIDI_H_
 #define MIDI_H_

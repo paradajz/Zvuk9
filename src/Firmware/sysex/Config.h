@@ -1,12 +1,11 @@
-#ifndef CONFIG_H_
-#define CONFIG_H_
+#ifndef CONFIG_SYSEX_H_
+#define CONFIG_SYSEX_H_
 
 #define MAX_NUMBER_OF_BLOCKS    7
 #define MAX_NUMBER_OF_SECTIONS  7
 #define MAX_CUSTOM_REQUESTS     5
 
 #define INVALID_VALUE           128
-#define CUSTOM_VALUE_CHECK      255
 
 #define CONFIG_TIMEOUT          60000   //1 minute
 

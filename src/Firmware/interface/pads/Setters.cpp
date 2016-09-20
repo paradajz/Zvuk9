@@ -58,7 +58,7 @@ void Pads::splitOnOff() {
     configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitEnabled);
     getPadParameters();
 
-    #if MODE_SERIAL > 0
+    #ifdef DEBUG
     splitEnabled ? printf("Split on\n") : printf("Split off\n");
     #endif
 
@@ -204,7 +204,7 @@ void Pads::setAftertouchType(aftertouchType_t type)   {
 
     configuration.writeParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_AFTERTOUCH_TYPE_ID, (uint8_t)type);
 
-    #if MODE_SERIAL > 0
+    #ifdef DEBUG
     switch(type)    {
 
         case aftertouchPoly:
@@ -387,7 +387,7 @@ changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate,
             //local
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
             variablePointer[startPad] = changedValue;
-            #if MODE_SERIAL > 0
+            #ifdef DEBUG
                 printf("Y min for %d pad: %d\n", startPad, changedValue);
             #endif
             break;
@@ -397,7 +397,7 @@ changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate,
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
             for (int i=0; i<MAX_PADS; i++)
                 variablePointer[i] = changedValue;
-            #if MODE_SERIAL > 0
+            #ifdef DEBUG
             printf("Y min for all pads: %d\n", changedValue);
             #endif
             break;
@@ -463,7 +463,7 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
             //local
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
             variablePointer[startPad] = changedValue;
-            #if MODE_SERIAL > 0
+            #ifdef DEBUG
             printf("Y curve for %d pad: %d\n", startPad, changedValue);
             #endif
             break;
@@ -473,7 +473,7 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
             for (int i=0; i<MAX_PADS; i++)
                 variablePointer[i] = changedValue;
-            #if MODE_SERIAL > 0
+            #ifdef DEBUG
             printf("Y curve for all pads: %d\n", changedValue);
             #endif
             break;
@@ -559,7 +559,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
         padNote[pad][noteIndex] = newNote;
         configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+noteIndex+(NOTES_PER_PAD*(uint16_t)pad), newNote);
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Adding note ");
         #endif
 
@@ -586,13 +586,13 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
             for (int i=0; i<NOTES_PER_PAD; i++)
                 configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*(uint16_t)pad), padNote[pad][i]);
 
-            #if MODE_SERIAL > 0
+            #ifdef DEBUG
                 printf("Removing note ");
             #endif
 
     }
 
-    #if MODE_SERIAL > 0
+    #ifdef DEBUG
         printf("%d, to pad %d", (uint8_t)note, pad);
     #endif
 
@@ -645,7 +645,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange) {
     if (!internalChange)
         configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale), noteShiftLevel);
 
-    #if MODE_SERIAL > 0
+    #ifdef DEBUG
         printf("Shifted note: %d\n", noteShiftLevel);
     #endif
 
@@ -698,7 +698,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
     if (!changeAllowed)    {
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Unable to do global shift: one or more pad notes are too ");
             direction ? printf("high\n") : printf("low\n");
         #endif
@@ -706,7 +706,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
     }   else {
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             direction ? printf("Octave up\n") : printf("Octave down\n");
         #endif
 
@@ -722,7 +722,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
                 uint8_t newNote = direction ? padNote[i][0] + MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES) : padNote[i][0] - MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES);
 
-                #if MODE_SERIAL > 0
+                #ifdef DEBUG
                     printf("New note for pad %d: %d\n", i, newNote);
                 #endif
 
@@ -740,7 +740,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
             //octave is ALWAYS first note on pad in predefined scales
             activeOctave = getOctaveFromNote(padNote[0][0]+(octaveShiftAmount[0]*MIDI_NOTES));
 
-            #if MODE_SERIAL > 0
+            #ifdef DEBUG
                 printf("active octave: %d\n", activeOctave);
             #endif
 
@@ -758,7 +758,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
                 }
 
-                #if MODE_SERIAL > 0
+                #ifdef DEBUG
                     printf("New notes for pad %d: ", i);
                 #endif
 
@@ -769,7 +769,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
                         newNote = (direction) ? padNote[i][j] + MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES) : padNote[i][j] - MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES);
                         configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote, true);    //async write
 
-                        #if MODE_SERIAL > 0
+                        #ifdef DEBUG
                             printf("%d ", newNote);
                         #endif
 
@@ -780,7 +780,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
                 }
 
-                #if MODE_SERIAL > 0
+                #ifdef DEBUG
                     printf("\n");
                 #endif
 
@@ -802,7 +802,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
             }
 
-            #if MODE_SERIAL > 0
+            #ifdef DEBUG
                 direction ? printf("Octave up, ") : printf("Octave down, ");
                 printf("active octave: %d\n", activeOctave);
             #endif
@@ -941,13 +941,13 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
         }
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Tonic changed, active tonic %d\n", newTonic);
         #endif
 
         }   else {
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Unable to change tonic: one or more pad notes are too ");
             shiftDirection ? printf("high\n") : printf("low\n");
         #endif
@@ -1042,7 +1042,7 @@ void Pads::midiSendOnOff(onOff_t type)    {
         for (int i=0; i<MAX_PADS; i++)
             setMIDISendState(type, i, newState);
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Notes ");
             newState ? printf("on") : printf("off");
             printf(" for all pads\n");
@@ -1070,7 +1070,7 @@ void Pads::midiSendOnOff(onOff_t type)    {
 
         setMIDISendState(type, lastPressedPad, newState);
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Notes ");
             newState ? printf("on") : printf("off");
             printf(" for pad %d\n", lastPressedPad);

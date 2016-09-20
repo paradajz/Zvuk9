@@ -10,9 +10,8 @@
 #include "LCDsettings.h"
 #include "../../Types.h"
 #include "../../hardware/timer/TimerObject.h"
-#include "../../Debug.h"
 
-#if MODE_SERIAL > 0
+#ifdef DEBUG
 #include "../../vserial/Serial.h"
 #endif
 

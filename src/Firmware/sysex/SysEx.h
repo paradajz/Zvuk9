@@ -1,6 +1,4 @@
-#include "../Debug.h"
-
-#if MODE_SERIAL < 1
+#ifdef NDEBUG
 
 #ifndef SYSEX_H_
 #define SYSEX_H_

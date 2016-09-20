@@ -1,8 +1,4 @@
-//this intents to replicate arduino serial print functions
-
-#include "../Debug.h"
-
-#if MODE_SERIAL > 0
+#ifdef DEBUG
 
 #ifndef VSERIAL_H_
 #define VSERIAL_H_

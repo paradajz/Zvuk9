@@ -102,7 +102,7 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, uint8_t curveGain, ui
 
         lastGain[(uint8_t)coordinate] = curveGain;
 
-        //#if MODE_SERIAL > 0
+        //#ifdef DEBUG
             //printf("Curve gain updated for coordinate %d. New gain: %d\n", coordinate, curveGain);
             //printf("scale:\n");
             //for (int i=0; i<128; i++)

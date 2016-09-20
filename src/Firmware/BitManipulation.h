@@ -42,4 +42,5 @@ typedef struct {
     }
 
 } encDec_14bit;
+
 #endif

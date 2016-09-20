@@ -78,22 +78,22 @@ void Pads::setupSysEx() {
 
 
         parameters = GLOBAL_PROGRAM_SETTINGS*NUMBER_OF_PROGRAMS;
-        minValue = CUSTOM_VALUE_CHECK;
-        maxValue = CUSTOM_VALUE_CHECK;
+        minValue = 0;
+        maxValue = 0;
 
         sysExSection globalSettings_section         = { parameters, minValue, maxValue };
 
 
         parameters = LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PROGRAMS*MAX_PADS;
-        minValue = CUSTOM_VALUE_CHECK;
-        maxValue = CUSTOM_VALUE_CHECK;
+        minValue = 0;
+        maxValue = 0;
 
         sysExSection localSettings_section          = { parameters, minValue, maxValue };
 
 
         parameters = PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES*NUMBER_OF_PROGRAMS;
-        minValue = CUSTOM_VALUE_CHECK;
-        maxValue = CUSTOM_VALUE_CHECK;
+        minValue = 0;
+        maxValue = 0;
 
         sysExSection predefinedScaleSettings_section = { parameters, minValue, maxValue };
 
@@ -192,8 +192,8 @@ void Pads::setupSysEx() {
 
     {
         parameters = MIDI_SETTINGS;
-        minValue = CUSTOM_VALUE_CHECK;
-        maxValue = CUSTOM_VALUE_CHECK;
+        minValue = 0;
+        maxValue = 0;
 
         sysExSection midiSettings_section           = { parameters, minValue, maxValue };
 

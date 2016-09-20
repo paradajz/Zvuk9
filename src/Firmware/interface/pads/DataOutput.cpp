@@ -2,7 +2,7 @@
 
 void Pads::sendX(uint8_t pad)  {
 
-    #if MODE_SERIAL > 0
+    #ifdef DEBUG
         printf("X for pad %d: ", pad);
         printf("%d\n", lastXMIDIvalue[pad]);
         printf("X CC: %d\n", ccXPad[pad]);
@@ -14,7 +14,7 @@ void Pads::sendX(uint8_t pad)  {
 
 void Pads::sendY(uint8_t pad)  {
 
-    #if MODE_SERIAL > 0
+    #ifdef DEBUG
         printf("Y for pad %d: ", pad);
         printf("%d\n", lastYMIDIvalue[pad]);
         printf("Y CC: %d\n", ccYPad[pad]);
@@ -32,7 +32,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
         case true:
         //note on
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Pad %d pressed. Notes:\n", pad);
         #endif
 
@@ -40,7 +40,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
             if (padNote[pad][i] == BLANK_NOTE) continue;
 
-            #if MODE_SERIAL > 0
+            #ifdef DEBUG
                 printf("%d\n", padNote[pad][i]);
             #else
                 midi.sendNoteOn(midiChannel[pad], padNote[pad][i], velocity);
@@ -48,14 +48,14 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
         }
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Velocity: %d\n", velocity);
         #endif
         break;
 
         case false:
         //note off
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Pad %d released. Notes: \n", pad);
         #endif
             //some special considerations here
@@ -88,7 +88,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
                 if (sendOff)    {
 
-                    #if MODE_SERIAL > 0
+                    #ifdef DEBUG
                         printf("%d\n", padNote[pad][i]);
                     #else
                         uint8_t velocity_ = 0;
@@ -109,14 +109,14 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
 
 void Pads::sendAftertouch(uint8_t pad)  {
 
-    #if MODE_SERIAL < 1
+    #ifdef NDEBUG
         uint8_t aftertouchValue = lastMIDInoteState[pad] ? lastAftertouchValue[pad] : 0;
     #endif
 
     switch(aftertouchType)  {
 
         case aftertouchPoly:
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Sending key aftertouch, pad %d: %d\n", pad, lastAftertouchValue[pad]);
         #else
             for (int i=0; i<NOTES_PER_PAD; i++) {
@@ -129,7 +129,7 @@ void Pads::sendAftertouch(uint8_t pad)  {
         break;
 
         case aftertouchChannel:
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Sending channel aftertouch: %d\n", maxAftertouchValue);
         #else
             midi.sendChannelAftertouch(midiChannel[pad], maxAftertouchValue);

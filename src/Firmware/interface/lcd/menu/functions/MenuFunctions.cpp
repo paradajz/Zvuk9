@@ -148,7 +148,7 @@ bool padEditMode(functionArgument argument)  {
 
         //normally, this is called in automatically in Pads.cpp
         //but on first occasion call it manually
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Pad edit mode\n");
         #endif
         pads.setupPadEditMode(lastTouchedPad);
@@ -222,13 +222,13 @@ bool checkRunningStatus(functionArgument argument)  {
 
         case true:
         //switch option
-        #if MODE_SERIAL < 1
+        #ifdef NDEBUG
         midi.setRunningStatus((bool)argument.argument1);
         #endif
         return true;
 
         case false:
-        #if MODE_SERIAL < 1
+        #ifdef NDEBUG
         return (midi.runningStatusEnabled() == (bool)argument.argument1);
         #endif
         break;
@@ -255,13 +255,13 @@ bool checkNoteOffStatus(functionArgument argument)    {
 
         case true:
         //switch option
-        #if MODE_SERIAL < 1
+        #ifdef NDEBUG
         midi.setNoteOffStatus((noteOffType_t)argument.argument1);
         #endif
         return true;
 
         case false:
-        #if MODE_SERIAL < 1
+        #ifdef NDEBUG
         return (midi.getNoteOffStatus() == (noteOffType_t)argument.argument1);
         #else
         return false;

@@ -49,17 +49,17 @@ void globalInit() {
     MCUSR &= ~(1 << WDRF);
     wdt_disable();
 
-    setOutputMacro(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
+    setOutput(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
     setLowMacro(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN_INDEX);
 
-    #if MODE_SERIAL > 0
+    #ifdef DEBUG
     vserial.init();
     #endif
 
     //do not change order of initialization!
     configuration.init();
 
-    #if MODE_SERIAL < 1
+    #ifdef NDEBUG
     midi.init();
     #endif
 

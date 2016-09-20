@@ -10,10 +10,10 @@ EEPROM addresses of parameters.
 #include <avr/eeprom.h>
 #include "../Modules.h"
 #include "UniqueID.h"
-#include "../Debug.h"
 #include "../interface/lcd/LCD.h"
+#include "Config.h"
 
-#if MODE_SERIAL > 0
+#ifdef DEBUG
 #include "../vserial/Serial.h"
 #endif
 
@@ -31,10 +31,6 @@ EEPROM addresses of parameters.
 #ifndef EEPROM_H_
 #define EEPROM_H_
 
-#define START_OFFSET    5
-
-#define ENABLE_ASYNC_UPDATE
-
 #ifdef ENABLE_ASYNC_UPDATE
 #define EEPROM_UPDATE_BUFFER_SIZE   64
 #endif
@@ -51,9 +47,9 @@ typedef struct {
 
     uint8_t sections;
     uint16_t blockStartAddress;
-    uint16_t sectionAddress[10];
-    uint16_t sectionParameters[10];
-    sectionParameterType_t sectionParameterType[10];
+    uint16_t sectionAddress[MAX_SECTIONS];
+    uint16_t sectionParameters[MAX_SECTIONS];
+    sectionParameterType_t sectionParameterType[MAX_SECTIONS];
     bool preserveOnPartialReset;
 
 } blockDescriptor;
@@ -100,7 +96,7 @@ class Configuration : LCD {
             startAddress += arrayIndex;
             if (startAddress > EEPROM_SIZE) {
 
-                #if MODE_SERIAL > 0
+                #ifdef DEBUG
                     printf("Requested address out of EEPROM memory range\n");
                 #endif
                 return 0;

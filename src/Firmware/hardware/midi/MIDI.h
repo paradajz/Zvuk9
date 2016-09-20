@@ -23,9 +23,7 @@
 
 //library modifed by Igor Petrovic
 
-#include "../../Debug.h"
-
-#if MODE_SERIAL < 1
+#ifdef NDEBUG
 
 #ifndef HW_MIDI_H
 #define HW_MIDI_H

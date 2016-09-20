@@ -33,9 +33,7 @@
  *  Header file for Descriptors.c.
  */
 
-#include "../../../Debug.h"
-
-#if MODE_SERIAL < 1
+#ifdef NDEBUG
 
 #ifndef _DESCRIPTORS_MIDI_H_
 #define _DESCRIPTORS_MIDI_H_

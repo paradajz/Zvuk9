@@ -33,9 +33,7 @@
  *  Header file for Descriptors.c.
  */
 
- #include "../../../Debug.h"
-
- #if MODE_SERIAL > 0
+#ifdef DEBUG
 
 #ifndef _DESCRIPTORS_VSERIAL_H_
 #define _DESCRIPTORS_VSERIAL_H_

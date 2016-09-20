@@ -196,7 +196,7 @@ bool Configuration::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t p
 
     if (startAddress > EEPROM_SIZE) {
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
             printf("Requested address out of EEPROM memory range\n");
         #endif
         return 0;
@@ -284,7 +284,7 @@ void Configuration::queueData(uint16_t eepromAddress, uint16_t data, uint8_t par
     //if buffer is full, wait until there is some space
     if (eeprom_update_buffer_tail == index)  {
 
-        #if MODE_SERIAL > 0
+        #ifdef DEBUG
         printf("Oops, buffer full. Waiting...\n");
         #endif
 

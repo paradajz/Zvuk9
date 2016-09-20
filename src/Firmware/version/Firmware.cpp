@@ -2,10 +2,6 @@
 #include <avr/eeprom.h>
 #include <avr/pgmspace.h>
 
-#define VERSION_POINT_LOCATION  (FLASH_SIZE - 10)
-#define CRC_LOCATION_FLASH      (FLASH_SIZE - 2)
-#define CRC_LOCATION_EEPROM     (EEPROM_SIZE - 2)   //write crc to last eeprom location
-
 bool checkNewRevision() {
 
     //current app crc is written to last flash location

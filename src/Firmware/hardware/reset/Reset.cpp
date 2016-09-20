@@ -69,8 +69,8 @@ void bootloaderReboot()  {
     _delay_ms(150);
 
     //set btldr pin to HIGH state so that we can reboot into bootloader mode using software
-    setOutputMacro(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
-    setHighMacro(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN_INDEX);
+    setOutput(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
+    setHigh(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN_INDEX);
 
     ((void (*)(void))BOOTLOADER_START_ADDRESS)();
     for (;;);

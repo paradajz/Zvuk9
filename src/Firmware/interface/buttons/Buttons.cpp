@@ -145,7 +145,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
     if (pads.editModeActive()) return;
 
-    #if MODE_SERIAL < 1
+    #ifdef NDEBUG
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
     #endif
 
@@ -157,7 +157,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
             case BUTTON_TRANSPORT_PLAY:
             type = transportPlay;
-            #if MODE_SERIAL < 1
+            #ifdef NDEBUG
             sysExArray[4] = 0x02;
             #endif
             #ifdef MODULE_LEDS
@@ -167,7 +167,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
             case BUTTON_TRANSPORT_STOP:
             type = transportStop;
-            #if MODE_SERIAL < 1
+            #ifdef NDEBUG
             sysExArray[4] = 0x01;
             #endif
             #ifdef MODULE_LEDS
@@ -182,7 +182,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
                 type = transportRecordOff;
-                #if MODE_SERIAL < 1
+                #ifdef NDEBUG
                 sysExArray[4] = 0x07;
                 #endif
 
@@ -190,7 +190,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
                 type = transportRecordOn;
-                #if MODE_SERIAL < 1
+                #ifdef NDEBUG
                 sysExArray[4] = 0x06;
                 #endif
 
@@ -205,7 +205,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
 
     }   else return;
 
-    #if MODE_SERIAL < 1
+    #ifdef NDEBUG
         midi.sendSysEx(sysExArray, 6, true);
     #endif
 
@@ -281,7 +281,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     //normally, this is called in automatically in Pads.cpp
                     //but on first occasion call it manually
-                    #if MODE_SERIAL > 0
+                    #ifdef DEBUG
                         printf("Pad edit mode\n");
                     #endif
                     pads.setupPadEditMode(pads.getLastTouchedPad());

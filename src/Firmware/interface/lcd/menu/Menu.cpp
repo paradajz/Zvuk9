@@ -196,7 +196,7 @@ void Menu::updateMenuScreen()   {
 
     }
 
-    #if MODE_SERIAL > 0
+    #ifdef DEBUG
     printf("\nmenuHierarchyPosition: %d\n", menuHierarchyPosition);
     #endif
 
@@ -230,7 +230,7 @@ void Menu::changeOption(bool direction) {
 
 void Menu::exitMenu()   {
 
-    #if MODE_SERIAL > 0
+    #ifdef DEBUG
         printf("Exiting menu\n");
     #endif
     //exit menu and restore initial state
