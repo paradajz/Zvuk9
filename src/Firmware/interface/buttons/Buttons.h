@@ -1,28 +1,18 @@
-/*
-
-Button control using two MPC23017 expanders.
-
-*/
-
-#include "../../Modules.h"
-
-#ifdef MODULE_BUTTONS
 #ifndef BUTTONS_H_
 #define BUTTONS_H_
-#include "../../midi/MIDI_parameters.h"
-#include "../../Types.h"
 #include "../pads/Pads.h"
 
-#ifdef MODULE_LCD
-#include "../lcd/LCD.h"
-#include "../lcd/menu/Menu.h"
-#endif
-
-#ifdef MODULE_LEDS
 #include "../leds/LEDs.h"
-#endif
+#include "../../core/Core.h"
 
-#define MAX_NUMBER_OF_BUTTONS   32
+typedef enum {
+
+    transportStop,
+    transportPlay,
+    transportRecordOn,
+    transportRecordOff
+
+} transportControl_t;
 
 class Buttons   {
 
@@ -44,7 +34,6 @@ class Buttons   {
     void handleOctaveEvent(bool direction, bool state);
 
     //read/debounce handling
-    bool readStates();
     void processButton(uint8_t buttonNumber, bool state);
     bool buttonDebounced(uint8_t buttonNumber, uint8_t state);
     void setButtonState(uint8_t buttonNumber, uint8_t state);
@@ -55,9 +44,6 @@ class Buttons   {
 
     //button-to-led mapping
     void mapButtonsToLEDs();
-
-    //menu
-    void checkMenu(menuType_t type);
 
     uint32_t mcpData;                                       //store data from all expander inputs
     uint8_t previousButtonState[MAX_NUMBER_OF_BUTTONS];     //debounce status
@@ -71,5 +57,4 @@ class Buttons   {
 
 extern Buttons buttons;
 
-#endif
 #endif

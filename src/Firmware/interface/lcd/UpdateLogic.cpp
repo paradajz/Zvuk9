@@ -9,10 +9,8 @@ LCD::LCD()  {
 
     displayMessage_var = false;
     messageDisplayTime = 0;
-    #ifdef MODULE_LCD
-        _delay_ms(250);
-        lcd_init(LCD_DISP_ON);
-    #endif
+    _delay_ms(250);
+    lcd_init(LCD_DISP_ON);
 
     setupLCDlayout();
 

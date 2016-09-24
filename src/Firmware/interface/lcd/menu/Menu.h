@@ -5,7 +5,6 @@
 #ifndef MENU_H_
 #define MENU_H_
 
-#include "../../../Types.h"
 #include "../Macros.h"
 #include "../strings/Strings.h"
 #include "items/ServiceMenu.h"

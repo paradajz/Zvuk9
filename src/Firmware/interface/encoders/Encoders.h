@@ -1,11 +1,7 @@
-#include "../../Modules.h"
-
-#ifdef MODULE_ENCODERS
-
 #ifndef ENCODERS_H_
 #define ENCODERS_H_
 
-#include "../../hardware/pins/Pins.h"
+#include "../../board/Board.h"
 #include <stdlib.h>
 
 #define PROGRAM_ENCODER         0
@@ -37,5 +33,4 @@ class Encoders  {
 
 extern Encoders encoders;
 
-#endif
 #endif

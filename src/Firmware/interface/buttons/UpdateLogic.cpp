@@ -2,20 +2,13 @@
 
 #ifdef BUTTONS_H_
 
-#include "../../hardware/i2c/i2c_master.h"
-#include "../../hardware/reset/Reset.h"
-
 #include <util/delay.h>
+
+#include "../lcd/menu/Menu.h"
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         5
 #define USER_MENU_TIMEOUT           1500
-
-//MCP23017 address bytes
-const uint8_t expanderAddress[] = { 0x21, 0x20 };   //chip address
-const uint8_t gpioAddress[]     = { 0x12, 0x13 };   //input/output
-const uint8_t iodirAddress[]    = { 0x00, 0x01 };   //port A/port B
-const uint8_t gppuAddress[]     = { 0x0C, 0x0D };   //interrupt/pull-up
 
 //shift new values from button in this variable
 //if it's 0xFF or buttonDebounceCompare, its reading is stable
@@ -38,57 +31,12 @@ Buttons::Buttons()  {
 
 }
 
-uint8_t read_I2C_reg(uint8_t address, uint8_t reg)   {
-
-    uint8_t value;
-
-    i2c_start((address << 1) + I2C_WRITE);
-    i2c_write(reg);
-    i2c_stop();
-
-    i2c_start((address << 1) + I2C_READ);
-    value = i2c_read_nack();
-    i2c_stop();
-
-    return value;
-}
-
-void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)  {
-
-    i2c_start((address << 1) + I2C_WRITE);
-    i2c_write(reg);
-    i2c_write(value);
-    i2c_stop();
-
-}
-
 void Buttons::init()  {
 
     mapButtonsToLEDs();
 
-    i2c_init();
-
-    //ensure that we know the configuration
-    write_I2C_reg(expanderAddress[0], 0x0A, 0x00);              //IOCON=0x00 if BANK=0
-    write_I2C_reg(expanderAddress[0], 0x05, 0x00);              //IOCON=0x00 if BANK=1
-    write_I2C_reg(expanderAddress[1], 0x0A, 0x00);              //IOCON=0x00 if BANK=0
-    write_I2C_reg(expanderAddress[1], 0x05, 0x00);              //IOCON=0x00 if BANK=1
-
-    write_I2C_reg(expanderAddress[0], iodirAddress[0], 0xFF);   //expander 1, set all pins on PORTA to input mode
-    write_I2C_reg(expanderAddress[0], iodirAddress[1], 0xFF);   //expander 1, set all pins on PORTB to input mode
-
-    write_I2C_reg(expanderAddress[1], iodirAddress[0], 0xFF);   //expander 2, set all pins on PORTA to input mode
-    write_I2C_reg(expanderAddress[1], iodirAddress[1], 0xFF);   //expander 2, set all pins on PORTB to input mode
-
-    write_I2C_reg(expanderAddress[0], gppuAddress[0], 0xFF);    //expander 1, turn on pull-ups, PORTA
-    write_I2C_reg(expanderAddress[0], gppuAddress[1], 0xFF);    //expander 1, turn on pull-ups, PORTB
-
-    write_I2C_reg(expanderAddress[1], gppuAddress[0], 0xFF);    //expander 2, turn on pull-ups, PORTA
-    write_I2C_reg(expanderAddress[1], gppuAddress[1], 0xFF);    //expander 2, turn on pull-ups, PORTB
-
     uint32_t currentTime = rTimeMillis();
 
-    #ifdef MODULE_LCD
     processingEnabled = false;
 
     //read buttons for 0.1 seconds
@@ -105,7 +53,6 @@ void Buttons::init()  {
         disable();
 
     }   else processingEnabled = true;
-    #endif
 
 }
 
@@ -113,29 +60,25 @@ void Buttons::update()    {
 
     if (!((rTimeMillis() - lastCheckTime) > EXPANDER_CHECK_TIME)) return;
 
-    if (readStates())   {
+    if (!board.buttonDataAvailable()) return;
 
-        for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
+    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
 
-            //invert button state because of pull-ups
-            uint8_t state = !((mcpData >> i) & 0x01);
-            bool debounced = buttonDebounced(i, state);
+        //invert button state because of pull-ups
+        bool state = board.getButtonState(i);
+        bool debounced = buttonDebounced(i, state);
 
-            if (debounced) {
+        if (debounced) {
 
-                //if button state is same as last one, do nothing
-                //act on change only
-                if (state == getButtonState(i)) continue;
+            //if button state is same as last one, do nothing
+            //act on change only
+            if (state == getButtonState(i)) continue;
 
-                //update previous button state with current one
-                setButtonState(i, state);
-                if (processingEnabled) processButton(i, state);
-
-            }
+            //update previous button state with current one
+            setButtonState(i, state);
+            if (processingEnabled) processButton(i, state);
 
         }
-
-        mcpData = 0;
 
     }
 
@@ -148,9 +91,7 @@ void Buttons::update()    {
 
             //buttonEnabled[BUTTON_ON_OFF_SPLIT] = false;
             userMenuTimeout = 0;
-            #ifdef MODULE_LCD
             menu.displayMenu(userMenu);
-            #endif
             #ifdef DEBUG
                 printf("Entering user menu\n");
             #endif
@@ -170,21 +111,6 @@ void Buttons::update()    {
 bool Buttons::getButtonState(uint8_t buttonNumber) {
 
     return bitRead(lastButtonDataPress, buttonNumber);
-
-}
-
-bool Buttons::readStates()   {
-
-    mcpData <<= 8;
-    mcpData |= read_I2C_reg(expanderAddress[0], gpioAddress[0]);     //expander A, GPIOA
-    mcpData <<= 8;
-    mcpData |= read_I2C_reg(expanderAddress[0], gpioAddress[1]);     //expander A, GPIOB
-    mcpData <<= 8;
-    mcpData |= read_I2C_reg(expanderAddress[1], gpioAddress[0]);     //expander B, GPIOA
-    mcpData <<= 8;
-    mcpData |= read_I2C_reg(expanderAddress[1], gpioAddress[1]);     //expander B, GPIOB
-
-    return true;
 
 }
 

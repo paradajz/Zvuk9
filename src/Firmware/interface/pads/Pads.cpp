@@ -1,4 +1,6 @@
 #include "Pads.h"
+#include "../../eeprom/Configuration.h"
+#include "../../sysex/SysEx.h"
 #include <avr/cpufunc.h>
 #include <util/delay.h>
 
@@ -42,7 +44,6 @@ Pads::Pads()  {
 
 void Pads::init()   {
 
-    initHardware();
     getConfiguration();
     setupSysEx();
 
@@ -58,7 +59,7 @@ void Pads::setupSysEx() {
 
     }
 
-    uint16_t parameters, minValue, maxValue;
+    sysExParameter_t parameters, minValue, maxValue;
 
     //program block
 
@@ -72,7 +73,7 @@ void Pads::setupSysEx() {
 
         parameters = NUMBER_OF_PROGRAMS;
         minValue = 0;
-        maxValue = NUMBER_OF_PREDEFINED_SCALES+NUMBER_OF_USER_SCALES - 1;
+        maxValue = PREDEFINED_SCALES+NUMBER_OF_USER_SCALES - 1;
 
         sysExSection lastActiveScale_section        = { parameters, minValue, maxValue };
 
@@ -91,7 +92,7 @@ void Pads::setupSysEx() {
         sysExSection localSettings_section          = { parameters, minValue, maxValue };
 
 
-        parameters = PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES*NUMBER_OF_PROGRAMS;
+        parameters = PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES*NUMBER_OF_PROGRAMS;
         minValue = 0;
         maxValue = 0;
 

@@ -3,10 +3,10 @@
 
 #include "Configuration.h"
 #include <util/delay.h>
-#include "../midi/MIDI_parameters.h"
-#include "../version/Firmware.h"
-#include "../BitManipulation.h"
-#include "../interface/buttons/Buttons.h"
+
+#ifdef DEBUG
+#include "../vserial/Serial.h"
+#endif
 
 Configuration::Configuration()    {
 
@@ -37,17 +37,15 @@ void Configuration::init() {
 
 void Configuration::factoryReset(factoryResetType_t type)   {
 
-    #ifdef MODULE_LCD
-        strcpy_P(stringBuffer, restoringDefaults_string);
-        lcd_clrscr();
-        lcd_gotoxy(0, 0);
-        lcd_puts(stringBuffer);
-        lcd_gotoxy(0, 1);
-        _delay_ms(2000);
-        strcpy_P(stringBuffer, pleaseWait_string);
-        lcd_puts(stringBuffer);
-        _delay_ms(2000);
-    #endif
+    //strcpy_P(stringBuffer, restoringDefaults_string);
+    //lcd_clrscr();
+    //lcd_gotoxy(0, 0);
+    //lcd_puts(stringBuffer);
+    //lcd_gotoxy(0, 1);
+    //_delay_ms(2000);
+    //strcpy_P(stringBuffer, pleaseWait_string);
+    //lcd_puts(stringBuffer);
+    //_delay_ms(2000);
 
     if (type == factoryReset_wipeRestore)
         clearEEPROM();
@@ -56,12 +54,10 @@ void Configuration::factoryReset(factoryResetType_t type)   {
 
     writeSignature();
 
-    #ifdef MODULE_LCD
-        lcd_gotoxy(0,2);
-        strcpy_P(stringBuffer, complete_string);
-        lcd_puts(stringBuffer);
-        _delay_ms(2000);
-    #endif
+    //lcd_gotoxy(0,2);
+    //strcpy_P(stringBuffer, complete_string);
+    //lcd_puts(stringBuffer);
+    //_delay_ms(2000);
 
 }
 

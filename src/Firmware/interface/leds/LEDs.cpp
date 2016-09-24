@@ -1,6 +1,6 @@
 #include "LEDs.h"
-#ifdef LEDS_H_
-#include "../../hardware/timer/TimerObject.h"
+#include "../pads/Pads.h"
+#include "../../eeprom/Configuration.h"
 #include "../pads/Pads.h"
 
 const uint8_t ledNoteArray[] = {
@@ -28,41 +28,27 @@ LEDs::LEDs()    {
 
 void LEDs::init()   {
 
-    setOutput(LED_ROW_1_DDR, LED_ROW_1_PIN_INDEX);
-    setOutput(LED_ROW_2_DDR, LED_ROW_2_PIN_INDEX);
-    setOutput(LED_ROW_3_DDR, LED_ROW_3_PIN_INDEX);
-
-    setLowMacro(LED_ROW_1_PORT, LED_ROW_1_PIN_INDEX);
-    setLowMacro(LED_ROW_2_PORT, LED_ROW_2_PIN_INDEX);
-    setLowMacro(LED_ROW_3_PORT, LED_ROW_3_PIN_INDEX);
-
-    setOutput(DECODER_OUT_1_DDR, DECODER_OUT_1_PIN_INDEX);
-    setOutput(DECODER_OUT_2_DDR, DECODER_OUT_2_PIN_INDEX);
-    setOutput(DECODER_OUT_3_DDR, DECODER_OUT_3_PIN_INDEX);
-
-    setOutput(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX);
-    setOutput(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN_INDEX);
-    setOutput(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN_INDEX);
+    
 
 }
 
 void LEDs::allLEDsOff() {
 
     for (int i=0; i<NUMBER_OF_LEDS; i++)
-        timers.setLEDstate(i, ledStateOff);
+        board.setLEDstate(i, ledStateOff);
 
 }
 
 void LEDs::allLEDsOn() {
 
     for (int i=0; i<NUMBER_OF_LEDS; i++)
-        timers.setLEDstate(i, ledStateFull);
+        board.setLEDstate(i, ledStateFull);
 
 }
 
 void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state)    {
 
-    timers.setLEDstate(ledNumber, state);
+    board.setLEDstate(ledNumber, state);
 
 }
 
@@ -74,33 +60,33 @@ uint8_t LEDs::getLEDnumberFromTonic(note_t note)  {
 
 ledState_t LEDs::getLEDstate(uint8_t ledNumber)    {
 
-    return timers.getLEDstate(ledNumber);
+    return board.getLEDstate(ledNumber);
 
 }
 
 void LEDs::setFadeSpeed(uint8_t speed)  {
 
-    timers.setPWMsteps(speed);
+    board.setPWMsteps(speed);
 
 }
 
 void LEDs::tonicLEDsOff()   {
 
     for (int i=0; i<MIDI_NOTES; i++)
-        timers.setLEDstate(ledNoteArray[i], ledStateOff);
+        board.setLEDstate(ledNoteArray[i], ledStateOff);
 
 }
 
 void LEDs::setNoteLEDstate(note_t note, ledState_t state)   {
 
     uint8_t ledNumber = getLEDnumberFromTonic(note);
-    timers.setLEDstate(ledNumber, state);
+    board.setLEDstate(ledNumber, state);
 
 }
 
 ledState_t LEDs::getTonicLEDstate(note_t note)   {
 
-    return timers.getLEDstate(getLEDnumberFromTonic(note));
+    return board.getLEDstate(getLEDnumberFromTonic(note));
 
 }
 
@@ -160,4 +146,3 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad) {
 }
 
 LEDs leds;
-#endif

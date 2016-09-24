@@ -1,4 +1,7 @@
 #include "Pads.h"
+#include "../leds/LEDs.h"
+#include "../lcd/LCD.h"
+#include "../../eeprom/Configuration.h"
 
 bool editModeActivated;
 
@@ -8,23 +11,10 @@ void Pads::setupPadEditMode(uint8_t pad)    {
         printf("Editing pad %d\n", pad);
     #endif
 
-    #ifdef MODULE_LCD
-        display.displayPadEditMode(pad + 1);
-    #endif
-
-    //#ifdef DEBUG
-        //printf("Active octave: %d\n", activeOctave);
-    //#endif
-
-    #ifdef MODULE_LCD
-        display.displayActiveOctave(normalizeOctave(activeOctave));
-    #endif
-
+    display.displayPadEditMode(pad + 1);
+    display.displayActiveOctave(normalizeOctave(activeOctave));
     displayActivePadNotes(pad);
-
-    #ifdef MODULE_LEDS
-        leds.displayActiveNoteLEDs(true, pad);
-    #endif
+    leds.displayActiveNoteLEDs(true, pad);
 
 }
 
@@ -55,23 +45,17 @@ void Pads::displayActivePadNotes(uint8_t pad) {
 
     }
 
-    #ifdef MODULE_LCD
-        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, true);
-    #endif
+    display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, true);
 
 }
 
 void Pads::exitPadEditMode()    {
 
     editModeActivated = false;
-    #ifdef MODULE_LCD
     display.clearPadEditMode();
     display.displayProgramAndScale(activeProgram+1, activeScale);
-    #endif
     //after exiting from pad edit mode, restore note led states
-    #ifdef MODULE_LEDS
     leds.displayActiveNoteLEDs();
-    #endif
 
 }
 

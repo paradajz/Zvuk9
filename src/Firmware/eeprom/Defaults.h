@@ -1,12 +1,21 @@
 #ifndef DEFS_H_
 #define DEFS_H_
 
-#include "../Scales.h"
-#include "../Types.h"
-#include "../midi/MIDI_parameters.h"
+#include "../interface/pads/DataTypes.h"
 
 //parameters
 #define NUMBER_OF_PROGRAMS                          10
+
+#define DEFAULT_OCTAVE                              4
+#define MIDI_OCTAVE_RANGE                           11
+
+#define MIN_MIDI_VALUE                              0
+#define MAX_MIDI_VALUE                              127
+
+#define DEFAULT_NOTE                                (DEFAULT_OCTAVE*MIDI_NOTES)
+#define BLANK_NOTE                                  128
+
+#define NUMBER_OF_USER_SCALES                       10
 
 typedef enum {  //list of IDs for global program settings for access
 
@@ -34,13 +43,13 @@ typedef enum {  //list of IDs for global program settings for access
 #define GLOBAL_PROGRAM_SETTING_Y_ENABLE             0x01
 #define GLOBAL_PROGRAM_SETTING_NOTE_ENABLE          0x01
 #define GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE    0x01
-#define GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL         DEFAULT_MIDI_CHANNEL
+#define GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL         0x01
 #define GLOBAL_PROGRAM_SETTING_CC_X                 0x14
 #define GLOBAL_PROGRAM_SETTING_CC_Y                 0x15
-#define GLOBAL_PROGRAM_SETTING_X_MIN                MIN_MIDI_VALUE
-#define GLOBAL_PROGRAM_SETTING_X_MAX                MAX_MIDI_VALUE
-#define GLOBAL_PROGRAM_SETTING_Y_MIN                MIN_MIDI_VALUE
-#define GLOBAL_PROGRAM_SETTING_Y_MAX                MAX_MIDI_VALUE
+#define GLOBAL_PROGRAM_SETTING_X_MIN                0
+#define GLOBAL_PROGRAM_SETTING_X_MAX                127
+#define GLOBAL_PROGRAM_SETTING_Y_MIN                0
+#define GLOBAL_PROGRAM_SETTING_Y_MAX                127
 #define GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN         curveTypeLinear
 #define GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN         curveTypeLinear
 
@@ -87,13 +96,13 @@ typedef enum {
 #define LOCAL_PROGRAM_SETTING_Y_ENABLE              0x01
 #define LOCAL_PROGRAM_SETTING_NOTE_ENABLE           0x01
 #define LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE     0x01
-#define LOCAL_PROGRAM_SETTING_MIDI_CHANNEL          DEFAULT_MIDI_CHANNEL
+#define LOCAL_PROGRAM_SETTING_MIDI_CHANNEL          0x01
 #define LOCAL_PROGRAM_SETTING_CC_X                  0x14
 #define LOCAL_PROGRAM_SETTING_CC_Y                  0x15
-#define LOCAL_PROGRAM_SETTING_X_MIN                 MIN_MIDI_VALUE
-#define LOCAL_PROGRAM_SETTING_X_MAX                 MAX_MIDI_VALUE
-#define LOCAL_PROGRAM_SETTING_Y_MIN                 MIN_MIDI_VALUE
-#define LOCAL_PROGRAM_SETTING_Y_MAX                 MAX_MIDI_VALUE
+#define LOCAL_PROGRAM_SETTING_X_MIN                 0
+#define LOCAL_PROGRAM_SETTING_X_MAX                 127
+#define LOCAL_PROGRAM_SETTING_Y_MIN                 0
+#define LOCAL_PROGRAM_SETTING_Y_MAX                 127
 #define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN          curveTypeLinear
 #define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN          curveTypeLinear
 
@@ -124,9 +133,9 @@ typedef enum {
 
 } midiSettings;
 
-#define MIDI_SETTING_AFTERTOUCH_TYPE                aftertouchChannel
+#define MIDI_SETTING_AFTERTOUCH_TYPE                0x00 //aftertouchChannel
 #define MIDI_SETTING_RUNNING_STATUS                 0x00
-#define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_standardNoteOff
+#define MIDI_SETTING_NOTE_OFF_TYPE                  0x00 //noteOffType_standardNoteOff
 
 const uint8_t defaultMIDIsettingArray[] = {
 

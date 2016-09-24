@@ -1,4 +1,7 @@
 #include "Pads.h"
+#include "../leds/LEDs.h"
+#include "../lcd/LCD.h"
+#include "../../eeprom/Configuration.h"
 
 void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)    {
 
@@ -522,9 +525,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
     uint8_t newNote = getActiveOctave()*MIDI_NOTES + (uint8_t)note;
     if (newNote > 127) {
 
-        #ifdef MODULE_LCD
-            display.displayOutOfRange();
-        #endif
+        display.displayOutOfRange();
         return outOfRange;
 
     }
@@ -535,7 +536,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
     for (int i=0; i<NOTES_PER_PAD; i++)
         if (padNote[pad][i] == newNote) { addOrRemove = false; noteIndex = i; break; }
 
-    uint16_t noteID = ((uint16_t)activeScale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+    uint16_t noteID = ((uint16_t)activeScale - PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
     //if it isn't, add it
     if (addOrRemove)    {
@@ -548,9 +549,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)    {
         //pads cannot have more than NOTES_PER_PAD notes
         if (noteIndex == NOTES_PER_PAD) {
 
-            #ifdef MODULE_LCD
             display.displayMaxNotesSet();
-            #endif
             return overflow;
 
         }
@@ -713,7 +712,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
         if (isPredefinedScale(activeScale))    {
 
             //predefined scale
-            uint16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
+            uint16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
             uint8_t currentOctave_predefinedScale = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale);
             uint8_t newOctave = currentOctave_predefinedScale;
             (direction) ? newOctave+=1 : newOctave-=1;
@@ -747,7 +746,7 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
         }   else {
 
             //user scale
-            uint16_t noteID = ((uint16_t)activeScale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+            uint16_t noteID = ((uint16_t)activeScale - PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
             uint8_t newNote;
             for (int i=0; i<MAX_PADS; i++)    {
 
@@ -903,10 +902,10 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
         result = outputChanged;
 
-        uint16_t noteID = ((uint16_t)activeScale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+        uint16_t noteID = ((uint16_t)activeScale - PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
         if (isPredefinedScale(activeScale) && !internalChange)
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale)+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
+            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale)+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
 
         for (int i=0; i<MAX_PADS; i++)    {
 
@@ -998,10 +997,8 @@ void Pads::checkRemainingNoteShift()    {
             if (tempPadNotes[i][j] != BLANK_NOTE)   {
 
                 note_t note = getTonicFromNote(tempPadNotes[i][j]);
-                #ifdef MODULE_LEDS
                 if (!noteActive(note))
                     leds.setNoteLEDstate(note, ledStateOff);
-                #endif
 
             }
 
@@ -1098,23 +1095,21 @@ void Pads::setPadPressed(uint8_t padNumber, bool padState) {
 
 void Pads::setFunctionLEDs(uint8_t padNumber)   {
 
-    #ifdef MODULE_LEDS
-        if (splitEnabled)  {
+    if (splitEnabled)  {
 
-            //split is on
-            //turn off function LEDs first
-            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
-            leds.setLEDstate(LED_ON_OFF_NOTES, ledStateOff);
-            leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
-            leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
+        //split is on
+        //turn off function LEDs first
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
 
-            //turn on feature LEDs depending on enabled features for last touched pad
-            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(onOff_aftertouch, padNumber) ? ledStateFull : ledStateOff);
-            leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_aftertouch, padNumber) ? ledStateFull : ledStateOff);
-            leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(onOff_x, padNumber) ? ledStateFull : ledStateOff);
-            leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(onOff_y, padNumber) ? ledStateFull : ledStateOff);
+        //turn on feature LEDs depending on enabled features for last touched pad
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(onOff_aftertouch, padNumber) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_aftertouch, padNumber) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(onOff_x, padNumber) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(onOff_y, padNumber) ? ledStateFull : ledStateOff);
 
-        }
-    #endif
+    }
 
 }

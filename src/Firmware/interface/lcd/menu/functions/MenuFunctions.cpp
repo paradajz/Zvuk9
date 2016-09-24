@@ -1,4 +1,6 @@
 #include "MenuFunctions.h"
+#include "../../../leds/LEDs.h"
+#include "../../../../eeprom/Configuration.h"
 
 #ifdef MENU_FUNCTIONS_H_
 
@@ -85,12 +87,10 @@ bool factoryReset(functionArgument argument) {
 
         if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))    {
 
-            wait(500); //don't clear lcd immediately
+            wait_ms(500); //don't clear lcd immediately
 
-            #ifdef MODULE_LEDS
-                leds.setFadeSpeed(1);
-                leds.allLEDsOff();
-            #endif
+            leds.setFadeSpeed(1);
+            leds.allLEDsOff();
             configuration.factoryReset((factoryResetType_t)argument.argument1);
             reboot();
 
@@ -139,9 +139,7 @@ bool padEditMode(functionArgument argument)  {
     //check if last touched pad is pressed
     if (pads.isPadPressed(lastTouchedPad))   {
 
-        #ifdef MODULE_LCD
-            display.displayEditModeNotAllowed(padNotReleased);
-        #endif
+        display.displayEditModeNotAllowed(padNotReleased);
         pads.setEditMode(false);
 
     }   else {
@@ -223,7 +221,7 @@ bool checkRunningStatus(functionArgument argument)  {
         case true:
         //switch option
         #ifdef NDEBUG
-        midi.setRunningStatus((bool)argument.argument1);
+        (bool)argument.argument1 ? midi.enableRunningStatus() : midi.disableRunningStatus();
         #endif
         return true;
 
@@ -256,13 +254,13 @@ bool checkNoteOffStatus(functionArgument argument)    {
         case true:
         //switch option
         #ifdef NDEBUG
-        midi.setNoteOffStatus((noteOffType_t)argument.argument1);
+        midi.setNoteOffMode((noteOffType_t)argument.argument1);
         #endif
         return true;
 
         case false:
         #ifdef NDEBUG
-        return (midi.getNoteOffStatus() == (noteOffType_t)argument.argument1);
+        return (midi.getNoteOffMode() == (noteOffType_t)argument.argument1);
         #else
         return false;
         #endif

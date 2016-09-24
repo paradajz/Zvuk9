@@ -238,9 +238,7 @@ void Menu::exitMenu()   {
     //disable calibration if active
     pads.setCalibrationMode(false);
     //re-enable buttons
-    #ifdef MODULE_BUTTONS
     buttons.enable();
-    #endif
     activeMenu = noMenu;
     functionRunning = false;
 

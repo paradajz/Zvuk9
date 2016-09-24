@@ -1,42 +1,24 @@
 #ifndef PADS_H
 #define PADS_H
 
-#include "../../Modules.h"
 #include <avr/eeprom.h>
 #include <stdlib.h>
-#include "../../hardware/pins/Pins.h"
 #include "curves/Curves.h"
-#include "../../midi/MIDI_parameters.h"
+#include "scales/Scales.h"
 #include "Calibration.h"
-#include "../../Types.h"
-#include "../../hardware/adc/ADC.h"
-#include "../../eeprom/Configuration.h"
-#include "../../midi/MIDI.h"
-#include "../lcd/Macros.h"
-#include "../../hardware/timer/TimerObject.h"
-#include "../../sysex/SysEx.h"
-
-#ifdef MODULE_LEDS
-#include "../leds/LEDs.h"
-#endif
-
-#ifdef MODULE_LCD
-#include "../lcd/LCD.h"
-#include "../lcd/menu/Menu.h"
-#endif
+#include "../../board/Board.h"
 
 #define CONNECTED_PADS          9
-#define MAX_PADS                9
 
 #define NUMBER_OF_SAMPLES       3
 
 #define DEFAULT_XY_AT_VALUE     255
 #define PAD_NOTE_BUFFER_SIZE    32
 
+#define NOTES_PER_PAD           7
+
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
-//multiplexer pins
-const uint8_t muxCommonPinsAnalogRead[] = { MUX_COMMON_PIN_0_INDEX, MUX_COMMON_PIN_1_INDEX, MUX_COMMON_PIN_2_INDEX, MUX_COMMON_PIN_3_INDEX };
 const uint8_t padID[] = { PAD_0, PAD_1, PAD_2, PAD_3, PAD_4, PAD_5, PAD_6, PAD_7, PAD_8 };
 
 class Pads  {

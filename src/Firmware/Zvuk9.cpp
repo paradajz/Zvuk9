@@ -6,12 +6,21 @@
 
 */
 
-#include "init/Init.h"
+#define FIRMWARE_VERSION_STRING     0x56
+#define HARDWARE_VERSION_STRING     0x42
+#define REBOOT_STRING               0x7F
+#define FACTORY_RESET_STRING        0x44
 
-#define FIRMWARE_VERSION_STRING 0x56
-#define HARDWARE_VERSION_STRING 0x42
-#define REBOOT_STRING           0x7F
-#define FACTORY_RESET_STRING    0x44
+#include "sysex/SysEx.h"
+#include "interface/buttons/Buttons.h"
+#include "interface/encoders/Encoders.h"
+#include "interface/lcd/LCD.h"
+#include "interface/lcd/menu/Menu.h"
+#include "interface/leds/LEDs.h"
+#include "interface/pads/Pads.h"
+#include "version/Firmware.h"
+#include "version/Hardware.h"
+#include "eeprom/Configuration.h"
 
 bool onCustom(uint8_t value) {
 
@@ -32,14 +41,14 @@ bool onCustom(uint8_t value) {
         case REBOOT_STRING:
         leds.setFadeSpeed(1);
         leds.allLEDsOff();
-        wait(1500);
+        wait_ms(1500);
         reboot();
-        return true; //pointless, but we're making compiler happy
+        return true;
 
         case FACTORY_RESET_STRING:
         leds.setFadeSpeed(1);
         leds.allLEDsOff();
-        wait(1500);
+        wait_ms(1500);
         configuration.factoryReset(factoryReset_partial);
         reboot();
         return true;
@@ -48,49 +57,104 @@ bool onCustom(uint8_t value) {
 
 }
 
-sysExParameter_t onGet(uint8_t block, uint8_t section, sysExParameter_t index) {
+sysExParameter_t onGet(uint8_t block, uint8_t section, uint16_t index) {
 
     return configuration.readParameter(block, section, index);
 
 }
 
-bool onSet(uint8_t block, uint8_t section, sysExParameter_t index, sysExParameter_t newValue)   {
+bool onSet(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue)   {
 
     return configuration.writeParameter(block, section, index, newValue);
 
 }
 
-bool onReset(uint8_t block, uint8_t section, sysExParameter_t index) {
+void startUpAnimation() {
 
-    switch(block) {
+    //slow down fading for effect
+    leds.setFadeSpeed(1);
 
-        case CONF_BLOCK_PROGRAM:
-        break;
+    ledState_t tempLedStateArray[NUMBER_OF_LEDS];
 
-        case CONF_BLOCK_USER_SCALE:
-        break;
+    for (int i=0; i<NUMBER_OF_LEDS; i++)    {
 
-        case CONF_BLOCK_PAD_CALIBRATION:
-        break;
+        //copy ledstates to temp field
+        tempLedStateArray[i] = leds.getLEDstate(i);
+        //turn all leds off
+        leds.setLEDstate(i, ledStateOff);
 
-        case CONF_BLOCK_MIDI:
-        break;
+    }
 
-        case CONF_BLOCK_PRESSURE_SETTINGS:
-        break;
+    //turn all leds on slowly
+    leds.allLEDsOn();
 
-    }   return false;
+    sei();
+
+    display.displayHelloMessage();
+
+    wait_ms(600);
+
+    //restore led states
+    for (int i=0; i<NUMBER_OF_LEDS; i++)
+    leds.setLEDstate(i, tempLedStateArray[i]);
+
+    wait_ms(1500);
+
+    //restore normal fade speed
+    leds.setFadeSpeed(DEFAULT_FADE_SPEED);
 
 }
 
 int main()    {
 
-    globalInit();
+    //disable watchdog
+    MCUSR &= ~(1 << WDRF);
+    wdt_disable();
+
+    #ifdef DEBUG
+    vserial.init();
+    #endif
+
+    //do not change order of initialization!
+    configuration.init();
+
+    #ifdef NDEBUG
+    midi.init(dinInterface);
+    midi.init(usbInterface);
+    midi.setInputChannel(1);
+    #endif
+
+    sei();
+    board.init();
+
+    display.init();
+    menu.init();
+
+    leds.init();
+
+    pads.init();
+
+    leds.displayActiveNoteLEDs();
+
+    #if START_UP_ANIMATION > 0
+    startUpAnimation();
+    #else
+    sei();
+    #endif
+
+    display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());
+
+    buttons.init();
+
+    if (checkNewRevision()) {
+
+        display.displayFirmwareUpdated();
+
+    }
 
     #ifdef NDEBUG
     sysEx.setHandleGet(onGet);
     sysEx.setHandleSet(onSet);
-    sysEx.setHandleReset(onReset);
     sysEx.setHandleCustomRequest(onCustom);
 
     sysEx.addCustomRequest(FIRMWARE_VERSION_STRING);
@@ -102,19 +166,9 @@ int main()    {
     while(1) {
 
         pads.update();
-
-        #ifdef MODULE_BUTTONS
         buttons.update();
-        #endif
-
-        #ifdef MODULE_ENCODERS
         encoders.update();
-        #endif
-
-        #ifdef MODULE_LCD
         display.update();
-        #endif
-
         #ifdef DEBUG
         vserial.update();
         #endif
@@ -125,8 +179,23 @@ int main()    {
             configuration.update();
         #endif
 
-        #ifdef DEBUG
-        midi.checkInput();
+        #ifdef NDEBUG
+        if (midi.read(usbInterface))   {   //new message on usb
+
+            midiMessageType_t messageType = midi.getType(usbInterface);
+
+            switch(messageType) {
+
+                case midiMessageSystemExclusive:
+                sysEx.handleSysEx(midi.getSysExArray(usbInterface), midi.getSysExArrayLength(usbInterface));
+                break;
+
+                default:
+                break;
+
+            }
+
+        }
         #endif
 
     }

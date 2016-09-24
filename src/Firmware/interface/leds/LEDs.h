@@ -1,13 +1,8 @@
-#include "../../Modules.h"
-
-#ifdef MODULE_LEDS
-
 #ifndef LEDS_H_
 #define LEDS_H_
 
-#include "../../hardware/pins/Pins.h"
-#include "../../Types.h"
-#include "LEDsettings.h"
+#include "../../board/Board.h"
+#include "../pads/DataTypes.h"
 
 class LEDs  {
 
@@ -36,4 +31,3 @@ class LEDs  {
 #endif
 
 extern LEDs leds;
-#endif

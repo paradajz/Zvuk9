@@ -5,8 +5,8 @@
 #ifndef MENU_FUNCTIONS_H_
 #define MENU_FUNCTIONS_H_
 
-#include "../../../../init/Init.h"
 #include "../../../pads/Pads.h"
+#include "../../../encoders/Encoders.h"
 #include "../../../../midi/MIDI.h"
 #include "../Menu.h"
 #include <avr/boot.h>

@@ -1,4 +1,8 @@
 #include "Pads.h"
+#include "../leds/LEDs.h"
+#include "../lcd/LCD.h"
+#include "../../eeprom/Configuration.h"
+#include "../../midi/MIDI.h"
 
 void Pads::sendX(uint8_t pad)  {
 
@@ -122,7 +126,7 @@ void Pads::sendAftertouch(uint8_t pad)  {
             for (int i=0; i<NOTES_PER_PAD; i++) {
 
                 if (padNote[pad][i] != BLANK_NOTE)
-                    midi.sendKeyAftertouch(midiChannel[pad], padNote[pad][i], aftertouchValue);
+                    midi.sendPolyPressure(padNote[pad][i], aftertouchValue, midiChannel[pad]);
 
         }
         #endif
@@ -132,7 +136,7 @@ void Pads::sendAftertouch(uint8_t pad)  {
         #ifdef DEBUG
             printf("Sending channel aftertouch: %d\n", maxAftertouchValue);
         #else
-            midi.sendChannelAftertouch(midiChannel[pad], maxAftertouchValue);
+            midi.sendAfterTouch(maxAftertouchValue, midiChannel[pad]);
         #endif
         break;
 
@@ -167,9 +171,7 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
         for (int i=0; i<noteCounter; i++) {
 
             tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
-            #ifdef MODULE_LEDS
-                leds.setNoteLEDstate((note_t)tonicArray[i], ledStateFull);
-            #endif
+            leds.setNoteLEDstate((note_t)tonicArray[i], ledStateFull);
 
         }
         break;
@@ -204,9 +206,7 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)  {
 
             }   if (!noteActive)    {
 
-                    #ifdef MODULE_LEDS
-                        leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledStateDim);
-                    #endif
+                    leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledStateDim);
 
             }
 
@@ -238,9 +238,7 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
         case true:
         if (!noteCounter || !noteSendEnabled[pad])  {
 
-            #ifdef MODULE_LCD
-                display.displayActivePadNotes(0, 0, 0, editModeActive());
-            #endif
+            display.displayActivePadNotes(0, 0, 0, editModeActive());
             return;
 
         }
@@ -255,20 +253,16 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)    {
 
         }
 
-        #ifdef MODULE_LCD
-            display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, editModeActive());
-            display.displayVelocity(velocity);
-            if (isPredefinedScale(getActiveScale()))
-                if (noteShiftLevel != 0)
-                    display.displayNoteShiftLevel(noteShiftLevel);
-        #endif
+        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, editModeActive());
+        display.displayVelocity(velocity);
+        if (isPredefinedScale(getActiveScale()))
+            if (noteShiftLevel != 0)
+                display.displayNoteShiftLevel(noteShiftLevel);
         break;
 
         case false:
-            //note off
-            #ifdef MODULE_LCD
-            display.displayActivePadNotes(0, 0, 0, editModeActive());
-            #endif
+        //note off
+        display.displayActivePadNotes(0, 0, 0, editModeActive());
         break;
 
     }

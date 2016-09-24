@@ -1,13 +1,30 @@
-#ifdef NDEBUG
+/*
+    OpenDeck MIDI platform firmware
+    Copyright (C) 2015, 2016 Igor Petrovic
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef SYSEX_H_
 #define SYSEX_H_
 
 #include <avr/io.h>
-#include "../midi/MIDI.h"
+#include <stdio.h>
 #include "Status.h"
 #include "SpecialRequests.h"
 #include "Config.h"
+#include "../midi/MIDI.h"
 
 typedef struct {
 
@@ -18,9 +35,9 @@ typedef struct {
 } sysExManufacturerID;
 
 #if PARAM_SIZE == 2
-typedef uint16_t sysExParameter_t;
+typedef int16_t sysExParameter_t;
 #elif PARAM_SIZE == 1
-typedef uint8_t sysExParameter_t;
+typedef int8_t sysExParameter_t;
 #else
 #error Incorrect parameter size for SysEx
 #endif
@@ -31,6 +48,7 @@ typedef struct {
     sysExParameter_t minValue;
     sysExParameter_t maxValue;
     uint8_t parts;
+    bool newValueIgnored;
 
 } sysExSection;
 
@@ -49,7 +67,6 @@ class SysEx {
 
     void setHandleGet(sysExParameter_t(*fptr)(uint8_t block, uint8_t section, uint16_t index));
     void setHandleSet(bool(*fptr)(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue));
-    void setHandleReset(bool(*fptr)(uint8_t block, uint8_t section, uint16_t index));
     void setHandleCustomRequest(bool(*fptr)(uint8_t value));
 
     bool addBlock(uint8_t sections);
@@ -76,8 +93,8 @@ class SysEx {
         sectionByte,    //9
         REQUEST_SIZE,
         RESPONSE_SIZE = partByte + 1,
-        MIN_MESSAGE_LENGTH = wishByte + 1 + 1, //add next byte and end
-        ML_REQ_STANDARD = REQUEST_SIZE + 1 //add end byte
+        MIN_MESSAGE_LENGTH = wishByte + 1 + 1,  //add next byte and end
+        ML_REQ_STANDARD = REQUEST_SIZE + 1      //add end byte
 
     } sysExRequestByteOrder;
 
@@ -94,7 +111,6 @@ class SysEx {
         //message wish
         sysExWish_get,
         sysExWish_set,
-        sysExWish_restore,
         sysExWish_backup,
         SYSEX_WISH_MAX
 
@@ -148,7 +164,6 @@ class SysEx {
 
     sysExParameter_t (*sendGetCallback)(uint8_t block, uint8_t section, uint16_t index);
     bool (*sendSetCallback)(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue);
-    bool (*sendResetCallback)(uint8_t block, uint8_t section, uint16_t index);
     bool (*sendCustomRequestCallback)(uint8_t value);
 
     bool                sysExEnabled,
@@ -166,5 +181,4 @@ class SysEx {
 
 extern SysEx sysEx;
 
-#endif
 #endif

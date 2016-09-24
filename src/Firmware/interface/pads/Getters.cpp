@@ -1,4 +1,6 @@
 #include "Pads.h"
+#include "../leds/LEDs.h"
+#include "../../eeprom/Configuration.h"
 
 //read from eeprom
 
@@ -128,13 +130,11 @@ void Pads::getPadParameters()   {
 
     uint8_t lastTouchedPad = getLastTouchedPad();
 
-    #ifdef MODULE_LEDS
-        leds.setLEDstate(LED_ON_OFF_SPLIT, splitEnabled ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(onOff_aftertouch, lastTouchedPad) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_notes, lastTouchedPad) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(onOff_x, lastTouchedPad) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(onOff_y, lastTouchedPad) ? ledStateFull : ledStateOff);
-    #endif
+    leds.setLEDstate(LED_ON_OFF_SPLIT, splitEnabled ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(onOff_aftertouch, lastTouchedPad) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_notes, lastTouchedPad) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(onOff_x, lastTouchedPad) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(onOff_y, lastTouchedPad) ? ledStateFull : ledStateOff);
 
 }
 
@@ -177,9 +177,9 @@ void Pads::generateScale(scale_t scale)    {
 
         //predefined scale
         uint8_t notesPerScale = getNotesPerScale(scale);
-        uint8_t octave = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
-        note_t tonic = (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
-        noteShiftLevel = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+        uint8_t octave = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+        note_t tonic = (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+        noteShiftLevel = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
 
         //#ifdef DEBUG
             //printf("Octave: %d\n", octave);
@@ -240,10 +240,10 @@ void Pads::generateScale(scale_t scale)    {
     }   else {  //user scales
 
         //#ifdef DEBUG
-            //printf("User scale %d\n", scale-NUMBER_OF_PREDEFINED_SCALES);
+            //printf("User scale %d\n", scale-PREDEFINED_SCALES);
         //#endif
 
-        uint16_t noteID = (scale - NUMBER_OF_PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+        uint16_t noteID = (scale - PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
         for (int i=0; i<MAX_PADS; i++)    {
 
@@ -491,7 +491,7 @@ note_t Pads::getActiveTonic()    {
     }   else  {
 
         //predefined scale tonic is written in eeprom
-        uint16_t tonicIndex = PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*NUMBER_OF_PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
+        uint16_t tonicIndex = PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
         return (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, tonicIndex);
 
     }   return MIDI_NOTES;
@@ -522,13 +522,13 @@ scaleType_t Pads::getScaleType(int8_t scale) {
 
 bool Pads::isUserScale(uint8_t scale)   {
 
-    return (scale >= NUMBER_OF_PREDEFINED_SCALES);
+    return (scale >= PREDEFINED_SCALES);
 
 }
 
 bool Pads::isPredefinedScale(uint8_t scale) {
 
-    return (scale < NUMBER_OF_PREDEFINED_SCALES);
+    return (scale < PREDEFINED_SCALES);
 
 }
 

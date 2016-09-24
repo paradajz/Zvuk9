@@ -8,24 +8,9 @@ EEPROM addresses of parameters.
 #include <stdio.h> 
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
-#include "../Modules.h"
 #include "UniqueID.h"
-#include "../interface/lcd/LCD.h"
 #include "Config.h"
-
-#ifdef DEBUG
-#include "../vserial/Serial.h"
-#endif
-
-#include "../BitManipulation.h"
-
-#ifdef MODULE_LCD
-#include "../hardware/lcd/lcd.h"
-#endif
-
-#include "../interface/pads/Pads.h"
 #include "Defaults.h"
-#include "../Scales.h"
 #include "Blocks.h"
 
 #ifndef EEPROM_H_
@@ -63,9 +48,17 @@ typedef enum {
 
 } blockInfo_t;
 
+typedef enum {
+
+    factoryReset_wipeRestore, //clear eeprom, restore defaults
+    factoryReset_restore, //update eeprom with defaults
+    factoryReset_partial //partially restore defaults
+
+} factoryResetType_t;
+
 //default controller settings
 
-class Configuration : LCD {
+class Configuration {
 
     public:
     Configuration();
@@ -146,15 +139,6 @@ class Configuration : LCD {
     #ifdef ENABLE_ASYNC_UPDATE
     void queueData(uint16_t eepromAddress, uint16_t data, uint8_t parameterType);
     #endif
-
-    struct {
-
-        uint8_t major;
-        uint8_t minor;
-        uint8_t revision;
-        uint16_t crc;
-
-    } firmwareVersion;
 
     #ifdef ENABLE_ASYNC_UPDATE
     //update buffer

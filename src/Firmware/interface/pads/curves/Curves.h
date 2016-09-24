@@ -6,7 +6,7 @@
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 
-#include "../../../Types.h"
+#include "../DataTypes.h"
 
 #define CURVE_STEPS 9
 

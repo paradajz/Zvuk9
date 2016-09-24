@@ -1,4 +1,5 @@
 #include "Pads.h"
+#include "../lcd/menu/Menu.h"
 
 void Pads::addXYSamples(int16_t xValue, int16_t yValue)    {
 
@@ -326,9 +327,7 @@ void Pads::update()  {
         if (!editModeActive()) {
 
             //don't send or show midi data while in pad edit mode or menu
-            #ifdef MODULE_LCD
             if (!menu.menuDisplayed())
-            #endif
                 checkMIDIdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
             //only display data from last touched pad
@@ -338,26 +337,20 @@ void Pads::update()  {
                 uint8_t padIndex = getLastTouchedPad();
 
                 //there are
-                #ifdef MODULE_LCD
                 if (!menu.menuDisplayed())
-                #endif
                     checkLCDdata(padIndex, true, true, true, true);
                 setFunctionLEDs(padIndex);
 
             }   else {
 
                     if (pad == getLastTouchedPad()) {
-                    #ifdef MODULE_LCD
+
                         if (menu.menuDisplayed())   {
 
                             if (calibrationEnabled)
                                 checkLCDdata(pad, false, false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
 
-                        }
-                    else checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
-                    #else
-                    checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
-                    #endif
+                        } else checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
                 }
 
@@ -366,7 +359,7 @@ void Pads::update()  {
         }
 
         setNextPad();
-        setMuxInput(activePad);
+        board.setMuxInput(activePad);
 
         velocityAvailable = false;
         aftertouchAvailable = false;
@@ -388,62 +381,11 @@ void Pads::update()  {
 bool Pads::xyUpdated(uint8_t pad)  {
 
     //read x/y three times and get median value
+    int16_t xValue = board.getPadX();
+    int16_t yValue = board.getPadY();
 
-    static int16_t xValue = -1, yValue = -1;
-    static bool admuxSet = false;
-
-    if (xValue == -1) {
-
-        if (!admuxSet)  {
-
-            //x
-            #if XY_FLIP_AXIS > 0
-                setupX();
-            #else
-                setupY();
-            #endif
-            admuxSet = true;
-
-            return false;
-
-        }
-
-        #if XY_FLIP_AXIS > 0
-            xValue = getX();
-        #else
-            xValue = getY();
-        #endif
-
-    }
-
-    //check if value is now available
-    if (xValue == -1) return false; //not yet
-
-    //x is read by this point
-    if (admuxSet && (yValue == -1)) {
-
-        #if XY_FLIP_AXIS > 0
-            setupY();
-        #else
-            setupX();
-        #endif
-
-        admuxSet = false;
-        return false;
-
-    }
-
-    if (yValue == -1) {
-
-        #if XY_FLIP_AXIS > 0
-            yValue = getY();
-        #else
-            yValue = getX();
-        #endif
-
-    }
-
-    if ((xValue != -1) && (yValue == -1)) return false;    //we don't have y yet
+    if ((xValue != -1) && (yValue == -1))
+        return false; //x/y aren't updated yet
 
     //if we got to this point, we have x and y coordinates
     addXYSamples(xValue, yValue);
@@ -451,10 +393,7 @@ bool Pads::xyUpdated(uint8_t pad)  {
     if (!xySampled()) return false;
     else {
 
-        xValue = -1;
-        yValue = -1;
         sampleCounterXY = 0;
-        admuxSet = false;
 
         if (calibrationEnabled) {
 
@@ -533,9 +472,7 @@ bool Pads::pressureSampled()   {
 
 bool Pads::pressureUpdated() {
 
-    int16_t pressure;
-
-    pressure = getPressure();
+    int16_t pressure = board.getPadPressure();
 
     if (pressure == -1) return false;
 
@@ -686,7 +623,6 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
     if (isPadPressed(pad))  {   lcdCleared = false;
 
-        #ifdef MODULE_LCD
         if (xAvailable) {
 
             if (xSendEnabled[pad])  {
@@ -741,7 +677,6 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
         }   else if (velocityAvailable && !aftertouchActivated[pad])
         display.clearAftertouch();
-        #endif
 
         if (velocityAvailable)  {
 
@@ -751,27 +686,20 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
         if (velocityAvailable)  {
 
-            #ifdef MODULE_LCD
-                display.displayMIDIchannel(midiChannel[pad]);
-            #endif
+            display.displayMIDIchannel(midiChannel[pad]);
 
         }
 
         if (lastShownPad != pad)    {
 
             lastShownPad = pad;
-            #ifdef MODULE_LCD
             display.displayPad(pad+1);
-            #endif
 
         }
 
     }   else if (allPadsReleased() && !lcdCleared) {
 
-            #ifdef MODULE_LCD
-                display.clearPadData();
-            #endif
-
+            display.clearPadData();
             lcdCleared = true;
             lastShownPad = -1;
 
@@ -927,5 +855,13 @@ void Pads::storeNotes(uint8_t pad)  {
     velocity_buffer[i] = lastVelocityValue[pad];
     pad_note_timer_buffer[i] = rTimeMillis();
     note_buffer_head = i;
+
+}
+
+void Pads::setNextPad()    {
+
+    switchToNextPad = false;
+    activePad++;
+    if (activePad == CONNECTED_PADS) activePad = 0;
 
 }

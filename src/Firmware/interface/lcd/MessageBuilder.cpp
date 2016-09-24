@@ -1,7 +1,6 @@
 #include "LCD.h"
 
 #ifdef LCD_H_
-#include "../../Scales.h"
 #include "../pads/Pads.h"
 #include "../../version/Firmware.h"
 #include "../../version/Hardware.h"
@@ -29,13 +28,13 @@ void LCD::displayHelloMessage() {
 
         //write directly to screen
         lcd_putc(stringBuffer[charIndex]);
-        wait(75);
+        wait_ms(75);
         charIndex++;
 
     }
 
     strcpy(lastLCDLine[0], stringBuffer);
-    wait(250);
+    wait_ms(250);
 
 }
 
@@ -476,7 +475,7 @@ void LCD::displayProgramAndScale(uint8_t program, uint8_t scale)   {
     addNumberToCharArray(program, size);
     addSpaceToCharArray(size, 1);
 
-    if ((scale >= 0) && (scale < NUMBER_OF_PREDEFINED_SCALES))  {
+    if ((scale >= 0) && (scale < PREDEFINED_SCALES))  {
 
         strcpy_P(tempBuffer, (char*)pgm_read_word(&(presetNameArray[scale])));
         size += pgm_read_byte(&presetNameArray_sizes[scale]);
@@ -484,11 +483,11 @@ void LCD::displayProgramAndScale(uint8_t program, uint8_t scale)   {
 
     }   else {
 
-        strcpy_P(tempBuffer, (char*)pgm_read_word(&(presetNameArray[NUMBER_OF_PREDEFINED_SCALES])));
-        size += pgm_read_byte(&presetNameArray_sizes[NUMBER_OF_PREDEFINED_SCALES]);
+        strcpy_P(tempBuffer, (char*)pgm_read_word(&(presetNameArray[PREDEFINED_SCALES])));
+        size += pgm_read_byte(&presetNameArray_sizes[PREDEFINED_SCALES]);
         strcat(stringBuffer, tempBuffer);
         addSpaceToCharArray(size, 1);
-        addNumberToCharArray((scale - NUMBER_OF_PREDEFINED_SCALES + 1), size);
+        addNumberToCharArray((scale - PREDEFINED_SCALES + 1), size);
 
     }
 

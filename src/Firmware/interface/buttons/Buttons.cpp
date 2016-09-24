@@ -3,6 +3,8 @@
 #ifdef BUTTONS_H_
 
 #include "../../midi/MIDI.h"
+#include "../lcd/LCD.h"
+#include "../lcd/menu/Menu.h"
 
 note_t Buttons::getTonicFromButton(uint8_t buttonNumber)   {
 
@@ -131,13 +133,8 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
 
     }
 
-    #ifdef MODULE_LEDS
-        leds.setLEDstate(ledNumber, ledState);
-    #endif
-
-    #ifdef MODULE_LCD
-        display.displayOnOff(lcdMessageType, pads.getSplitState(), (uint8_t)ledState, lastTouchedPad+1);
-    #endif
+    leds.setLEDstate(ledNumber, ledState);
+    display.displayOnOff(lcdMessageType, pads.getSplitState(), (uint8_t)ledState, lastTouchedPad+1);
 
 }
 
@@ -160,9 +157,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             #ifdef NDEBUG
             sysExArray[4] = 0x02;
             #endif
-            #ifdef MODULE_LEDS
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateFull);
-            #endif
             break;
 
             case BUTTON_TRANSPORT_STOP:
@@ -170,14 +165,11 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
             #ifdef NDEBUG
             sysExArray[4] = 0x01;
             #endif
-            #ifdef MODULE_LEDS
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateOff);
             leds.setLEDstate(LED_TRANSPORT_STOP, ledStateOff);
-            #endif
             break;
 
             case BUTTON_TRANSPORT_RECORD:
-            #ifdef MODULE_LEDS
             if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull) {
 
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
@@ -195,7 +187,6 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
                 #endif
 
             }
-            #endif
             break;
 
             default:
@@ -206,12 +197,10 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)  {
     }   else return;
 
     #ifdef NDEBUG
-        midi.sendSysEx(sysExArray, 6, true);
+        midi.sendSysEx(6, sysExArray, true);
     #endif
 
-    #ifdef MODULE_LCD
-        display.displayTransportControl(type);
-    #endif
+    display.displayTransportControl(type);
 
 }
 
@@ -227,9 +216,7 @@ void Buttons::handleTonicEvent(note_t note, bool state) {
         switch(result)  {
 
             case outputChanged:
-            #ifdef MODULE_LEDS
-                leds.displayActiveNoteLEDs();
-            #endif
+            leds.displayActiveNoteLEDs();
             break;
 
             default:
@@ -238,9 +225,7 @@ void Buttons::handleTonicEvent(note_t note, bool state) {
         }
 
         //always do this
-        #ifdef MODULE_LCD
-            display.displayNoteChange(result, tonicChange, activeTonic);
-        #endif
+        display.displayNoteChange(result, tonicChange, activeTonic);
 
     }   else {
 
@@ -248,9 +233,7 @@ void Buttons::handleTonicEvent(note_t note, bool state) {
         uint8_t pad = pads.getLastTouchedPad();
         pads.assignPadNote(pad, note);
         pads.displayActivePadNotes(pad);
-        #ifdef MODULE_LEDS
-            leds.displayActiveNoteLEDs(true, pad);
-        #endif
+        leds.displayActiveNoteLEDs(true, pad);
 
     }
 
@@ -272,9 +255,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
                 //check if last touched pad is pressed
                 if (pads.isPadPressed(pads.getLastTouchedPad()))   {
 
-                    #ifdef MODULE_LCD
-                        display.displayEditModeNotAllowed(padNotReleased);
-                    #endif
+                    display.displayEditModeNotAllowed(padNotReleased);
                     pads.setEditMode(false);
 
                 }   else {
@@ -322,19 +303,13 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                 case false:
                 pads.changeActiveOctave(direction);
-                #ifdef MODULE_LCD
-                    display.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
-                #endif
-                #ifdef MODULE_LEDS
-                    leds.displayActiveNoteLEDs(true, lastTouchedPad);
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
-                #endif
+                display.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
+                leds.displayActiveNoteLEDs(true, lastTouchedPad);
+                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
                 break;
 
                 case true:
-                #ifdef MODULE_LEDS
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
-                #endif
+                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                 break;
 
             }
@@ -348,18 +323,12 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                     changeOutput_t shiftResult = pads.shiftOctave(direction);
                     uint8_t activeOctave = pads.getActiveOctave();
-                    #ifdef MODULE_LCD
-                        display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
-                    #endif
-                    #ifdef MODULE_LEDS
-                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
-                    #endif
+                    display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
 
                 }   else {
 
-                    #ifdef MODULE_LEDS
-                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateDim);
-                    #endif
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateDim);
 
                 }
 
@@ -370,30 +339,20 @@ void Buttons::handleOctaveEvent(bool direction, bool state)   {
 
                         if (pads.isPadPressed(lastTouchedPad))   {
 
-                            #ifdef MODULE_LCD
-                                display.displayEditModeNotAllowed(padNotReleased);
-                            #endif
-
+                            display.displayEditModeNotAllowed(padNotReleased);
                             return;
 
                         }
 
-                        #ifdef MODULE_LEDS
-                            direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
-                        #endif
-
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                         buttonEnabled[BUTTON_ON_OFF_NOTES] = false;
 
                         changeOutput_t shiftResult = pads.shiftNote(direction);
-                        #ifdef MODULE_LCD
-                            display.displayNoteChange(shiftResult, noteShift, direction);
-                        #endif
+                        display.displayNoteChange(shiftResult, noteShift, direction);
 
                     }   else {
 
-                        #ifdef MODULE_LEDS
-                            direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
-                        #endif
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
 
                     }
 

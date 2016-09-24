@@ -1,15 +1,10 @@
-#include "../../Modules.h"
-
-#ifdef MODULE_LCD
-
 #ifndef LCD_H_
 #define LCD_H_
 
-#include "../../Types.h"
-#include "../../hardware/lcd/lcd.h"
+#include "../../board/Board.h"
+#include "../buttons/Buttons.h"
+#include "../pads/Pads.h"
 #include "LCDsettings.h"
-#include "../../Types.h"
-#include "../../hardware/timer/TimerObject.h"
 
 #ifdef DEBUG
 #include "../../vserial/Serial.h"
@@ -19,6 +14,30 @@
 #include "strings/Strings.h"
 #include <string.h>
 #include <stdlib.h>
+
+typedef enum {
+
+    noMessage,
+    showMessage,
+    messageDisplayed,
+    clearMessage
+
+} messageStatus_t;
+
+typedef enum {
+
+    userMenu,
+    serviceMenu,
+    noMenu
+
+} menuType_t;
+
+typedef enum {
+
+    text,
+    message
+
+} lcdTextType;
 
 #define SPACE_CHAR          32
 
@@ -183,5 +202,4 @@ class LCD   {
 
 extern LCD display;
 
-#endif
 #endif
