@@ -136,7 +136,7 @@ int main()    {
 
     leds.displayActiveNoteLEDs();
 
-    #if START_UP_ANIMATION > 0
+    #ifdef START_UP_ANIMATION
     startUpAnimation();
     #else
     sei();
@@ -165,7 +165,7 @@ int main()    {
 
     while(1) {
 
-        pads.update();
+        //pads.update();
         buttons.update();
         encoders.update();
         display.update();

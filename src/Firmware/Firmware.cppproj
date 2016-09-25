@@ -82,6 +82,7 @@
       <Value>F_CPU=16000000UL</Value>
       <Value>F_USB=16000000UL</Value>
       <Value>USE_LUFA_CONFIG_HEADER</Value>
+      <Value>START_UP_ANIMATION</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
@@ -106,6 +107,20 @@
   </avrgcccpp.assembler.general.IncludePaths>
 </AvrGccCpp>
     </ToolchainSettings>
+    <PostBuildEvent>REM running version script
+call cd $(SolutionDir)
+call cd ..\tools
+call bin\sh.exe -l version_script.sh
+
+REM converting hex to bin and adding crc
+call srec_cat.exe "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" -intel -fill 0xFF 0x0000 0x1DFFE -Cyclic_Redundancy_Check_16_Big_Endian 0x1DFFE -XMODEM -o "$(SolutionDir)\..\tools\FLASH.bin" -binary
+
+REM calling version_append
+call version_append.exe
+call del version
+
+REM move binary to root dir
+call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>

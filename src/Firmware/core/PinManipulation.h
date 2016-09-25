@@ -2,11 +2,13 @@
 #define PINMANIPULATION_H_
 
 #define DDR(x) (*(&x-1))
-#if defined (__AVR_ATmega2560__) || defined(__AVR_ATmega32U4__)
-//PINF doesn't follow standard convention of port-2 address
-#define PIN(x) ( &PORTF==&(x) ? _SFR_IO8(0x0F) : (*(&x - 2)) )
+
+//see register summary in datasheet for selected device
+#if defined(__AVR_ATmega64__) || defined(__AVR_ATmega128__)
+    /* on ATmega64/128 PINF is on port 0x00 and not 0x60 */
+    #define PIN(x) ( &PORTF==&(x) ? _SFR_IO8(0x00) : (*(&x - 2)) )
 #else
-#define PIN(x) (*(&x-2))
+    #define PIN(x) (*(&x-2))
 #endif
 
 #define setOutput(port, pin) ((DDR(port)) |= (1 << (pin)))
