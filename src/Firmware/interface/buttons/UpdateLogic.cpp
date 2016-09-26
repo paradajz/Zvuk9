@@ -8,7 +8,7 @@
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         5
-#define USER_MENU_TIMEOUT           1500
+#define USER_MENU_TIMEOUT           3000
 
 //shift new values from button in this variable
 //if it's 0xFF or buttonDebounceCompare, its reading is stable
