@@ -10,12 +10,12 @@ const uint8_t muxCommonPinsAnalogRead[] = {
 
 };
 
-uint8_t adcPinReadOrder[] = {
+uint8_t adcPinReadOrder_board[] = {
 
     muxCommonPinsAnalogRead[2], //pressure, first reading
     muxCommonPinsAnalogRead[0], //pressure, second reading
-    muxCommonPinsAnalogRead[2], //x coordinate
-    muxCommonPinsAnalogRead[0]  //y coordinate
+    muxCommonPinsAnalogRead[0], //x coordinate
+    muxCommonPinsAnalogRead[2]  //y coordinate
 
 };
 
@@ -49,6 +49,8 @@ void Board::initPads()  {
     setHigh(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_INDEX);
     setHigh(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_INDEX);
     setHigh(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_INDEX);
+
+    setUpADC();
 
 }
 
@@ -85,26 +87,6 @@ void setupX()  {
 
     //x is read from y+
     //set 0/5V across x+/x-
-    setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_INDEX);
-    setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_INDEX);
-    setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_INDEX);
-    setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_INDEX);
-
-    setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_INDEX);
-    setHigh(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_INDEX);
-    setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_INDEX);
-    setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_INDEX);
-
-    _NOP(); _NOP(); _NOP();
-
-    setADCchannel(adcPinReadOrder[readX]);
-
-}
-
-void setupY()  {
-
-    //y is read from x+
-    //set 0/5V across y+/y-
     setInput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_INDEX);
     setInput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_INDEX);
     setOutput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_INDEX);
@@ -117,140 +99,55 @@ void setupY()  {
 
     _NOP(); _NOP(); _NOP();
 
-    setADCchannel(adcPinReadOrder[readY]);
+    setADCchannel(adcPinReadOrder_board[readX]);
+
+}
+
+void setupY()  {
+
+    //y is read from x+
+    //set 0/5V across y+/y-
+    setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_INDEX);
+    setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_INDEX);
+    setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_INDEX);
+    setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_INDEX);
+
+    setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_INDEX);
+    setHigh(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_INDEX);
+    setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_INDEX);
+    setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_INDEX);
+
+    _NOP(); _NOP(); _NOP();
+
+    setADCchannel(adcPinReadOrder_board[readY]);
 
 }
 
 int16_t Board::getPadPressure()  {
 
-    static int16_t  tempPressureValueZ1 = 0,
-    tempPressureValueZ2 = 0;
+    int16_t value1, value2;
 
-    static bool firstPin = true;
+    setupPressure();
+    setADCchannel(adcPinReadOrder_board[readPressure0]);
+    value1 = getADCvalue();
+    setADCchannel(adcPinReadOrder_board[readPressure1]);
+    value2 = getADCvalue();
 
-    static bool firstPressurePinFinished = false;
-    static bool secondPressurePinFinished = false;
-
-    bool readInitiated = analogReadInProgress();
-    int16_t returnValue = -1;
-
-    //conversion isn't started yet, setup pressure and request first value
-    if (!readInitiated && (!firstPressurePinFinished && !secondPressurePinFinished) && firstPin)   {
-
-        setupPressure();
-        setADCchannel(adcPinReadOrder[readPressure0]);
-        startADCconversion();
-        firstPin = false;
-
-    }   else
-
-    //conversion finished, save first value and request second
-    if (!readInitiated && !firstPressurePinFinished && !secondPressurePinFinished && !firstPin)   {
-
-        firstPressurePinFinished = true;
-        tempPressureValueZ1 = getADCvalue();
-        setADCchannel(adcPinReadOrder[readPressure1]);
-        startADCconversion();
-        firstPin = true;
-
-    }   else
-
-    //second conversion finished, save value
-    if (!readInitiated && firstPressurePinFinished && !secondPressurePinFinished)    {
-
-        secondPressurePinFinished = true;
-        tempPressureValueZ2 = getADCvalue();
-
-        firstPressurePinFinished = false;
-        secondPressurePinFinished = false;
-        returnValue = (1023 - (tempPressureValueZ2 - tempPressureValueZ1));
-
-        tempPressureValueZ1 = 0;
-        tempPressureValueZ2 = 0;
-
-    }
-
-    return returnValue;
+    return (1023 - (value2 - value1));
 
 }
 
 int16_t Board::getPadX()  {
 
-    static int16_t xValue = -1;
-    static bool admuxSet = false;
+    setupX();
+    return getADCvalue();
 
-    if (xValue == -1) {
-
-        if (!admuxSet)  {
-
-            setupX();
-            setupY();
-            admuxSet = true;
-            return -1;
-
-        }
-
-        bool readInitiated = analogReadInProgress();
-        static bool xSwitched = false;
-
-        if (!readInitiated && !xSwitched)   {
-
-            startADCconversion();
-            xSwitched = true;
-            return -1;
-
-            } else if (readInitiated && xSwitched)  {
-
-            return -1;
-
-            } else {
-
-            xSwitched = false;
-            xValue = -1;
-            return getADCvalue();
-
-        }
-
-    }   return -1;
 
 }
 
 int16_t Board::getPadY()  {
 
-    static int16_t yValue = -1;
-    static bool admuxSet = false;
-
-    if (yValue == -1) {
-
-        if (!admuxSet)  {
-
-            setupY();
-            admuxSet = true;
-            return -1;
-
-        }
-
-        bool readInitiated = analogReadInProgress();
-        static bool ySwitched = false;
-
-        if (!readInitiated && !ySwitched)   {
-
-            startADCconversion();
-            ySwitched = true;
-            return -1;
-
-            } else if (readInitiated && ySwitched)  {
-
-            return -1;
-
-            } else {
-
-            ySwitched = false;
-            yValue = -1;
-            return getADCvalue();
-
-        }
-
-    }   return -1;
+    setupY();
+    return getADCvalue();
 
 }

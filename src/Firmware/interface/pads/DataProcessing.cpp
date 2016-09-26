@@ -359,7 +359,6 @@ void Pads::update()  {
         }
 
         setNextPad();
-        board.setMuxInput(activePad);
 
         velocityAvailable = false;
         aftertouchAvailable = false;
@@ -384,8 +383,8 @@ bool Pads::xyUpdated(uint8_t pad)  {
     int16_t xValue = board.getPadX();
     int16_t yValue = board.getPadY();
 
-    if ((xValue != -1) && (yValue == -1))
-        return false; //x/y aren't updated yet
+    //if ((xValue == -1) || (yValue == -1))
+        //return false; //x/y aren't updated yet
 
     //if we got to this point, we have x and y coordinates
     addXYSamples(xValue, yValue);
@@ -411,13 +410,6 @@ bool Pads::xyUpdated(uint8_t pad)  {
                 pads.calibrate(activeCalibration, lower, pad, minCalibrationValue);
                 pads.calibrate(activeCalibration, upper, pad, maxCalibrationValue);
 
-                //#ifdef DEBUG
-                    //printf("Calibrating pad %d\n", pad);
-                    //printf("Minimum value: %d\n", minCalibrationValue);
-                    //printf("Maximum value: %d\n", maxCalibrationValue);
-                    //printf("Calibrated value: %d\n", scale_raw(medianValue, minCalibrationValue, maxCalibrationValue));
-                //#endif
-
             }
 
         }
@@ -425,6 +417,106 @@ bool Pads::xyUpdated(uint8_t pad)  {
         return true;
 
     }
+
+    ////read x/y three times and get median value
+//
+    //static int16_t xValue = -1, yValue = -1;
+    //static bool admuxSet = false;
+//
+    //if (xValue == -1) {
+//
+        //if (!admuxSet)  {
+//
+            ////x
+            //#if XY_FLIP_AXIS > 0
+            //setupX();
+            //#else
+            //setupY();
+            //#endif
+            //admuxSet = true;
+//
+            //return false;
+//
+        //}
+//
+        //#if XY_FLIP_AXIS > 0
+        //xValue = getX();
+        //#else
+        //xValue = getY();
+        //#endif
+//
+    //}
+//
+    ////check if value is now available
+    //if (xValue == -1) return false; //not yet
+//
+    ////x is read by this point
+    //if (admuxSet && (yValue == -1)) {
+//
+        //#if XY_FLIP_AXIS > 0
+        //setupY();
+        //#else
+        //setupX();
+        //#endif
+//
+        //admuxSet = false;
+        //return false;
+//
+    //}
+//
+    //if (yValue == -1) {
+//
+        //#if XY_FLIP_AXIS > 0
+        //yValue = getY();
+        //#else
+        //yValue = getX();
+        //#endif
+//
+    //}
+//
+    //if ((xValue != -1) && (yValue == -1)) return false;    //we don't have y yet
+//
+    ////if we got to this point, we have x and y coordinates
+    //addXYSamples(xValue, yValue);
+//
+    //if (!xySampled()) return false;
+    //else {
+//
+        //xValue = -1;
+        //yValue = -1;
+        //sampleCounterXY = 0;
+        //admuxSet = false;
+//
+        //if (calibrationEnabled) {
+//
+            ////calibration is enabled
+            //int16_t medianValue = getMedianValueXYZ(activeCalibration);
+//
+            //if (medianValue < minCalibrationValue)
+            //minCalibrationValue = medianValue+X_MIN_CALIBRATION_OFFSET;
+//
+            //if (medianValue > maxCalibrationValue)
+            //maxCalibrationValue = medianValue+X_MAX_CALIBRATION_OFFSET;
+//
+            //if (minCalibrationValue >= 0 && maxCalibrationValue < 1024) {
+//
+                //pads.calibrate(activeCalibration, lower, pad, minCalibrationValue);
+                //pads.calibrate(activeCalibration, upper, pad, maxCalibrationValue);
+//
+                ////#if MODE_SERIAL > 0
+                ////printf("Calibrating pad %d\n", pad);
+                ////printf("Minimum value: %d\n", minCalibrationValue);
+                ////printf("Maximum value: %d\n", maxCalibrationValue);
+                ////printf("Calibrated value: %d\n", scale_raw(medianValue, minCalibrationValue, maxCalibrationValue));
+                ////#endif
+//
+            //}
+//
+        //}
+//
+        //return true;
+//
+    //}
 
 }
 
@@ -473,8 +565,6 @@ bool Pads::pressureSampled()   {
 bool Pads::pressureUpdated() {
 
     int16_t pressure = board.getPadPressure();
-
-    if (pressure == -1) return false;
 
     //we have pressure
     addPressureSamples(pressure);
@@ -863,5 +953,7 @@ void Pads::setNextPad()    {
     switchToNextPad = false;
     activePad++;
     if (activePad == CONNECTED_PADS) activePad = 0;
+
+    board.setMuxInput(activePad);
 
 }

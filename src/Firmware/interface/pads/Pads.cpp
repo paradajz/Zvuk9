@@ -44,7 +44,6 @@ Pads::Pads()  {
 
 void Pads::init()   {
 
-    board.setMuxInput(activePad);
     getConfiguration();
     setupSysEx();
 

@@ -50,7 +50,7 @@ void LCD::init()    {
 
 void LCD::update()  {
 
-    if (bitRead(ADCSRA, ADSC)) return;  //don't mess with LCD while ADC conversion is in progress
+    //if (bitRead(ADCSRA, ADSC)) return;  //don't mess with LCD while ADC conversion is in progress
     if ((rTimeMillis() - lastLCDupdateTime) < LCD_REFRESH_TIME) return; //we don't need to update lcd in real time
 
     //get message status to determine what to print

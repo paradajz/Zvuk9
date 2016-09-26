@@ -162,10 +162,7 @@ int main()    {
 
     while(1) {
 
-        //printf("testing\n");
-        //wait_ms(1000);
-
-        //pads.update();
+        pads.update();
         buttons.update();
         encoders.update();
         display.update();

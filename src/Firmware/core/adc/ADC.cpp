@@ -41,9 +41,9 @@ void setUpADC() {
     for (int i=0; i<5; i++)
         getADCvalue(); //few dummy reads to init adc
 
-    #if ADC_INTERRUPT == 1
-        adcInterruptEnable();
-    #endif
+    //#if ADC_INTERRUPT == 1
+        //adcInterruptEnable();
+    //#endif
 
 }
 
@@ -68,24 +68,9 @@ void disconnectDigitalInADC(uint8_t channel) {
 
 int16_t getADCvalue()   {
 
-    if ((ADCSRA >> ADSC) & 0x01)  {
-
-        //conversion is still running
-        return -1;
-
-    }   else {
-
-        //no conversion running
-        if ((ADCSRA >> ADIE) & 0x01) { return adcValue; }
-        else {
-
-            //wait until ADC conversion is complete
-            while (ADCSRA & (1<<ADSC));
-            return ADC;
-
-        }
-
-    }
+    startADCconversion();
+    while (ADCSRA & (1<<ADSC));
+    return ADC;
 
 }
 

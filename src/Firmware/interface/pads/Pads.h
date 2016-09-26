@@ -105,8 +105,6 @@ class Pads  {
     private:
 
     //init
-    void initPadPins();
-    void initHardware();
     void setupSysEx();
 
     //EEPROM config read
@@ -123,12 +121,6 @@ class Pads  {
     //hardware control
     void setMuxInput(uint8_t muxInput);
     void setNextPad();
-    void setupPressure();
-    int16_t getPressure();
-    void setupX();
-    int16_t getX();
-    void setupY();
-    int16_t getY();
 
     //midi scaling
     uint8_t scalePressure(uint8_t pad, int16_t pressure, pressureType_t type);
