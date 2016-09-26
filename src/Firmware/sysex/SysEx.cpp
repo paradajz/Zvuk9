@@ -17,6 +17,7 @@
 */
 
 #include "SysEx.h"
+#include "../midi/DataTypes.h"
 
 #ifdef SYSEX_H_
 
@@ -203,7 +204,9 @@ void SysEx::handleSysEx(uint8_t *array, uint8_t size)    {
         sysExArray[responseSize] = 0xF7;
         responseSize++;
 
+        #ifdef NDEBUG
         midi.sendSysEx(responseSize, sysExArray, true);
+        #endif
 
     }
 
@@ -516,7 +519,9 @@ bool SysEx::checkParameters()   {
             sysExArray[responseSize] = 0xF7;
             responseSize++;
 
+            #ifdef NDEBUG
             midi.sendSysEx(responseSize, sysExArray, true);
+            #endif
 
         }
 
@@ -738,7 +743,9 @@ void SysEx::sendCustomMessage(uint8_t id, sysExParameter_t value)   {
     customMessage[statusByte+3] = 0xF7;
     #endif
 
+    #ifdef NDEBUG
     midi.sendSysEx(size, customMessage, true);
+    #endif
 
 }
 

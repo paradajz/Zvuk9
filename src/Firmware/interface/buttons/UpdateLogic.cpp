@@ -39,20 +39,24 @@ void Buttons::init()  {
 
     processingEnabled = false;
 
-    //read buttons for 0.1 seconds
-    do {
+    ////read buttons for 0.1 seconds
+    //do {
+//
+        ////read all buttons without activating event handlers
+        //update();
+//
+    //}   while ((rTimeMillis() - currentTime) < 100);
+//
+    //if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP)) {
+//
+        //menu.displayMenu(serviceMenu);
+        //disable();
+//
+    //}else {
 
-        //read all buttons without activating event handlers
-        update();
+        processingEnabled = true;
 
-    }   while ((rTimeMillis() - currentTime) < 100);
-
-    if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP)) {
-
-        menu.displayMenu(serviceMenu);
-        disable();
-
-    }   else processingEnabled = true;
+    //}
 
 }
 
@@ -64,7 +68,6 @@ void Buttons::update()    {
 
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
 
-        //invert button state because of pull-ups
         bool state = board.getButtonState(i);
         bool debounced = buttonDebounced(i, state);
 

@@ -33,6 +33,23 @@ volatile uint8_t *encoderPort2Array[] = {
 
 };
 
+void Board::initEncoders()  {
+
+    for (int i=0; i<NUMBER_OF_ENCODERS; i++)    {
+
+        setInput(*(encoderPort1Array[i]), encoderPinIndex1Array[i]);
+        setInput(*(encoderPort2Array[i]), encoderPinIndex2Array[i]);
+
+        setHigh(*(encoderPort1Array[i]), encoderPinIndex1Array[i]);
+        setHigh(*(encoderPort2Array[i]), encoderPinIndex2Array[i]);
+
+        encoderData[i] |= ((uint16_t)0 << 8);
+        encoderData[i] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);   //set number of pulses to 8
+
+    }
+
+}
+
 int8_t Board::getEncoderState(uint8_t encoderNumber)  {
 
     int8_t returnValue;

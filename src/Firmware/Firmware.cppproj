@@ -180,7 +180,7 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
   <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
   <avrgcccpp.compiler.optimization.DebugLevel>Default (-g2)</avrgcccpp.compiler.optimization.DebugLevel>
   <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
-  <avrgcccpp.compiler.miscellaneous.OtherFlags>-Wl,-print-gc-sections</avrgcccpp.compiler.miscellaneous.OtherFlags>
+  <avrgcccpp.compiler.miscellaneous.OtherFlags>-Wl,-print-gc-sections -include "%24(MSBuildProjectDirectory)/BitManipulation.h"</avrgcccpp.compiler.miscellaneous.OtherFlags>
   <avrgcccpp.compiler.miscellaneous.Verbose>True</avrgcccpp.compiler.miscellaneous.Verbose>
   <avrgcccpp.linker.libraries.Libraries>
     <ListValues>
@@ -815,6 +815,9 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="midi\Config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="midi\DataTypes.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="midi\MIDI.cpp">

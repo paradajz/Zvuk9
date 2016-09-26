@@ -5,7 +5,7 @@
 #include "../../../../version/Firmware.h"
 #include "../../../../version/Hardware.h"
 #include "../../../../eeprom/Configuration.h"
-
+#include "../../../../midi/DataTypes.h"
 #include "../functions/MenuFunctions.h"
 
 void Menu::createUserMenuLayout()   {

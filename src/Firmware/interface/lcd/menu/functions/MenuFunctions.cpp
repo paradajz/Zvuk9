@@ -1,6 +1,7 @@
 #include "MenuFunctions.h"
 #include "../../../leds/LEDs.h"
 #include "../../../../eeprom/Configuration.h"
+#include "../../../../midi/DataTypes.h"
 
 #ifdef MENU_FUNCTIONS_H_
 

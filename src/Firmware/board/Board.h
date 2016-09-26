@@ -39,6 +39,12 @@ class Board {
     void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value);
     uint8_t read_I2C_reg(uint8_t address, uint8_t reg);
 
+    void initTimers();
+    void initButtons();
+    void initEncoders();
+    void initLEDs();
+    void initPads();
+
 };
 
 extern Board board;

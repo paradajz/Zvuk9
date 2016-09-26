@@ -5,6 +5,75 @@
 //timer2 - LEDs (pwm)
 //timer3 - LED matrix
 
+void Board::initTimers()    {
+
+    //clear timer3 info
+    TCCR3A = 0;
+    TCCR3B = 0;
+    TCNT3  = 0;
+    TIMSK3 = 0;
+    OCR3A = 0;
+    OCR3B = 0;
+    OCR3C = 0;
+
+    //turn on CTC mode
+    TCCR3B |= (1 << WGM32);
+
+    //set prescaler to 256
+    TCCR3B |= (1 << CS32);
+
+    //configure timer1/2 for LED matrix PWM
+    TCCR1A = 0;
+    TCCR1B = 0;
+    TCCR1C = 0;
+    TIMSK1 = 0;
+    TCNT1 = 0;
+    OCR1A = 0;
+    OCR1B = 0;
+    OCR1C = 0;
+
+    TCCR2A = 0;
+    TCCR2B = 0;
+    TIMSK2 = 0;
+    TCNT2 = 0;
+    OCR2A = 0;
+    OCR2B = 0;
+
+    //phase correct PWM, top 0xFF
+    TCCR1A |= (1<<WGM10);
+    TCCR2A |= (1<<WGM20);
+
+    //prescaler 1
+    TCCR1B |= (1<<CS10);
+    TCCR2B |= (1<<CS20);
+
+    //configure timer0
+    //used for delay/millis/leds
+    TCCR0A = 0;
+    TCCR0B = 0;
+    TCNT0 = 0;
+    TIMSK0 = 0;
+    OCR0A = 0;
+    OCR0B = 0;
+
+    //turn on CTC mode
+    TCCR0A |= (1 << WGM01);
+
+    //set prescaler to 64
+    TCCR0B |= (1 << CS00) | (1 << CS01);
+
+    //set compare match register to desired timer count
+    OCR0A = 124; //500uS
+
+    //OCR3A = 10; //??
+
+    //enable CTC interrupt for timer0
+    TIMSK0 |= (1 << OCIE0A);
+
+    TIMSK3 |= (1<<OCIE3A);
+
+}
+
 inline void activateColumn(uint8_t column) {
 
     bitRead(column, 0) ? setHigh(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX) : setLow(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX);

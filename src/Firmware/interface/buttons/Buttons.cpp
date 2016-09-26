@@ -2,7 +2,9 @@
 
 #ifdef BUTTONS_H_
 
+#ifdef NDEBUG
 #include "../../midi/MIDI.h"
+#endif
 #include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
 

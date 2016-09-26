@@ -24,7 +24,9 @@
 #include "Status.h"
 #include "SpecialRequests.h"
 #include "Config.h"
+#ifdef NDEBUG
 #include "../midi/MIDI.h"
+#endif
 
 typedef struct {
 

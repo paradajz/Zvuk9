@@ -3,10 +3,10 @@
 #ifndef VSERIAL_H_
 #define VSERIAL_H_
 
-#include "../hardware/usb/vserial/Descriptors.h"
+#include "../core/usb/vserial/Descriptors.h"
 
-#include "../hardware/usb/lufa/LUFA/Drivers/USB/USB.h"
-#include "../hardware/usb/lufa/LUFA/Platform/Platform.h"
+#include "../core/usb/lufa/LUFA/Drivers/USB/USB.h"
+#include "../core/usb/lufa/LUFA/Platform/Platform.h"
 
 /* Function Prototypes: */
 void SetupHardware(void);

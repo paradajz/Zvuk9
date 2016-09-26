@@ -7,6 +7,26 @@ volatile uint8_t     pwmSteps = DEFAULT_FADE_SPEED;
 uint32_t             ledBlinking;
 uint16_t             ledBlinkTimer[NUMBER_OF_LEDS];
 
+void Board::initLEDs()  {
+
+    setOutput(LED_ROW_1_PORT, LED_ROW_1_PIN_INDEX);
+    setOutput(LED_ROW_2_PORT, LED_ROW_2_PIN_INDEX);
+    setOutput(LED_ROW_3_PORT, LED_ROW_3_PIN_INDEX);
+
+    setLow(LED_ROW_1_PORT, LED_ROW_1_PIN_INDEX);
+    setLow(LED_ROW_2_PORT, LED_ROW_2_PIN_INDEX);
+    setLow(LED_ROW_3_PORT, LED_ROW_3_PIN_INDEX);
+
+    setOutput(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX);
+    setOutput(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN_INDEX);
+    setOutput(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN_INDEX);
+
+    setLow(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN_INDEX);
+    setLow(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN_INDEX);
+    setLow(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN_INDEX);
+
+}
+
 uint8_t ledStateToValue(ledState_t state)  {
 
     switch(state)   {

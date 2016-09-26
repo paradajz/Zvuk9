@@ -2,7 +2,9 @@
 #include "../leds/LEDs.h"
 #include "../lcd/LCD.h"
 #include "../../eeprom/Configuration.h"
+#ifdef NDEBUG
 #include "../../midi/MIDI.h"
+#endif
 
 void Pads::sendX(uint8_t pad)  {
 
