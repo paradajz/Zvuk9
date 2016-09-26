@@ -191,7 +191,8 @@ void LCD::displayOnOff(onOff_t type, bool _splitState, uint8_t functionState, ui
 
         updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
 
-        displayPadAmount(_splitState, padNumber);
+        if (type != onOff_split)
+            displayPadAmount(_splitState, padNumber);
         break;
 
         default:

@@ -79,7 +79,8 @@ void Buttons::update()    {
 
             //update previous button state with current one
             setButtonState(i, state);
-            if (processingEnabled) processButton(i, state);
+            if (processingEnabled)
+                processButton(i, state);
 
         }
 

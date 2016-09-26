@@ -199,9 +199,9 @@ ISR(TIMER0_COMPA_vect)    {
                 if (ledBlinkTimer[i] == LED_BLINK_TIME)    {
 
                     if (ledState[i] == LED_INTENSITY_FULL)
-                    ledState[i] = LED_INTENSITY_OFF;
+                        ledState[i] = LED_INTENSITY_OFF;
                     else ledState[i] = LED_INTENSITY_FULL;
-                    ledBlinkTimer[i] = 0;
+                        ledBlinkTimer[i] = 0;
 
                 }
 
@@ -218,9 +218,6 @@ inline void updateEncoder(uint8_t encoderID)    {
 
     uint8_t p1val = readPin(*encoderPort1Array[encoderID], encoderPinIndex1Array[encoderID]);
     uint8_t p2val = readPin(*encoderPort2Array[encoderID], encoderPinIndex2Array[encoderID]);
-
-    //uint8_t p1val = (*encoderPort1Array[encoderID] >> encoderPinIndex1Array[encoderID]) & 0x01;
-    //uint8_t p2val = (*encoderPort2Array[encoderID] >> encoderPinIndex2Array[encoderID]) & 0x01;
 
     uint8_t pairState = p1val;
     pairState <<= 1;
