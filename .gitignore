@@ -8,3 +8,5 @@ src/Bootloader/Debug/
 src/Bootloader/doxyfile
 FLASH.bin
 tools/tmp/*
+w.zip
+w/*
