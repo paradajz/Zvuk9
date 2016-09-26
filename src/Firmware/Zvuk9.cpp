@@ -116,7 +116,7 @@ int main()    {
     #endif
 
     //do not change order of initialization!
-    //configuration.init();
+    configuration.init();
 
     #ifdef NDEBUG
     midi.init(dinInterface);
@@ -128,9 +128,7 @@ int main()    {
 
     display.init();
     menu.init();
-
     leds.init();
-
     pads.init();
 
     leds.displayActiveNoteLEDs();

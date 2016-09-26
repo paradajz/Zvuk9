@@ -216,8 +216,11 @@ ISR(TIMER0_COMPA_vect)    {
 
 inline void updateEncoder(uint8_t encoderID)    {
 
-    uint8_t p1val = (*encoderPort1Array[encoderID] >> encoderPinIndex1Array[encoderID]) & 0x01;
-    uint8_t p2val = (*encoderPort2Array[encoderID] >> encoderPinIndex2Array[encoderID]) & 0x01;
+    uint8_t p1val = readPin(*encoderPort1Array[encoderID], encoderPinIndex1Array[encoderID]);
+    uint8_t p2val = readPin(*encoderPort2Array[encoderID], encoderPinIndex2Array[encoderID]);
+
+    //uint8_t p1val = (*encoderPort1Array[encoderID] >> encoderPinIndex1Array[encoderID]) & 0x01;
+    //uint8_t p2val = (*encoderPort2Array[encoderID] >> encoderPinIndex2Array[encoderID]) & 0x01;
 
     uint8_t pairState = p1val;
     pairState <<= 1;
