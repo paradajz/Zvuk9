@@ -166,6 +166,7 @@ int main()    {
         buttons.update();
         encoders.update();
         display.update();
+
         #ifdef DEBUG
         vserial.update();
         #endif

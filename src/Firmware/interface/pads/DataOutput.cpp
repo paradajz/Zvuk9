@@ -13,7 +13,7 @@ void Pads::sendX(uint8_t pad)  {
         printf("%d\n", lastXMIDIvalue[pad]);
         printf("X CC: %d\n", ccXPad[pad]);
     #else
-        midi.sendControlChange(midiChannel[pad], ccXPad[pad], lastXMIDIvalue[pad]);
+        midi.sendControlChange(ccXPad[pad], lastXMIDIvalue[pad], midiChannel[pad]);
     #endif
 
 }
@@ -25,7 +25,7 @@ void Pads::sendY(uint8_t pad)  {
         printf("%d\n", lastYMIDIvalue[pad]);
         printf("Y CC: %d\n", ccYPad[pad]);
     #else
-        midi.sendControlChange(midiChannel[pad], ccYPad[pad], lastYMIDIvalue[pad]);
+        midi.sendControlChange(ccYPad[pad], lastYMIDIvalue[pad], midiChannel[pad]);
     #endif
 
 }
@@ -49,7 +49,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
             #ifdef DEBUG
                 printf("%d\n", padNote[pad][i]);
             #else
-                midi.sendNoteOn(midiChannel[pad], padNote[pad][i], velocity);
+                midi.sendNoteOn(padNote[pad][i], velocity, midiChannel[pad]);
             #endif
 
         }
@@ -98,7 +98,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
                         printf("%d\n", padNote[pad][i]);
                     #else
                         uint8_t velocity_ = 0;
-                        midi.sendNoteOff(midiChannel[pad], padNote[pad][i], velocity_);
+                        midi.sendNoteOff(padNote[pad][i], velocity_, midiChannel[pad]);
                     #endif
 
                 }
