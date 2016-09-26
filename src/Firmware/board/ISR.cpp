@@ -65,7 +65,8 @@ void Board::initTimers()    {
     //set compare match register to desired timer count
     OCR0A = 124; //500uS
 
-    //OCR3A = 10; //??
+    //encoder read ISR
+    OCR3A = 10;
 
     //enable CTC interrupt for timer0
     TIMSK0 |= (1 << OCIE0A);

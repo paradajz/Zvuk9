@@ -39,24 +39,24 @@ void Buttons::init()  {
 
     processingEnabled = false;
 
-    ////read buttons for 0.1 seconds
-    //do {
-//
-        ////read all buttons without activating event handlers
-        //update();
-//
-    //}   while ((rTimeMillis() - currentTime) < 100);
-//
-    //if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP)) {
-//
-        //menu.displayMenu(serviceMenu);
-        //disable();
-//
-    //}else {
+    //read buttons for 0.1 seconds
+    do {
+
+        //read all buttons without activating event handlers
+        update();
+
+    }   while ((rTimeMillis() - currentTime) < 100);
+
+    if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP)) {
+
+        menu.displayMenu(serviceMenu);
+        disable();
+
+    }   else {
 
         processingEnabled = true;
 
-    //}
+    }
 
 }
 

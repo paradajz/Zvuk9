@@ -92,13 +92,13 @@ void startUpAnimation() {
 
     display.displayHelloMessage();
 
-    //wait_ms(600);
+    wait_ms(600);
 
     //restore led states
     for (int i=0; i<NUMBER_OF_LEDS; i++)
         leds.setLEDstate(i, tempLedStateArray[i]);
 
-    //wait_ms(1500);
+    wait_ms(1500);
 
     //restore normal fade speed
     leds.setFadeSpeed(DEFAULT_FADE_SPEED);
@@ -116,7 +116,7 @@ int main()    {
     #endif
 
     //do not change order of initialization!
-    configuration.init();
+    //configuration.init();
 
     #ifdef NDEBUG
     midi.init(dinInterface);
@@ -124,7 +124,6 @@ int main()    {
     midi.setInputChannel(1);
     #endif
 
-    sei();
     board.init();
 
     display.init();
@@ -165,11 +164,11 @@ int main()    {
 
     while(1) {
 
-        printf("testing\n");
-        wait_ms(1000);
+        //printf("testing\n");
+        //wait_ms(1000);
 
         //pads.update();
-        //buttons.update();
+        buttons.update();
         encoders.update();
         display.update();
         #ifdef DEBUG
