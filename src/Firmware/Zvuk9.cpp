@@ -92,13 +92,13 @@ void startUpAnimation() {
 
     display.displayHelloMessage();
 
-    wait_ms(600);
+    wait_ms(800);
 
     //restore led states
     for (int i=0; i<NUMBER_OF_LEDS; i++)
         leds.setLEDstate(i, tempLedStateArray[i]);
 
-    wait_ms(1500);
+    wait_ms(1800);
 
     //restore normal fade speed
     leds.setFadeSpeed(DEFAULT_FADE_SPEED);

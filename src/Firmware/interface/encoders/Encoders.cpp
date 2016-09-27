@@ -44,8 +44,7 @@ void Encoders::update(bool process) {
 
         lastStepTime[i] = rTimeMillis();
 
-        for (int j=0; j<abs(encoderSteps); j++)
-            handleEncoder(i, (encoderSteps > 0), steps);
+        handleEncoder(i, (encoderSteps > 0), steps);
 
     }
 

@@ -65,9 +65,6 @@ void Board::initTimers()    {
 
 ISR(TIMER3_COMPA_vect)  {
 
-    //static bool millisUpdate = false;
-    //millisUpdate = !millisUpdate;
-
     //turn off pwm
     TCCR2A &= ~(1<<COM2A1);
     TCCR1A &= ~(1<<COM1A1);
@@ -141,20 +138,10 @@ ISR(TIMER3_COMPA_vect)  {
     //update run time
     rTime_ms = ms;
 
-    uint8_t p1val, p2val;
-    uint8_t pairState;
-
     for (int i=0; i<NUMBER_OF_ENCODERS; i++)    {
 
-        p1val = readPin(*encoderPort1Array[i], encoderPinIndex1Array[i]);
-        p2val = readPin(*encoderPort2Array[i], encoderPinIndex2Array[i]);
-
-        pairState = p1val;
-        pairState <<= 1;
-        pairState |= p2val;
-
-        encoderBuffer[i] <<= 2;
-        encoderBuffer[i] |= pairState;
+        bitWrite(encoderBuffer[i], 1, readPin(*encoderPort1Array[i], encoderPinIndex1Array[i]));
+        bitWrite(encoderBuffer[i], 0, readPin(*encoderPort2Array[i], encoderPinIndex2Array[i]));
 
     }
 

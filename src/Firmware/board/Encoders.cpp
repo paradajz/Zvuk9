@@ -1,8 +1,7 @@
 #include "Board.h"
 
-volatile int8_t      encoderMoving[NUMBER_OF_ENCODERS];
-uint16_t             encoderData[NUMBER_OF_ENCODERS];
-volatile uint32_t    encoderBuffer[NUMBER_OF_ENCODERS];
+uint16_t            encoderData[NUMBER_OF_ENCODERS];
+volatile uint8_t    encoderBuffer[NUMBER_OF_ENCODERS];
 
 volatile uint8_t *encoderPort1Array[] = {
 
@@ -51,11 +50,13 @@ void Board::initEncoders()  {
 
 }
 
-inline void updateEncoder(uint8_t encoderID)    {
+inline int8_t readEncoder(uint8_t encoderID, uint8_t pairState)  {
 
-    //add new data
+    //generate new data
     uint8_t newPairData = 0;
-    //newPairData |= (((encoderData[encoderID] << 2) & 0x000F) | (uint16_t)pairState);
+    newPairData |= (((encoderData[encoderID] << 2) & 0x000F) | (uint16_t)pairState);
+
+    //remove old data
     encoderData[encoderID] &= ENCODER_CLEAR_TEMP_STATE_MASK;
 
     //shift in new data
@@ -63,7 +64,7 @@ inline void updateEncoder(uint8_t encoderID)    {
 
     int8_t encRead = encoderLookUpTable[newPairData];
 
-    if (!encRead) return;
+    if (!encRead) return 0;
 
     bool newEncoderDirection = encRead > 0;
     //get current number of pulses from encoderData
@@ -78,8 +79,8 @@ inline void updateEncoder(uint8_t encoderID)    {
     //write new encoder direction
     bitWrite(encoderData[encoderID], ENCODER_DIRECTION_BIT, newEncoderDirection);
 
-    if (lastEncoderDirection != newEncoderDirection) return;
-    if (currentPulses % PULSES_PER_STEP) return;
+    if (lastEncoderDirection != newEncoderDirection) return 0;
+    if (currentPulses % PULSES_PER_STEP) return 0;
 
     //clear current pulses
     encoderData[encoderID] &= ENCODER_CLEAR_PULSES_MASK;
@@ -87,17 +88,15 @@ inline void updateEncoder(uint8_t encoderID)    {
     //set default pulse count
     encoderData[encoderID] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);
 
-    //clear current moving status
-    if (newEncoderDirection) encoderMoving[encoderID]++;
-    else encoderMoving[encoderID]--;
+    if (newEncoderDirection)
+        return 1;
+    else return -1;
 
 }
 
 int8_t Board::getEncoderState(uint8_t encoderNumber)  {
 
-    int8_t returnValue;
-    returnValue = encoderMoving[encoderNumber];
-    encoderMoving[encoderNumber] = 0;
-    return returnValue;
+    uint8_t tempBuffer = encoderBuffer[encoderNumber];
+    return readEncoder(encoderNumber, tempBuffer);
 
 }

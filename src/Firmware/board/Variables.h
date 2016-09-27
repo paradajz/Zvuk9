@@ -12,11 +12,10 @@ extern bool                 blinkEnabled;
 extern volatile uint8_t     ledValue[NUMBER_OF_LEDS];
 
 //encoders
-extern volatile int8_t      encoderMoving[NUMBER_OF_ENCODERS];
 extern uint16_t             encoderData[NUMBER_OF_ENCODERS];
 extern volatile uint8_t     *encoderPort1Array[NUMBER_OF_ENCODERS];
 extern volatile uint8_t     *encoderPort2Array[NUMBER_OF_ENCODERS];
-extern volatile uint32_t    encoderBuffer[NUMBER_OF_ENCODERS];
+extern volatile uint8_t     encoderBuffer[NUMBER_OF_ENCODERS];
 
 //millis
 extern volatile uint32_t    rTime_ms;
