@@ -1,11 +1,11 @@
 #include "Board.h"
 
-volatile int8_t      activeColumnInterrupt;
-uint8_t              ledState[NUMBER_OF_LEDS];
-int16_t              transitionCounter[NUMBER_OF_LEDS];
-volatile uint8_t     pwmSteps = DEFAULT_FADE_SPEED;
-uint32_t             ledBlinking;
-uint16_t             ledBlinkTimer[NUMBER_OF_LEDS];
+volatile int8_t     activeColumnInterrupt;
+uint8_t             ledState[NUMBER_OF_LEDS];
+int16_t             transitionCounter[NUMBER_OF_LEDS];
+volatile uint8_t    pwmSteps = DEFAULT_FADE_SPEED;
+uint16_t            ledBlinkTimer[NUMBER_OF_LEDS];
+bool                blinkEnabled;
 
 void Board::initLEDs()  {
 
@@ -27,69 +27,70 @@ void Board::initLEDs()  {
 
 }
 
-uint8_t ledStateToValue(ledState_t state)  {
+ledState_t Board::getLEDstate(uint8_t ledNumber)  {
+
+    if (bitRead(ledState[ledNumber], LED_HALF_INTENSITY_BIT))
+        return ledStateDim;
+
+    if (bitRead(ledState[ledNumber], LED_FULL_INTENSITY_BIT))
+    return ledStateFull;
+
+    return ledStateOff;
+
+}
+
+void Board::setLEDstate(uint8_t ledNumber, ledState_t state, bool blink) {
 
     switch(state)   {
 
         case ledStateOff:
-        return 0;
+        ledState[ledNumber] = 0;
+        ledBlinkTimer[ledNumber] = 0;
+        break;
 
         case ledStateDim:
-        return LED_INTENSITY_HALF;
+        //set dim intensity bit
+        bitSet(ledState[ledNumber], LED_HALF_INTENSITY_BIT);
+        //clear full intensity bit
+        bitClear(ledState[ledNumber], LED_FULL_INTENSITY_BIT);
+        //clear blinking bits, just in case
+        bitClear(ledState[ledNumber], LED_BLIK_ENABLED_BIT);
+        bitClear(ledState[ledNumber], LED_BLINK_STATE_BIT);
+        break;
 
         case ledStateFull:
-        return LED_INTENSITY_FULL;
-
-        case ledStateBlink:
-        return LED_INTENSITY_FULL;
+        //set full intensity bit
+        bitSet(ledState[ledNumber], LED_FULL_INTENSITY_BIT);
+        //clear dim intensity bit
+        bitClear(ledState[ledNumber], LED_HALF_INTENSITY_BIT);
+        //clear blinking bits, just in case
+        bitClear(ledState[ledNumber], LED_BLIK_ENABLED_BIT);
+        bitClear(ledState[ledNumber], LED_BLINK_STATE_BIT);
+        break;
 
         default:
-        return 0;
+        return;
 
     }
 
-}
+    if (blink) {
 
-ledState_t Board::getLEDstate(uint8_t ledNumber)  {
-
-    if (bitRead(ledBlinking, ledNumber))
-    return ledStateBlink;
-
-    switch(ledState[ledNumber]) {
-
-        case LED_INTENSITY_FULL:
-        return ledStateFull;
-
-        case LED_INTENSITY_HALF:
-        return ledStateDim;
-
-        default:
-        return ledStateOff;
-
-    }
-
-}
-
-void Board::setLEDstate(uint8_t ledNumber, ledState_t state) {
-
-    uint8_t value = ledStateToValue(state);
-
-    if (state == ledStateBlink) {
-
-        bitWrite(ledBlinking, ledNumber, 1);
+        //enable blinking
+        bitSet(ledState[ledNumber], LED_BLIK_ENABLED_BIT);
         //make sure led starts blinking immediately
-        if ((ledState[ledNumber] == LED_INTENSITY_FULL) || (ledState[ledNumber] == LED_INTENSITY_HALF))
-        value = LED_INTENSITY_OFF;
-        else value = LED_INTENSITY_FULL;
+        bitSet(ledState[ledNumber], LED_BLINK_STATE_BIT);
 
-    } else if (bitRead(ledBlinking, ledNumber))   {
+    } else {
 
-        bitWrite(ledBlinking, ledNumber, 0);
-        ledBlinkTimer[ledNumber] = 0;
+        if (bitRead(ledState[ledNumber], LED_BLIK_ENABLED_BIT))   {
+
+            //disable blinking bits
+            bitClear(ledState[ledNumber], LED_BLIK_ENABLED_BIT);
+            bitClear(ledState[ledNumber], LED_BLINK_STATE_BIT);
+
+        }
 
     }
-
-    ledState[ledNumber] = value;
 
 }
 

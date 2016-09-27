@@ -8,7 +8,7 @@ extern volatile int8_t      activeColumnInterrupt;
 extern uint8_t              ledState[NUMBER_OF_LEDS];
 extern int16_t              transitionCounter[NUMBER_OF_LEDS];
 extern volatile uint8_t     pwmSteps;
-extern uint32_t             ledBlinking;
+extern bool                 blinkEnabled;
 extern uint16_t             ledBlinkTimer[NUMBER_OF_LEDS];
 
 //encoders

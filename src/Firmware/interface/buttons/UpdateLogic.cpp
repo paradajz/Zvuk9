@@ -93,7 +93,6 @@ void Buttons::update()    {
         if (!userMenuTimeout) userMenuTimeout = rTimeMillis();
         else if (((rTimeMillis() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed()) {
 
-            //buttonEnabled[BUTTON_ON_OFF_SPLIT] = false;
             userMenuTimeout = 0;
             menu.displayMenu(userMenu);
             #ifdef DEBUG
@@ -102,7 +101,7 @@ void Buttons::update()    {
             //disable buttons while in menu
             buttons.disable();
             //turn off blinky led
-            leds.setLEDstate(LED_ON_OFF_SPLIT, ledStateOff);
+            leds.setLEDstate(LED_ON_OFF_SPLIT, leds.getLEDstate(LED_ON_OFF_SPLIT), false);
 
         }
 
@@ -184,8 +183,7 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
             buttonEnabled[i] = true;
             //reset blinking
             uint8_t ledNumber = getLEDnumberFromButton(i);
-            if (leds.getLEDstate(ledNumber) == ledStateBlink)
-                leds.setLEDstate(ledNumber, ledStateOff);
+            leds.setLEDstate(ledNumber, leds.getLEDstate(ledNumber), false);
 
         }
 

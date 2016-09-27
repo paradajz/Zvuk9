@@ -46,9 +46,9 @@ void LEDs::allLEDsOn() {
 
 }
 
-void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state)    {
+void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state, bool blink)    {
 
-    board.setLEDstate(ledNumber, state);
+    board.setLEDstate(ledNumber, state, blink);
 
 }
 

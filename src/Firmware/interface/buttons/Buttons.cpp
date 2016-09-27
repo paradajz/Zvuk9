@@ -71,11 +71,14 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
 
             pads.midiSendOnOff(onOff_notes);
             lcdMessageType = onOff_notes;
-            if (pads.getMIDISendState(onOff_notes, lastTouchedPad)) ledState = ledStateFull; else ledState = ledStateOff;
+            if (pads.getMIDISendState(onOff_notes, lastTouchedPad))
+                ledState = ledStateFull;
+            else
+                ledState = ledStateOff;
 
         }   else {
 
-            leds.setLEDstate(ledNumber, ledStateBlink);
+            leds.setLEDstate(ledNumber, pads.getMIDISendState(onOff_notes, lastTouchedPad) ? ledStateFull : ledStateOff, true);
             return;
 
         }
@@ -124,7 +127,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)    {
 
         }   else {
 
-            leds.setLEDstate(ledNumber, ledStateBlink);
+            leds.setLEDstate(ledNumber, pads.getSplitState() ? ledStateFull : ledStateOff, true);
             return;
 
         }

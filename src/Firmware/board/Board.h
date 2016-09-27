@@ -14,8 +14,7 @@ typedef enum {
 
     ledStateOff,
     ledStateDim,
-    ledStateFull,
-    ledStateBlink
+    ledStateFull
 
 } ledState_t;
 
@@ -25,7 +24,7 @@ class Board {
     Board();
     void init();
     ledState_t getLEDstate(uint8_t ledNumber);
-    void setLEDstate(uint8_t ledNumber, ledState_t state);
+    void setLEDstate(uint8_t ledNumber, ledState_t state, bool blink = false);
     int8_t getEncoderState(uint8_t encoderID);
     void setPWMsteps(uint8_t steps);
     bool buttonDataAvailable();

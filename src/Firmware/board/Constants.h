@@ -15,7 +15,27 @@
 #define LED_INTENSITY_FULL          255
 #define LED_INTENSITY_HALF          110
 
-#define LED_BLINK_TIME              250
+#define LED_BLINK_TIME              250 //ms
+
+/*
+
+    LED state is stored into one byte (ledState). The bits have following meaning (7 being the MSB bit):
+
+    7: x
+    6: x
+    5: x
+    4: x
+    3: Blink bit (timer changes this bit)
+    2: LED blinking is on
+    1: LED is constantly turned on, half intensity
+    0: LED is constantly turned on, full intensity
+
+    */
+
+#define LED_FULL_INTENSITY_BIT  0
+#define LED_HALF_INTENSITY_BIT  1
+#define LED_BLIK_ENABLED_BIT    2
+#define LED_BLINK_STATE_BIT     3
 
 /*
 
@@ -46,5 +66,7 @@ const uint8_t expanderAddress[] = { 0x21, 0x20 };   //chip address
 const uint8_t gpioAddress[]     = { 0x12, 0x13 };   //input/output
 const uint8_t iodirAddress[]    = { 0x00, 0x01 };   //port A/port B
 const uint8_t gppuAddress[]     = { 0x0C, 0x0D };   //interrupt/pull-up
+
+
 
 #endif
