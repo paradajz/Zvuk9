@@ -3,6 +3,9 @@
 #include "../../eeprom/Configuration.h"
 #include "../pads/Pads.h"
 
+uint32_t    ledBlinkTimer[NUMBER_OF_LEDS];
+bool        ledBlinkState[NUMBER_OF_LEDS];
+
 const uint8_t ledNoteArray[] = {
 
     LED_NOTE_C,
@@ -32,6 +35,26 @@ void LEDs::init()   {
 
 }
 
+void LEDs::update() {
+
+    for (int i=0; i<NUMBER_OF_LEDS; i++)    {
+
+        if (board.ledBlinking(i))   {
+
+            if ((rTimeMillis() - ledBlinkTimer[i]) > LED_BLINK_TIME)  {
+
+                board.setLEDstate(i, board.getLEDstate(i), ledBlinkState[i]);
+                ledBlinkState[i] = !ledBlinkState[i];
+                ledBlinkTimer[i] = rTimeMillis();
+
+            }
+
+        }
+
+    }
+
+}
+
 void LEDs::allLEDsOff() {
 
     for (int i=0; i<NUMBER_OF_LEDS; i++)
@@ -49,6 +72,9 @@ void LEDs::allLEDsOn() {
 void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state, bool blink)    {
 
     board.setLEDstate(ledNumber, state, blink);
+    ledBlinkState[ledNumber] = blink;
+    if (state == ledStateOff)
+        ledBlinkTimer[ledNumber] = 0;
 
 }
 

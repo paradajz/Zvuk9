@@ -33,6 +33,7 @@ class Board {
     int16_t getPadX();
     int16_t getPadY();
     void setMuxInput(uint8_t muxInput);
+    bool ledBlinking(uint8_t ledNumber);
 
     private:
     void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value);

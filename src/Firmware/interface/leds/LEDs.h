@@ -9,7 +9,7 @@ class LEDs  {
     public:
     LEDs();
     void init();
-
+    void update();
     void allLEDsOn();
     void allLEDsOff();
 

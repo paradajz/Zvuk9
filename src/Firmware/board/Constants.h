@@ -34,7 +34,7 @@
 
 #define LED_FULL_INTENSITY_BIT  0
 #define LED_HALF_INTENSITY_BIT  1
-#define LED_BLIK_ENABLED_BIT    2
+#define LED_BLINK_ENABLED_BIT   2
 #define LED_BLINK_STATE_BIT     3
 
 /*
