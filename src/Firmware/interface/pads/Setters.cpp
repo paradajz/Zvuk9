@@ -671,21 +671,30 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
 
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
-                if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i]) != BLANK_NOTE)
-                if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i]) < MIDI_NOTES)
-                changeAllowed = false;
+                if (padNote[i][j] != BLANK_NOTE)    {
+
+                    if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i]) < MIDI_NOTES)
+                        changeAllowed = false;
+
+                }
 
                 if (!changeAllowed) break;
 
             }
 
-            }   else {  //shift up
+        }   else {  //shift up
 
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
-                if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i]) != BLANK_NOTE)
-                if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i])+MIDI_NOTES > MAX_MIDI_VALUE)
-                changeAllowed = false;
+                if (padNote[i][j] != BLANK_NOTE)  {
+
+                    if (padNote[i][j]+(MIDI_NOTES*octaveShiftAmount[i])+MIDI_NOTES > MAX_MIDI_VALUE)    {
+
+                        changeAllowed = false;
+
+                    }
+
+                }
 
                 if (!changeAllowed) break;
 
@@ -730,14 +739,14 @@ changeOutput_t Pads::shiftOctave(bool direction)  {
                 else {
 
                     bitWrite(octaveShiftPadBuffer, i, 1);
-                    (direction) ? octaveShiftAmount[i]++ : octaveShiftAmount[i]--;
+                    (direction) ? octaveShiftAmount[i]+=1 : octaveShiftAmount[i]-=1;
 
                 }
 
             }
 
             //octave is ALWAYS first note on pad in predefined scales
-            activeOctave = getOctaveFromNote(padNote[0][0]+(octaveShiftAmount[0]*MIDI_NOTES));
+            activeOctave = getOctaveFromNote(padNote[0][0]) + octaveShiftAmount[0];
 
             #ifdef DEBUG
                 printf("active octave: %d\n", activeOctave);
