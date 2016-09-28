@@ -13,7 +13,7 @@
 
 #define LED_INTENSITY_OFF           0
 #define LED_INTENSITY_FULL          255
-#define LED_INTENSITY_HALF          110
+#define LED_INTENSITY_HALF          100
 
 #define LED_BLINK_TIME              250 //ms
 

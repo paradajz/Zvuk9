@@ -50,6 +50,21 @@
 #define DECODER_OUT_3_PORT          PORTB
 #define DECODER_OUT_3_PIN_INDEX     3
 
+#define DECODER_CLEAR_MASK          0b11110001
+
+const uint8_t decoderStateArray[] = {
+
+    0b00000000,
+    0b00000010,
+    0b00000100,
+    0b00000110,
+    0b00001000,
+    0b00001010,
+    0b00001100,
+    0b00001110
+
+};
+
 //encoders
 
 //encoder 0

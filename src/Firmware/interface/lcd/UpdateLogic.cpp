@@ -50,7 +50,6 @@ void LCD::init()    {
 
 void LCD::update()  {
 
-    //if (bitRead(ADCSRA, ADSC)) return;  //don't mess with LCD while ADC conversion is in progress
     if ((rTimeMillis() - lastLCDupdateTime) < LCD_REFRESH_TIME) return; //we don't need to update lcd in real time
 
     //get message status to determine what to print
@@ -58,8 +57,6 @@ void LCD::update()  {
 
     //use char pointer to point to line we're going to print
     char *charPointer;
-
-    //checkPadDataClear();
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)    {
 
