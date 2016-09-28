@@ -3,7 +3,7 @@
 #include "../lcd/LCD.h"
 #include "../../eeprom/Configuration.h"
 
-bool editModeActivated;
+bool editModeActivated = false;
 
 void Pads::setupPadEditMode(uint8_t pad)    {
 

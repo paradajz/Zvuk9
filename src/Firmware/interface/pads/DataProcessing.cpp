@@ -315,11 +315,17 @@ void Pads::update()  {
 
             }
 
-            if (!editModeActive() && lastMIDInoteState[pad]) //update only once, on press
+            if (!editModeActive() && lastMIDInoteState[pad])    {
+
+                //update only once, on press
                 setFunctionLEDs(pad);
 
-            if (editModeActive() && lastMIDInoteState[pad]) //update only once, on press
-                setupPadEditMode(pad);
+            } else {
+
+                if (editModeActive() && lastMIDInoteState[pad]) //update only once, on press
+                    setupPadEditMode(pad);
+
+            }
 
         }
 
@@ -364,11 +370,6 @@ void Pads::update()  {
         aftertouchAvailable = false;
         xAvailable = false;
         yAvailable = false;
-
-        //#ifdef DEBUG
-            //if (activePad == 0)
-                //printf("\n");
-        //#endif
 
     }
 

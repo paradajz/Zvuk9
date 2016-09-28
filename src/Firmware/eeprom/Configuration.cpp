@@ -31,33 +31,12 @@ void Configuration::init() {
     createMemoryLayout();
     createSectionAddresses();
 
-    checkReset();
-
 }
 
 void Configuration::factoryReset(factoryResetType_t type)   {
 
-    //strcpy_P(stringBuffer, restoringDefaults_string);
-    //lcd_clrscr();
-    //lcd_gotoxy(0, 0);
-    //lcd_puts(stringBuffer);
-    //lcd_gotoxy(0, 1);
-    //_delay_ms(2000);
-    //strcpy_P(stringBuffer, pleaseWait_string);
-    //lcd_puts(stringBuffer);
-    //_delay_ms(2000);
-
-    if (type == factoryReset_wipeRestore)
-        clearEEPROM();
-
     initSettings(type == factoryReset_partial);
-
     writeSignature();
-
-    //lcd_gotoxy(0,2);
-    //strcpy_P(stringBuffer, complete_string);
-    //lcd_puts(stringBuffer);
-    //_delay_ms(2000);
 
 }
 
@@ -70,49 +49,20 @@ void Configuration::writeSignature()    {
 
 }
 
-void Configuration::checkReset()    {
+bool Configuration::checkSignature()    {
 
-    //if ID bytes haven't been written to EEPROM on specified address,
-    //write default configuration to EEPROM
-
-    bool factory_reset = false;
     uint8_t unique_id_invert = invertByte(EEPROM_UNIQUE_ID);
     uint8_t checkByte;
 
-    //first check if all bytes up to START_OFFSET address match unique id
+    //check if all bytes up to START_OFFSET address match unique id
     for (int i=0; i<START_OFFSET; i++)  {
 
         (i%2) ? checkByte = unique_id_invert : checkByte = EEPROM_UNIQUE_ID;
 
-        if (eeprom_read_byte((uint8_t*)i) != checkByte)  {
+        if (eeprom_read_byte((uint8_t*)i) != checkByte)
+            return false;
 
-            factory_reset = true;
-            break;
-
-        }
-
-    }
-
-    //id bytes don't match
-    //check if all bytes up to START_OFFSET are same
-    //if they're the same, eeprom has been cleared before, only restore configuration
-    //else clear eeprom and apply config
-    if (factory_reset)  {
-
-        for (int i=0; i<START_OFFSET-1; i++)  {
-
-            if (eeprom_read_byte((uint8_t*)i) != invertByte(eeprom_read_byte((uint8_t*)i+1)))    {
-
-                factoryReset(factoryReset_wipeRestore);
-                return;
-
-            }
-
-        }
-
-        factoryReset(factoryReset_restore);
-
-    }
+    }   return true;
 
 }
 

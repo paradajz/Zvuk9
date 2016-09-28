@@ -117,6 +117,28 @@ int main()    {
 
     //do not change order of initialization!
     configuration.init();
+    if (!configuration.checkSignature())    {
+
+        char tempBuffer[20];
+
+        strcpy_P(tempBuffer, restoringDefaults_string);
+        lcd_clrscr();
+        lcd_gotoxy(0, 0);
+        lcd_puts(tempBuffer);
+        lcd_gotoxy(0, 1);
+        wait_ms(2000);
+        strcpy_P(tempBuffer, pleaseWait_string);
+        lcd_puts(tempBuffer);
+        wait_ms(2000);
+
+        configuration.factoryReset(factoryReset_partial);
+
+        lcd_gotoxy(0,2);
+        strcpy_P(tempBuffer, complete_string);
+        lcd_puts(tempBuffer);
+        wait_ms(2000);
+
+    }
 
     #ifdef NDEBUG
     midi.init(dinInterface);

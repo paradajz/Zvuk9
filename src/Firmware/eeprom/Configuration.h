@@ -50,7 +50,6 @@ typedef enum {
 
 typedef enum {
 
-    factoryReset_wipeRestore, //clear eeprom, restore defaults
     factoryReset_restore, //update eeprom with defaults
     factoryReset_partial //partially restore defaults
 
@@ -67,6 +66,7 @@ class Configuration {
     #endif
     void clearEEPROM();
     void init();
+    bool checkSignature();
     void initSettings(bool partialReset);
     void factoryReset(factoryResetType_t type);
     friend void factory_reset(factoryResetType_t type);
@@ -134,7 +134,6 @@ class Configuration {
     void initUserScales(bool partialReset);
     void initPadCalibration(bool partialReset);
     void initMIDIsettings(bool partialReset);
-    void checkReset();
     void writeSignature();
     #ifdef ENABLE_ASYNC_UPDATE
     void queueData(uint16_t eepromAddress, uint16_t data, uint8_t parameterType);
