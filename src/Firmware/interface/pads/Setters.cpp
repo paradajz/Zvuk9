@@ -888,17 +888,17 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
             if ((uint8_t)currentScaleTonic < (uint8_t)newTonic)      {
 
-                if (padNote[i][j]+  noteShiftAmount[i] != BLANK_NOTE)
-                if ((padNote[i][j] + noteShiftAmount[i] + changeDifference) > MAX_MIDI_VALUE)
-                changeAllowed = false;
+                if (padNote[i][j] != BLANK_NOTE)
+                    if ((padNote[i][j] + noteShiftAmount[i] + changeDifference) > MAX_MIDI_VALUE)
+                        changeAllowed = false;
 
             }
 
             else if ((uint8_t)currentScaleTonic > (uint8_t)newTonic) {
 
-                if (padNote[i][j] + noteShiftAmount[i] != BLANK_NOTE)
-                if ((padNote[i][j] + noteShiftAmount[i] - changeDifference) < MIN_MIDI_VALUE)
-                changeAllowed = false;
+                if (padNote[i][j] != BLANK_NOTE)
+                    if ((padNote[i][j] + noteShiftAmount[i] - changeDifference) < MIN_MIDI_VALUE)
+                        changeAllowed = false;
 
             }
 
@@ -929,7 +929,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)  {
 
             for (int j=0; j<NOTES_PER_PAD; j++) {
 
-                if (padNote[i][j] + noteShiftAmount[i] != BLANK_NOTE)    {
+                if (padNote[i][j] != BLANK_NOTE)    {
 
                     if (shiftDirection) newNote = padNote[i][j] + changeDifference + noteShiftAmount[i];
                     else                newNote = padNote[i][j] - changeDifference + noteShiftAmount[i];
