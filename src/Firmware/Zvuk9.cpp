@@ -131,7 +131,7 @@ int main()    {
         lcd_puts(tempBuffer);
         wait_ms(2000);
 
-        configuration.factoryReset(factoryReset_partial);
+        configuration.factoryReset(factoryReset_restore);
 
         lcd_gotoxy(0,2);
         strcpy_P(tempBuffer, complete_string);
