@@ -326,14 +326,23 @@ changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate,
     switch(coordinate)  {
 
         case coordinateX:
+        #ifdef DEBUG
+        printf("X ");
+        #endif
         switch(limitType)   {
 
             case ccLimitTypeMax:
+            #ifdef DEBUG
+            printf("max for ");
+            #endif
             variablePointer = ccXmaxPad;
             configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_MAX_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_MAX_ID;
             break;
 
             case ccLimitTypeMin:
+            #ifdef DEBUG
+            printf("min for ");
+            #endif
             variablePointer = ccXminPad;
             configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_MIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_MIN_ID;
             break;
@@ -345,14 +354,21 @@ changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate,
         break;
 
         case coordinateY:
+        printf("Y ");
         switch(limitType)   {
 
             case ccLimitTypeMax:
+            #ifdef DEBUG
+            printf("max for ");
+            #endif
             variablePointer = ccYmaxPad;
             configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_MAX_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_MAX_ID;
             break;
 
             case ccLimitTypeMin:
+            #ifdef DEBUG
+            printf("min for ");
+            #endif
             variablePointer = ccYminPad;
             configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_MIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_MIN_ID;
             break;
@@ -391,7 +407,7 @@ changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate,
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
             variablePointer[startPad] = changedValue;
             #ifdef DEBUG
-                printf("Y min for %d pad: %d\n", startPad, changedValue);
+                printf("pad %d: %d\n", startPad, changedValue);
             #endif
             break;
 
@@ -401,7 +417,7 @@ changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate,
             for (int i=0; i<MAX_PADS; i++)
                 variablePointer[i] = changedValue;
             #ifdef DEBUG
-            printf("Y min for all pads: %d\n", changedValue);
+                printf("all pads: %d\n", changedValue);
             #endif
             break;
 
