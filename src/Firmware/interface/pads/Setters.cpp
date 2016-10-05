@@ -1021,18 +1021,30 @@ void Pads::midiSendOnOff(onOff_t type)    {
     switch(type)    {
 
         case onOff_notes:
+        #ifdef DEBUG
+        printf("Notes ");
+        #endif
         variablePointer = noteSendEnabled;
         break;
 
         case onOff_x:
+        #ifdef DEBUG
+        printf("X ");
+        #endif
         variablePointer = xSendEnabled;
         break;
 
         case onOff_y:
+        #ifdef DEBUG
+        printf("Y ");
+        #endif
         variablePointer = ySendEnabled;
         break;
 
         case onOff_aftertouch:
+        #ifdef DEBUG
+        printf("Aftertouch ");
+        #endif
         variablePointer = aftertouchSendEnabled;
         break;
 
@@ -1041,7 +1053,7 @@ void Pads::midiSendOnOff(onOff_t type)    {
 
     }
 
-    if (!splitEnabled)   {   //feature splitting is off
+    if (!splitEnabled)   {
 
         newState = !variablePointer[0];
 
@@ -1049,7 +1061,6 @@ void Pads::midiSendOnOff(onOff_t type)    {
             setMIDISendState(type, i, newState);
 
         #ifdef DEBUG
-            printf("Notes ");
             newState ? printf("on") : printf("off");
             printf(" for all pads\n");
         #endif
@@ -1077,7 +1088,6 @@ void Pads::midiSendOnOff(onOff_t type)    {
         setMIDISendState(type, lastPressedPad, newState);
 
         #ifdef DEBUG
-            printf("Notes ");
             newState ? printf("on") : printf("off");
             printf(" for pad %d\n", lastPressedPad);
         #endif
