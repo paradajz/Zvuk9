@@ -717,6 +717,7 @@ void SysEx::addToResponse(sysExParameter_t value)    {
 
 void SysEx::sendCustomMessage(uint8_t id, sysExParameter_t value)   {
 
+    #ifdef NDEBUG
     #if PARAM_SIZE == 2
     uint8_t size = 9;
     #elif PARAM_SIZE == 1
@@ -731,6 +732,7 @@ void SysEx::sendCustomMessage(uint8_t id, sysExParameter_t value)   {
     customMessage[idByte_3] = defaultID.byte3;
     customMessage[statusByte] = ACK;
     customMessage[statusByte+1] = id;
+
     #if PARAM_SIZE == 2
     encDec_14bit encoded;
     encoded.value = value;
@@ -743,7 +745,6 @@ void SysEx::sendCustomMessage(uint8_t id, sysExParameter_t value)   {
     customMessage[statusByte+3] = 0xF7;
     #endif
 
-    #ifdef NDEBUG
     midi.sendSysEx(size, customMessage, true);
     #endif
 
