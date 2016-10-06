@@ -92,6 +92,7 @@ bool factoryReset(functionArgument argument) {
 
             leds.setFadeSpeed(1);
             leds.allLEDsOff();
+            wait_ms(2000);
             configuration.factoryReset((factoryResetType_t)argument.argument1);
             reboot();
 
