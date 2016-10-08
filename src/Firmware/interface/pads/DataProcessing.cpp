@@ -585,6 +585,11 @@ bool Pads::checkVelocity(uint8_t pad)  {
 
     //we've taken 3 pressure samples so far, get median value
     int16_t medianValue = getMedianValueXYZ(coordinateZ);
+
+    //#ifdef DEBUG
+    //printf("Pad %d, pressure: %d\n", pad, medianValue);
+    //#endif
+
     //calibrate pressure based on median value (0-1023 -> 0-127)
     uint8_t calibratedPressure = scalePressure(pad, medianValue, pressureVelocity);
 
@@ -593,12 +598,7 @@ bool Pads::checkVelocity(uint8_t pad)  {
 
     if (pressureStable(pad, pressDetected))    {
 
-        //#ifdef DEBUG
-            //printf("pad %d median value: %d\tMIDI value: %d\n", pad, medianValue, calibratedPressure);
-        //#endif
-
         //pad reading is stable
-
         switch (pressDetected)    {
 
             case true:

@@ -1,8 +1,6 @@
 #ifndef VALUES_H_
 #define VALUES_H_
 
-#include "Curves.h"
-
 const uint8_t PROGMEM gain_1[] PROGMEM = {
 
     0,
