@@ -1,5 +1,6 @@
 #include "Pads.h"
 #include "../lcd/menu/Menu.h"
+#include "../../eeprom/Defaults.h"
 
 void Pads::addXYSamples(int16_t xValue, int16_t yValue)    {
 
@@ -488,7 +489,7 @@ bool Pads::checkVelocity(uint8_t pad)  {
     //we've taken 3 pressure samples so far, get median value
     int16_t medianValue = getMedianValueXYZ(coordinateZ);
 
-    if (calibrationEnabled && (activeCalibration == coordinateZ) && (medianValue > 20)) {
+    if (calibrationEnabled && (activeCalibration == coordinateZ) && (medianValue > DEFAULT_PAD_PRESSURE_LIMIT_LOWER)) {
 
         //calibration is enabled
         int16_t medianValue = getMedianValueXYZ(activeCalibration);
@@ -498,7 +499,7 @@ bool Pads::checkVelocity(uint8_t pad)  {
         if (medianValue > maxCalibrationValue)
         maxCalibrationValue = medianValue;
 
-        if (maxCalibrationValue < 1024) {
+        if (maxCalibrationValue < 1024 && (maxCalibrationValue > DEFAULT_PAD_PRESSURE_LIMIT_LOWER)) {
 
             pads.calibrate(activeCalibration, upper, pad, maxCalibrationValue);
             #ifdef DEBUG
