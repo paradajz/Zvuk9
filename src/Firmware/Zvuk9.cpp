@@ -22,10 +22,10 @@
 #include "version/Hardware.h"
 #include "eeprom/Configuration.h"
 
-bool onCustom(uint8_t value) {
-
-    switch(value)   {
-
+bool onCustom(uint8_t value)
+{
+    switch(value)
+    {
         case FIRMWARE_VERSION_STRING:
         sysEx.addToResponse(getSWversion(swVersion_major));
         sysEx.addToResponse(getSWversion(swVersion_minor));
@@ -52,37 +52,34 @@ bool onCustom(uint8_t value) {
         configuration.factoryReset(factoryReset_partial);
         reboot();
         return true;
+    }
 
-    }   return false;
-
+    return false;
 }
 
-sysExParameter_t onGet(uint8_t block, uint8_t section, uint16_t index) {
-
+sysExParameter_t onGet(uint8_t block, uint8_t section, uint16_t index)
+{
     return configuration.readParameter(block, section, index);
-
 }
 
-bool onSet(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue)   {
-
+bool onSet(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue)
+{
     return configuration.writeParameter(block, section, index, newValue);
-
 }
 
-void startUpAnimation() {
-
+void startUpAnimation()
+{
     //slow down fading for effect
     leds.setFadeSpeed(1);
 
     ledState_t tempLedStateArray[NUMBER_OF_LEDS];
 
-    for (int i=0; i<NUMBER_OF_LEDS; i++)    {
-
+    for (int i=0; i<NUMBER_OF_LEDS; i++)
+    {
         //copy ledstates to temp field
         tempLedStateArray[i] = leds.getLEDstate(i);
         //turn all leds off
         leds.setLEDstate(i, ledStateOff);
-
     }
 
     //turn all leds on slowly
@@ -102,11 +99,10 @@ void startUpAnimation() {
 
     //restore normal fade speed
     leds.setFadeSpeed(DEFAULT_FADE_SPEED);
-
 }
 
-int main()    {
-
+int main()
+{
     //disable watchdog
     MCUSR &= ~(1 << WDRF);
     wdt_disable();
@@ -117,8 +113,8 @@ int main()    {
 
     //do not change order of initialization!
     configuration.init();
-    if (!configuration.checkSignature())    {
-
+    if (!configuration.checkSignature())
+    {
         char tempBuffer[20];
 
         strcpy_P(tempBuffer, restoringDefaults_string);
@@ -137,7 +133,6 @@ int main()    {
         strcpy_P(tempBuffer, complete_string);
         lcd_puts(tempBuffer);
         wait_ms(2000);
-
     }
 
     #ifdef NDEBUG
@@ -165,11 +160,8 @@ int main()    {
 
     buttons.init();
 
-    if (checkNewRevision()) {
-
+    if (checkNewRevision())
         display.displayFirmwareUpdated();
-
-    }
 
     #ifdef NDEBUG
     sysEx.setHandleGet(onGet);
@@ -182,8 +174,8 @@ int main()    {
     sysEx.addCustomRequest(FACTORY_RESET_STRING);
     #endif
 
-    while(1) {
-
+    while(1)
+    {
         pads.update();
         buttons.update();
         encoders.update();
@@ -201,26 +193,23 @@ int main()    {
         #endif
 
         #ifdef NDEBUG
-        if (midi.read(usbInterface))   {   //new message on usb
-
+        if (midi.read(usbInterface))
+        {
+            //new message on usb
             midiMessageType_t messageType = midi.getType(usbInterface);
 
-            switch(messageType) {
-
+            switch(messageType)
+            {
                 case midiMessageSystemExclusive:
                 sysEx.handleSysEx(midi.getSysExArray(usbInterface), midi.getSysExArrayLength(usbInterface));
                 break;
 
                 default:
                 break;
-
             }
-
         }
         #endif
-
     }
 
     return 0;
-
 }
