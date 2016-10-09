@@ -231,7 +231,7 @@ void Menu::changeOption(bool direction) {
 void Menu::exitMenu()   {
 
     #ifdef DEBUG
-        printf("Exiting menu\n");
+    printf("Exiting menu\n");
     #endif
     //exit menu and restore initial state
     display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());

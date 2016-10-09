@@ -135,7 +135,7 @@ class Pads  {
     int16_t getMedianValueXYZ(coordinateType_t coordinate);
 
     //data processing
-    bool pressureUpdated();
+    bool pressureUpdated(uint8_t pad);
     bool xyUpdated(uint8_t pad);
 
     //data availability checks
