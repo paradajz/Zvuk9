@@ -291,12 +291,9 @@ void Pads::getPressureLimits()  {
     //#endif
 
     for (int i=0; i<MAX_PADS; i++) {
-
-        padPressureLimitLower[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureLowerSection, i);
         padPressureLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
 
         //#ifdef DEBUG
-            //printf("Lower pressure limit for pad %d: %d\n", i, padPressureLimitLower[i]);
             //printf("Upper pressure limit for pad %d: %d\n", i, padPressureLimitUpper[i]);
         //#endif
 

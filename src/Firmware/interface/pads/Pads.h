@@ -217,8 +217,7 @@ class Pads  {
     int8_t      padCurveX[MAX_PADS],
                 padCurveY[MAX_PADS];
 
-    int16_t     padPressureLimitLower[MAX_PADS],
-                padPressureLimitUpper[MAX_PADS],
+    int16_t     padPressureLimitUpper[MAX_PADS],
                 padXLimitLower[MAX_PADS],
                 padXLimitUpper[MAX_PADS],
                 padYLimitLower[MAX_PADS],

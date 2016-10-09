@@ -1,5 +1,5 @@
 #include "Pads.h"
-
+#include "../../eeprom/Defaults.h"
 
 const uint8_t gamma_15[] = {
 
@@ -151,7 +151,7 @@ uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, pressureType_t type) 
         break;
 
         case pressureVelocity:
-        return gamma_15[map(constrain(pressure, padPressureLimitLower[pad], padPressureLimitUpper[pad]), padPressureLimitLower[pad], padPressureLimitUpper[pad], 0, 127)];
+        return gamma_15[map(constrain(pressure, DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad]), DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad], 0, 127)];
         break;
 
     }

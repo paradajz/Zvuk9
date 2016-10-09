@@ -78,11 +78,6 @@ bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint
         //pressure
         switch(direction)   {
 
-            case lower:
-            variablePointer = padPressureLimitLower;
-            configurationSection = padCalibrationPressureLowerSection;
-            break;
-
             case upper:
             variablePointer = padPressureLimitUpper;
             configurationSection = padCalibrationPressureUpperSection;
