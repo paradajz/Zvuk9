@@ -240,7 +240,11 @@
     <PostBuildEvent>REM uploading bootloader using usbasp
 call cd $(SolutionDir)
 call cd ..\tools
-call avrdude.exe -p usb1286 -c usbasp -U flash:w:"$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex":i</PostBuildEvent>
+call avrdude -p usb1286 -c usbasp -e
+call avrdude -p usb1286 -c usbasp -U lock:w:0x3F:m
+call avrdude -p usb1286 -c usbasp -U lfuse:w:0xff:m -U hfuse:w:0xd0:m -U efuse:w:0xf8:m
+call avrdude.exe -p usb1286 -c usbasp -U flash:w:"$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex":i
+avrdude -p usb1286 -c usbasp -U lock:w:0x0C:m</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
