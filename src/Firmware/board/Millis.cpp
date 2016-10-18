@@ -2,8 +2,8 @@
 
 volatile uint32_t rTime_ms;
 
-uint32_t rTimeMillis()    {
-
+uint32_t rTimeMillis()
+{
     uint32_t _rTime_mS;
 
     //save interrupt flag
@@ -18,5 +18,4 @@ uint32_t rTimeMillis()    {
     SREG = interruptFlag;
 
     return _rTime_mS;
-
 }

@@ -1,5 +1,4 @@
-#ifndef BOARD_H_
-#define BOARD_H_
+#pragma once
 
 #include "../core/Core.h"
 #include "pins/board_v1/Map.h"
@@ -10,16 +9,15 @@
 
 uint32_t rTimeMillis();
 
-typedef enum {
-
+typedef enum
+{
     ledStateOff,
     ledStateDim,
     ledStateFull
-
 } ledState_t;
 
-class Board {
-
+class Board
+{
     public:
     Board();
     void init();
@@ -44,9 +42,6 @@ class Board {
     void initEncoders();
     void initLEDs();
     void initPads();
-
 };
 
 extern Board board;
-
-#endif

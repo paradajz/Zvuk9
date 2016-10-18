@@ -1,5 +1,4 @@
-#ifndef VARIABLES_H_
-#define VARIABLES_H_
+#pragma once
 
 #include "Constants.h"
 
@@ -19,5 +18,3 @@ extern volatile uint8_t     encoderBuffer[NUMBER_OF_ENCODERS];
 
 //millis
 extern volatile uint32_t    rTime_ms;
-
-#endif

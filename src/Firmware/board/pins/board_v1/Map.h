@@ -1,5 +1,4 @@
-#ifndef MAP_H_
-#define MAP_H_
+#pragma once
 
 //pads
 #define PAD_0                       2
@@ -66,5 +65,3 @@
 #define BUTTON_TRANSPORT_PLAY       22
 #define BUTTON_TRANSPORT_STOP       21
 #define BUTTON_TRANSPORT_RECORD     20
-
-#endif

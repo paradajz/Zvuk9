@@ -15,7 +15,6 @@ void Menu::createUserMenuLayout()   {
     menuItem[userMenuItem_pressureSensitivity].function = NULL;
 
     {
-
         menuItem[userMenuItem_pressureSensitivity_1].stringPointer = pressure_sensitivity_1_string;
         menuItem[userMenuItem_pressureSensitivity_1].level = 11;
         menuItem[userMenuItem_pressureSensitivity_1].checkable = true;
@@ -30,7 +29,6 @@ void Menu::createUserMenuLayout()   {
         menuItem[userMenuItem_pressureSensitivity_3].level = 13;
         menuItem[userMenuItem_pressureSensitivity_3].checkable = true;
         menuItem[userMenuItem_pressureSensitivity_3].function = NULL;
-
     }
 
     menuItem[userMenuItem_pressureCurve].stringPointer = menuOption_pressureCurve_string;

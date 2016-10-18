@@ -1,20 +1,18 @@
 #include "Board.h"
 #include "Variables.h"
 
-Board::Board()  {
-
+Board::Board()
+{
     //default constructor
-
 }
 
-void Board::init() {
-
+void Board::init()
+{
     initTimers();
     initEncoders();
     initButtons();
     initLEDs();
     initPads();
-
 };
 
 Board board;

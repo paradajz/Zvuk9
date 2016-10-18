@@ -87,16 +87,11 @@ void Application_Jump_Check(void)
     //a bit of cheating - HWBE fuse is unprogrammed, however, we are using HWB pin to
     //detect whether we should run bootloader or not
     //check if buton on HWB pin is released
-    if (!((BTLDR_BUTTON_PIN_REGISTER >> BTLDR_BUTTON_PIN_INDEX) & 0x01))  {
-
+    if (!((BTLDR_BUTTON_PIN_REGISTER >> BTLDR_BUTTON_PIN_INDEX) & 0x01))
+    {
         //bootloader button is released
         JumpToApplication = true;
-
     }
-
-    /* Clear external reset source if source is external*/
-    //if (!(MCUSR & (1 << EXTRF)))
-        //MCUSR &= ~(1 << EXTRF);
 
     /* Don't run the user application if the reset vector is blank (no app loaded) */
     bool ApplicationValid = (pgm_read_word_near(0) != 0xFFFF);

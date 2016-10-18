@@ -1,44 +1,35 @@
 #include "Board.h"
 
-//timer0 - delay/millis/micros/encoders
-//timer1 - LEDs (pwm)
-//timer2 - LEDs (pwm)
-//timer3 - LED matrix
-
-volatile uint8_t *tccraArray[] = {
-
+volatile uint8_t *tccraArray[] =
+{
     &TCCR2A,
     &TCCR1A,
     &TCCR1A
-
 };
 
-const uint8_t comaArray[] = {
-
+const uint8_t comaArray[] =
+{
     COM2A1,
     COM1A1,
     COM1B1
-
 };
 
-volatile uint8_t *ledRowPortArray[] = {
-
+volatile uint8_t *ledRowPortArray[] =
+{
     &LED_ROW_1_PORT,
     &LED_ROW_2_PORT,
     &LED_ROW_3_PORT
-
 };
 
-const uint8_t ledRowPinArray[] = {
-
+const uint8_t ledRowPinArray[] =
+{
     LED_ROW_1_PIN_INDEX,
     LED_ROW_2_PIN_INDEX,
     LED_ROW_3_PIN_INDEX
-
 };
 
-void Board::initTimers()    {
-
+void Board::initTimers()
+{
     //configure timer3
     //used for led matrix, millis and encoder readout
     TCCR3A = 0;
@@ -92,11 +83,10 @@ void Board::initTimers()    {
     TCNT0 = 0;
     TIMSK0 = 0;
     OCR0A = 0;
-
 }
 
-ISR(TIMER3_COMPA_vect)  {
-
+ISR(TIMER3_COMPA_vect)
+{
     //turn off pwm
     TCCR2A &= ~(1<<COM2A1);
     TCCR1A &= ~(1<<COM1A1);
@@ -117,81 +107,75 @@ ISR(TIMER3_COMPA_vect)  {
 
     uint8_t ledNumber;
 
-    for (int i=0; i<NUMBER_OF_LED_ROWS; i++)  {
-
+    for (int i=0; i<NUMBER_OF_LED_ROWS; i++)
+    {
         ledNumber = activeColumnInterrupt+i*NUMBER_OF_LED_COLUMNS;
 
-        if (transitionCounter[ledNumber])   {
-
-            switch (i)  {
-
+        if (transitionCounter[ledNumber])
+        {
+            switch (i)
+            {
                 case 0:
-                if (transitionCounter[ledNumber] == 255)    {
-
+                if (transitionCounter[ledNumber] == 255)
+                {
                     //turn off pwm
                     TCCR2A &= ~(1<<COM2A1);
                     setHigh(LED_ROW_1_PORT, LED_ROW_1_PIN_INDEX);
-
-                }   else {
-
+                }
+                else
+                {
                     *tccraArray[i] |= (1<<comaArray[i]);
                     OCR2A = transitionCounter[ledNumber];
-
                 }
                 break;
 
                 case 1:
-                if (transitionCounter[ledNumber] == 255)    {
-
+                if (transitionCounter[ledNumber] == 255)
+                {
                     //turn off pwm
                     TCCR1A &= ~(1<<COM1A1);
                     setHigh(LED_ROW_2_PORT, LED_ROW_2_PIN_INDEX);
-
-                }   else {
-
+                }
+                else
+                {
                     *tccraArray[i] |= (1<<comaArray[i]);
                     OCR1A = transitionCounter[ledNumber];
-
                 }
                 break;
 
                 case 2:
-                if (transitionCounter[ledNumber] == 255)    {
-
+                if (transitionCounter[ledNumber] == 255)
+                {
                     //turn off pwm
                     TCCR1A &= ~(1<<COM1B1);
                     setHigh(LED_ROW_3_PORT, LED_ROW_3_PIN_INDEX);
-
-                }   else {
-
+                }
+                else
+                {
                     *tccraArray[i] |= (1<<comaArray[i]);
                     OCR1B = transitionCounter[ledNumber];
-
                 }
                 break;
-
             }
-
         }
 
-        if (transitionCounter[ledNumber] != ledValue[ledNumber]) {
-
-            if (transitionCounter[ledNumber] < ledValue[ledNumber]) {
-
+        if (transitionCounter[ledNumber] != ledValue[ledNumber])
+        {
+            if (transitionCounter[ledNumber] < ledValue[ledNumber])
+            {
                 transitionCounter[ledNumber] += pwmSteps;
+
                 if (transitionCounter[ledNumber] > ledValue[ledNumber])
                     transitionCounter[ledNumber] = ledValue[ledNumber];
-
-            }   else {
-
+            }
+            else
+            {
                 transitionCounter[ledNumber] -= pwmSteps;
+
                 if (transitionCounter[ledNumber] < ledValue[ledNumber])
                     transitionCounter[ledNumber] = ledValue[ledNumber];
-
             }
-
         }
-
     }
 
     activeColumnInterrupt++;
@@ -202,11 +186,9 @@ ISR(TIMER3_COMPA_vect)  {
     //update run time
     rTime_ms = ms;
 
-    for (int i=0; i<NUMBER_OF_ENCODERS; i++)    {
-
+    for (int i=0; i<NUMBER_OF_ENCODERS; i++)
+    {
         bitWrite(encoderBuffer[i], 1, readPin(*encoderPort1Array[i], encoderPinIndex1Array[i]));
         bitWrite(encoderBuffer[i], 0, readPin(*encoderPort2Array[i], encoderPinIndex2Array[i]));
-
     }
-
 }

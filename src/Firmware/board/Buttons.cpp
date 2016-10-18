@@ -2,17 +2,16 @@
 
 uint32_t mcpData = 0;
 
-void Board::write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)  {
-
+void Board::write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)
+{
     i2c_start((address << 1) + I2C_WRITE);
     i2c_write(reg);
     i2c_write(value);
     i2c_stop();
-
 }
 
-uint8_t Board::read_I2C_reg(uint8_t address, uint8_t reg)   {
-
+uint8_t Board::read_I2C_reg(uint8_t address, uint8_t reg)
+{
     uint8_t value;
 
     i2c_start((address << 1) + I2C_WRITE);
@@ -24,11 +23,10 @@ uint8_t Board::read_I2C_reg(uint8_t address, uint8_t reg)   {
     i2c_stop();
 
     return value;
-
 }
 
-void Board::initButtons()   {
-
+void Board::initButtons()
+{
     i2c_init();
 
     //ensure that we know the configuration
@@ -48,11 +46,10 @@ void Board::initButtons()   {
 
     write_I2C_reg(expanderAddress[1], gppuAddress[0], 0xFF);    //expander 2, turn on pull-ups, PORTA
     write_I2C_reg(expanderAddress[1], gppuAddress[1], 0xFF);    //expander 2, turn on pull-ups, PORTB
-
 }
 
-bool Board::buttonDataAvailable()   {
-
+bool Board::buttonDataAvailable()
+{
     mcpData <<= 8;
     mcpData |= read_I2C_reg(expanderAddress[0], gpioAddress[0]);     //expander A, GPIOA
     mcpData <<= 8;
@@ -63,11 +60,9 @@ bool Board::buttonDataAvailable()   {
     mcpData |= read_I2C_reg(expanderAddress[1], gpioAddress[1]);     //expander B, GPIOB
 
     return true;
-
 }
 
-bool Board::getButtonState(uint8_t buttonID)    {
-
+bool Board::getButtonState(uint8_t buttonID)
+{
     return !((mcpData >> buttonID) & 0x01);
-
 }

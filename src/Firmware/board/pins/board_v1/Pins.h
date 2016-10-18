@@ -1,6 +1,4 @@
-#ifndef PINS_V1_H_
-#define PINS_V1_H_
-
+#pragma once
 #include <avr/io.h>
 
 //mux
@@ -52,8 +50,8 @@
 
 #define DECODER_CLEAR_MASK          0b11110001
 
-const uint8_t decoderStateArray[] = {
-
+const uint8_t decoderStateArray[] =
+{
     0b00000000,
     0b00000010,
     0b00000100,
@@ -62,7 +60,6 @@ const uint8_t decoderStateArray[] = {
     0b00001010,
     0b00001100,
     0b00001110
-
 };
 
 //encoders
@@ -137,8 +134,8 @@ const uint8_t decoderStateArray[] = {
 #define ENCODER_PAIR_09_PIN_1_PORT  PORTC
 #define ENCODER_PAIR_09_PIN_1_INDEX 2
 
-const uint8_t encoderPinIndex1Array[] = {
-
+const uint8_t encoderPinIndex1Array[] =
+{
     ENCODER_PAIR_00_PIN_0_INDEX,
     ENCODER_PAIR_01_PIN_0_INDEX,
     ENCODER_PAIR_02_PIN_0_INDEX,
@@ -149,11 +146,10 @@ const uint8_t encoderPinIndex1Array[] = {
     ENCODER_PAIR_07_PIN_0_INDEX,
     ENCODER_PAIR_08_PIN_0_INDEX,
     ENCODER_PAIR_09_PIN_0_INDEX
-
 };
 
-const uint8_t encoderPinIndex2Array[] = {
-
+const uint8_t encoderPinIndex2Array[] =
+{
     ENCODER_PAIR_00_PIN_1_INDEX,
     ENCODER_PAIR_01_PIN_1_INDEX,
     ENCODER_PAIR_02_PIN_1_INDEX,
@@ -164,7 +160,6 @@ const uint8_t encoderPinIndex2Array[] = {
     ENCODER_PAIR_07_PIN_1_INDEX,
     ENCODER_PAIR_08_PIN_1_INDEX,
     ENCODER_PAIR_09_PIN_1_INDEX
-
 };
 
 //LCD
@@ -192,5 +187,3 @@ const uint8_t encoderPinIndex2Array[] = {
 //bootloader button
 #define BTLDR_BUTTON_PORT           PORTE
 #define BTLDR_BUTTON_PIN_INDEX      2
-
-#endif

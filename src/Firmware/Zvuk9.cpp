@@ -107,6 +107,8 @@ int main()
     MCUSR &= ~(1 << WDRF);
     wdt_disable();
 
+    configuration.clearEEPROM();
+
     #ifdef DEBUG
     vserial.init();
     #endif
