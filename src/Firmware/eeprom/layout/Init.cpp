@@ -87,15 +87,9 @@ void Configuration::initUserScales(bool partialReset)   {
 
         for (int j=0; j<MAX_PADS; j++)    {
 
-            for (int k=0; k<NOTES_PER_PAD; k++) {
-
-                //set first note to default note
-                //set all other notes to blank
-
-                if (!k) eeprom_update_byte((uint8_t*)parameterAddress+k+(NOTES_PER_PAD*j), DEFAULT_NOTE);
-                else    eeprom_update_byte((uint8_t*)parameterAddress+k+(NOTES_PER_PAD*j), BLANK_NOTE);
-
-            }
+            //all blank notes
+            for (int k=0; k<NOTES_PER_PAD; k++)
+                eeprom_update_byte((uint8_t*)parameterAddress+k+(NOTES_PER_PAD*j), BLANK_NOTE);
 
         }
 
