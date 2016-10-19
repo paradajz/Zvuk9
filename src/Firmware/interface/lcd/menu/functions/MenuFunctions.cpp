@@ -271,4 +271,35 @@ bool checkNoteOffStatus(functionArgument argument)    {
 
 }
 
+bool checkPressureSensitivity(functionArgument argument) {
+
+    switch((pressureSensitivity_t)argument.argument1)  {
+
+        case pressure_soft:
+        case pressure_medium:
+        case pressure_hard:
+        //ok
+        break;
+
+        default:
+        //invalid argument
+        return false;
+
+    }
+
+    switch(argument.argument2)  {
+
+        case true:
+        pads.setPressureSensitivity((pressureSensitivity_t)argument.argument1);
+        return true;
+        break;
+
+        case false:
+        return (pads.getPressureSensitivity() == (pressureSensitivity_t)argument.argument1);
+        break;
+
+    }   return false;
+
+}
+
 #endif

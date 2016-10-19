@@ -1143,3 +1143,10 @@ void Pads::setFunctionLEDs(uint8_t padNumber)   {
     }
 
 }
+
+void Pads::setPressureSensitivity(pressureSensitivity_t type)  {
+
+    pressureSensitivity = type;
+    configuration.writeParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureSensitivitySection, 0, type);
+
+}

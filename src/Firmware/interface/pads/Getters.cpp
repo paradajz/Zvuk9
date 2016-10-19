@@ -10,7 +10,9 @@ void Pads::getConfiguration()   {
     getProgramParameters();
     getPadLimits();
 
+    //globals
     aftertouchType = configuration.readParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
+    pressureSensitivity = (pressureSensitivity_t)configuration.readParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureSensitivitySection, 0);
 
 }
 
@@ -598,5 +600,11 @@ uint8_t Pads::padsPressed() {
             numberOfPressedPads++;
 
     return numberOfPressedPads;
+
+}
+
+pressureSensitivity_t Pads::getPressureSensitivity()   {
+
+    return pressureSensitivity;
 
 }

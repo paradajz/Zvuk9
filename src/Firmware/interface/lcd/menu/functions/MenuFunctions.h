@@ -60,11 +60,11 @@ bool checkCalibration(functionArgument argument);
 //checkable items functions
 bool checkRunningStatus(functionArgument argument);
 
-bool checkPressureLevel(functionArgument argument);
-
-bool checkAftertouchType(functionArgument argument);
+bool checkPressureSensitivity(functionArgument argument);
 
 bool checkPressureCurve(functionArgument argument);
+
+bool checkAftertouchType(functionArgument argument);
 
 bool checkNoteOffStatus(functionArgument argument);
 

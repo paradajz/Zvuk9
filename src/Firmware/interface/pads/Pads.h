@@ -94,6 +94,10 @@ class Pads  {
     bool isUserScale(uint8_t scale);
     bool isPredefinedScale(uint8_t scale);
 
+    //pressure info
+    pressureSensitivity_t getPressureSensitivity();
+    void setPressureSensitivity(pressureSensitivity_t type);
+
     uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
 
     //calibration
@@ -283,6 +287,9 @@ class Pads  {
     int16_t     minCalibrationValue,
                 maxCalibrationValue;
     coordinateType_t activeCalibration;
+
+    //pressure info
+    pressureSensitivity_t pressureSensitivity;
 
 };
 

@@ -8,6 +8,7 @@ void Configuration::initSettings(bool partialReset) {
     initUserScales(partialReset);
     initPadCalibration(partialReset);
     initMIDIsettings(partialReset);
+    initPressureSettings(partialReset);
 
 }
 
@@ -162,6 +163,20 @@ void Configuration::initMIDIsettings(bool partialReset) {
     uint16_t parameterAddress = blockStartAddress;
 
     for (int i=0; i<MIDI_SETTINGS; i++)
-    eeprom_update_byte((uint8_t*)parameterAddress+i, defaultMIDIsettingArray[i]);
+        eeprom_update_byte((uint8_t*)parameterAddress+i, defaultMIDIsettingArray[i]);
+
+}
+
+void Configuration::initPressureSettings(bool partialReset) {
+
+    if (partialReset && blocks[CONF_BLOCK_PRESSURE_SETTINGS].preserveOnPartialReset) return;
+
+    uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_PRESSURE_SETTINGS);
+    uint16_t parameterAddress = blockStartAddress + blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionAddress[pressureSensitivitySection];
+
+    eeprom_update_byte((uint8_t*)parameterAddress, 0);
+
+    parameterAddress = blockStartAddress + blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionAddress[pressureCurveSection];
+    eeprom_update_byte((uint8_t*)parameterAddress, 0);
 
 }

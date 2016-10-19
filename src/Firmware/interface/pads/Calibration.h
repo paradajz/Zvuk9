@@ -36,4 +36,7 @@
 
 #define XY_FLIP_VALUES                      0
 
+#define MEDIUM_PRESSURE_INCREASE            50
+#define HARD_PRESSURE_INCREASE              100
+
 #endif

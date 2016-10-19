@@ -135,4 +135,12 @@ typedef enum {
 
 } calibrationDirection;
 
+typedef enum {
+
+    pressure_soft,
+    pressure_medium,
+    pressure_hard
+
+} pressureSensitivity_t;
+
 #endif

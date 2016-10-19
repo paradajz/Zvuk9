@@ -134,6 +134,7 @@ class Configuration {
     void initUserScales(bool partialReset);
     void initPadCalibration(bool partialReset);
     void initMIDIsettings(bool partialReset);
+    void initPressureSettings(bool partialReset);
     void writeSignature();
     #ifdef ENABLE_ASYNC_UPDATE
     void queueData(uint16_t eepromAddress, uint16_t data, uint8_t parameterType);
