@@ -8,7 +8,7 @@
 #define NUMBER_OF_LED_ROWS          3
 
 #define NUMBER_OF_TRANSITIONS       64
-#define DEFAULT_FADE_SPEED          15
+#define DEFAULT_FADE_SPEED          5
 
 #define LED_INTENSITY_OFF           0
 #define LED_INTENSITY_FULL          255
