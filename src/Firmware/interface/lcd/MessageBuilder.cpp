@@ -102,10 +102,6 @@ void LCD::displayCurveChange(coordinateType_t coordinate, bool _splitState, int8
         break;
 
         default:
-        if (curveValue > (uint8_t)curveTypeLinear)
-            curveValue -= (uint8_t)curveTypeLinear;
-        else curveValue = (curveTypeLinear - curveValue)*-1;
-        addNumberToCharArray(curveValue, size);
         break;
 
     }

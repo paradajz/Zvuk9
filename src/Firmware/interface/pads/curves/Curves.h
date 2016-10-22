@@ -8,21 +8,22 @@
 
 #include "../DataTypes.h"
 
-#define CURVE_STEPS 9
+#define NUMBER_OF_CURVES 3
 
 class Curves {
 
     public:
     Curves();
     void init();
-    uint8_t getCurveValue(coordinateType_t coordinate, uint8_t gain, uint8_t index, uint8_t min, uint8_t max);
+    uint8_t getCurveValue(coordinateType_t coordinate, curveType_t gain, uint8_t index, uint8_t min, uint8_t max);
 
     private:
-    void setupCurve(uint8_t curveGain, uint8_t min, uint8_t max);
+    void setupCurve(curveType_t type, uint8_t min, uint8_t max);
+    void setupLinearCurve();
     uint8_t scale[128];
-    int8_t  lastGain[2],
-            lastMin[2],
-            lastMax[2];
+    int8_t  lastGain[2], //x+y
+            lastMin[2], //x+y
+            lastMax[2]; //x+y
 
 };
 

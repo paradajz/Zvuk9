@@ -6,6 +6,13 @@
 
 #define LOG_05      (double)log((double)0.5)
 
+const uint8_t curveGain[] = 
+{
+    0, //linear scale
+    1, //wide middle
+    9 //wide ends
+};
+
 double bias(double b, double x)    {
 
     return pow(x, log(b)/LOG_05);
@@ -38,19 +45,16 @@ Curves::Curves()    {
     }
 
     //set linear scale by default
-    memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[(uint8_t)curveTypeLinear-1])), 128);
+    for (int i=0; i<128; i++)
+        scale[i] = i;
 
 }
 
-void Curves::setupCurve(uint8_t curveGain, uint8_t min, uint8_t max)   {
+void Curves::setupCurve(curveType_t type, uint8_t min, uint8_t max)   {
 
-    if (curveGain == 5)    {
+    if (type == curveTypeLinear)    {
 
-        //normally, gain 0.5 produces linear scale
-        //however, we are converting decimal numbers to int so there is slight error
-        //in this case, setup curve manually
-        for (int i=0; i<128; i++)
-            scale[i] = i;
+        setupLinearCurve();
 
         //scale range if min isn't 0 or max isn't 127
         if (min || max != 127) {
@@ -62,9 +66,9 @@ void Curves::setupCurve(uint8_t curveGain, uint8_t min, uint8_t max)   {
 
     }   else {
 
-        //printf("Curve scaling updated. Min: %d, max: %d\n", min, max);
+        memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[(uint8_t)type])), 128);
 
-        double curveGain_double = curveGain/10.0; //scale gain value to values 0.0-1.0
+        double curveGain_double = (uint8_t)curveGain[type]/10.0; //scale gain value to values 0.0-1.0
         uint8_t numberOfValues = max-min;
         double step, stepValue = 0.0;
 
@@ -110,25 +114,20 @@ void Curves::setupCurve(uint8_t curveGain, uint8_t min, uint8_t max)   {
 
 }
 
-uint8_t Curves::getCurveValue(coordinateType_t coordinate, uint8_t curveGain, uint8_t index, uint8_t min, uint8_t max)    {
+uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uint8_t index, uint8_t min, uint8_t max)    {
 
-    if (curveGain != lastGain[(uint8_t)coordinate])   {
+    if ((uint8_t)type != lastGain[(uint8_t)coordinate])   {
 
         #ifdef DEBUG
         printf("Setting up new x/y scale\n");
         #endif
 
-        //only copy bytes from flash if received gain differs from last one
-        memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[curveGain-1])), 128);
+        if (type == curveTypeLinear)
+            setupLinearCurve();
+        else
+            memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[(uint8_t)type])), 128);
 
-        lastGain[(uint8_t)coordinate] = curveGain;
-
-        //#ifdef DEBUG
-            //printf("Curve gain updated for coordinate %d. New gain: %d\n", coordinate, curveGain);
-            //printf("scale:\n");
-            //for (int i=0; i<128; i++)
-                //printf("%d\n", scale[i]);
-        //#endif
+        lastGain[(uint8_t)coordinate] = (uint8_t)type;
 
     }
 
@@ -144,7 +143,7 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, uint8_t curveGain, ui
             lastMax[(uint8_t)coordinate] = max;
 
             //in this case, we are setting up curve manually
-            setupCurve(curveGain, min, max);
+            setupCurve(type, min, max);
 
         }
 
@@ -152,6 +151,12 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, uint8_t curveGain, ui
 
     return scale[index];
 
+}
+
+void Curves::setupLinearCurve()
+{
+    for (int i=0; i<128; i++)
+        scale[i] = i;
 }
 
 Curves curves;

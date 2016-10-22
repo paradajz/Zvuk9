@@ -429,14 +429,14 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
     uint8_t startPad = !splitEnabled ? 0 : lastPressedPad;
-    uint8_t compareValue = CURVE_STEPS;
+    uint8_t compareValue = NUMBER_OF_CURVES-1;
     bool compareResult;
     uint8_t changedValue = 0;
     bool changeAllowed = true;
     int8_t *variablePointer;
     uint16_t configurationID;
 
-    if (!direction) { steps *= -1; compareValue = 1; }
+    if (!direction) { steps *= -1; compareValue = 0; }
 
     switch(coordinate)   {
 
@@ -1148,5 +1148,6 @@ void Pads::setPressureSensitivity(pressureSensitivity_t type)  {
 
     pressureSensitivity = type;
     configuration.writeParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureSensitivitySection, 0, type);
+    getPressureLimits();
 
 }

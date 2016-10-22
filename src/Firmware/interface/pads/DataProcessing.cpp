@@ -77,7 +77,7 @@ bool Pads::checkX(uint8_t pad)  {
     if (pressureReduction[pad]) return false;
 
     int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), coordinateX);
-    xValue = curves.getCurveValue(coordinateX, padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
+    xValue = curves.getCurveValue(coordinateX, (curveType_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
     bool xChanged = false;
 
@@ -105,7 +105,7 @@ bool Pads::checkY(uint8_t pad)  {
     if (pressureReduction[pad]) return false;
 
     int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), coordinateY);
-    curves.getCurveValue(coordinateY, padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
+    curves.getCurveValue(coordinateY, (curveType_t)padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
 
     bool yChanged = false;
 
