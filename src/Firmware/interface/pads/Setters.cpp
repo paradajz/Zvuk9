@@ -1136,7 +1136,7 @@ void Pads::setFunctionLEDs(uint8_t padNumber)   {
 
         //turn on feature LEDs depending on enabled features for last touched pad
         leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(onOff_aftertouch, padNumber) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_aftertouch, padNumber) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_notes, padNumber) ? ledStateFull : ledStateOff);
         leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(onOff_x, padNumber) ? ledStateFull : ledStateOff);
         leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(onOff_y, padNumber) ? ledStateFull : ledStateOff);
 
