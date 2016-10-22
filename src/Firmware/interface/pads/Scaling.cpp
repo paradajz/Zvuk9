@@ -9,8 +9,6 @@ uint32_t Pads::map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_mi
 
 uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, pressureType_t type) {
 
-    int16_t increase = 0;
-
     switch(type)  {
 
         case pressureAftertouch:
@@ -18,21 +16,7 @@ uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, pressureType_t type) 
         break;
 
         case pressureVelocity:
-        switch(pressureSensitivity) {
-
-            case pressure_medium:
-            increase = MEDIUM_PRESSURE_INCREASE;
-            break;
-
-            case pressure_hard:
-            increase = HARD_PRESSURE_INCREASE;
-            break;
-
-            default:
-            break;
-
-        }
-        return map(constrain(pressure, DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad]+increase), DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad]+increase, 0, 127);
+        return map(constrain(pressure, DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad]), DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad], 0, 127);
         break;
 
     }

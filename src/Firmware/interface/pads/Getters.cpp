@@ -6,13 +6,13 @@
 
 void Pads::getConfiguration()   {
 
-    //read pad configuration from EEPROM
-    getProgramParameters();
-    getPadLimits();
-
     //globals
     aftertouchType = configuration.readParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
     pressureSensitivity = (pressureSensitivity_t)configuration.readParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureSensitivitySection, 0);
+
+    //read pad configuration from EEPROM
+    getProgramParameters();
+    getPadLimits();
 
 }
 
@@ -279,7 +279,8 @@ void Pads::getPadLimits()   {
     printf("Printing out limits for pads\n");
     #endif
 
-    getPressureLimits();
+    setPressureSensitivity(pressureSensitivity);
+    //getPressureLimits(pressureSensitivity);
     getXLimits();
     getYLimits();
     getAftertouchLimits();
@@ -288,8 +289,33 @@ void Pads::getPadLimits()   {
 
 void Pads::getPressureLimits()  {
 
+    uint8_t percentageIncrease = 0;
+
+    switch(pressureSensitivity)
+    {
+        case pressure_soft:
+        //default
+        break;
+
+        case pressure_medium:
+        percentageIncrease = MEDIUM_PRESSURE_INCREASE_PERCENT;
+        break;
+
+        case pressure_hard:
+        percentageIncrease = HARD_PRESSURE_INCREASE_PERCENT;
+        break;
+
+        default:
+        return;
+    }
+
     for (int i=0; i<MAX_PADS; i++) {
+
         padPressureLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
+        if (percentageIncrease)
+        {
+            padPressureLimitUpper[i] = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
+        }
 
         #ifdef DEBUG
         printf("Upper pressure limit for pad %d: %d\n", i, padPressureLimitUpper[i]);
