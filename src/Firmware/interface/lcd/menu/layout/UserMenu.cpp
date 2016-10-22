@@ -10,50 +10,56 @@
 
 void Menu::createUserMenuLayout()   {
 
-    menuItem[userMenuItem_pressureSensitivity].stringPointer = menuOption_pressureSensitivity_string;
-    menuItem[userMenuItem_pressureSensitivity].level = 1;
-    menuItem[userMenuItem_pressureSensitivity].function = NULL;
+    menuItem[userMenuItem_pressureSettings].stringPointer = menuOption_pressureSettings_string;
+    menuItem[userMenuItem_pressureSettings].level = 1;
+    menuItem[userMenuItem_pressureSettings].function = NULL;
 
     {
-        menuItem[userMenuItem_pressureSensitivity_1].stringPointer = pressure_sensitivity_1_string;
-        menuItem[userMenuItem_pressureSensitivity_1].level = 11;
-        menuItem[userMenuItem_pressureSensitivity_1].checkable = true;
-        menuItem[userMenuItem_pressureSensitivity_1].function = checkPressureSensitivity;
-        menuItem[userMenuItem_pressureSensitivity_1].argument.argument1 = (uint8_t)pressure_soft;
+        menuItem[userMenuItem_pressureSensitivity].stringPointer = menuOption_pressureSensitivity_string;
+        menuItem[userMenuItem_pressureSensitivity].level = 11;
+        menuItem[userMenuItem_pressureSensitivity].function = NULL;
 
-        menuItem[userMenuItem_pressureSensitivity_2].stringPointer = pressure_sensitivity_2_string;
-        menuItem[userMenuItem_pressureSensitivity_2].level = 12;
-        menuItem[userMenuItem_pressureSensitivity_2].checkable = true;
-        menuItem[userMenuItem_pressureSensitivity_2].function = checkPressureSensitivity;
-        menuItem[userMenuItem_pressureSensitivity_2].argument.argument1 = (uint8_t)pressure_medium;
+        {
+            menuItem[userMenuItem_pressureSensitivity_1].stringPointer = pressure_sensitivity_1_string;
+            menuItem[userMenuItem_pressureSensitivity_1].level = 111;
+            menuItem[userMenuItem_pressureSensitivity_1].checkable = true;
+            menuItem[userMenuItem_pressureSensitivity_1].function = checkPressureSensitivity;
+            menuItem[userMenuItem_pressureSensitivity_1].argument.argument1 = (uint8_t)pressure_soft;
 
-        menuItem[userMenuItem_pressureSensitivity_3].stringPointer = pressure_sensitivity_3_string;
-        menuItem[userMenuItem_pressureSensitivity_3].level = 13;
-        menuItem[userMenuItem_pressureSensitivity_3].checkable = true;
-        menuItem[userMenuItem_pressureSensitivity_3].function = checkPressureSensitivity;
-        menuItem[userMenuItem_pressureSensitivity_3].argument.argument1 = (uint8_t)pressure_hard;
-    }
+            menuItem[userMenuItem_pressureSensitivity_2].stringPointer = pressure_sensitivity_2_string;
+            menuItem[userMenuItem_pressureSensitivity_2].level = 112;
+            menuItem[userMenuItem_pressureSensitivity_2].checkable = true;
+            menuItem[userMenuItem_pressureSensitivity_2].function = checkPressureSensitivity;
+            menuItem[userMenuItem_pressureSensitivity_2].argument.argument1 = (uint8_t)pressure_medium;
 
-    menuItem[userMenuItem_pressureCurve].stringPointer = menuOption_pressureCurve_string;
-    menuItem[userMenuItem_pressureCurve].level = 2;
-    menuItem[userMenuItem_pressureCurve].function = NULL;
+            menuItem[userMenuItem_pressureSensitivity_3].stringPointer = pressure_sensitivity_3_string;
+            menuItem[userMenuItem_pressureSensitivity_3].level = 113;
+            menuItem[userMenuItem_pressureSensitivity_3].checkable = true;
+            menuItem[userMenuItem_pressureSensitivity_3].function = checkPressureSensitivity;
+            menuItem[userMenuItem_pressureSensitivity_3].argument.argument1 = (uint8_t)pressure_hard;
+        }
+
+        menuItem[userMenuItem_pressureCurve].stringPointer = menuOption_pressureCurve_string;
+        menuItem[userMenuItem_pressureCurve].level = 12;
+        menuItem[userMenuItem_pressureCurve].function = NULL;
 
         {
             menuItem[userMenuItem_pressureCurve_linear].stringPointer = pressure_curve_linear_string;
-            menuItem[userMenuItem_pressureCurve_linear].level = 21;
+            menuItem[userMenuItem_pressureCurve_linear].level = 121;
             menuItem[userMenuItem_pressureCurve_linear].checkable = true;
             menuItem[userMenuItem_pressureCurve_linear].function = NULL;
 
             menuItem[userMenuItem_pressureCurve_log].stringPointer = pressure_curve_log_string;
-            menuItem[userMenuItem_pressureCurve_log].level = 22;
+            menuItem[userMenuItem_pressureCurve_log].level = 122;
             menuItem[userMenuItem_pressureCurve_log].checkable = true;
             menuItem[userMenuItem_pressureCurve_log].function = NULL;
 
             menuItem[userMenuItem_pressureCurve_exp].stringPointer = pressure_curve_inv_exp_string;
-            menuItem[userMenuItem_pressureCurve_exp].level = 23;
+            menuItem[userMenuItem_pressureCurve_exp].level = 123;
             menuItem[userMenuItem_pressureCurve_exp].checkable = true;
             menuItem[userMenuItem_pressureCurve_exp].function = NULL;
         }
+    }
 
     menuItem[userMenuItem_midiSettings].stringPointer = menuOption_midiSettings_string;
     menuItem[userMenuItem_midiSettings].level = 3;

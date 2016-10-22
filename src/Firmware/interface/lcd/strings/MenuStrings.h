@@ -13,8 +13,9 @@ const char menuOption_padCalibration_string[] PROGMEM = "Pad calibration";
 const char menuOption_deviceInfo_string[] PROGMEM = "Device info";
 const char menuOption_factoryReset_string[] PROGMEM = "Factory reset";
 const char menuOption_factoryReset_caps_string[] PROGMEM = "***FACTORY RESET***";
-const char menuOption_pressureSensitivity_string[] PROGMEM = "Press. sensitivity";
-const char menuOption_pressureCurve_string[] PROGMEM = "Press. curve";
+const char menuOption_pressureSettings_string[] PROGMEM = "Press. settings";
+const char menuOption_pressureSensitivity_string[] PROGMEM = "Sensitivity";
+const char menuOption_pressureCurve_string[] PROGMEM = "Curve";
 const char menuOption_midiSettings_string[] PROGMEM = "MIDI settings";
 
 //calibration menu options

@@ -3,6 +3,7 @@
 
 typedef enum {
 
+    userMenuItem_pressureSettings,
     userMenuItem_pressureSensitivity,
     userMenuItem_pressureCurve,
     userMenuItem_midiSettings,
