@@ -1,6 +1,8 @@
 #ifndef PADSCALIBRATION_H_
 #define PADSCALIBRATION_H_
 
+#include "../../eeprom/Defaults.h"
+
 //don't check velocity for PAD_PRESS_DEBOUNCE_TIMEms after pad has just been pressed
 #define PAD_PRESS_DEBOUNCE_TIME             10
 //pad is considered released PAD_RELEASE_DEBOUNCE_TIMEms after releasing pad
@@ -31,8 +33,8 @@
 
 //when doing interactive calibration, scrolling from left to right isn't 100% accurate
 //compensate using offset
-#define X_MIN_CALIBRATION_OFFSET            3
-#define X_MAX_CALIBRATION_OFFSET            -3
+#define XY_MIN_CALIBRATION_OFFSET           10
+#define XY_MAX_CALIBRATION_OFFSET           -10
 
 #define XY_FLIP_VALUES                      0
 

@@ -255,6 +255,7 @@ class Pads  {
                 lastAftertouchUpdateTime[MAX_PADS],
                 aftertouchActivationDelay[MAX_PADS];
 
+    uint8_t     pressureReduction[MAX_PADS];
     uint8_t     sampleCounterPressure,
                 sampleCounterXY;
 

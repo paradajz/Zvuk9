@@ -275,9 +275,9 @@ void Pads::generateScale(scale_t scale)    {
 
 void Pads::getPadLimits()   {
 
-    //#ifdef DEBUG
-        //printf("Printing out limits for pads\n");
-    //#endif
+    #ifdef DEBUG
+    printf("Printing out limits for pads\n");
+    #endif
 
     getPressureLimits();
     getXLimits();
@@ -288,16 +288,12 @@ void Pads::getPadLimits()   {
 
 void Pads::getPressureLimits()  {
 
-    //#ifdef DEBUG
-        //printf("Printing out pressure limits for pads\n");
-    //#endif
-
     for (int i=0; i<MAX_PADS; i++) {
         padPressureLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
 
-        //#ifdef DEBUG
-            //printf("Upper pressure limit for pad %d: %d\n", i, padPressureLimitUpper[i]);
-        //#endif
+        #ifdef DEBUG
+        printf("Upper pressure limit for pad %d: %d\n", i, padPressureLimitUpper[i]);
+        #endif
 
     }
 
@@ -305,19 +301,19 @@ void Pads::getPressureLimits()  {
 
 void Pads::getXLimits()  {
 
-    //#ifdef DEBUG
-        //printf("Printing out X limits for pads\n");
-    //#endif
+    #ifdef DEBUG
+        printf("Printing out X limits for pads\n");
+    #endif
 
     for (int i=0; i<MAX_PADS; i++) {
 
         padXLimitLower[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXlowerSection, i);
         padXLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, i);
 
-        //#ifdef DEBUG
-            //printf("Lower X limit for pad %d: %d\n", i, padXLimitLower[i]);
-            //printf("Upper X limit for pad %d: %d\n", i, padXLimitUpper[i]);
-        //#endif
+        #ifdef DEBUG
+        printf("Lower X limit for pad %d: %d\n", i, padXLimitLower[i]);
+        printf("Upper X limit for pad %d: %d\n", i, padXLimitUpper[i]);
+        #endif
 
     }
 
@@ -325,19 +321,19 @@ void Pads::getXLimits()  {
 
 void Pads::getYLimits()  {
 
-    //#ifdef DEBUG
-        //printf("Printing out Y limits for pads\n");
-    //#endif
+    #ifdef DEBUG
+    printf("Printing out Y limits for pads\n");
+    #endif
 
     for (int i=0; i<MAX_PADS; i++) {
 
         padYLimitLower[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYlowerSection, i);
         padYLimitUpper[i] = configuration.readParameter(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, i);
 
-        //#ifdef DEBUG
-            //printf("Lower Y limit for pad %d: %d\n", i, padYLimitLower[i]);
-            //printf("Upper Y limit for pad %d: %d\n", i, padYLimitUpper[i]);
-        //#endif
+        #ifdef DEBUG
+        printf("Lower Y limit for pad %d: %d\n", i, padYLimitLower[i]);
+        printf("Upper Y limit for pad %d: %d\n", i, padYLimitUpper[i]);
+        #endif
 
     }
 
@@ -345,9 +341,9 @@ void Pads::getYLimits()  {
 
 void Pads::getAftertouchLimits()    {
 
-    //#ifdef DEBUG
-        //printf("Printing out aftertouch limits for pads\n");
-    //#endif
+    #ifdef DEBUG
+    printf("Printing out aftertouch limits for pads\n");
+    #endif
 
     for (int i=0; i<MAX_PADS; i++)    {
 
@@ -356,10 +352,10 @@ void Pads::getAftertouchLimits()    {
         padAftertouchLimitLower[i] = lowerLimit;
         padAftertouchLimitUpper[i] = upperLimit;
 
-        //#ifdef DEBUG
-            //printf("Lower aftertouch limit for pad %d: %d\n", i, padAftertouchLimitLower[i]);
-            //printf("Upper aftertouch limit for pad %d: %d\n", i, padAftertouchLimitUpper[i]);
-        //#endif
+        #ifdef DEBUG
+        printf("Lower aftertouch limit for pad %d: %d\n", i, padAftertouchLimitLower[i]);
+        printf("Upper aftertouch limit for pad %d: %d\n", i, padAftertouchLimitUpper[i]);
+        #endif
 
     }
 

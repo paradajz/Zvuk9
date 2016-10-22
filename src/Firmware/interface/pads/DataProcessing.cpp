@@ -2,6 +2,8 @@
 #include "../lcd/menu/Menu.h"
 #include "../../eeprom/Defaults.h"
 
+const uint8_t pressureReductionConstant = 0b11111110;
+
 void Pads::addXYSamples(int16_t xValue, int16_t yValue)    {
 
     xValueSamples[sampleCounterXY] = xValue;
@@ -74,6 +76,8 @@ int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
 
 bool Pads::checkX(uint8_t pad)  {
 
+    if (pressureReduction[pad] == 0xFF) return false;
+
     int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), coordinateX);
     xValue = curves.getCurveValue(coordinateX, padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
@@ -99,6 +103,8 @@ bool Pads::checkX(uint8_t pad)  {
 }
 
 bool Pads::checkY(uint8_t pad)  {
+
+    if (pressureReduction[pad] == 0xFF) return false;
 
     int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), coordinateY);
     curves.getCurveValue(coordinateY, padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
@@ -404,17 +410,22 @@ bool Pads::xyUpdated(uint8_t pad)  {
             //calibration is enabled
             int16_t medianValue = getMedianValueXYZ(activeCalibration);
 
-            if (medianValue < minCalibrationValue)
-                minCalibrationValue = medianValue+X_MIN_CALIBRATION_OFFSET;
+            if ((medianValue < minCalibrationValue) && (medianValue != minCalibrationValue))
+            {
+                minCalibrationValue = medianValue;
+                calibrate(activeCalibration, lower, pad, minCalibrationValue+XY_MIN_CALIBRATION_OFFSET);
+                #ifdef DEBUG
+                printf("Calibrating lowest value, pad %d: %d\n", pad, minCalibrationValue+XY_MIN_CALIBRATION_OFFSET);
+                #endif
+            }
 
-            if (medianValue > maxCalibrationValue)
-                maxCalibrationValue = medianValue+X_MAX_CALIBRATION_OFFSET;
-
-            if (minCalibrationValue >= 0 && maxCalibrationValue < 1024) {
-
-                pads.calibrate(activeCalibration, lower, pad, minCalibrationValue);
-                pads.calibrate(activeCalibration, upper, pad, maxCalibrationValue);
-
+            if ((medianValue > maxCalibrationValue) && (medianValue != maxCalibrationValue) && maxCalibrationValue)
+            {
+                maxCalibrationValue = medianValue;
+                calibrate(activeCalibration, upper, pad, maxCalibrationValue+XY_MAX_CALIBRATION_OFFSET);
+                #ifdef DEBUG
+                printf("Calibrating max value, pad %d: %d\n", pad, maxCalibrationValue+XY_MAX_CALIBRATION_OFFSET);
+                #endif
             }
 
         }
@@ -478,6 +489,20 @@ bool Pads::pressureUpdated(uint8_t pad) {
         //we have pressure
         //reset pressure sample counter
         sampleCounterPressure = 0;
+        //detect if pressure is increasing or decreasing, but only if pad is pressed
+        if (isPadPressed(pad))
+        {
+            pressureReduction[pad] = (pressureReduction[pad] << 1) | (getMedianValueXYZ(coordinateZ) < lastPressureValue[pad]) | pressureReductionConstant;
+        }
+        else
+        {
+            pressureReduction[pad] = 0;
+        }
+
+        #ifdef DEBUG
+        if (pressureReduction[pad] == 0xFF)
+            printf("Pressure reduction detected for pad %d\n", pad);
+        #endif
         return true;
 
     }
