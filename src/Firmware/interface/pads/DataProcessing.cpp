@@ -2,8 +2,6 @@
 #include "../lcd/menu/Menu.h"
 #include "../../eeprom/Defaults.h"
 
-const uint8_t pressureReductionConstant = 0b11111110;
-
 void Pads::addXYSamples(int16_t xValue, int16_t yValue)    {
 
     xValueSamples[sampleCounterXY] = xValue;
@@ -76,7 +74,7 @@ int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
 
 bool Pads::checkX(uint8_t pad)  {
 
-    if (pressureReduction[pad] == 0xFF) return false;
+    if (pressureReduction[pad]) return false;
 
     int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), coordinateX);
     xValue = curves.getCurveValue(coordinateX, padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
@@ -104,7 +102,7 @@ bool Pads::checkX(uint8_t pad)  {
 
 bool Pads::checkY(uint8_t pad)  {
 
-    if (pressureReduction[pad] == 0xFF) return false;
+    if (pressureReduction[pad]) return false;
 
     int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), coordinateY);
     curves.getCurveValue(coordinateY, padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
@@ -492,17 +490,12 @@ bool Pads::pressureUpdated(uint8_t pad) {
         //detect if pressure is increasing or decreasing, but only if pad is pressed
         if (isPadPressed(pad))
         {
-            pressureReduction[pad] = (pressureReduction[pad] << 1) | (getMedianValueXYZ(coordinateZ) < lastPressureValue[pad]) | pressureReductionConstant;
+            pressureReduction[pad] = (getMedianValueXYZ(coordinateZ) < lastPressureValue[pad]);
         }
         else
         {
             pressureReduction[pad] = 0;
         }
-
-        #ifdef DEBUG
-        if (pressureReduction[pad] == 0xFF)
-            printf("Pressure reduction detected for pad %d\n", pad);
-        #endif
         return true;
 
     }
