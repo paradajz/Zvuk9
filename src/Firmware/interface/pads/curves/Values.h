@@ -267,13 +267,6 @@ const uint8_t PROGMEM scale_wideEnds[] PROGMEM = {
 
 };
 
-const uint8_t* const scaleArray[] PROGMEM = {
-
-    scale_wideMiddle,
-    scale_wideEnds,
-
-};
-
 const uint8_t PROGMEM scale_log[] PROGMEM =
 {
     0,
@@ -537,4 +530,14 @@ const uint8_t PROGMEM scale_exp[] PROGMEM =
     47,
     127
 };
+
+const uint8_t* const scaleArray[] PROGMEM = {
+
+    scale_wideMiddle,
+    scale_wideEnds,
+    scale_log,
+    scale_exp
+
+};
+
 #endif

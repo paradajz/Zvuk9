@@ -592,6 +592,7 @@ bool Pads::checkVelocity(uint8_t pad)  {
 
     //calibrate pressure based on median value (0-1023 -> 0-127)
     uint8_t calibratedPressure = scalePressure(pad, medianValue, pressureVelocity);
+    calibratedPressure = curves.getCurveValue(coordinateZ, pressureCurve, calibratedPressure, 0, 127);
 
     bool pressDetected = (calibratedPressure > 0);
     bool returnValue = false;

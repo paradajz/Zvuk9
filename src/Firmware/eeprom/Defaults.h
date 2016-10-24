@@ -2,6 +2,7 @@
 #define DEFS_H_
 
 #include "../interface/pads/DataTypes.h"
+#include "../interface/pads/curves/Curves.h"
 
 //parameters
 #define NUMBER_OF_PROGRAMS                          10

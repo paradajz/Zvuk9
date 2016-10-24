@@ -48,19 +48,19 @@ void Menu::createUserMenuLayout()   {
             menuItem[userMenuItem_pressureCurve_linear].level = 121;
             menuItem[userMenuItem_pressureCurve_linear].checkable = true;
             menuItem[userMenuItem_pressureCurve_linear].function = checkPressureCurve;
-            menuItem[userMenuItem_pressureCurve_linear].argument.argument1 = (uint8_t)pressureCurve_linear;
+            menuItem[userMenuItem_pressureCurve_linear].argument.argument1 = (uint8_t)curveTypeLinear;
 
             menuItem[userMenuItem_pressureCurve_log].stringPointer = pressure_curve_log_string;
             menuItem[userMenuItem_pressureCurve_log].level = 122;
             menuItem[userMenuItem_pressureCurve_log].checkable = true;
             menuItem[userMenuItem_pressureCurve_log].function = checkPressureCurve;
-            menuItem[userMenuItem_pressureCurve_log].argument.argument1 = (uint8_t)pressureCurve_log;
+            menuItem[userMenuItem_pressureCurve_log].argument.argument1 = (uint8_t)curveTypeLog;
 
             menuItem[userMenuItem_pressureCurve_exp].stringPointer = pressure_curve_inv_exp_string;
             menuItem[userMenuItem_pressureCurve_exp].level = 123;
             menuItem[userMenuItem_pressureCurve_exp].checkable = true;
             menuItem[userMenuItem_pressureCurve_exp].function = checkPressureCurve;
-            menuItem[userMenuItem_pressureCurve_exp].argument.argument1 = (uint8_t)pressureCurve_exp;
+            menuItem[userMenuItem_pressureCurve_exp].argument.argument1 = (uint8_t)curveTypeExp;
         }
     }
 

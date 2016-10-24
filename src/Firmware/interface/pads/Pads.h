@@ -98,8 +98,8 @@ class Pads  {
     //pressure info
     pressureSensitivity_t getPressureSensitivity();
     void setPressureSensitivity(pressureSensitivity_t type);
-    pressureCurve_t getPressureCurve();
-    void setPressureCurve(pressureCurve_t curve);
+    curveType_t getPressureCurve();
+    void setPressureCurve(curveType_t curve);
 
     uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
 
@@ -295,7 +295,7 @@ class Pads  {
 
     //pressure info
     pressureSensitivity_t pressureSensitivity;
-    pressureCurve_t pressureCurve;
+    curveType_t pressureCurve;
 
 };
 

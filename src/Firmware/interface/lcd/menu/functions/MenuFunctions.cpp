@@ -298,11 +298,11 @@ bool checkPressureSensitivity(functionArgument argument) {
 
 bool checkPressureCurve(functionArgument argument)    {
 
-    switch((pressureCurve_t)argument.argument1)  {
+    switch((curveType_t)argument.argument1)  {
 
-        case pressureCurve_linear:
-        case pressureCurve_log:
-        case pressureCurve_exp:
+        case curveTypeLinear:
+        case curveTypeLog:
+        case curveTypeExp:
         //ok
         break;
 
@@ -315,12 +315,12 @@ bool checkPressureCurve(functionArgument argument)    {
     switch(argument.argument2)  {
 
         case true:
-        pads.setPressureCurve((pressureCurve_t)argument.argument1);
+        pads.setPressureCurve((curveType_t)argument.argument1);
         return true;
         break;
 
         case false:
-        return (pads.getPressureCurve() == (pressureCurve_t)argument.argument1);
+        return (pads.getPressureCurve() == (curveType_t)argument.argument1);
         break;
 
     }   return false;

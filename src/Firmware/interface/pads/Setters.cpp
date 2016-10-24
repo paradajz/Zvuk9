@@ -433,7 +433,7 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
     uint8_t startPad = !splitEnabled ? 0 : lastPressedPad;
-    uint8_t compareValue = NUMBER_OF_CURVES-1;
+    uint8_t compareValue = NUMBER_OF_CC_CURVES-1; //no exp and log
     bool compareResult;
     uint8_t changedValue = 0;
     bool changeAllowed = true;
@@ -1163,7 +1163,7 @@ void Pads::setPressureSensitivity(pressureSensitivity_t type)  {
 
 }
 
-void Pads::setPressureCurve(pressureCurve_t curve)  {
+void Pads::setPressureCurve(curveType_t curve)  {
 
     pressureCurve = curve;
     configuration.writeParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureCurveSection, 0, curve);
