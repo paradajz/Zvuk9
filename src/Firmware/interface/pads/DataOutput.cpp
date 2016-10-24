@@ -85,8 +85,12 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)   {
                     //only send note off if the same note isn't active on some other pad already
                     if (padNote[j][i] == padNote[pad][i])    {
 
-                        sendOff = false;
-                        break; //no need to check further
+                        //extra check here - check if midi channels differ
+                        if (midiChannel[j] == midiChannel[pad])
+                        {
+                            sendOff = false;
+                            break; //no need to check further
+                        }
 
                     }
 
