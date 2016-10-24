@@ -602,17 +602,17 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
 
     uint8_t size = 0;
 
-    //always clear notes first since they can have large size (user scale only)
+    //always clear notes first since they can have large size
     //issues are raised if we don't do this
     //a bit hacky...
-    if (pads.isUserScale(pads.getActiveScale()))   {
+    //if (pads.isUserScale(pads.getActiveScale()))   {
 
-        strcpy_P(stringBuffer, notesClear_string);
-        size = progmemCharArraySize(notesClear_string);
-        padEditMode ?   updateDisplay(lcdElements.notes.row, text, 0, false, size, true) : 
-                        updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
+    strcpy_P(stringBuffer, notesClear_string);
+    size = progmemCharArraySize(notesClear_string);
+    padEditMode ?   updateDisplay(lcdElements.notes.row, text, 0, false, size, true) : 
+                    updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
 
-    }
+    //}
 
     //pad edit mode and regular mode differ in start index of notes
     //change scroll start index depending on whether pad edit mode is active
