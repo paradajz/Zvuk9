@@ -180,12 +180,6 @@ bool checkPressureLevel(functionArgument argument)    {
 
 }
 
-bool checkPressureCurve(functionArgument argument)    {
-
-    return true;
-
-}
-
 bool checkAftertouchType(functionArgument argument)   {
 
     switch((aftertouchType_t)argument.argument1)    {
@@ -296,6 +290,37 @@ bool checkPressureSensitivity(functionArgument argument) {
 
         case false:
         return (pads.getPressureSensitivity() == (pressureSensitivity_t)argument.argument1);
+        break;
+
+    }   return false;
+
+}
+
+bool checkPressureCurve(functionArgument argument)    {
+
+    switch((pressureCurve_t)argument.argument1)  {
+
+        case pressureCurve_linear:
+        case pressureCurve_log:
+        case pressureCurve_exp:
+        //ok
+        break;
+
+        default:
+        //invalid argument
+        return false;
+
+    }
+
+    switch(argument.argument2)  {
+
+        case true:
+        pads.setPressureCurve((pressureCurve_t)argument.argument1);
+        return true;
+        break;
+
+        case false:
+        return (pads.getPressureCurve() == (pressureCurve_t)argument.argument1);
         break;
 
     }   return false;
