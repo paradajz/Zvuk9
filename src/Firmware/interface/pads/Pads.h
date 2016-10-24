@@ -10,6 +10,7 @@
 
 #define CONNECTED_PADS          9
 
+#define MEDIAN_RUNS_XY          2
 #define NUMBER_OF_SAMPLES       3
 
 #define DEFAULT_XY_AT_VALUE     255
@@ -97,6 +98,8 @@ class Pads  {
     //pressure info
     pressureSensitivity_t getPressureSensitivity();
     void setPressureSensitivity(pressureSensitivity_t type);
+    pressureCurve_t getPressureCurve();
+    void setPressureCurve(pressureCurve_t curve);
 
     uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
 
@@ -132,15 +135,15 @@ class Pads  {
 
     //data sampling/debouncing
     void addPressureSamples(int16_t pressure);
-    void addXYSamples(int16_t xValue, int16_t yValue);
     bool pressureSampled();
-    bool xySampled();
     bool pressureStable(uint8_t padNumber, bool pressDetected);
     int16_t getMedianValueXYZ(coordinateType_t coordinate);
 
     //data processing
     bool pressureUpdated(uint8_t pad);
     bool xyUpdated(uint8_t pad);
+    bool xUpdated(uint8_t pad);
+    bool yUpdated(uint8_t pad);
 
     //data availability checks
     bool checkAftertouch(uint8_t pad, bool velocityAvailable);
@@ -200,6 +203,8 @@ class Pads  {
     //median value samples get stored here (3 samples)
     int16_t     xValueSamples[NUMBER_OF_SAMPLES],
                 yValueSamples[NUMBER_OF_SAMPLES],
+                xMedianSamples[MEDIAN_RUNS_XY],
+                yMedianSamples[MEDIAN_RUNS_XY],
                 pressureValueSamples[NUMBER_OF_SAMPLES];
 
     //store press states for all pads inside this variable
@@ -256,8 +261,7 @@ class Pads  {
                 aftertouchActivationDelay[MAX_PADS];
 
     uint8_t     pressureReduction[MAX_PADS];
-    uint8_t     sampleCounterPressure,
-                sampleCounterXY;
+    uint8_t     sampleCounterPressure;
 
     //pad read control
     uint8_t     activePad;
@@ -291,6 +295,7 @@ class Pads  {
 
     //pressure info
     pressureSensitivity_t pressureSensitivity;
+    pressureCurve_t pressureCurve;
 
 };
 

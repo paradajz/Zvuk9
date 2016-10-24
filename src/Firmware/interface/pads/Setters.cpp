@@ -136,6 +136,10 @@ bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint
 
         variablePointer[pad] = limit;
         configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, configurationSection, (uint16_t)pad, limit);
+        #ifdef DEBUG
+        getXLimits();
+        getYLimits();
+        #endif
         return true;
 
     }   return false;
@@ -471,6 +475,13 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
 
     if (changeAllowed)  {
 
+        #ifdef DEBUG
+        if (coordinate == coordinateX)
+            printf("X curve for ");
+        else if (coordinate == coordinateY)
+            printf("Y curve for ");
+        #endif
+
         switch(splitEnabled) {
 
             case true:
@@ -478,7 +489,7 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
             configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
             variablePointer[startPad] = changedValue;
             #ifdef DEBUG
-            printf("Y curve for %d pad: %d\n", startPad, changedValue);
+            printf("pad %d: %d\n", startPad, changedValue);
             #endif
             break;
 
@@ -488,7 +499,7 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
             for (int i=0; i<MAX_PADS; i++)
                 variablePointer[i] = changedValue;
             #ifdef DEBUG
-            printf("Y curve for all pads: %d\n", changedValue);
+            printf("all pads: %d\n", changedValue);
             #endif
             break;
 
@@ -1149,5 +1160,12 @@ void Pads::setPressureSensitivity(pressureSensitivity_t type)  {
     pressureSensitivity = type;
     configuration.writeParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureSensitivitySection, 0, type);
     getPressureLimits();
+
+}
+
+void Pads::setPressureCurve(pressureCurve_t curve)  {
+
+    pressureCurve = curve;
+    configuration.writeParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureCurveSection, 0, curve);
 
 }

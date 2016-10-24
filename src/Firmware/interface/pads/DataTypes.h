@@ -49,6 +49,14 @@ typedef enum {
 
 typedef enum {
 
+    pressureCurve_linear,
+    pressureCurve_log,
+    pressureCurve_exp
+
+} pressureCurve_t;
+
+typedef enum {
+
     aftertouchChannel,
     aftertouchPoly
 

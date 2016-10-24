@@ -2,130 +2,166 @@
 #include "../lcd/menu/Menu.h"
 #include "../../eeprom/Defaults.h"
 
-void Pads::addXYSamples(int16_t xValue, int16_t yValue)    {
+const uint8_t pressureReductionConstant = 0b11111100;
 
-    xValueSamples[sampleCounterXY] = xValue;
-    yValueSamples[sampleCounterXY] = yValue;
-
-    sampleCounterXY++;
-
-}
-
-bool Pads::xySampled() {
-
-    return (sampleCounterXY == NUMBER_OF_SAMPLES);
-
-}
-
-int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)  {
-
+int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)
+{
     int16_t medianValue = 0;
 
-    switch(coordinate)  {
-
+    switch(coordinate)
+    {
         case coordinateX:
         if ((xValueSamples[0] <= xValueSamples[1]) && (xValueSamples[0] <= xValueSamples[2]))
-        {
             medianValue = (xValueSamples[1] <= xValueSamples[2]) ? xValueSamples[1] : xValueSamples[2];
-        }
         else if ((xValueSamples[1] <= xValueSamples[0]) && (xValueSamples[1] <= xValueSamples[2]))
-        {
             medianValue = (xValueSamples[0] <= xValueSamples[2]) ? xValueSamples[0] : xValueSamples[2];
-        }
         else
-        {
             medianValue = (xValueSamples[0] <= xValueSamples[1]) ? xValueSamples[0] : xValueSamples[1];
-        }
         break;
 
         case coordinateY:
         if ((yValueSamples[0] <= yValueSamples[1]) && (yValueSamples[0] <= yValueSamples[2]))
-        {
             medianValue = (yValueSamples[1] <= yValueSamples[2]) ? yValueSamples[1] : yValueSamples[2];
-        }
         else if ((yValueSamples[1] <= yValueSamples[0]) && (yValueSamples[1] <= yValueSamples[2]))
-        {
             medianValue = (yValueSamples[0] <= yValueSamples[2]) ? yValueSamples[0] : yValueSamples[2];
-        }
         else
-        {
             medianValue = (yValueSamples[0] <= yValueSamples[1]) ? yValueSamples[0] : yValueSamples[1];
-        }
         break;
 
         case coordinateZ:
         if ((pressureValueSamples[0] <= pressureValueSamples[1]) && (pressureValueSamples[0] <= pressureValueSamples[2]))
-        {
             medianValue = (pressureValueSamples[1] <= pressureValueSamples[2]) ? pressureValueSamples[1] : pressureValueSamples[2];
-        }
         else if ((pressureValueSamples[1] <= pressureValueSamples[0]) && (pressureValueSamples[1] <= pressureValueSamples[2]))
-        {
             medianValue = (pressureValueSamples[0] <= pressureValueSamples[2]) ? pressureValueSamples[0] : pressureValueSamples[2];
-        }
         else
-        {
             medianValue = (pressureValueSamples[0] <= pressureValueSamples[1]) ? pressureValueSamples[0] : pressureValueSamples[1];
-        }
         break;
 
-    }   return medianValue;
+    }
 
+    return medianValue;
 }
 
-bool Pads::checkX(uint8_t pad)  {
+bool Pads::checkX(uint8_t pad)
+{
+    if (pressureReduction[pad])
+        return false;
 
-    if (pressureReduction[pad]) return false;
+    int16_t medianValue = 0;
 
-    int16_t xValue = scaleXY(pad, getMedianValueXYZ(coordinateX), coordinateX);
+    for (int i=0; i<MEDIAN_RUNS_XY; i++)
+        medianValue += xMedianSamples[i];
+
+    medianValue /= MEDIAN_RUNS_XY;
+
+    if (calibrationEnabled && (activeCalibration == coordinateX))
+    {
+        if ((medianValue < minCalibrationValue) && (medianValue != minCalibrationValue) && (medianValue >= DEFAULT_PAD_X_LIMIT_LOWER))
+        {
+            minCalibrationValue = medianValue;
+
+            #ifdef DEBUG
+            printf("Calibrating lowest value for X, pad %d: %d\n", pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
+            #endif
+            calibrate(coordinateX, lower, pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
+        }
+        else if ((medianValue > maxCalibrationValue) && (medianValue != maxCalibrationValue) && maxCalibrationValue && (medianValue <= DEFAULT_PAD_X_LIMIT_UPPER))
+        {
+            maxCalibrationValue = medianValue;
+
+            #ifdef DEBUG
+            printf("Calibrating max value for X, pad %d: %d\n", pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
+            #endif
+            calibrate(coordinateX, upper, pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
+        }
+    }
+
+    int16_t xValue = scaleXY(pad, medianValue, coordinateX);
     xValue = curves.getCurveValue(coordinateX, (curveType_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
     bool xChanged = false;
 
-    if ((rTimeMillis() - xSendTimer[pad]) > XY_SEND_TIMEOUT)  {
+    if ((rTimeMillis() - xSendTimer[pad]) > XY_SEND_TIMEOUT)
+    {
+        if (abs(xValue - lastXMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP)
+            xChanged = true;
+    }
+    else if ((xValue != lastXMIDIvalue[pad]) && ((rTimeMillis() - xSendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
+    {
+        xChanged = true;
+    }
 
-        if (abs(xValue - lastXMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP) xChanged = true;
-
-    }   else if ((xValue != lastXMIDIvalue[pad]) && ((rTimeMillis() - xSendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
-    xChanged = true;
-
-    if (xChanged)   {
-
+    if (xChanged)
+    {
         lastXMIDIvalue[pad] = xValue;
         xSendTimer[pad] = rTimeMillis();
 
         padDebounceTimer[pad] = rTimeMillis(); //why? investigate
         return true;
+    }
 
-    } return false;
-
+    return false;
 }
 
-bool Pads::checkY(uint8_t pad)  {
+bool Pads::checkY(uint8_t pad)
+{
+    if (pressureReduction[pad])
+        return false;
 
-    if (pressureReduction[pad]) return false;
+    int16_t medianValue = 0;
 
-    int16_t yValue = scaleXY(pad, getMedianValueXYZ(coordinateY), coordinateY);
+    for (int i=0; i<MEDIAN_RUNS_XY; i++)
+        medianValue += yMedianSamples[i];
+
+    medianValue /= MEDIAN_RUNS_XY;
+
+    if (calibrationEnabled && (activeCalibration == coordinateY))
+    {
+        if ((medianValue < minCalibrationValue) && (medianValue != minCalibrationValue) && (medianValue >= DEFAULT_PAD_Y_LIMIT_LOWER))
+        {
+            minCalibrationValue = medianValue;
+
+            #ifdef DEBUG
+            printf("Calibrating lowest value for Y, pad %d: %d\n", pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
+            #endif
+            calibrate(coordinateY, lower, pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
+        }
+        else if ((medianValue > maxCalibrationValue) && (medianValue != maxCalibrationValue) && maxCalibrationValue && (medianValue <= DEFAULT_PAD_Y_LIMIT_UPPER))
+        {
+            maxCalibrationValue = medianValue;
+
+            #ifdef DEBUG
+            printf("Calibrating max value for Y, pad %d: %d\n", pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
+            #endif
+            calibrate(coordinateY, upper, pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
+        }
+    }
+
+    int16_t yValue = scaleXY(pad, medianValue, coordinateY);
     curves.getCurveValue(coordinateY, (curveType_t)padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
 
     bool yChanged = false;
 
-    if ((rTimeMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT)  {
+    if ((rTimeMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT)
+    {
+        if (abs(yValue - lastYMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP)
+            yChanged = true;
+    }
+    else if ((yValue != lastYMIDIvalue[pad]) && ((rTimeMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
+    {
+        yChanged = true;
+    }
 
-        if (abs(yValue - lastYMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP) yChanged = true;
-
-    }   else if ((yValue != lastYMIDIvalue[pad]) && ((rTimeMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
-    yChanged = true;
-
-    if (yChanged)   {
-
+    if (yChanged)
+    {
         lastYMIDIvalue[pad] = yValue;
         ySendTimer[pad] = rTimeMillis();
 
         padDebounceTimer[pad] = rTimeMillis(); //why? investigate
         return true;
+    }
 
-    }   return false;
-
+    return false;
 }
 
 bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)  {
@@ -280,6 +316,7 @@ void Pads::update()
     static bool xAvailable = false;
     static bool yAvailable = false;
     bool restoreLCD = false;
+    static bool xUpdated_var = false, yUpdated_var = false;
 
     if (!switchToXYread)
     {
@@ -294,13 +331,24 @@ void Pads::update()
     else
     {
         //don't update x/y if pressure isn't read
-        if (xyUpdated(pad))
+        if (xUpdated(pad))
         {
             xAvailable = checkX(pad);
-            yAvailable = checkY(pad);
+            xUpdated_var = true;
+        }
 
+        if (yUpdated(pad))
+        {
+            yAvailable = checkY(pad);
+            yUpdated_var = true;
+        }
+
+        if (xUpdated_var && yUpdated_var)
+        {
             switchToXYread = false;
             switchToNextPad = true;
+            xUpdated_var = false;
+            yUpdated_var = false;
         }
     }
 
@@ -389,49 +437,62 @@ void Pads::update()
     checkRemainingNoteShift();
 }
 
-bool Pads::xyUpdated(uint8_t pad)  {
-
-    //read x/y three times and get median value
+bool Pads::xUpdated(uint8_t pad)
+{
+    //read x three times and get median value
+    static uint8_t xSampleCounter = 0;
+    static uint8_t medianRunCounter = 0;
     int16_t xValue = board.getPadX();
-    int16_t yValue = board.getPadY();
 
-    //if we got to this point, we have x and y coordinates
-    addXYSamples(xValue, yValue);
+    xValueSamples[xSampleCounter] = xValue;
+    xSampleCounter++;
 
-    if (!xySampled()) return false;
-    else {
-
-        sampleCounterXY = 0;
-
-        if (calibrationEnabled && (activeCalibration != coordinateZ)) {
-
-            //calibration is enabled
-            int16_t medianValue = getMedianValueXYZ(activeCalibration);
-
-            if ((medianValue < minCalibrationValue) && (medianValue != minCalibrationValue))
-            {
-                minCalibrationValue = medianValue;
-                calibrate(activeCalibration, lower, pad, minCalibrationValue+XY_MIN_CALIBRATION_OFFSET);
-                #ifdef DEBUG
-                printf("Calibrating lowest value, pad %d: %d\n", pad, minCalibrationValue+XY_MIN_CALIBRATION_OFFSET);
-                #endif
-            }
-
-            if ((medianValue > maxCalibrationValue) && (medianValue != maxCalibrationValue) && maxCalibrationValue)
-            {
-                maxCalibrationValue = medianValue;
-                calibrate(activeCalibration, upper, pad, maxCalibrationValue+XY_MAX_CALIBRATION_OFFSET);
-                #ifdef DEBUG
-                printf("Calibrating max value, pad %d: %d\n", pad, maxCalibrationValue+XY_MAX_CALIBRATION_OFFSET);
-                #endif
-            }
-
+    if (xSampleCounter != NUMBER_OF_SAMPLES)
+    {
+        return false;
+    }
+    else
+    {
+        xSampleCounter = 0;
+        xMedianSamples[medianRunCounter] = getMedianValueXYZ(coordinateX);
+        medianRunCounter++;
+        if (medianRunCounter == MEDIAN_RUNS_XY)
+        {
+            medianRunCounter = 0;
+            return true;
         }
-
-        return true;
-
     }
 
+    return false;
+}
+
+bool Pads::yUpdated(uint8_t pad)
+{
+    //read x three times and get median value
+    static uint8_t ySampleCounter = 0;
+    static uint8_t medianRunCounter = 0;
+    int16_t yValue = board.getPadY();
+
+    yValueSamples[ySampleCounter] = yValue;
+    ySampleCounter++;
+
+    if (ySampleCounter != NUMBER_OF_SAMPLES)
+    {
+        return false;
+    }
+    else
+    {
+        ySampleCounter = 0;
+        yMedianSamples[medianRunCounter] = getMedianValueXYZ(coordinateY);
+        medianRunCounter++;
+        if (medianRunCounter == MEDIAN_RUNS_XY)
+        {
+            medianRunCounter = 0;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool Pads::pressureStable(uint8_t pad, bool pressDetected)  {
@@ -490,7 +551,8 @@ bool Pads::pressureUpdated(uint8_t pad) {
         //detect if pressure is increasing or decreasing, but only if pad is pressed
         if (isPadPressed(pad))
         {
-            pressureReduction[pad] = (getMedianValueXYZ(coordinateZ) < lastPressureValue[pad]);
+            //pressureReduction[pad] = abs(getMedianValueXYZ(coordinateZ) - lastPressureValue[pad]) > 5;
+            pressureReduction[pad] = getMedianValueXYZ(coordinateZ) < lastPressureValue[pad];
         }
         else
         {
@@ -507,26 +569,26 @@ bool Pads::checkVelocity(uint8_t pad)  {
     //we've taken 3 pressure samples so far, get median value
     int16_t medianValue = getMedianValueXYZ(coordinateZ);
 
-    if (calibrationEnabled && (activeCalibration == coordinateZ) && (medianValue > DEFAULT_PAD_PRESSURE_LIMIT_LOWER)) {
-
-        //calibration is enabled
-        int16_t medianValue = getMedianValueXYZ(activeCalibration);
-
-        //we are only updating max calibration value for pressure
-
-        if (medianValue > maxCalibrationValue)
-        maxCalibrationValue = medianValue;
-
-        if (maxCalibrationValue < 1024 && (maxCalibrationValue > DEFAULT_PAD_PRESSURE_LIMIT_LOWER)) {
-
-            pads.calibrate(activeCalibration, upper, pad, maxCalibrationValue);
-            #ifdef DEBUG
-            printf("New max calibration value, pressure, pad %d: %d\n", pad, maxCalibrationValue);
-            #endif
-
-        }
-
-    }
+    //if (calibrationEnabled && (activeCalibration == coordinateZ) && (medianValue > DEFAULT_PAD_PRESSURE_LIMIT_LOWER)) {
+//
+        ////calibration is enabled
+        //int16_t medianValue = getMedianValueXYZ(activeCalibration);
+//
+        ////we are only updating max calibration value for pressure
+//
+        //if (medianValue > maxCalibrationValue)
+        //maxCalibrationValue = medianValue;
+//
+        //if (maxCalibrationValue < 1024 && (maxCalibrationValue > DEFAULT_PAD_PRESSURE_LIMIT_LOWER)) {
+//
+            //pads.calibrate(activeCalibration, upper, pad, maxCalibrationValue);
+            //#ifdef DEBUG
+            //printf("New max calibration value, pressure, pad %d: %d\n", pad, maxCalibrationValue);
+            //#endif
+//
+        //}
+//
+    //}
 
     //calibrate pressure based on median value (0-1023 -> 0-127)
     uint8_t calibratedPressure = scalePressure(pad, medianValue, pressureVelocity);
@@ -546,6 +608,8 @@ bool Pads::checkVelocity(uint8_t pad)  {
                 bitWrite(padPressed, pad, true);  //set pad pressed
                 lastVelocityValue[pad] = calibratedPressure;
                 lastMIDInoteState[pad] = true;
+                //always do this when pad is pressed
+                resetCalibration();
                 returnValue = true;
 
             }
@@ -760,7 +824,7 @@ void Pads::updateLastPressedPad(uint8_t pad, bool state)   {
         clearTouchHistoryPad(pad);
         break;
 
-    }   resetCalibration();
+    }
 
 }
 

@@ -54,8 +54,6 @@ void Curves::setupCurve(curveType_t type, uint8_t min, uint8_t max)   {
 
     if (type == curveTypeLinear)    {
 
-        setupLinearCurve();
-
         //scale range if min isn't 0 or max isn't 127
         if (min || max != 127) {
 
@@ -65,8 +63,6 @@ void Curves::setupCurve(curveType_t type, uint8_t min, uint8_t max)   {
         }
 
     }   else {
-
-        memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[(uint8_t)type])), 128);
 
         double curveGain_double = (uint8_t)curveGain[type]/10.0; //scale gain value to values 0.0-1.0
         uint8_t numberOfValues = max-min;
@@ -123,9 +119,13 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uin
         #endif
 
         if (type == curveTypeLinear)
-            setupLinearCurve();
+        {
+            //setup curve manually
+            for (int i=0; i<128; i++)
+                scale[i] = i;
+        }
         else
-            memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[(uint8_t)type])), 128);
+            memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[(uint8_t)type-1])), 128);
 
         lastGain[(uint8_t)coordinate] = (uint8_t)type;
 
@@ -151,12 +151,6 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uin
 
     return scale[index];
 
-}
-
-void Curves::setupLinearCurve()
-{
-    for (int i=0; i<128; i++)
-        scale[i] = i;
 }
 
 Curves curves;
