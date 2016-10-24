@@ -4,12 +4,7 @@
 #define DDR(x) (*(&x-1))
 
 //see register summary in datasheet for selected device
-#if defined(__AVR_ATmega64__) || defined(__AVR_ATmega128__)
-    /* on ATmega64/128 PINF is on port 0x00 and not 0x60 */
-    #define PIN(x) ( &PORTF==&(x) ? _SFR_IO8(0x00) : (*(&x - 2)) )
-#else
-    #define PIN(x) (*(&x-2))
-#endif
+#define PIN(x) (*(&x-2))
 
 #define setOutput(port, pin) ((DDR(port)) |= (1 << (pin)))
 #define setInput(port, pin) ((DDR(port)) &= ~(1 << (pin)))
