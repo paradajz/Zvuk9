@@ -1,21 +1,19 @@
-#ifndef BUTTONS_H_
-#define BUTTONS_H_
+#pragma once
 #include "../pads/Pads.h"
 
 #include "../leds/LEDs.h"
 #include "../../core/Core.h"
 
-typedef enum {
-
+typedef enum
+{
     transportStop,
     transportPlay,
     transportRecordOn,
     transportRecordOff
-
 } transportControl_t;
 
-class Buttons   {
-
+class Buttons
+{
     public:
     Buttons();
     void init();
@@ -52,9 +50,6 @@ class Buttons   {
     bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
     bool processingEnabled;
     uint32_t userMenuTimeout;
-
 };
 
 extern Buttons buttons;
-
-#endif

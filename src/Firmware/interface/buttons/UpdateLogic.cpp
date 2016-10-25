@@ -1,7 +1,5 @@
 #include "Buttons.h"
 
-#ifdef BUTTONS_H_
-
 #include <util/delay.h>
 
 #include "../lcd/menu/Menu.h"
@@ -14,125 +12,121 @@
 //if it's 0xFF or buttonDebounceCompare, its reading is stable
 const uint8_t buttonDebounceCompare = 0b11110000;
 
-Buttons::Buttons()  {
-
+Buttons::Buttons()
+{
     //default constructor
     lastCheckTime               = 0;
     lastButtonDataPress         = 0;
     mcpData                     = 0;
     processingEnabled           = true;
 
-    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
-
+    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
+    {
         previousButtonState[i] = buttonDebounceCompare;
         buttonEnabled[i] = true;
-
     }
-
 }
 
-void Buttons::init()  {
-
+void Buttons::init()
+{
     mapButtonsToLEDs();
-
     uint32_t currentTime = rTimeMillis();
-
     processingEnabled = false;
 
     //read buttons for 0.1 seconds
-    do {
-
+    do
+    {
         //read all buttons without activating event handlers
         update();
+    }
+    while ((rTimeMillis() - currentTime) < 100);
 
-    }   while ((rTimeMillis() - currentTime) < 100);
-
-    if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP)) {
-
+    if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP))
+    {
         menu.displayMenu(serviceMenu);
         disable();
-
-    }   else {
-
-        processingEnabled = true;
-
     }
-
+    else
+    {
+        processingEnabled = true;
+    }
 }
 
-void Buttons::update()    {
+void Buttons::update()
+{
+    if (!((rTimeMillis() - lastCheckTime) > EXPANDER_CHECK_TIME))
+        return;
 
-    if (!((rTimeMillis() - lastCheckTime) > EXPANDER_CHECK_TIME)) return;
+    if (!board.buttonDataAvailable())
+        return;
 
-    if (!board.buttonDataAvailable()) return;
-
-    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
-
+    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
+    {
         bool state = board.getButtonState(i);
         bool debounced = buttonDebounced(i, state);
 
-        if (debounced) {
-
+        if (debounced)
+        {
             //if button state is same as last one, do nothing
             //act on change only
-            if (state == getButtonState(i)) continue;
-
+            if (state == getButtonState(i))
+                continue;
             //update previous button state with current one
             setButtonState(i, state);
             if (processingEnabled)
                 processButton(i, state);
-
         }
-
     }
 
     //check split button for entering into user menu
-    if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])   {
-
+    if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])
+    {
         //measure the time the button is pressed
-        if (!userMenuTimeout) userMenuTimeout = rTimeMillis();
-        else if (((rTimeMillis() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed()) {
-
+        if (!userMenuTimeout)
+        {
+            userMenuTimeout = rTimeMillis();
+        }
+        else if (((rTimeMillis() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed())
+        {
             userMenuTimeout = 0;
             menu.displayMenu(userMenu);
             #ifdef DEBUG
-                printf("Entering user menu\n");
+            printf("Entering user menu\n");
             #endif
             //disable buttons while in menu
             buttons.disable();
             //turn off blinky led
             leds.setLEDstate(LED_ON_OFF_SPLIT, leds.getLEDstate(LED_ON_OFF_SPLIT), false);
-
         }
-
-    }  else userMenuTimeout = 0;
+    }
+    else
+    {
+        userMenuTimeout = 0;
+    }
 
     lastCheckTime = rTimeMillis();
-
 }
 
-bool Buttons::getButtonState(uint8_t buttonNumber) {
-
+bool Buttons::getButtonState(uint8_t buttonNumber)
+{
     return bitRead(lastButtonDataPress, buttonNumber);
-
 }
 
-bool Buttons::buttonDebounced(uint8_t buttonNumber, uint8_t state)  {
-
+bool Buttons::buttonDebounced(uint8_t buttonNumber, uint8_t state)
+{
     //shift new button reading into previousButtonState
     previousButtonState[buttonNumber] = (previousButtonState[buttonNumber] << 1) | state | buttonDebounceCompare;
 
     //if button is debounced, return true
     return ((previousButtonState[buttonNumber] == buttonDebounceCompare) || (previousButtonState[buttonNumber] == 0xFF));
-
 }
 
-void Buttons::processButton(uint8_t buttonNumber, bool state)    {
-
-    if (buttonEnabled[buttonNumber])    {
-
-        switch (buttonNumber)   {
-
+void Buttons::processButton(uint8_t buttonNumber, bool state)
+{
+    if (buttonEnabled[buttonNumber])
+    {
+        switch (buttonNumber)
+        {
             case BUTTON_ON_OFF_AFTERTOUCH:
             case BUTTON_ON_OFF_NOTES:
             case BUTTON_ON_OFF_X:
@@ -170,49 +164,39 @@ void Buttons::processButton(uint8_t buttonNumber, bool state)    {
             note_t note = getTonicFromButton(buttonNumber);
             handleTonicEvent(note, state);
             break;
-
         }
-
     }
 
     //resume all callbacks
-    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++) {
-
-        if (!buttonEnabled[i] && !getButtonState(i)) {
-
+    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
+    {
+        if (!buttonEnabled[i] && !getButtonState(i))
+        {
             buttonEnabled[i] = true;
             //reset blinking
             uint8_t ledNumber = getLEDnumberFromButton(i);
             leds.setLEDstate(ledNumber, leds.getLEDstate(ledNumber), false);
-
         }
-
     }
-
 }
 
-void Buttons::setButtonState(uint8_t buttonNumber, uint8_t state) {
-
+void Buttons::setButtonState(uint8_t buttonNumber, uint8_t state)
+{
     bitWrite(lastButtonDataPress, buttonNumber, state);
-
 }
 
-void Buttons::enable(int8_t buttonID)  {
-
+void Buttons::enable(int8_t buttonID)
+{
     if (buttonID == -1)
         processingEnabled = true;
-
-    else buttonEnabled[buttonID] = true;
-
+    else
+        buttonEnabled[buttonID] = true;
 }
 
-void Buttons::disable(int8_t buttonID) {
-
+void Buttons::disable(int8_t buttonID)
+{
     if (buttonID == -1)
         processingEnabled = false;
-
-    else buttonEnabled[buttonID] = false;
-
+    else
+        buttonEnabled[buttonID] = false;
 }
-
-#endif

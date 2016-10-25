@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#count all tags with "v*.0" pattern and assign value to $major
-major=$(git tag -l "v*.0" | wc -l)
+#read value written inside MAJOR file
+major=$(head -n 1 MAJOR)
 
 #list all tags descending until major tag is found, count the output and assign result to $minor
 minor=$(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname) %(*objectname) %(objectname)' refs/tags | sort -r | awk '{ print $3 }' | sed -e 's/refs\/tags\///g' | sed '/v*.0/Q' | wc -l)
