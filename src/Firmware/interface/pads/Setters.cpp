@@ -668,7 +668,8 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange)
         for (int i=0; i<MAX_PADS-1; i++)
             tempNoteArray[i] = padNote[i+1][0];
 
-        noteShiftLevel++;
+        if (!internalChange)
+            noteShiftLevel++;
         break;
 
         case false:
@@ -682,7 +683,8 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange)
         for (int i=0; i<MAX_PADS-1; i++)
             tempNoteArray[i+1] = padNote[i][0];
 
-        noteShiftLevel--;
+        if (!internalChange)
+            noteShiftLevel--;
         break;
 
     }
@@ -691,7 +693,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange)
         noteShiftLevel = 0;
 
     if (!internalChange)
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale), noteShiftLevel);
+        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, noteShiftLevel);
 
     #ifdef DEBUG
     printf("Shifted note: %d\n", noteShiftLevel);

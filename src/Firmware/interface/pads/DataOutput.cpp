@@ -240,7 +240,7 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)
         display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, editModeActive());
         display.displayVelocity(velocity);
 
-        if (isPredefinedScale(getActiveScale()))
+        if (isPredefinedScale(activeScale))
         {
             if (noteShiftLevel != 0)
                 display.displayNoteShiftLevel(noteShiftLevel);

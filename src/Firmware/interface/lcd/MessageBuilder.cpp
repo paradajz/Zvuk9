@@ -565,10 +565,18 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
     //a bit hacky...
     //if (pads.isUserScale(pads.getActiveScale()))   {
 
-    strcpy_P(stringBuffer, notesClear_string);
-    size = progmemCharArraySize(notesClear_string);
-    padEditMode ?   updateDisplay(lcdElements.notes.row, text, 0, false, size, true) :
-                    updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, true);
+    if (padEditMode)
+    {
+        strcpy_P(stringBuffer, notesClear_editMode_string);
+        size = progmemCharArraySize(notesClear_editMode_string);
+        updateDisplay(lcdElements.notes.row, text, 0, false, size, true);
+    }
+    else
+    {
+        strcpy_P(stringBuffer, notesClear_string);
+        size = progmemCharArraySize(notesClear_string);
+        updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, false);
+    }
 
     //}
 

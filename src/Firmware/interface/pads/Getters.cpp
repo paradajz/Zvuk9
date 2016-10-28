@@ -184,11 +184,11 @@ void Pads::generateScale(scale_t scale)    {
         note_t tonic = (note_t)configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
         noteShiftLevel = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
 
-        //#ifdef DEBUG
-            //printf("Octave: %d\n", octave);
-            //printf("Tonic: %d\n", tonic);
-            //printf("Shift: %d\n", noteShiftLevel);
-        //#endif
+        #ifdef DEBUG
+        printf("Octave: %d\n", octave);
+        printf("Tonic: %d\n", tonic);
+        printf("Shift: %d\n", noteShiftLevel);
+        #endif
 
         uint8_t noteCounter = 0;
 
@@ -229,8 +229,8 @@ void Pads::generateScale(scale_t scale)    {
         //finally, apply note shift
         if (noteShiftLevel < 0)  {
 
-            noteShiftLevel *= -1;
-            for (int i=0; i<noteShiftLevel; i++)
+            int8_t temp = noteShiftLevel *= -1;
+            for (int i=0; i<temp; i++)
                 shiftNote(false, true);
 
         }   else {
