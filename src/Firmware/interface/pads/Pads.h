@@ -1,5 +1,4 @@
-#ifndef PADS_H
-#define PADS_H
+#pragma once
 
 #include <avr/eeprom.h>
 #include <stdlib.h>
@@ -18,12 +17,10 @@
 
 #define NOTES_PER_PAD           7
 
-#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
-
 const uint8_t padID[] = { PAD_0, PAD_1, PAD_2, PAD_3, PAD_4, PAD_5, PAD_6, PAD_7, PAD_8 };
 
-class Pads  {
-
+class Pads
+{
     public:
 
     //init
@@ -296,8 +293,6 @@ class Pads  {
     //pressure info
     pressureSensitivity_t pressureSensitivity;
     curveType_t pressureCurve;
-
 };
 
 extern Pads pads;
-#endif

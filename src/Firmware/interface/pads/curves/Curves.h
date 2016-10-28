@@ -1,5 +1,4 @@
-#ifndef PADXYSCALES_H_
-#define PADXYSCALES_H_
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,8 +7,8 @@
 
 #include "../DataTypes.h"
 
-typedef enum {
-
+typedef enum
+{
     curveTypeLinear,
     curveTypeWideMiddle,
     curveTypeWideEnds,
@@ -17,10 +16,10 @@ typedef enum {
     curveTypeLog = NUMBER_OF_CC_CURVES,
     curveTypeExp = curveTypeLog+1,
     NUMBER_OF_CURVES = curveTypeExp+1
-
 } curveType_t;
 
-class Curves {
+class Curves
+{
 
     public:
     Curves();
@@ -32,9 +31,6 @@ class Curves {
     int8_t  lastCurve[3], //x+y+z
             lastMin[2], //x+y
             lastMax[2]; //x+y
-
 };
 
 extern Curves curves;
-
-#endif

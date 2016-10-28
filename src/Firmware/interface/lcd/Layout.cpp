@@ -1,9 +1,7 @@
 #include "LCD.h"
 
-#ifdef LCD_H_
-
-void LCD::setupLCDlayout()  {
-
+void LCD::setupLCDlayout()
+{
     {
         lcdElements.programAndScale.row = 0;
         lcdElements.programAndScale.startIndex = 0;
@@ -62,7 +60,4 @@ void LCD::setupLCDlayout()  {
         lcdElements.padCalibration.row = 0;
         lcdElements.padCalibration.startIndex = 0;
     }
-
 }
-
-#endif

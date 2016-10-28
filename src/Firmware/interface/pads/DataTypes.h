@@ -1,15 +1,13 @@
-#ifndef DATATYPES_H_
-#define DATATYPES_H_
+#pragma once
 
-typedef enum {
-
+typedef enum
+{
     ccLimitTypeMin,
     ccLimitTypeMax
-
 } ccLimitType_t;
 
-typedef enum {
-
+typedef enum
+{
     C,
     C_SHARP,
     D,
@@ -23,11 +21,10 @@ typedef enum {
     A_SHARP,
     B,
     MIDI_NOTES
-
 } note_t;
 
-typedef enum {
-
+typedef enum
+{
     scaleNaturalMinor,
     scaleMelodicMinor,
     scaleHarmonicMinor,
@@ -36,80 +33,71 @@ typedef enum {
     scaleMinorPentatonic,
     scaleMajorPentatonic,
     PREDEFINED_SCALES
-
 } scale_t;
 
-typedef enum {
-
+typedef enum
+{
     aftertouchChannel,
     aftertouchPoly
-
 } aftertouchType_t;
 
-typedef enum {
-
+typedef enum
+{
     coordinateX,
     coordinateY,
     coordinateZ,
-
 } coordinateType_t;
 
-typedef enum {
-
+typedef enum
+{
     pressureVelocity,
     pressureAftertouch
-
 } pressureType_t;
 
-typedef enum {
-
+typedef enum
+{
     fiveNoteScale = 5,
     sevenNoteScale = 7,
     userScale
-
 } scaleType_t;
 
-typedef enum {
-
+typedef enum
+{
     onOff_notes,
     onOff_aftertouch,
     onOff_x,
     onOff_y,
     onOff_split
-
 } onOff_t;
 
-typedef enum {
-
+typedef enum
+{
     noChange,
     outputChanged,
     outOfRange,
     overflow,
     notAllowed
-
 } changeOutput_t;
 
-typedef enum {
-
+typedef enum
+{
     tonicChange,
     octaveChange,
     noteShift,
     noteAdded,
     noteRemoved
-
 } noteChangeType_t;
 
-typedef enum {
-
+typedef enum
+{
     notUserPreset,
     padNotReleased,
     padEditEnter,
     padEditExit
-
 } padEditModeResult_t;
 
-typedef enum {
-
+typedef enum
+{
     changeProgram,
     changePreset,
     changeCCnumber,
@@ -117,22 +105,17 @@ typedef enum {
     changeCurve,
     calibrationMode,
     enterPadEditMode
-
 } padReleaseError_t;
 
-typedef enum {
-
+typedef enum
+{
     lower,
     upper
-
 } calibrationDirection;
 
-typedef enum {
-
+typedef enum
+{
     pressure_soft,
     pressure_medium,
     pressure_hard
-
 } pressureSensitivity_t;
-
-#endif

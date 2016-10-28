@@ -1,5 +1,4 @@
-#ifndef VALUES_H_
-#define VALUES_H_
+#pragma once
 
 const uint8_t PROGMEM scale_log[] PROGMEM =
 {
@@ -265,11 +264,8 @@ const uint8_t PROGMEM scale_exp[] PROGMEM =
     127
 };
 
-const uint8_t* const scaleArray[] PROGMEM = {
-
+const uint8_t* const scaleArray[] PROGMEM =
+{
     scale_log,
     scale_exp
-
 };
-
-#endif

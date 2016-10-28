@@ -1,5 +1,4 @@
-#ifndef ERRORS_STRINGS_H_
-#define ERRORS_STRINGS_H_
+#pragma once
 
 #include <avr/pgmspace.h>
 
@@ -22,5 +21,3 @@ const char exitPadMode_string[] PROGMEM = "Exit pad mode to";
 
 const char maxNotesSet0_string[] PROGMEM = "Maximum number of";
 const char maxNotesSet1_string[] PROGMEM = "notes set";
-
-#endif

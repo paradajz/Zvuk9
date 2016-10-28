@@ -1,5 +1,4 @@
-#ifndef LCDSETTINGS_H_
-#define LCDSETTINGS_H_
+#pragma once
 
 #include "../pads/Calibration.h"
 
@@ -16,5 +15,3 @@
 #define NUMBER_OF_LCD_ROWS              4
 
 #define MAX_TEXT_SIZE                   (NUMBER_OF_LCD_COLUMNS+10)
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef NOTES_STRINGS_H_
-#define NOTES_STRINGS_H_
+#pragma once
 
 #include <avr/pgmspace.h>
 
@@ -34,8 +33,8 @@ const char notesClear_string[] PROGMEM = "                         ";
 const char noteShift_string[] PROGMEM = "n";
 const char noteShiftClear_string[] PROGMEM = "   ";
 
-PGM_P const noteNameArray[] PROGMEM = {
-
+PGM_P const noteNameArray[] PROGMEM =
+{
     tonicC_string,
     tonicCSharp_string,
     tonicD_string,
@@ -48,11 +47,10 @@ PGM_P const noteNameArray[] PROGMEM = {
     tonicA_string,
     tonicASharp_string,
     tonicB_strig
-
 };
 
-const uint8_t noteNameArray_sizes[] PROGMEM = {
-
+const uint8_t noteNameArray_sizes[] PROGMEM =
+{
     sizeof(tonicC_string) - 1,
     sizeof(tonicCSharp_string) - 1,
     sizeof(tonicD_string) - 1,
@@ -65,7 +63,4 @@ const uint8_t noteNameArray_sizes[] PROGMEM = {
     sizeof(tonicA_string) - 1,
     sizeof(tonicASharp_string) - 1,
     sizeof(tonicB_strig) - 1
-
 };
-
-#endif

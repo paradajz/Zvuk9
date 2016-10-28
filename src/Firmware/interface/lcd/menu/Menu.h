@@ -1,9 +1,6 @@
+#pragma once
+
 #include "../LCD.h"
-
-#ifdef LCD_H_
-
-#ifndef MENU_H_
-#define MENU_H_
 
 #include "../Macros.h"
 #include "../strings/Strings.h"
@@ -12,15 +9,14 @@
 
 #define MAX_MENU_OPTIONS    25
 
-typedef struct {
-
+typedef struct
+{
     uint8_t argument1;
     uint8_t argument2;
-
 } functionArgument;
 
-class Menu : LCD {
-
+class Menu : LCD
+{
     public:
     Menu();
     void init();
@@ -50,8 +46,8 @@ class Menu : LCD {
 
     typedef bool (*actionPointer)(functionArgument argument);
 
-    typedef struct {
-
+    typedef struct
+    {
         //denotes item level in menu hierarchy, ie. 1.2.3.1.
         uint16_t level;
         //pointer to function if any
@@ -61,15 +57,10 @@ class Menu : LCD {
         bool conditionCheck;
         bool checkable;
         functionArgument argument;
-
     } menuItem_t;
 
     menuItem_t menuItem[MAX_MENU_OPTIONS];
     uint8_t menuSize;
-
 };
 
 extern Menu menu;
-
-#endif
-#endif

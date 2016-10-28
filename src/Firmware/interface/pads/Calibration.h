@@ -1,5 +1,4 @@
-#ifndef PADSCALIBRATION_H_
-#define PADSCALIBRATION_H_
+#pragma once
 
 #include "../../eeprom/Defaults.h"
 
@@ -45,5 +44,3 @@
 #define MAX_Y_VALUE                         620
 
 #define DEFAULT_PAD_PRESSURE_LIMIT_LOWER    100
-
-#endif

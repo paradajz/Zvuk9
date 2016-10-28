@@ -1,5 +1,4 @@
-#ifndef MENU_SERVICEMENUSTRINGS_H_
-#define MENU_SERVICEMENUSTRINGS_H_
+#pragma once
 
 #include <avr/pgmspace.h>
 
@@ -78,5 +77,3 @@ const char no_string[] PROGMEM = "No";
 const char factory_reset_warning_1_string[] PROGMEM = " Confirm with pads:";
 const char factory_reset_warning_2_string[] PROGMEM = "  1[ ] 7[ ] 9[ ]   ";
 const char factory_reset_warning_3_string[] PROGMEM = " Cancel: any other";
-
-#endif

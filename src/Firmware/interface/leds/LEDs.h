@@ -1,11 +1,10 @@
-#ifndef LEDS_H_
-#define LEDS_H_
+#pragma once
 
 #include "../../board/Board.h"
 #include "../pads/DataTypes.h"
 
-class LEDs  {
-
+class LEDs
+{
     public:
     LEDs();
     void init();
@@ -25,9 +24,6 @@ class LEDs  {
     ledState_t getTonicLEDstate(note_t note);
 
     private:
-
 };
-
-#endif
 
 extern LEDs leds;

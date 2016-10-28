@@ -1,5 +1,4 @@
-#ifndef MISC_STRINGS_H_
-#define MISC_STRINGS_H_
+#pragma once
 
 #include <avr/pgmspace.h>
 
@@ -13,5 +12,3 @@ const char aftertouchClear_string[] PROGMEM = "     ";
 const char midiChannelClear_string[] PROGMEM = "    ";
 const char midiChannel_string[] PROGMEM = "ch";
 const char firmware_updated[] PROGMEM = "Firmware updated!";
-
-#endif

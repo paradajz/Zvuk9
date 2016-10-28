@@ -12,24 +12,22 @@
 #define LOG_CURVE_INDEX     0
 #define EXP_CURVE_INDEX     1
 
-double bias(double b, double x)    {
-
+double bias(double b, double x)
+{
     return pow(x, log(b)/LOG_05);
-
 }
 
-double gain(double g, double x)    {
-
+double gain(double g, double x)
+{
     if (x < 0.5)
         return bias(1-g, 2*x)/2;
-    else return 1 - bias(1-g,2 - 2*x)/2;
-
+    else
+        return 1 - bias(1-g,2 - 2*x)/2;
 }
 
-uint8_t map_u8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max) {
-
+uint8_t map_u8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max)
+{
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-
 };
 
 Curves::Curves()    {
@@ -57,8 +55,8 @@ Curves::Curves()    {
 
 }
 
-uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uint8_t index, uint8_t min, uint8_t max)    {
-
+uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uint8_t index, uint8_t min, uint8_t max)
+{
     if ((uint8_t)type != lastCurve[(uint8_t)coordinate])
     {
         bool minMax_differ = (min || (max != 127));
@@ -109,8 +107,8 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uin
             //scale range
             step = 1.0/(double)numberOfValues;
 
-            for (int i=0; i<=numberOfValues; i++)   {
-
+            for (int i=0; i<=numberOfValues; i++)
+            {
                 //make sure that curve extremes are correct
                 if (!i)
                     scale[(uint8_t)coordinate][i] = 0;
@@ -120,7 +118,6 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uin
                     scale[(uint8_t)coordinate][i] = round(gain(curveGain_double, stepValue) * numberOfValues); //round up
 
                 stepValue += step;
-
             }
 
             if (min > 0)

@@ -1,10 +1,4 @@
 #include "../../LCD.h"
-
-#ifdef LCD_H_
-
-#ifndef MENU_FUNCTIONS_H_
-#define MENU_FUNCTIONS_H_
-
 #include "../../../pads/Pads.h"
 #include "../../../encoders/Encoders.h"
 #include "../../../../midi/MIDI.h"
@@ -67,6 +61,3 @@ bool checkPressureCurve(functionArgument argument);
 bool checkAftertouchType(functionArgument argument);
 
 bool checkNoteOffStatus(functionArgument argument);
-
-#endif
-#endif

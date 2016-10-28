@@ -1,7 +1,6 @@
 #include "Buttons.h"
 
 #include <util/delay.h>
-
 #include "../lcd/menu/Menu.h"
 
 //time after which expanders are checked in ms

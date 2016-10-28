@@ -1,9 +1,9 @@
 #include "Scales.h"
 
-uint8_t getNotesPerScale(scale_t scale)    {
-
-    switch(scale)   {
-
+uint8_t getNotesPerScale(scale_t scale)
+{
+    switch(scale)
+    {
         case scaleNaturalMinor:
         case scaleMelodicMinor:
         case scaleHarmonicMinor:
@@ -17,18 +17,16 @@ uint8_t getNotesPerScale(scale_t scale)    {
 
         default:
         return 0;
-
     }
-
 }
 
 
-note_t getScaleNote(scale_t scale, uint8_t note)  {
-
+note_t getScaleNote(scale_t scale, uint8_t note)
+{
     //no error checking, be careful
 
-    switch(scale)   {
-
+    switch(scale)
+    {
         case scaleNaturalMinor:
         return scaleNaturalMinor_notes[note];
         break;
@@ -59,7 +57,5 @@ note_t getScaleNote(scale_t scale, uint8_t note)  {
 
         default:
         return C;
-
     }
-
 }

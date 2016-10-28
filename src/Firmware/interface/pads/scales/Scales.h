@@ -1,5 +1,4 @@
-#ifndef SCALES_H_
-#define SCALES_H_
+#pragma once
 
 //scale definitions starting from lowest octave
 //pentatonic scales have 5 notes per octave
@@ -19,5 +18,3 @@ const note_t scaleMajor_notes[]              = { C, D, E, F, G, A, B };
 const note_t scaleHarmonicMajor_notes[]      = { C, D, E, F, G, G_SHARP, B };
 const note_t scaleMinorPentatonic_notes[]    = { C, D_SHARP, F, G, A_SHARP };
 const note_t scaleMajorPentatonic_notes[]    = { C, D, E, G, A };
-
-#endif

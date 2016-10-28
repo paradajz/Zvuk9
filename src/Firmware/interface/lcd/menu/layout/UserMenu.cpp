@@ -1,5 +1,4 @@
 #include "../Menu.h"
-#ifdef MENU_H_
 #include "../items/UserMenu.h"
 
 #include "../../../../version/Firmware.h"
@@ -8,8 +7,8 @@
 #include "../../../../midi/DataTypes.h"
 #include "../functions/MenuFunctions.h"
 
-void Menu::createUserMenuLayout()   {
-
+void Menu::createUserMenuLayout()
+{
     menuItem[userMenuItem_pressureSettings].stringPointer = menuOption_pressureSettings_string;
     menuItem[userMenuItem_pressureSettings].level = 1;
     menuItem[userMenuItem_pressureSettings].function = NULL;
@@ -132,6 +131,4 @@ void Menu::createUserMenuLayout()   {
     menuItem[userMenuItem_factoryReset].level = 5;
     menuItem[userMenuItem_factoryReset].function = factoryReset;
     menuItem[userMenuItem_factoryReset].argument.argument1 = (uint8_t)factoryReset_partial;
-
 }
-#endif

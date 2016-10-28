@@ -1,5 +1,4 @@
-#ifndef LCD_H_
-#define LCD_H_
+#pragma once
 
 #include "../../board/Board.h"
 #include "../buttons/Buttons.h"
@@ -15,34 +14,31 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef enum {
-
+typedef enum
+{
     noMessage,
     showMessage,
     messageDisplayed,
     clearMessage
-
 } messageStatus_t;
 
-typedef enum {
-
+typedef enum
+{
     userMenu,
     serviceMenu,
     noMenu
-
 } menuType_t;
 
-typedef enum {
-
+typedef enum
+{
     text,
     message
-
 } lcdTextType;
 
 #define SPACE_CHAR          32
 
-class LCD   {
-
+class LCD
+{
     public:
     LCD();
     void init();
@@ -89,8 +85,8 @@ class LCD   {
     void displayFactoryResetWarning();
     void displayNoteShiftLevel(int8_t level);
 
-    inline uint8_t getNumberOfDigits(int32_t number)  {
-
+    inline uint8_t getNumberOfDigits(int32_t number)
+    {
         if (number < 10)            return 1;
         if (number < 100)           return 2;
         if (number < 1000)          return 3;
@@ -102,39 +98,36 @@ class LCD   {
         if (number < 1000000000)    return 9;
 
         return 10; //max size
-
     }
 
     //menu functions
     void displayDeviceInfo();
 
     //string manipulation
-    inline void addNumberToCharArray(int32_t number, uint8_t &stringSize)  {
-
+    inline void addNumberToCharArray(int32_t number, uint8_t &stringSize)
+    {
         char intToCharArray[7];
         itoa(number, intToCharArray, 10);
         stringSize += getNumberOfDigits(number);
         if (number < 0) stringSize++;
         strcat(stringBuffer, intToCharArray);
         stringBuffer[stringSize] = '\0';
-
     }
 
-    inline void appendText(const char *text, uint8_t &stringSize) {
-
+    inline void appendText(const char *text, uint8_t &stringSize)
+    {
         stringSize += strlen(text);
         strcat(stringBuffer, text);
         stringBuffer[stringSize] = '\0';
-
     }
 
-    inline void addSpaceToCharArray(uint8_t &stringSize, uint8_t numberOfSpaces) {
-
+    inline void addSpaceToCharArray(uint8_t &stringSize, uint8_t numberOfSpaces)
+    {
         for (int i=0; i<numberOfSpaces; i++)
-        stringBuffer[stringSize+i] = SPACE_CHAR;
+            stringBuffer[stringSize+i] = SPACE_CHAR;
+
         stringSize += numberOfSpaces;
         stringBuffer[stringSize] = '\0';
-
     }
 
     protected:
@@ -169,15 +162,14 @@ class LCD   {
     char lastLCDLine[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
     char lcdLineScroll[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
 
-    typedef struct {
-
+    typedef struct
+    {
         uint8_t row;
         uint8_t startIndex;
-
     } lcdElement_t;
 
-    typedef struct {
-
+    typedef struct
+    {
         lcdElement_t ccx;
         lcdElement_t ccy;
         lcdElement_t xpos;
@@ -193,13 +185,9 @@ class LCD   {
         lcdElement_t messageText2;
         lcdElement_t padCalibration;
         lcdElement_t noteShiftLevel;
-
     } lcdElements_t;
 
     lcdElements_t lcdElements;
-
 };
 
 extern LCD display;
-
-#endif

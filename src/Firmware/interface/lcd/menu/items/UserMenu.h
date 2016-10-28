@@ -1,8 +1,7 @@
-#ifndef USER_MENU_OPTIONS_H_
-#define USER_MENU_OPTIONS_H_
+#pragma once
 
-typedef enum {
-
+typedef enum
+{
     userMenuItem_pressureSettings,
     userMenuItem_pressureSensitivity,
     userMenuItem_pressureCurve,
@@ -32,7 +31,4 @@ typedef enum {
     userMenuItem_midiSettings_runningStatus_disabled,
 
     USER_MENU_ITEMS
-
 } userMenuItems_t;
-
-#endif

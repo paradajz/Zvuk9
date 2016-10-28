@@ -1,5 +1,4 @@
 #include "../Menu.h"
-#ifdef MENU_H_
 #include "../items/ServiceMenu.h"
 
 #include "../../../../version/Firmware.h"
@@ -8,8 +7,8 @@
 
 #include "../functions/MenuFunctions.h"
 
-void Menu::createServiceMenuLayout()   {
-
+void Menu::createServiceMenuLayout()
+{
     menuItem[serviceMenuItem_calibration].stringPointer = menuOption_padCalibration_string;
     menuItem[serviceMenuItem_calibration].level = 1;
     menuItem[serviceMenuItem_calibration].function = checkCalibration;
@@ -42,6 +41,4 @@ void Menu::createServiceMenuLayout()   {
     menuItem[serviceMenuItem_factoryReset].level = 3;
     menuItem[serviceMenuItem_factoryReset].function = factoryReset;
     menuItem[serviceMenuItem_factoryReset].argument.argument1 = (uint8_t)factoryReset_restore;
-
 }
-#endif

@@ -1,5 +1,4 @@
-#ifndef CC_STRINGS_H_
-#define CC_STRINGS_H_
+#pragma once
 
 #include <avr/pgmspace.h>
 
@@ -27,36 +26,30 @@ const char yPosition_string[] PROGMEM = "y";
 const char xyPositionClear_string[] PROGMEM = "    ";
 const char xyCCclear_string[] PROGMEM = "      ";
 
-PGM_P const curveCoordinateArray[] PROGMEM = {
-
+PGM_P const curveCoordinateArray[] PROGMEM =
+{
     //match order with coordinateType_t enum
     curveCoordinateX_string,
     curveCoordinateY_string
-
 };
 
-const uint8_t curveCoordinateArray_sizes[] PROGMEM = {
-
+const uint8_t curveCoordinateArray_sizes[] PROGMEM =
+{
     //match order with coordinateType_t enum
     sizeof(curveCoordinateX_string) - 1,
     sizeof(curveCoordinateY_string) - 1
-
 };
 
-PGM_P const ccArray[] PROGMEM = {
-
+PGM_P const ccArray[] PROGMEM =
+{
     //match order with coordinateType_t enum
     xCC_string,
     yCC_string
-
 };
 
-const uint8_t ccArray_sizes[] PROGMEM = {
-
+const uint8_t ccArray_sizes[] PROGMEM =
+{
     //match order with coordinateType_t enum
     sizeof(xCC_string) - 1,
     sizeof(yCC_string) - 1
-
 };
-
-#endif

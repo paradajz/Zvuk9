@@ -3,35 +3,34 @@
 #include "../../../../eeprom/Configuration.h"
 #include "../../../../midi/DataTypes.h"
 
-#ifdef MENU_FUNCTIONS_H_
-
-bool factoryReset(functionArgument argument) {
-
+bool factoryReset(functionArgument argument)
+{
     display.displayFactoryResetWarning();
 
     uint16_t padsPressed = 0;
 
-    while(1)    {
-
+    while(1)
+    {
         pads.update();
 
         for (int i=0; i<MAX_PADS; i++)
-            if (pads.isPadPressed(i))   {
-
-                if ((i != 6) && (i != 0) && (i != 8)) {
-
+        {
+            if (pads.isPadPressed(i))
+            {
+                 //hardcoding!!! :( pads 1, 7 and 9 need to be pressed to invoke factory reset
+                if ((i != 6) && (i != 0) && (i != 8))
+                {
                     //flush all accumulated encoder output if there were any movements
                     encoders.flush();
                     return false;
-
                 }
 
-                if (!bitRead(padsPressed, i))   {
-
+                if (!bitRead(padsPressed, i))
+                {
                     bitWrite(padsPressed, i, 1);
 
-                    switch(i)   {
-
+                    switch(i)
+                    {
                         case 0:
                         lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
                         lcd_putc('x');
@@ -49,19 +48,17 @@ bool factoryReset(functionArgument argument) {
 
                         default:
                         break;
-
                     }
-
                 }
-
-            }   else {
-
-                if (bitRead(padsPressed, i))    {
-
+            }
+            else
+            {
+                if (bitRead(padsPressed, i))
+                {
                     bitWrite(padsPressed, i, 0);
 
-                    switch(i)   {
-
+                    switch(i)
+                    {
                         case 0:
                         lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
                         lcd_putc(' ');
@@ -79,40 +76,35 @@ bool factoryReset(functionArgument argument) {
 
                         default:
                         break;
-
                     }
-
                 }
-
             }
+        }
 
-        if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))    {
-
+        if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))
+        {
             wait_ms(500); //don't clear lcd immediately
-
             leds.setFadeSpeed(1);
             leds.allLEDsOff();
             wait_ms(2000);
             configuration.factoryReset((factoryResetType_t)argument.argument1);
             reboot();
-
         }
+    }
 
-    }   return true;
-
+    return true;
 }
 
-bool deviceInfo(functionArgument argument)   {
-
+bool deviceInfo(functionArgument argument)
+{
     display.displayDeviceInfo();
     return true;
-
 }
 
-bool enableCalibration(functionArgument argument)     {
-
-    switch(argument.argument1)    {
-
+bool enableCalibration(functionArgument argument)
+{
+    switch(argument.argument1)
+    {
         case coordinateX:
         case coordinateY:
         case coordinateZ:
@@ -122,7 +114,6 @@ bool enableCalibration(functionArgument argument)     {
         default:
         //wrong type
         return false;
-
     }
 
     pads.setCalibrationMode(true, (coordinateType_t)argument.argument1);
@@ -130,60 +121,55 @@ bool enableCalibration(functionArgument argument)     {
     display.clearLine(2);
     display.clearLine(3);
     return true;
-
 }
 
-bool padEditMode(functionArgument argument)  {
-
+bool padEditMode(functionArgument argument)
+{
     pads.setEditMode(true);
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     //check if last touched pad is pressed
-    if (pads.isPadPressed(lastTouchedPad))   {
-
+    if (pads.isPadPressed(lastTouchedPad))
+    {
         display.displayEditModeNotAllowed(padNotReleased);
         pads.setEditMode(false);
-
-    }   else {
-
+    }
+    else
+    {
         //normally, this is called in automatically in Pads.cpp
         //but on first occasion call it manually
         #ifdef DEBUG
-            printf("Pad edit mode\n");
+        printf("Pad edit mode\n");
         #endif
         pads.setupPadEditMode(lastTouchedPad);
-
         leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
         leds.setLEDstate(LED_OCTAVE_UP, ledStateFull);
-
     }
 
     return true;
-
 }
 
-bool checkCalibration(functionArgument argument) {
-
-    if (!pads.allPadsReleased())    {
-
+bool checkCalibration(functionArgument argument)
+{
+    if (!pads.allPadsReleased())
+    {
         display.displayPadReleaseError(calibrationMode);
         menu.stopFunction();
         return false;
-
-    }   return true;
-
-}
-
-bool checkPressureLevel(functionArgument argument)    {
+    }
 
     return true;
-
 }
 
-bool checkAftertouchType(functionArgument argument)   {
+bool checkPressureLevel(functionArgument argument)
+{
+    return true;
+}
 
-    switch((aftertouchType_t)argument.argument1)    {
-
+bool checkAftertouchType(functionArgument argument)
+{
+    switch((aftertouchType_t)argument.argument1)
+    {
         case aftertouchPoly:
         case aftertouchChannel:
         //nothing
@@ -191,11 +177,10 @@ bool checkAftertouchType(functionArgument argument)   {
 
         default:
         return false;
-
     }
 
-    switch(argument.argument2)  {
-
+    switch(argument.argument2)
+    {
         case true:
         //change option
         pads.setAftertouchType((aftertouchType_t)argument.argument1);
@@ -205,15 +190,15 @@ bool checkAftertouchType(functionArgument argument)   {
         case false:
         //check if current aftertouch type is same as received argument
         return (pads.getAftertouchType() == (aftertouchType_t)argument.argument1);
+    }
 
-    }   return false;
-
+    return false;
 }
 
-bool checkRunningStatus(functionArgument argument)  {
-
-    switch(argument.argument2)  {
-
+bool checkRunningStatus(functionArgument argument)
+{
+    switch(argument.argument2)
+    {
         case true:
         //switch option
         #ifdef NDEBUG
@@ -227,14 +212,15 @@ bool checkRunningStatus(functionArgument argument)  {
         #endif
         break;
 
-    }   return false;
+    }
 
+    return false;
 }
 
-bool checkNoteOffStatus(functionArgument argument)    {
-
-    switch(argument.argument1)  {
-
+bool checkNoteOffStatus(functionArgument argument)
+{
+    switch(argument.argument1)
+    {
         case noteOffType_noteOnZeroVel:
         case noteOffType_standardNoteOff:
         //nothing
@@ -242,11 +228,10 @@ bool checkNoteOffStatus(functionArgument argument)    {
 
         default:
         return false;
-
     }
 
-    switch(argument.argument2)  {
-
+    switch(argument.argument2)
+    {
         case true:
         //switch option
         #ifdef NDEBUG
@@ -260,15 +245,15 @@ bool checkNoteOffStatus(functionArgument argument)    {
         #else
         return false;
         #endif
+    }
 
-    }   return false;
-
+    return false;
 }
 
-bool checkPressureSensitivity(functionArgument argument) {
-
-    switch((pressureSensitivity_t)argument.argument1)  {
-
+bool checkPressureSensitivity(functionArgument argument)
+{
+    switch((pressureSensitivity_t)argument.argument1)
+    {
         case pressure_soft:
         case pressure_medium:
         case pressure_hard:
@@ -278,11 +263,10 @@ bool checkPressureSensitivity(functionArgument argument) {
         default:
         //invalid argument
         return false;
-
     }
 
-    switch(argument.argument2)  {
-
+    switch(argument.argument2)
+    {
         case true:
         pads.setPressureSensitivity((pressureSensitivity_t)argument.argument1);
         return true;
@@ -291,15 +275,15 @@ bool checkPressureSensitivity(functionArgument argument) {
         case false:
         return (pads.getPressureSensitivity() == (pressureSensitivity_t)argument.argument1);
         break;
+    }
 
-    }   return false;
-
+    return false;
 }
 
-bool checkPressureCurve(functionArgument argument)    {
-
-    switch((curveType_t)argument.argument1)  {
-
+bool checkPressureCurve(functionArgument argument)
+{
+    switch((curveType_t)argument.argument1)
+    {
         case curveTypeLinear:
         case curveTypeLog:
         case curveTypeExp:
@@ -309,11 +293,10 @@ bool checkPressureCurve(functionArgument argument)    {
         default:
         //invalid argument
         return false;
-
     }
 
-    switch(argument.argument2)  {
-
+    switch(argument.argument2)
+    {
         case true:
         pads.setPressureCurve((curveType_t)argument.argument1);
         return true;
@@ -323,8 +306,7 @@ bool checkPressureCurve(functionArgument argument)    {
         return (pads.getPressureCurve() == (curveType_t)argument.argument1);
         break;
 
-    }   return false;
+    }
 
+    return false;
 }
-
-#endif

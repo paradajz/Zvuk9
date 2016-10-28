@@ -1,5 +1,4 @@
-#ifndef SCALES_STRINGS_H_
-#define SCALES_STRINGS_H_
+#pragma once
 
 #include <avr/pgmspace.h>
 
@@ -12,8 +11,8 @@ const char presetMinorPentatonic_string[] PROGMEM = "Minor Pentatonic";
 const char presetMajorPentatonic_string[] PROGMEM = "Major Pentatonic";
 const char presetUser_string[] PROGMEM = "User preset";
 
-PGM_P const presetNameArray[] PROGMEM = {
-
+PGM_P const presetNameArray[] PROGMEM =
+{
     presetNaturalMinor_string,
     presetMelodicMinor_string,
     presetHarmonicMinor_string,
@@ -22,11 +21,10 @@ PGM_P const presetNameArray[] PROGMEM = {
     presetMinorPentatonic_string,
     presetMajorPentatonic_string,
     presetUser_string
-
 };
 
-const uint8_t presetNameArray_sizes[] PROGMEM = {
-
+const uint8_t presetNameArray_sizes[] PROGMEM =
+{
     sizeof(presetNaturalMinor_string) - 1,
     sizeof(presetMelodicMinor_string) - 1,
     sizeof(presetHarmonicMinor_string) - 1,
@@ -35,7 +33,4 @@ const uint8_t presetNameArray_sizes[] PROGMEM = {
     sizeof(presetMinorPentatonic_string) - 1,
     sizeof(presetMajorPentatonic_string) - 1,
     sizeof(presetUser_string) - 1
-
 };
-
-#endif
