@@ -1,5 +1,4 @@
-#ifndef ENCODERS_H_
-#define ENCODERS_H_
+#pragma once
 
 #include "../../board/Board.h"
 #include <stdlib.h>
@@ -17,8 +16,8 @@
 #define Y_MIN_ENCODER           5
 #define Y_CURVE_ENCODER         4
 
-class Encoders  {
-
+class Encoders
+{
     public:
     Encoders();
     void init();
@@ -28,9 +27,6 @@ class Encoders  {
     private:
     void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps);
     uint32_t lastStepTime[NUMBER_OF_ENCODERS];
-
 };
 
 extern Encoders encoders;
-
-#endif
