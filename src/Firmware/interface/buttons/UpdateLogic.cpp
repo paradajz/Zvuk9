@@ -96,6 +96,7 @@ void Buttons::update()
             buttons.disable();
             //turn off blinky led
             leds.setLEDstate(LED_ON_OFF_SPLIT, leds.getLEDstate(LED_ON_OFF_SPLIT), false);
+
         }
     }
     else

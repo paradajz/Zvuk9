@@ -67,6 +67,7 @@ class Pads
     changeOutput_t shiftOctave(bool direction);
     changeOutput_t shiftNote(bool direction, bool internalChange = false);
     changeOutput_t setTonic(note_t note, bool internalChange = false);
+    int8_t getNoteShiftLevel();
 
     //CC
     //getters

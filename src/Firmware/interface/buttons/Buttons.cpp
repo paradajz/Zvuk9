@@ -123,6 +123,7 @@ void Buttons::handleOnOffEvent(uint8_t buttonNumber, bool state)
             pads.midiSendOnOff(onOff_y);
             lcdMessageType = onOff_y;
             ledNumber = LED_ON_OFF_Y;
+
             if (pads.getMIDISendState(onOff_y, lastTouchedPad))
                 ledState = ledStateFull;
             else
@@ -359,7 +360,7 @@ void Buttons::handleOctaveEvent(bool direction, bool state)
                     buttonEnabled[BUTTON_ON_OFF_NOTES] = false;
 
                     changeOutput_t shiftResult = pads.shiftNote(direction);
-                    display.displayNoteChange(shiftResult, noteShift, direction);
+                    display.displayNoteChange(shiftResult, noteShift, pads.getNoteShiftLevel());
                 }
                 else
                 {

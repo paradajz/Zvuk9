@@ -180,7 +180,7 @@ int main()
         buttons.update();
         encoders.update();
         display.update();
-        //leds.update();
+        leds.update();
 
         #ifdef DEBUG
         vserial.update();

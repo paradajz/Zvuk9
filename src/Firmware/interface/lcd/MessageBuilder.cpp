@@ -233,12 +233,13 @@ void LCD::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t
         switch (result)
         {
             case outputChanged:
-            strcpy_P(stringBuffer, value ? noteUp_string : noteDown_string);
-            size = value ? progmemCharArraySize(noteUp_string) : progmemCharArraySize(noteDown_string);
+            strcpy_P(stringBuffer, notesShifted_string);
+            size = progmemCharArraySize(notesShifted_string);
             updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
 
-            strcpy_P(stringBuffer, emptyLine_string);
-            size = NUMBER_OF_LCD_COLUMNS;
+            strcpy_P(stringBuffer, notesShiftLevel_string);
+            size = progmemCharArraySize(notesShiftLevel_string);
+            addNumberToCharArray(value, size);
             updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
             break;
 

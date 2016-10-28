@@ -645,3 +645,8 @@ curveType_t Pads::getPressureCurve()    {
     return pressureCurve;
 
 }
+
+int8_t Pads::getNoteShiftLevel()
+{
+    return noteShiftLevel;
+}

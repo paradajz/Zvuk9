@@ -23,8 +23,8 @@ const char activeOctave_string[] PROGMEM = "Active octave: ";
 
 const char padEditMode_string[] PROGMEM = "Pad edit mode";
 
-const char noteDown_string[] PROGMEM = "One note down";
-const char noteUp_string[] PROGMEM = "One note up";
+const char notesShifted_string[] PROGMEM = "Notes shifted";
+const char notesShiftLevel_string[] PROGMEM = "Current level: ";
 
 const char velocity_string[] PROGMEM = "v";
 const char velocityClear_string[] PROGMEM = "    ";

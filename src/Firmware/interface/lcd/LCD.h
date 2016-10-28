@@ -84,6 +84,7 @@ class LCD
     void displayMIDIchannel(uint8_t channel);
     void displayFactoryResetWarning();
     void displayNoteShiftLevel(int8_t level);
+    void displayNoteUpDown(bool state, int8_t shiftLevel = 0);
 
     inline uint8_t getNumberOfDigits(int32_t number)
     {
