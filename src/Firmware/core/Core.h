@@ -1,5 +1,4 @@
-#ifndef CORE_H_
-#define CORE_H_
+#pragma once
 
 #include <avr/cpufunc.h>
 #include <util/delay.h>
@@ -15,5 +14,3 @@
 #endif
 #include "PinManipulation.h"
 #include "wait/Wait.h"
-
-#endif

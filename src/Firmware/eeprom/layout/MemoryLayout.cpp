@@ -1,7 +1,7 @@
 #include "Include.h"
 
-void Configuration::createMemoryLayout() {
-
+void Configuration::createMemoryLayout()
+{
     {
         blocks[CONF_BLOCK_PROGRAM].sections = PROGRAM_SECTIONS;
 
@@ -75,7 +75,5 @@ void Configuration::createMemoryLayout() {
 
         blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameters[pressureCurveSection] = 1;
         blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameterType[pressureCurveSection] = BYTE_PARAMETER;
-
     }
-
 }

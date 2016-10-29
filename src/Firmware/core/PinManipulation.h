@@ -1,5 +1,4 @@
-#ifndef PINMANIPULATION_H_
-#define PINMANIPULATION_H_
+#pragma once
 
 #define DDR(x) (*(&x-1))
 
@@ -23,5 +22,3 @@
     _NOP(); \
     setHigh((port), (pin)); \
 } while (0)
-
-#endif

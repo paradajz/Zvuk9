@@ -4,8 +4,8 @@
 
 int16_t adcValue = 0;
 
-void setUpADC() {
-
+void setUpADC()
+{
     ADMUX = 0x00;
     ADCSRA = 0x0;
 
@@ -42,46 +42,42 @@ void setUpADC() {
         getADCvalue(); //few dummy reads to init adc
 
     //#if ADC_INTERRUPT == 1
-        //adcInterruptEnable();
+    //adcInterruptEnable();
     //#endif
-
 }
 
-void setADCchannel(uint8_t channel)  {
-
+void setADCchannel(uint8_t channel)
+{
     //check for valid channel
-    if ((channel < 0) || (channel > 7))   return;
+    if ((channel < 0) || (channel > 7))
+        return;
 
     //select ADC channel with safety mask
     ADMUX = (ADMUX & 0xF0) | (channel & 0x0F);
 
     _NOP();
-
 }
 
-void disconnectDigitalInADC(uint8_t channel) {
+void disconnectDigitalInADC(uint8_t channel){
 
     if (channel < 6)
         DIDR0 |= (1<<channel);
-
 }
 
-int16_t getADCvalue()   {
-
+int16_t getADCvalue()
+{
     startADCconversion();
+
     while (ADCSRA & (1<<ADSC));
     return ADC;
-
 }
 
-ISR(ADC_vect)   {
-
+ISR(ADC_vect)
+{
     adcValue = ADC;
-
 }
 
-bool analogReadInProgress() {
-
+bool analogReadInProgress()
+{
     return ((ADCSRA >> ADSC) & 0x01);
-
 }

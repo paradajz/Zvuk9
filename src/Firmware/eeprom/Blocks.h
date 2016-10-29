@@ -1,38 +1,33 @@
-#ifndef BLOCKS_H_
-#define BLOCKS_H_
+#pragma once
 
-typedef enum {
-
+typedef enum
+{
     CONF_BLOCK_PROGRAM,
     CONF_BLOCK_USER_SCALE,
     CONF_BLOCK_PAD_CALIBRATION,
     CONF_BLOCK_MIDI,
     CONF_BLOCK_PRESSURE_SETTINGS,
     CONF_BLOCKS
-
 } blocks;
 
-
-typedef enum {
-
+typedef enum
+{
     programLastActiveProgramSection,
     programLastActiveScaleSection,
     programGlobalSettingsSection,
     programLocalSettingsSection,
     programScalePredefinedSection,
     PROGRAM_SECTIONS
-
 } programSection;
 
-typedef enum {
-
+typedef enum
+{
     padNotesSection,
     USER_SCALE_SECTIONS
-
 } userScaleSection;
 
-typedef enum {
-
+typedef enum
+{
     padCalibrationPressureLowerSection,
     padCalibrationPressureUpperSection,
     padCalibrationXlowerSection,
@@ -40,15 +35,11 @@ typedef enum {
     padCalibrationYlowerSection,
     padCalibrationYupperSection,
     PAD_CALIBRATION_SECTIONS
-
 } padCalibrationSection;
 
-typedef enum {
-
+typedef enum
+{
     pressureSensitivitySection,
     pressureCurveSection,
     PRESSURE_SETTINGS_SECTIONS
-
 } pressureSettingsSection;
-
-#endif

@@ -20,83 +20,88 @@ bool    rxEnabled,
 
 //isr functions
 
-ISR(USART1_RX_vect) {
-
+ISR(USART1_RX_vect)
+{
     uint8_t c, i;
 
     c = UDR1;
     i = rx_buffer_head + 1;
 
-    if (i >= SERIAL_BUFFER_SIZE) i = 0;
+    if (i >= SERIAL_BUFFER_SIZE)
+        i = 0;
 
-    if (i != rx_buffer_tail) {
-
+    if (i != rx_buffer_tail)
+    {
         rx_buffer[i] = c;
         rx_buffer_head = i;
-
     }
-
 }
 
-ISR(USART1_UDRE_vect)   {
-
+ISR(USART1_UDRE_vect)
+{
     uint8_t i;
 
-    if (tx_buffer_head == tx_buffer_tail) {
-
+    if (tx_buffer_head == tx_buffer_tail)
+    {
         // buffer is empty, disable transmit interrupt
         if (!rxEnabled)
             UCSR1B = (1<<TXCIE1) | (1<<TXEN1);
-        else UCSR1B = (1<<RXEN1) | (1<<TXCIE1) | (1<<TXEN1) | (1<<RXCIE1);
-
-    } else {
-
+        else
+            UCSR1B = (1<<RXEN1) | (1<<TXCIE1) | (1<<TXEN1) | (1<<RXCIE1);
+    }
+    else
+    {
         i = tx_buffer_tail + 1;
-        if (i >= SERIAL_BUFFER_SIZE) i = 0;
+
+        if (i >= SERIAL_BUFFER_SIZE)
+            i = 0;
+
         UDR1 = tx_buffer[i];
         tx_buffer_tail = i;
-
     }
-
 }
 
-ISR(USART1_TX_vect) {
-
+ISR(USART1_TX_vect)
+{
     transmitting = 0;
-
 }
 
-UART::UART()  {
-
+UART::UART()
+{
     //default constructor
-
 }
 
 
-int8_t UART::read(void)   {
-
+int8_t UART::read(void)
+{
     uint8_t data, i;
 
-    if (rx_buffer_head == rx_buffer_tail) return -1;
+    if (rx_buffer_head == rx_buffer_tail)
+        return -1;
     i = rx_buffer_tail + 1;
-    if (i >= SERIAL_BUFFER_SIZE) i = 0;
+
+    if (i >= SERIAL_BUFFER_SIZE)
+        i = 0;
+
     data = rx_buffer[i];
     rx_buffer_tail = i;
     return data;
-
 }
 
-void UART::write(uint8_t data)  {
-
-    if (!txEnabled) return;
+void UART::write(uint8_t data)
+{
+    if (!txEnabled)
+        return;
 
     uint8_t i;
 
-    if (!(UCSR1B & (1<<TXEN1))) return;
+    if (!(UCSR1B & (1<<TXEN1)))
+        return;
 
     i = tx_buffer_head + 1;
 
-    if (i >= SERIAL_BUFFER_SIZE) i = 0;
+    if (i >= SERIAL_BUFFER_SIZE)
+        i = 0;
 
     while (tx_buffer_tail == i); // wait until space in buffer
 
@@ -107,31 +112,30 @@ void UART::write(uint8_t data)  {
 
     if (!rxEnabled)
         UCSR1B = (1<<TXCIE1) | (1<<TXEN1) | (1<<UDRIE1);
-    else UCSR1B = (1<<RXEN1) | (1<<TXCIE1) | (1<<TXEN1) | (1<<RXCIE1) | (1<<UDRIE1);
-
+    else
+        UCSR1B = (1<<RXEN1) | (1<<TXCIE1) | (1<<TXEN1) | (1<<RXCIE1) | (1<<UDRIE1);
 }
 
-void UART::begin(uint32_t baudRate, bool enableRX, bool enableTX)   {
-
+void UART::begin(uint32_t baudRate, bool enableRX, bool enableTX)
+{
     rxEnabled = enableRX;
     txEnabled = enableTX;
 
     int16_t baud_count = ((F_CPU / 8) + (baudRate / 2)) / baudRate;
 
-    if ((baud_count & 1) && baud_count <= 4096) {
-
+    if ((baud_count & 1) && baud_count <= 4096)
+    {
         UCSR1A = (1<<U2X1); //double speed uart
         UBRR1 = baud_count - 1;
-
-    }   else {
-
+    }
+    else
+    {
         UCSR1A = 0;
         UBRR1 = (baud_count >> 1) - 1;
-
     }
 
-    if (!(UCSR1B & (1<<TXEN1))) {
-
+    if (!(UCSR1B & (1<<TXEN1)))
+    {
         rx_buffer_head = 0;
         rx_buffer_tail = 0;
         tx_buffer_head = 0;
@@ -147,23 +151,21 @@ void UART::begin(uint32_t baudRate, bool enableRX, bool enableTX)   {
             UCSR1B = (1<<RXEN1) | (1<<RXCIE1);
         else if (enableTX & !enableRX)  //enable only transmit
             UCSR1B = (1<<TXCIE1) | (1<<TXEN1);
-
     }
-
 }
 
-uint16_t UART::available()    {
-
+uint16_t UART::available()
+{
     //return available number of bytes in incoming buffer
-
     uint8_t head, tail;
 
     head = rx_buffer_head;
     tail = rx_buffer_tail;
 
-    if (head >= tail) return head - tail;
-    return SERIAL_BUFFER_SIZE + head - tail;
+    if (head >= tail)
+        return head - tail;
 
+    return SERIAL_BUFFER_SIZE + head - tail;
 }
 
 //initialize serial object

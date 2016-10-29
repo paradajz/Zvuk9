@@ -5,8 +5,8 @@
 
 #define WDFR 3
 
-void disablePeripherals(void)   {
-
+void disablePeripherals()
+{
     //disable eeprom
     EECR = 0;
 
@@ -49,11 +49,10 @@ void disablePeripherals(void)   {
     PORTD = 0;
     PORTE = 0;
     PORTF = 0;
-
 }
 
-void reboot()    {
-
+void reboot()
+{
     cli();
     //stop watchdog timer, if running
     MCUSR &= ~(1<<WDFR);
@@ -67,5 +66,4 @@ void reboot()    {
 
     wdt_enable(WDTO_250MS);
     for (;;);
-
 }

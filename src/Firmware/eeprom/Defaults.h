@@ -1,5 +1,4 @@
-#ifndef DEFS_H_
-#define DEFS_H_
+#pragma once
 
 #include "../interface/pads/DataTypes.h"
 #include "../interface/pads/curves/Curves.h"
@@ -18,8 +17,9 @@
 
 #define NUMBER_OF_USER_SCALES                       10
 
-typedef enum {  //list of IDs for global program settings for access
-
+typedef enum
+{
+    //list of IDs for global program settings for access
     GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID,
     GLOBAL_PROGRAM_SETTING_X_ENABLE_ID,
     GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID,
@@ -35,7 +35,6 @@ typedef enum {  //list of IDs for global program settings for access
     GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID,
     GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID,
     GLOBAL_PROGRAM_SETTINGS
-
 } globalProgramSettings;
 
 //define default global program settings
@@ -55,8 +54,8 @@ typedef enum {  //list of IDs for global program settings for access
 #define GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN         curveTypeLinear
 
 //put global settings in array for easier access
-const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] = {
-
+const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] =
+{
     GLOBAL_PROGRAM_SETTING_SPLIT_STATE,
     GLOBAL_PROGRAM_SETTING_X_ENABLE,
     GLOBAL_PROGRAM_SETTING_Y_ENABLE,
@@ -71,11 +70,10 @@ const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] = {
     GLOBAL_PROGRAM_SETTING_Y_MAX,
     GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN,
     GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN
-
 };
 
-typedef enum {
-
+typedef enum
+{
     LOCAL_PROGRAM_SETTING_X_ENABLE_ID,
     LOCAL_PROGRAM_SETTING_Y_ENABLE_ID,
     LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID,
@@ -90,7 +88,6 @@ typedef enum {
     LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID,
     LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID,
     LOCAL_PROGRAM_SETTINGS
-
 } localProgramSettings;
 
 #define LOCAL_PROGRAM_SETTING_X_ENABLE              0x01
@@ -107,8 +104,8 @@ typedef enum {
 #define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN          curveTypeLinear
 #define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN          curveTypeLinear
 
-const uint8_t defaultLocalProgramSettingArray[] = {
-
+const uint8_t defaultLocalProgramSettingArray[] =
+{
     LOCAL_PROGRAM_SETTING_X_ENABLE,
     LOCAL_PROGRAM_SETTING_Y_ENABLE,
     LOCAL_PROGRAM_SETTING_NOTE_ENABLE,
@@ -122,49 +119,44 @@ const uint8_t defaultLocalProgramSettingArray[] = {
     LOCAL_PROGRAM_SETTING_Y_MAX,
     LOCAL_PROGRAM_SETTING_X_CURVE_GAIN,
     LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN
-
 };
 
-typedef enum {
-
+typedef enum
+{
     MIDI_SETTING_AFTERTOUCH_TYPE_ID,
     MIDI_SETTING_RUNNING_STATUS_ID,
     MIDI_SETTING_NOTE_OFF_TYPE_ID,
     MIDI_SETTINGS
-
 } midiSettings;
 
 #define MIDI_SETTING_AFTERTOUCH_TYPE                0x00 //aftertouchChannel
 #define MIDI_SETTING_RUNNING_STATUS                 0x00
 #define MIDI_SETTING_NOTE_OFF_TYPE                  0x00 //noteOffType_standardNoteOff
 
-const uint8_t defaultMIDIsettingArray[] = {
-
+const uint8_t defaultMIDIsettingArray[] =
+{
     MIDI_SETTING_AFTERTOUCH_TYPE,
     MIDI_SETTING_RUNNING_STATUS,
     MIDI_SETTING_NOTE_OFF_TYPE
-
 };
 
-typedef enum {
-
+typedef enum
+{
     PREDEFINED_SCALE_OCTAVE_ID,
     PREDEFINED_SCALE_TONIC_ID,
     PREDEFINED_SCALE_SHIFT_ID,
     PREDEFINED_SCALE_PARAMETERS
-
 } predefinedScaleParameters;
 
 #define PREDEFINED_SCALE_OCTAVE                     DEFAULT_OCTAVE
 #define PREDEFINED_SCALE_TONIC                      C
 #define PREDEFINED_SCALE_SHIFT                      0
 
-const uint8_t defaultPredefinedScaleParametersArray[] = {
-
+const uint8_t defaultPredefinedScaleParametersArray[] =
+{
     PREDEFINED_SCALE_OCTAVE,
     PREDEFINED_SCALE_TONIC,
     PREDEFINED_SCALE_SHIFT
-
 };
 
 #define DEFAULT_ACTIVE_PROGRAM                      0
@@ -177,5 +169,3 @@ const uint8_t defaultPredefinedScaleParametersArray[] = {
 #define DEFAULT_PAD_Y_LIMIT_UPPER                   620
 
 #define DEFAULT_PAD_PRESSURE_LIMIT_UPPER            380
-
-#endif

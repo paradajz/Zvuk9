@@ -1,9 +1,6 @@
-#ifndef RESET_H_
-#define RESET_H_
+#pragma once
 
 #include <stdio.h>
 
 void disablePeripherals();
 void reboot();
-
-#endif

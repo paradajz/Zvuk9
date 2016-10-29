@@ -23,10 +23,9 @@
 
 //library modifed by Igor Petrovic
 
-#ifdef NDEBUG
-#ifndef MIDI_H
-#define MIDI_H
 
+#ifdef NDEBUG
+#pragma once
 #include "../core/usb/midi/Descriptors.h"
 
 //usb
@@ -41,8 +40,8 @@ void EVENT_USB_Device_ConfigurationChanged(void);
 #include <avr/interrupt.h>
 #include <stdbool.h>
 
-class MIDI    {
-
+class MIDI
+{
     public:
     MIDI();
     bool init(midiInterfaceType_t type);
@@ -120,8 +119,8 @@ class MIDI    {
             dinEnabled;
 
     //decoded data of a MIDI message
-    struct Message  {
-
+    struct Message
+    {
         //MIDI channel on which the message was received (1-16)
         uint8_t channel;
 
@@ -139,7 +138,6 @@ class MIDI    {
 
         //message valid/invalid (no channel consideration here, validity means the message respects the MIDI norm)
         bool valid;
-
     };
 
     bool                mThruActivated;
@@ -161,10 +159,8 @@ class MIDI    {
                         ccChannel_,
                         programChangeChannel_,
                         aftertouchChannel_;
-
 };
 
 extern MIDI midi;
 
-#endif
 #endif

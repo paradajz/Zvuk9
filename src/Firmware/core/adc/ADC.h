@@ -1,5 +1,4 @@
-#ifndef ADC_H_
-#define ADC_H_
+#pragma once
 
 //ADC setup and manipulation
 
@@ -15,5 +14,3 @@ void setADCchannel(uint8_t channel);
 int16_t getADCvalue();
 void disconnectDigitalInADC(uint8_t channel);
 bool analogReadInProgress();
-
-#endif
