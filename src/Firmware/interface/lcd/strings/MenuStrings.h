@@ -52,7 +52,8 @@ const char pressure_curve_inv_exp_string[] PROGMEM = "Exp.";
 const char midiSettings_midiChannel_string[] PROGMEM = "Channel";
 const char midiSettings_atouchType_string[] PROGMEM = "Aftertouch type";
 const char midiSettings_runningStatus_string[] PROGMEM = "Running status";
-const char midiSettings_noteOff_string[] PROGMEM = "Note off";
+const char midiSettings_noteOff_string[] PROGMEM = "Note off type";
+const char midiSettings_transport_string[] PROGMEM = "Transport CC";
 
 const char aftertouchType_channel_string[] PROGMEM = "Channel";
 const char aftertouchType_poly_string[] PROGMEM = "Poly";

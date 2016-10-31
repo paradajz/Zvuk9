@@ -5,6 +5,7 @@
 #endif
 #include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
+#include "../../eeprom/Configuration.h"
 
 note_t Buttons::getTonicFromButton(uint8_t buttonNumber)
 {
@@ -175,7 +176,10 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
             case BUTTON_TRANSPORT_PLAY:
             type = transportPlay;
             #ifdef NDEBUG
-            sysExArray[4] = 0x02;
+            if (!transportCCenabled_)
+                sysExArray[4] = 0x02;
+            else
+                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_PLAY, 127, 1);
             #endif
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateFull);
             break;
@@ -183,7 +187,10 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
             case BUTTON_TRANSPORT_STOP:
             type = transportStop;
             #ifdef NDEBUG
-            sysExArray[4] = 0x01;
+            if (!transportCCenabled_)
+                sysExArray[4] = 0x01;
+            else
+                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_STOP, 127, 1);
             #endif
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateOff);
             leds.setLEDstate(LED_TRANSPORT_STOP, ledStateOff);
@@ -195,7 +202,10 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
                 type = transportRecordOff;
                 #ifdef NDEBUG
-                sysExArray[4] = 0x07;
+                if (!transportCCenabled_)
+                    sysExArray[4] = 0x07;
+                else
+                    midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
                 #endif
             }
             else
@@ -203,7 +213,10 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
                 type = transportRecordOn;
                 #ifdef NDEBUG
-                sysExArray[4] = 0x06;
+                if (!transportCCenabled_)
+                    sysExArray[4] = 0x06;
+                else
+                    midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 127, 1);
                 #endif
             }
             break;
@@ -218,7 +231,8 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
     }
 
     #ifdef NDEBUG
-    midi.sendSysEx(6, sysExArray, true);
+    if (!transportCCenabled_)
+        midi.sendSysEx(6, sysExArray, true);
     #endif
 
     display.displayTransportControl(type);
@@ -370,6 +384,21 @@ void Buttons::handleOctaveEvent(bool direction, bool state)
             break;
         }
     }
+}
+
+void Buttons::enableTransportCC()
+{
+    transportCCenabled_ = true;
+}
+
+void Buttons::disableTransportCC()
+{
+    transportCCenabled_ = false;
+}
+
+bool Buttons::transportCCenabled()
+{
+    return transportCCenabled_;
 }
 
 Buttons buttons;

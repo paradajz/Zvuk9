@@ -54,6 +54,8 @@ bool checkCalibration(functionArgument argument);
 //checkable items functions
 bool checkRunningStatus(functionArgument argument);
 
+bool checkTransportCC(functionArgument argument);
+
 bool checkPressureSensitivity(functionArgument argument);
 
 bool checkPressureCurve(functionArgument argument);

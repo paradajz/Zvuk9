@@ -21,6 +21,11 @@ class Buttons
     void enable(int8_t buttonID = -1);
     void disable(int8_t buttonID = -1);
 
+    void enableTransportCC();
+    void disableTransportCC();
+
+    bool transportCCenabled();
+
     //getters
     bool getButtonState(uint8_t buttonNumber);
 
@@ -50,6 +55,7 @@ class Buttons
     bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
     bool processingEnabled;
     uint32_t userMenuTimeout;
+    bool transportCCenabled_;
 };
 
 extern Buttons buttons;
