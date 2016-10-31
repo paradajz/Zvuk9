@@ -222,7 +222,7 @@ void Pads::setupSysEx()
             sysEx.addSection(CONF_BLOCK_PAD_CALIBRATION, padCalibrationSectionArray[i]->numberOfParameters, padCalibrationSectionArray[i]->minValue, padCalibrationSectionArray[i]->maxValue);
     }
 
-    //midi block
+    //global settings block
     {
         parameters = MIDI_SETTINGS;
         minValue = 0;
@@ -235,41 +235,20 @@ void Pads::setupSysEx()
             maxValue
         };
 
-        sysEx.addSection(CONF_BLOCK_MIDI, midiSettings_section.numberOfParameters, midiSettings_section.minValue, midiSettings_section.maxValue);
-    }
+        sysEx.addSection(CONF_BLOCK_GLOBAL_SETTINGS, midiSettings_section.numberOfParameters, midiSettings_section.minValue, midiSettings_section.maxValue);
 
-    //pressure settings block
-    {
-        parameters = 1;
+        parameters = PRESSURE_SETTINGS;
         minValue = 0;
-        maxValue = 2; //HARDCODED - FIXME
+        maxValue = 0;
 
-        sysExSection pressureSensitivity_section =
+        sysExSection pressureSettings_section =
         {
             parameters,
             minValue,
             maxValue
         };
 
-        parameters = 1;
-        minValue = 0;
-        maxValue = 2; //HARDCODED - FIXME
-
-        sysExSection pressureCurve_section =
-        {
-            parameters,
-            minValue,
-            maxValue
-        };
-
-        sysExSection *pressureSettingsSectionArray[] =
-        {
-            &pressureSensitivity_section,
-            &pressureCurve_section
-        };
-
-        for (int i=0; i<PRESSURE_SETTINGS_SECTIONS; i++)
-            sysEx.addSection(CONF_BLOCK_PRESSURE_SETTINGS, pressureSettingsSectionArray[i]->numberOfParameters, pressureSettingsSectionArray[i]->minValue, pressureSettingsSectionArray[i]->maxValue);
+        sysEx.addSection(CONF_BLOCK_GLOBAL_SETTINGS, pressureSettings_section.numberOfParameters, pressureSettings_section.minValue, pressureSettings_section.maxValue);
     }
 }
 

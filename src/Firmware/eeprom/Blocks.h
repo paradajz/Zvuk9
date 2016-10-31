@@ -5,8 +5,7 @@ typedef enum
     CONF_BLOCK_PROGRAM,
     CONF_BLOCK_USER_SCALE,
     CONF_BLOCK_PAD_CALIBRATION,
-    CONF_BLOCK_MIDI,
-    CONF_BLOCK_PRESSURE_SETTINGS,
+    CONF_BLOCK_GLOBAL_SETTINGS,
     CONF_BLOCKS
 } blocks;
 
@@ -39,7 +38,7 @@ typedef enum
 
 typedef enum
 {
-    pressureSensitivitySection,
-    pressureCurveSection,
-    PRESSURE_SETTINGS_SECTIONS
-} pressureSettingsSection;
+    globalSettingsMIDI,
+    globalSettingsPressure,
+    GLOBAL_SETTINGS_SECTIONS
+} globalSettingsSection;

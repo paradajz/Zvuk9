@@ -64,59 +64,59 @@ void Menu::createUserMenuLayout()
     }
 
     menuItem[userMenuItem_midiSettings].stringPointer = menuOption_midiSettings_string;
-    menuItem[userMenuItem_midiSettings].level = 3;
+    menuItem[userMenuItem_midiSettings].level = 2;
     menuItem[userMenuItem_midiSettings].function = NULL;
 
         {
             menuItem[userMenuItem_midiSettings_aftertouchType].stringPointer = midiSettings_atouchType_string;
-            menuItem[userMenuItem_midiSettings_aftertouchType].level = 31;
+            menuItem[userMenuItem_midiSettings_aftertouchType].level = 21;
             menuItem[userMenuItem_midiSettings_aftertouchType].function = NULL;
 
                 {
                     menuItem[userMenuItem_midiSettings_aftertouchType_channel].stringPointer = aftertouchType_channel_string;
-                    menuItem[userMenuItem_midiSettings_aftertouchType_channel].level = 311;
+                    menuItem[userMenuItem_midiSettings_aftertouchType_channel].level = 211;
                     menuItem[userMenuItem_midiSettings_aftertouchType_channel].checkable = true;
                     menuItem[userMenuItem_midiSettings_aftertouchType_channel].function = checkAftertouchType;
                     menuItem[userMenuItem_midiSettings_aftertouchType_channel].argument.argument1 = (uint8_t)aftertouchChannel;
 
                     menuItem[userMenuItem_midiSettings_aftertouchType_poly].stringPointer = aftertouchType_poly_string;
-                    menuItem[userMenuItem_midiSettings_aftertouchType_poly].level = 312;
+                    menuItem[userMenuItem_midiSettings_aftertouchType_poly].level = 212;
                     menuItem[userMenuItem_midiSettings_aftertouchType_poly].checkable = true;
                     menuItem[userMenuItem_midiSettings_aftertouchType_poly].function = checkAftertouchType;
                     menuItem[userMenuItem_midiSettings_aftertouchType_poly].argument.argument1 = (uint8_t)aftertouchPoly;
                 }
 
             menuItem[userMenuItem_midiSettings_runningStatus].stringPointer = midiSettings_runningStatus_string;
-            menuItem[userMenuItem_midiSettings_runningStatus].level = 32;
+            menuItem[userMenuItem_midiSettings_runningStatus].level = 22;
             menuItem[userMenuItem_midiSettings_runningStatus].function = NULL;
 
             {
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].stringPointer = enabled_string_string;
-                menuItem[userMenuItem_midiSettings_runningStatus_enabled].level = 321;
+                menuItem[userMenuItem_midiSettings_runningStatus_enabled].level = 221;
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].checkable = true;
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].function = checkRunningStatus;
                 menuItem[userMenuItem_midiSettings_runningStatus_enabled].argument.argument1 = 1;
 
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].stringPointer = disabled_string_string;
-                menuItem[userMenuItem_midiSettings_runningStatus_disabled].level = 322;
+                menuItem[userMenuItem_midiSettings_runningStatus_disabled].level = 222;
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].checkable = true;
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].function = checkRunningStatus;
                 menuItem[userMenuItem_midiSettings_runningStatus_disabled].argument.argument1 = 0;
             }
 
             menuItem[userMenuItem_midiSettings_noteOff].stringPointer = midiSettings_noteOff_string;
-            menuItem[userMenuItem_midiSettings_noteOff].level = 33;
+            menuItem[userMenuItem_midiSettings_noteOff].level = 23;
             menuItem[userMenuItem_midiSettings_noteOff].function = NULL;
 
             {
                 menuItem[userMenuItem_midiSettings_noteOff_channel].stringPointer = noteOff_offChannel_string;
-                menuItem[userMenuItem_midiSettings_noteOff_channel].level = 331;
+                menuItem[userMenuItem_midiSettings_noteOff_channel].level = 231;
                 menuItem[userMenuItem_midiSettings_noteOff_channel].checkable = true;
                 menuItem[userMenuItem_midiSettings_noteOff_channel].function = checkNoteOffStatus;
                 menuItem[userMenuItem_midiSettings_noteOff_channel].argument.argument1 = (uint8_t)noteOffType_standardNoteOff;
 
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].stringPointer = noteOff_zeroVel_string;
-                menuItem[userMenuItem_midiSettings_noteOff_zero_vel].level = 332;
+                menuItem[userMenuItem_midiSettings_noteOff_zero_vel].level = 232;
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].checkable = true;
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].function = checkNoteOffStatus;
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].argument.argument1 = (uint8_t)noteOffType_noteOnZeroVel;
@@ -124,11 +124,11 @@ void Menu::createUserMenuLayout()
         }
 
     menuItem[userMenuItem_deviceInfo].stringPointer = menuOption_deviceInfo_string;
-    menuItem[userMenuItem_deviceInfo].level = 4;
+    menuItem[userMenuItem_deviceInfo].level = 3;
     menuItem[userMenuItem_deviceInfo].function = deviceInfo;
 
     menuItem[userMenuItem_factoryReset].stringPointer = menuOption_factoryReset_string;
-    menuItem[userMenuItem_factoryReset].level = 5;
+    menuItem[userMenuItem_factoryReset].level = 4;
     menuItem[userMenuItem_factoryReset].function = factoryReset;
     menuItem[userMenuItem_factoryReset].argument.argument1 = (uint8_t)factoryReset_partial;
 }

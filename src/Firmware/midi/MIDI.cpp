@@ -23,6 +23,7 @@
 
 //library modified by Igor Petrovic
 
+#ifdef NDEBUG
 #include "MIDI.h"
 
 USB_ClassInfo_MIDI_Device_t MIDI_Interface;
@@ -1503,3 +1504,5 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 }
 
 MIDI midi;
+
+#endif

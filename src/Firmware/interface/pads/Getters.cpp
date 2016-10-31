@@ -7,9 +7,9 @@
 void Pads::getConfiguration()
 {
     //globals
-    aftertouchType = configuration.readParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
-    pressureSensitivity = (pressureSensitivity_t)configuration.readParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureSensitivitySection, 0);
-    pressureCurve = (curveType_t)configuration.readParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureCurveSection, 0);
+    aftertouchType = (aftertouchType_t)configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
+    pressureSensitivity = (pressureSensitivity_t)configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID);
+    pressureCurve = (curveType_t)configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID);
 
     //read pad configuration from EEPROM
     getProgramParameters();

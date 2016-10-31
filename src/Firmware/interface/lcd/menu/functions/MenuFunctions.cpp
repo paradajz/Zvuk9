@@ -203,6 +203,7 @@ bool checkRunningStatus(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         (bool)argument.argument1 ? midi.enableRunningStatus() : midi.disableRunningStatus();
+        configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument.argument1);
         #endif
         return true;
 
@@ -219,7 +220,7 @@ bool checkRunningStatus(functionArgument argument)
 
 bool checkNoteOffStatus(functionArgument argument)
 {
-    switch(argument.argument1)
+    switch((noteOffType_t)argument.argument1)
     {
         case noteOffType_noteOnZeroVel:
         case noteOffType_standardNoteOff:
@@ -227,6 +228,7 @@ bool checkNoteOffStatus(functionArgument argument)
         break;
 
         default:
+        //invalid argument
         return false;
     }
 
@@ -236,6 +238,7 @@ bool checkNoteOffStatus(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         midi.setNoteOffMode((noteOffType_t)argument.argument1);
+        configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
         #endif
         return true;
 

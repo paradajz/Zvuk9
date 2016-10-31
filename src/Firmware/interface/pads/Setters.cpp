@@ -194,7 +194,7 @@ void Pads::setAftertouchType(aftertouchType_t type)
         return; //wrong argument
     }
 
-    configuration.writeParameter(CONF_BLOCK_MIDI, 0, MIDI_SETTING_AFTERTOUCH_TYPE_ID, (uint8_t)type);
+    configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_AFTERTOUCH_TYPE_ID, (uint8_t)type);
 
     #ifdef DEBUG
     switch(type)
@@ -1173,12 +1173,12 @@ void Pads::setFunctionLEDs(uint8_t padNumber)
 void Pads::setPressureSensitivity(pressureSensitivity_t type)
 {
     pressureSensitivity = type;
-    configuration.writeParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureSensitivitySection, 0, type);
+    configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID, type);
     getPressureLimits();
 }
 
 void Pads::setPressureCurve(curveType_t curve)
 {
     pressureCurve = curve;
-    configuration.writeParameter(CONF_BLOCK_PRESSURE_SETTINGS, pressureCurveSection, 0, curve);
+    configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID, curve);
 }

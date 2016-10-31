@@ -235,7 +235,7 @@ class Pads
     uint8_t     padNote[MAX_PADS][NOTES_PER_PAD];
 
     uint8_t     midiChannel[MAX_PADS];
-    uint8_t     aftertouchType;
+    aftertouchType_t aftertouchType;
     uint8_t     maxAftertouchValue;
 
     bool        splitEnabled;

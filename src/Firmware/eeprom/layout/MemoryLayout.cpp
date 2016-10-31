@@ -57,23 +57,14 @@ void Configuration::createMemoryLayout()
     }
 
     {
-        blocks[CONF_BLOCK_MIDI].sections = 1;
+        blocks[CONF_BLOCK_GLOBAL_SETTINGS].sections = GLOBAL_SETTINGS_SECTIONS;
 
-        blocks[CONF_BLOCK_MIDI].preserveOnPartialReset = false;
+        blocks[CONF_BLOCK_GLOBAL_SETTINGS].preserveOnPartialReset = false;
 
-        blocks[CONF_BLOCK_MIDI].sectionParameters[0] = MIDI_SETTINGS;
-        blocks[CONF_BLOCK_MIDI].sectionParameterType[0] = BYTE_PARAMETER;
-    }
+        blocks[CONF_BLOCK_GLOBAL_SETTINGS].sectionParameters[globalSettingsMIDI] = MIDI_SETTINGS;
+        blocks[CONF_BLOCK_GLOBAL_SETTINGS].sectionParameterType[globalSettingsMIDI] = BYTE_PARAMETER;
 
-    {
-        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sections = PRESSURE_SETTINGS_SECTIONS;
-
-        blocks[CONF_BLOCK_PRESSURE_SETTINGS].preserveOnPartialReset = false;
-
-        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameters[pressureSensitivitySection] = 1;
-        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameterType[pressureSensitivitySection] = BYTE_PARAMETER;
-
-        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameters[pressureCurveSection] = 1;
-        blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionParameterType[pressureCurveSection] = BYTE_PARAMETER;
+        blocks[CONF_BLOCK_GLOBAL_SETTINGS].sectionParameters[globalSettingsPressure] = PRESSURE_SETTINGS;
+        blocks[CONF_BLOCK_GLOBAL_SETTINGS].sectionParameterType[globalSettingsPressure] = BYTE_PARAMETER;
     }
 }

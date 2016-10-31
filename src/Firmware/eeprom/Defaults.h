@@ -2,6 +2,7 @@
 
 #include "../interface/pads/DataTypes.h"
 #include "../interface/pads/curves/Curves.h"
+#include "../midi/DataTypes.h"
 
 //parameters
 #define NUMBER_OF_PROGRAMS                          10
@@ -129,15 +130,31 @@ typedef enum
     MIDI_SETTINGS
 } midiSettings;
 
-#define MIDI_SETTING_AFTERTOUCH_TYPE                0x00 //aftertouchChannel
-#define MIDI_SETTING_RUNNING_STATUS                 0x00
-#define MIDI_SETTING_NOTE_OFF_TYPE                  0x00 //noteOffType_standardNoteOff
+#define MIDI_SETTING_AFTERTOUCH_TYPE                aftertouchChannel
+#define MIDI_SETTING_RUNNING_STATUS                 0x00 //disabled
+#define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_standardNoteOff
 
 const uint8_t defaultMIDIsettingArray[] =
 {
     MIDI_SETTING_AFTERTOUCH_TYPE,
     MIDI_SETTING_RUNNING_STATUS,
     MIDI_SETTING_NOTE_OFF_TYPE
+};
+
+typedef enum
+{
+    PRESSURE_SETTING_SENSITIVITY_ID,
+    PRESSURE_SETTING_CURVE_ID,
+    PRESSURE_SETTINGS
+} pressureSettings;
+
+#define PRESSURE_SETTING_SENSITIVITY                0x00
+#define PRESSURE_SETTING_CURVE                      curveTypeLinear
+
+const uint8_t defaultPressureSettingsArray[] =
+{
+    PRESSURE_SETTING_SENSITIVITY,
+    PRESSURE_SETTING_CURVE
 };
 
 typedef enum

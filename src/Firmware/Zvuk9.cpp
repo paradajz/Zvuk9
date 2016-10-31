@@ -139,6 +139,9 @@ int main()
     midi.init(dinInterface);
     midi.init(usbInterface);
     midi.setInputChannel(1);
+    midi.setNoteOffMode((noteOffType_t)configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
+    bool runningStatus = configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
+    runningStatus ? midi.enableRunningStatus() : midi.disableRunningStatus();
     #endif
 
     board.init();

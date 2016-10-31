@@ -7,8 +7,7 @@ void Configuration::initSettings(bool partialReset)
     initProgramSettings(partialReset);
     initUserScales(partialReset);
     initPadCalibration(partialReset);
-    initMIDIsettings(partialReset);
-    initPressureSettings(partialReset);
+    initGlobalSettings(partialReset);
 }
 
 void Configuration::initProgramSettings(bool partialReset)
@@ -134,28 +133,20 @@ void Configuration::initPadCalibration(bool partialReset)
     }
 }
 
-void Configuration::initMIDIsettings(bool partialReset)
+void Configuration::initGlobalSettings(bool partialReset)
 {
-    if (partialReset && blocks[CONF_BLOCK_MIDI].preserveOnPartialReset)
+    if (partialReset && blocks[CONF_BLOCK_GLOBAL_SETTINGS].preserveOnPartialReset)
         return;
 
-    uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_MIDI);
-    uint16_t parameterAddress = blockStartAddress;
+    uint16_t parameterAddress;
+
+    parameterAddress = getSectionAddress(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI);
 
     for (int i=0; i<MIDI_SETTINGS; i++)
         eeprom_update_byte((uint8_t*)parameterAddress+i, defaultMIDIsettingArray[i]);
-}
 
-void Configuration::initPressureSettings(bool partialReset)
-{
-    if (partialReset && blocks[CONF_BLOCK_PRESSURE_SETTINGS].preserveOnPartialReset)
-        return;
+    parameterAddress = getSectionAddress(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure);
 
-    uint16_t blockStartAddress = getBlockAddress(CONF_BLOCK_PRESSURE_SETTINGS);
-    uint16_t parameterAddress = blockStartAddress + blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionAddress[pressureSensitivitySection];
-
-    eeprom_update_byte((uint8_t*)parameterAddress, 0);
-
-    parameterAddress = blockStartAddress + blocks[CONF_BLOCK_PRESSURE_SETTINGS].sectionAddress[pressureCurveSection];
-    eeprom_update_byte((uint8_t*)parameterAddress, 0);
+    for (int i=0; i<PRESSURE_SETTINGS; i++)
+        eeprom_update_byte((uint8_t*)parameterAddress+i, defaultPressureSettingsArray[i]);
 }
