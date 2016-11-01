@@ -32,7 +32,7 @@ void Buttons::init()
     mapButtonsToLEDs();
     uint32_t currentTime = rTimeMillis();
     processingEnabled = false;
-    transportCCenabled_ = configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC);
+    transportCCenabled_ = configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID);
 
     //read buttons for 0.1 seconds
     do
