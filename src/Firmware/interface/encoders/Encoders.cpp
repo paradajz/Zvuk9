@@ -4,7 +4,7 @@
 #include "../pads/Pads.h"
 #include "../buttons/Buttons.h"
 #include "../lcd/menu/Menu.h"
-#include "../../eeprom/Configuration.h"
+#include "../../database/Database.h"
 
 #define ENCODER_SPEED_1         1
 #define ENCODER_SPEED_2         5

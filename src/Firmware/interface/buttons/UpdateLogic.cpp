@@ -2,7 +2,7 @@
 
 #include <util/delay.h>
 #include "../lcd/menu/Menu.h"
-#include "../../eeprom/Configuration.h"
+#include "../../database/Database.h"
 
 //time after which expanders are checked in ms
 #define EXPANDER_CHECK_TIME         5
@@ -32,7 +32,7 @@ void Buttons::init()
     mapButtonsToLEDs();
     uint32_t currentTime = rTimeMillis();
     processingEnabled = false;
-    transportCCenabled_ = configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID);
+    transportCCenabled_ = db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID);
 
     //read buttons for 0.1 seconds
     do

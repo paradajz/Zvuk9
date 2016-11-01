@@ -3,6 +3,7 @@
 #include "../interface/pads/DataTypes.h"
 #include "../interface/pads/curves/Curves.h"
 #include "../midi/DataTypes.h"
+#include "IDs.h"
 
 //parameters
 #define NUMBER_OF_PROGRAMS                          10
@@ -18,25 +19,16 @@
 
 #define NUMBER_OF_USER_SCALES                       10
 
-typedef enum
-{
-    //list of IDs for global program settings for access
-    GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID,
-    GLOBAL_PROGRAM_SETTING_X_ENABLE_ID,
-    GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID,
-    GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID,
-    GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID,
-    GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID,
-    GLOBAL_PROGRAM_SETTING_CC_X_ID,
-    GLOBAL_PROGRAM_SETTING_CC_Y_ID,
-    GLOBAL_PROGRAM_SETTING_X_MIN_ID,
-    GLOBAL_PROGRAM_SETTING_X_MAX_ID,
-    GLOBAL_PROGRAM_SETTING_Y_MIN_ID,
-    GLOBAL_PROGRAM_SETTING_Y_MAX_ID,
-    GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID,
-    GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID,
-    GLOBAL_PROGRAM_SETTINGS
-} globalProgramSettings;
+#define DEFAULT_ACTIVE_PROGRAM                      0
+#define DEFAULT_ACTIVE_SCALE                        0
+
+#define DEFAULT_PAD_X_LIMIT_LOWER                   440
+#define DEFAULT_PAD_X_LIMIT_UPPER                   600
+
+#define DEFAULT_PAD_Y_LIMIT_LOWER                   450
+#define DEFAULT_PAD_Y_LIMIT_UPPER                   620
+
+#define DEFAULT_PAD_PRESSURE_LIMIT_UPPER            380
 
 //define default global program settings
 #define GLOBAL_PROGRAM_SETTING_SPLIT_STATE          0x00
@@ -73,24 +65,6 @@ const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] =
     GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN
 };
 
-typedef enum
-{
-    LOCAL_PROGRAM_SETTING_X_ENABLE_ID,
-    LOCAL_PROGRAM_SETTING_Y_ENABLE_ID,
-    LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID,
-    LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID,
-    LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID,
-    LOCAL_PROGRAM_SETTING_CC_X_ID,
-    LOCAL_PROGRAM_SETTING_CC_Y_ID,
-    LOCAL_PROGRAM_SETTING_X_MIN_ID,
-    LOCAL_PROGRAM_SETTING_X_MAX_ID,
-    LOCAL_PROGRAM_SETTING_Y_MIN_ID,
-    LOCAL_PROGRAM_SETTING_Y_MAX_ID,
-    LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID,
-    LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID,
-    LOCAL_PROGRAM_SETTINGS
-} localProgramSettings;
-
 #define LOCAL_PROGRAM_SETTING_X_ENABLE              0x01
 #define LOCAL_PROGRAM_SETTING_Y_ENABLE              0x01
 #define LOCAL_PROGRAM_SETTING_NOTE_ENABLE           0x01
@@ -122,18 +96,6 @@ const uint8_t defaultLocalProgramSettingArray[] =
     LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN
 };
 
-typedef enum
-{
-    MIDI_SETTING_AFTERTOUCH_TYPE_ID,
-    MIDI_SETTING_RUNNING_STATUS_ID,
-    MIDI_SETTING_NOTE_OFF_TYPE_ID,
-    MIDI_SETTING_TRANSPORT_CC_ID,
-    MIDI_SETTING_TRANSPORT_CC_PLAY_ID,
-    MIDI_SETTING_TRANSPORT_CC_STOP_ID,
-    MIDI_SETTING_TRANSPORT_CC_RECORD_ID,
-    MIDI_SETTINGS
-} midiSettings;
-
 #define MIDI_SETTING_AFTERTOUCH_TYPE                aftertouchChannel
 #define MIDI_SETTING_RUNNING_STATUS                 0x00 //disabled
 #define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_standardNoteOff
@@ -153,13 +115,6 @@ const uint8_t defaultMIDIsettingArray[] =
     MIDI_SETTING_TRANSPORT_CC_RECORD
 };
 
-typedef enum
-{
-    PRESSURE_SETTING_SENSITIVITY_ID,
-    PRESSURE_SETTING_CURVE_ID,
-    PRESSURE_SETTINGS
-} pressureSettings;
-
 #define PRESSURE_SETTING_SENSITIVITY                0x00
 #define PRESSURE_SETTING_CURVE                      curveTypeLinear
 
@@ -168,14 +123,6 @@ const uint8_t defaultPressureSettingsArray[] =
     PRESSURE_SETTING_SENSITIVITY,
     PRESSURE_SETTING_CURVE
 };
-
-typedef enum
-{
-    PREDEFINED_SCALE_OCTAVE_ID,
-    PREDEFINED_SCALE_TONIC_ID,
-    PREDEFINED_SCALE_SHIFT_ID,
-    PREDEFINED_SCALE_PARAMETERS
-} predefinedScaleParameters;
 
 #define PREDEFINED_SCALE_OCTAVE                     DEFAULT_OCTAVE
 #define PREDEFINED_SCALE_TONIC                      C
@@ -187,14 +134,3 @@ const uint8_t defaultPredefinedScaleParametersArray[] =
     PREDEFINED_SCALE_TONIC,
     PREDEFINED_SCALE_SHIFT
 };
-
-#define DEFAULT_ACTIVE_PROGRAM                      0
-#define DEFAULT_ACTIVE_SCALE                        0
-
-#define DEFAULT_PAD_X_LIMIT_LOWER                   440
-#define DEFAULT_PAD_X_LIMIT_UPPER                   600
-
-#define DEFAULT_PAD_Y_LIMIT_LOWER                   450
-#define DEFAULT_PAD_Y_LIMIT_UPPER                   620
-
-#define DEFAULT_PAD_PRESSURE_LIMIT_UPPER            380

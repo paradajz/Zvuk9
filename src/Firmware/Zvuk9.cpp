@@ -20,7 +20,7 @@
 #include "interface/pads/Pads.h"
 #include "version/Firmware.h"
 #include "version/Hardware.h"
-#include "eeprom/Configuration.h"
+#include "database/Database.h"
 
 bool onCustom(uint8_t value)
 {
@@ -49,7 +49,7 @@ bool onCustom(uint8_t value)
         leds.setFadeSpeed(1);
         leds.allLEDsOff();
         wait_ms(1500);
-        configuration.factoryReset(factoryReset_partial);
+        db.factoryReset(factoryReset_partial);
         reboot();
         return true;
     }
@@ -59,12 +59,12 @@ bool onCustom(uint8_t value)
 
 sysExParameter_t onGet(uint8_t block, uint8_t section, uint16_t index)
 {
-    return configuration.readParameter(block, section, index);
+    return db.read(block, section, index);
 }
 
 bool onSet(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue)
 {
-    return configuration.writeParameter(block, section, index, newValue);
+    return db.update(block, section, index, newValue);
 }
 
 void startUpAnimation()
@@ -112,8 +112,8 @@ int main()
     #endif
 
     //do not change order of initialization!
-    configuration.init();
-    if (!configuration.checkSignature())
+    db.init();
+    if (!db.checkSignature())
     {
         char tempBuffer[20];
 
@@ -127,7 +127,7 @@ int main()
         lcd_puts(tempBuffer);
         wait_ms(2000);
 
-        configuration.factoryReset(factoryReset_restore);
+        db.factoryReset(factoryReset_restore);
 
         lcd_gotoxy(0,2);
         strcpy_P(tempBuffer, complete_string);
@@ -139,8 +139,8 @@ int main()
     midi.init(dinInterface);
     midi.init(usbInterface);
     midi.setInputChannel(1);
-    midi.setNoteOffMode((noteOffType_t)configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
-    bool runningStatus = configuration.readParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
+    midi.setNoteOffMode((noteOffType_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
+    bool runningStatus = db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
     runningStatus ? midi.enableRunningStatus() : midi.disableRunningStatus();
     #endif
 
@@ -192,7 +192,7 @@ int main()
         #ifdef ENABLE_ASYNC_UPDATE
         //write to eeprom when all pads are released
         if (pads.allPadsReleased())
-            configuration.update();
+            db.checkQueue();
         #endif
 
         #ifdef NDEBUG

@@ -5,7 +5,7 @@
 #endif
 #include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
-#include "../../eeprom/Configuration.h"
+#include "../../database/Database.h"
 
 note_t Buttons::getTonicFromButton(uint8_t buttonNumber)
 {

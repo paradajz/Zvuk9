@@ -1,5 +1,5 @@
 #include "Pads.h"
-#include "../../eeprom/Configuration.h"
+#include "../../database/Database.h"
 #include "../../sysex/SysEx.h"
 #include <avr/cpufunc.h>
 #include <util/delay.h>
@@ -48,7 +48,7 @@ void Pads::setupSysEx()
 {
     for (int i=0; i<CONF_BLOCKS; i++)
     {
-        uint8_t sections = configuration.getBlockSections(i);
+        uint8_t sections = db.getBlockSections(i);
         sysEx.addBlock(sections);
     }
 

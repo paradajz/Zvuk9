@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../eeprom/Defaults.h"
+#include "../../database/Defaults.h"
 
 //don't check velocity for PAD_PRESS_DEBOUNCE_TIMEms after pad has just been pressed
 #define PAD_PRESS_DEBOUNCE_TIME             15

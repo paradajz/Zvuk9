@@ -1,11 +1,11 @@
-#include "Configuration.h"
+#include "Database.h"
 #include <util/delay.h>
 
 #ifdef DEBUG
 #include "../vserial/Serial.h"
 #endif
 
-Configuration::Configuration()
+Database::Database()
 {
     //def const
     #ifdef ENABLE_ASYNC_UPDATE
@@ -21,19 +21,19 @@ Configuration::Configuration()
     #endif
 }
 
-void Configuration::init()
+void Database::init()
 {
     createMemoryLayout();
     createSectionAddresses();
 }
 
-void Configuration::factoryReset(factoryResetType_t type)
+void Database::factoryReset(factoryResetType_t type)
 {
     initSettings(type == factoryReset_partial);
     writeSignature();
 }
 
-void Configuration::writeSignature()
+void Database::writeSignature()
 {
     uint8_t unique_id_invert = invertByte(EEPROM_UNIQUE_ID);
 
@@ -41,7 +41,7 @@ void Configuration::writeSignature()
         (i%2) ? eeprom_update_byte((uint8_t*)i, unique_id_invert) : eeprom_update_byte((uint8_t*)i, EEPROM_UNIQUE_ID);
 }
 
-bool Configuration::checkSignature()
+bool Database::checkSignature()
 {
     uint8_t unique_id_invert = invertByte(EEPROM_UNIQUE_ID);
     uint8_t checkByte;
@@ -58,13 +58,13 @@ bool Configuration::checkSignature()
     return true;
 }
 
-void Configuration::clearEEPROM()
+void Database::clearEEPROM()
 {
     for (int i=0; i<EEPROM_SIZE; i++)
         eeprom_update_byte((uint8_t*)i, 0xFF);
 }
 
-void Configuration::createSectionAddresses()
+void Database::createSectionAddresses()
 {
     for (int i=0; i<CONF_BLOCKS; i++)
     {
@@ -118,7 +118,46 @@ void Configuration::createSectionAddresses()
     }
 }
 
-bool Configuration::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue, bool async)
+int16_t Database::read(uint8_t blockID, uint8_t sectionID, uint16_t parameterID)
+{
+    uint16_t startAddress = getSectionAddress(blockID, sectionID);
+    uint8_t parameterType = getParameterType(blockID, sectionID);
+
+    uint8_t arrayIndex;
+    uint8_t parameterIndex;
+
+    switch(parameterType)
+    {
+        case BIT_PARAMETER:
+        arrayIndex = parameterID/8;
+        parameterIndex = parameterID - 8*arrayIndex;
+        startAddress += arrayIndex;
+
+        if (startAddress > EEPROM_SIZE)
+        {
+            #ifdef DEBUG
+            printf("Requested address out of EEPROM memory range\n");
+            #endif
+            return 0;
+        }
+        return bitRead(eeprom_read_byte((uint8_t*)startAddress), parameterIndex);
+        break;
+
+        case BYTE_PARAMETER:
+        startAddress += parameterID;
+        return eeprom_read_byte((uint8_t*)startAddress);
+        break;
+
+        case WORD_PARAMETER:
+        startAddress += ((uint16_t)parameterID*2);
+        return eeprom_read_word((uint16_t*)startAddress);
+        break;
+    }
+
+    return 0;
+}
+
+bool Database::update(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue, bool async)
 {
     uint16_t startAddress = getSectionAddress(blockID, sectionID);
 
@@ -201,7 +240,7 @@ bool Configuration::writeParameter(uint8_t blockID, uint8_t sectionID, int16_t p
 }
 
 #ifdef ENABLE_ASYNC_UPDATE
-void Configuration::queueData(uint16_t eepromAddress, uint16_t data, uint8_t parameterType)
+void Database::queueData(uint16_t eepromAddress, uint16_t data, uint8_t parameterType)
 {
     uint8_t index = eeprom_update_buffer_head + 1;
 
@@ -215,7 +254,7 @@ void Configuration::queueData(uint16_t eepromAddress, uint16_t data, uint8_t par
         printf("Oops, buffer full. Waiting...\n");
         #endif
 
-        while (!update());
+        while (!checkQueue());
     }
 
     eeprom_update_bufer_param_type[index] = parameterType;
@@ -224,7 +263,7 @@ void Configuration::queueData(uint16_t eepromAddress, uint16_t data, uint8_t par
     eeprom_update_buffer_head = index;
 }
 
-bool Configuration::update()
+bool Database::checkQueue()
 {
     //write queued data to eeprom
     if (eeprom_update_buffer_head == eeprom_update_buffer_tail)
@@ -257,7 +296,7 @@ bool Configuration::update()
 }
 #endif
 
-uint8_t Configuration::getBlockSections(uint8_t block)
+uint8_t Database::getBlockSections(uint8_t block)
 {
     if (block >= CONF_BLOCKS)
         return 0;
@@ -265,4 +304,4 @@ uint8_t Configuration::getBlockSections(uint8_t block)
     return blocks[block].sections;
 }
 
-Configuration configuration;
+Database db;

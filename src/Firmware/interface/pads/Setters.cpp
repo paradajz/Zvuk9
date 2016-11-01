@@ -1,7 +1,7 @@
 #include "Pads.h"
 #include "../leds/LEDs.h"
 #include "../lcd/LCD.h"
-#include "../../eeprom/Configuration.h"
+#include "../../database/Database.h"
 
 void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)
 {
@@ -38,14 +38,14 @@ void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)
     {
         case false:
         //global
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
+        db.update(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
         for (int i=0; i<MAX_PADS; i++)
             variablePointer[i] = state;
         break;
 
         case true:
         //local
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
+        db.update(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), state);
             variablePointer[padNumber] = state;
         break;
     }
@@ -54,7 +54,7 @@ void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)
 void Pads::splitOnOff()
 {
     splitEnabled = !splitEnabled;
-    configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitEnabled);
+    db.update(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitEnabled);
     getPadParameters();
 
     #ifdef DEBUG
@@ -126,7 +126,7 @@ bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint
     if ((int)limit != variablePointer[pad])
     {
         variablePointer[pad] = limit;
-        configuration.writeParameter(CONF_BLOCK_PAD_CALIBRATION, configurationSection, (uint16_t)pad, limit);
+        db.update(CONF_BLOCK_PAD_CALIBRATION, configurationSection, (uint16_t)pad, limit);
         #ifdef DEBUG
         getXLimits();
         getYLimits();
@@ -157,7 +157,7 @@ bool Pads::setActiveProgram(int8_t program)
 
     if (program != activeProgram)
     {
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLastActiveProgramSection, (uint16_t)0, program);
+        db.update(CONF_BLOCK_PROGRAM, programLastActiveProgramSection, (uint16_t)0, program);
         getProgramParameters();
         return true;
     }
@@ -173,7 +173,7 @@ bool Pads::setActiveScale(int8_t scale)  {
     if (activeScale != scale)
     {
         activeScale = scale;
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram, scale);
+        db.update(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram, scale);
         getScaleParameters();
         return true;
     }
@@ -194,7 +194,7 @@ void Pads::setAftertouchType(aftertouchType_t type)
         return; //wrong argument
     }
 
-    configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_AFTERTOUCH_TYPE_ID, (uint8_t)type);
+    db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_AFTERTOUCH_TYPE_ID, (uint8_t)type);
 
     #ifdef DEBUG
     switch(type)
@@ -309,13 +309,13 @@ changeOutput_t Pads::changeCC(bool direction, coordinateType_t type, int8_t step
         {
             case true:
             //local
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
+            db.update(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
             variablePointer[startPad] = changedValue;
             break;
 
             case false:
             //global
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
+            db.update(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
             for (int i=0; i<MAX_PADS; i++)
                 variablePointer[i] = changedValue;
             break;
@@ -434,7 +434,7 @@ changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate,
         {
             case true:
             //local
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
+            db.update(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
             variablePointer[startPad] = changedValue;
             #ifdef DEBUG
             printf("pad %d: %d\n", startPad, changedValue);
@@ -443,7 +443,7 @@ changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate,
 
             case false:
             //global
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
+            db.update(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
             for (int i=0; i<MAX_PADS; i++)
                 variablePointer[i] = changedValue;
             #ifdef DEBUG
@@ -522,7 +522,7 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
         {
             case true:
             //local
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
+            db.update(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
             variablePointer[startPad] = changedValue;
             #ifdef DEBUG
             printf("pad %d: %d\n", startPad, changedValue);
@@ -531,7 +531,7 @@ changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int
 
             case false:
             //global
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
+            db.update(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
             for (int i=0; i<MAX_PADS; i++)
                 variablePointer[i] = changedValue;
             #ifdef DEBUG
@@ -555,13 +555,13 @@ bool Pads::setMIDIchannel(uint8_t pad, uint8_t channel)
             for (int i=0; i<MAX_PADS; i++)
                 midiChannel[i] = channel;
 
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram, channel);
+            db.update(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram, channel);
         }
         else
         {
             //apply to single pad only
             midiChannel[pad] = channel;
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*pad+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), channel);
+            db.update(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*pad+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), channel);
 
         }
 
@@ -620,7 +620,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)
 
         //assign new pad note
         padNote[pad][noteIndex] = newNote;
-        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+noteIndex+(NOTES_PER_PAD*(uint16_t)pad), newNote);
+        db.update(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+noteIndex+(NOTES_PER_PAD*(uint16_t)pad), newNote);
 
         #ifdef DEBUG
         printf("Adding note ");
@@ -647,7 +647,7 @@ changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)
         padNote[pad][NOTES_PER_PAD-1] = BLANK_NOTE;
 
         for (int i=0; i<NOTES_PER_PAD; i++)
-            configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*(uint16_t)pad), padNote[pad][i]);
+            db.update(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+i+(NOTES_PER_PAD*(uint16_t)pad), padNote[pad][i]);
 
         #ifdef DEBUG
         printf("Removing note ");
@@ -711,7 +711,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange)
         noteShiftLevel = 0;
 
     if (!internalChange)
-        configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, noteShiftLevel);
+        db.update(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, noteShiftLevel);
 
     #ifdef DEBUG
     printf("Shifted note: %d\n", noteShiftLevel);
@@ -785,10 +785,10 @@ changeOutput_t Pads::shiftOctave(bool direction)
         {
             //predefined scale
             uint16_t octaveIndex_predefinedScale = PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
-            uint8_t currentOctave_predefinedScale = configuration.readParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale);
+            uint8_t currentOctave_predefinedScale = db.read(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale);
             uint8_t newOctave = currentOctave_predefinedScale;
             (direction) ? newOctave+=1 : newOctave-=1;
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, newOctave);
+            db.update(CONF_BLOCK_PROGRAM, programScalePredefinedSection, octaveIndex_predefinedScale, newOctave);
 
             for (int i=0; i<MAX_PADS; i++)
             {
@@ -839,7 +839,7 @@ changeOutput_t Pads::shiftOctave(bool direction)
                     if (padNote[i][j] != BLANK_NOTE)
                     {
                         newNote = (direction) ? padNote[i][j] + MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES) : padNote[i][j] - MIDI_NOTES + (octaveShiftAmount[i]*MIDI_NOTES);
-                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote, true);    //async write
+                        db.update(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote, true);    //async write
 
                         #ifdef DEBUG
                         printf("%d ", newNote);
@@ -976,7 +976,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)
         uint16_t noteID = ((uint16_t)activeScale - PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
 
         if (isPredefinedScale(activeScale) && !internalChange)
-            configuration.writeParameter(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale)+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
+            db.update(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+(PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale)+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram), newTonic);
 
         for (int i=0; i<MAX_PADS; i++)
         {
@@ -1000,7 +1000,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)
                     if (isUserScale(activeScale) && !internalChange)
                     {
                         //async write
-                        configuration.writeParameter(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote, true);
+                        db.update(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i), newNote, true);
                     }
 
                     if (!isPadPressed(i))
@@ -1191,12 +1191,12 @@ void Pads::setFunctionLEDs(uint8_t padNumber)
 void Pads::setPressureSensitivity(pressureSensitivity_t type)
 {
     pressureSensitivity = type;
-    configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID, type);
+    db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID, type);
     getPressureLimits();
 }
 
 void Pads::setPressureCurve(curveType_t curve)
 {
     pressureCurve = curve;
-    configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID, curve);
+    db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID, curve);
 }

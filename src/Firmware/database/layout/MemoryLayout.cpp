@@ -1,6 +1,6 @@
 #include "Include.h"
 
-void Configuration::createMemoryLayout()
+void Database::createMemoryLayout()
 {
     {
         blocks[CONF_BLOCK_PROGRAM].sections = PROGRAM_SECTIONS;

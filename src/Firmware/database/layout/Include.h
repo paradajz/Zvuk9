@@ -1,5 +1,5 @@
 #pragma once
 
-#include "../Configuration.h"
+#include "../Database.h"
 #include "../../board/Board.h"
 #include "../../interface/pads/Pads.h"

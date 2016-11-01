@@ -1,5 +1,5 @@
 #include "Pads.h"
-#include "../../eeprom/Defaults.h"
+#include "../../database/Defaults.h"
 
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 

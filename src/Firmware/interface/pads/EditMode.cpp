@@ -1,7 +1,7 @@
 #include "Pads.h"
 #include "../leds/LEDs.h"
 #include "../lcd/LCD.h"
-#include "../../eeprom/Configuration.h"
+#include "../../database/Database.h"
 
 bool editModeActivated = false;
 

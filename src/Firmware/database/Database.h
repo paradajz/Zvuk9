@@ -45,12 +45,12 @@ typedef enum
 
 //default controller settings
 
-class Configuration
+class Database
 {
     public:
-    Configuration();
+    Database();
     #ifdef ENABLE_ASYNC_UPDATE
-    bool update();
+    bool checkQueue();
     #endif
     void clearEEPROM();
     void init();
@@ -61,46 +61,8 @@ class Configuration
     void createMemoryLayout();
     void createSectionAddresses();
     uint8_t getBlockSections(uint8_t block);
-    inline uint16_t readParameter(uint8_t blockID, uint8_t sectionID, uint16_t parameterID = 0)  {
-
-        uint16_t startAddress = getSectionAddress(blockID, sectionID);
-        uint8_t parameterType = getParameterType(blockID, sectionID);
-
-        uint8_t arrayIndex;
-        uint8_t parameterIndex;
-
-        switch(parameterType)
-        {
-            case BIT_PARAMETER:
-            arrayIndex = parameterID/8;
-            parameterIndex = parameterID - 8*arrayIndex;
-            startAddress += arrayIndex;
-
-            if (startAddress > EEPROM_SIZE)
-            {
-                #ifdef DEBUG
-                printf("Requested address out of EEPROM memory range\n");
-                #endif
-                return 0;
-            }
-            return bitRead(eeprom_read_byte((uint8_t*)startAddress), parameterIndex);
-            break;
-
-            case BYTE_PARAMETER:
-            startAddress += parameterID;
-            return eeprom_read_byte((uint8_t*)startAddress);
-            break;
-
-            case WORD_PARAMETER:
-            startAddress += ((uint16_t)parameterID*2);
-            return eeprom_read_word((uint16_t*)startAddress);
-            break;
-        }
-
-        return 0;
-    };
-
-    bool writeParameter(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue, bool async = false);
+    int16_t read(uint8_t blockID, uint8_t sectionID, uint16_t parameterID = 0);
+    bool update(uint8_t blockID, uint8_t sectionID, int16_t parameterID, int16_t newValue, bool async = false);
     blockDescriptor blocks[CONF_BLOCKS];
 
     private:
@@ -138,4 +100,4 @@ class Configuration
     #endif
 };
 
-extern Configuration configuration;
+extern Database db;

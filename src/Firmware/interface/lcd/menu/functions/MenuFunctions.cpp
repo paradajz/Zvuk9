@@ -1,6 +1,6 @@
 #include "MenuFunctions.h"
 #include "../../../leds/LEDs.h"
-#include "../../../../eeprom/Configuration.h"
+#include "../../../../database/Database.h"
 #include "../../../../midi/DataTypes.h"
 
 bool factoryReset(functionArgument argument)
@@ -87,7 +87,7 @@ bool factoryReset(functionArgument argument)
             leds.setFadeSpeed(1);
             leds.allLEDsOff();
             wait_ms(2000);
-            configuration.factoryReset((factoryResetType_t)argument.argument1);
+            db.factoryReset((factoryResetType_t)argument.argument1);
             reboot();
         }
     }
@@ -203,7 +203,7 @@ bool checkRunningStatus(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         (bool)argument.argument1 ? midi.enableRunningStatus() : midi.disableRunningStatus();
-        configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument.argument1);
+        db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument.argument1);
         #endif
         return true;
 
@@ -238,7 +238,7 @@ bool checkNoteOffStatus(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         midi.setNoteOffMode((noteOffType_t)argument.argument1);
-        configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
+        db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
         #endif
         return true;
 
@@ -261,7 +261,7 @@ bool checkTransportCC(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         (bool)argument.argument1 ? buttons.enableTransportCC() : buttons.disableTransportCC();
-        configuration.writeParameter(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID, argument.argument1);
+        db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID, argument.argument1);
         #endif
         return true;
 

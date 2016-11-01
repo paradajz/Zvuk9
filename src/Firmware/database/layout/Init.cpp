@@ -1,6 +1,7 @@
 #include "Include.h"
+#include "../Defaults.h"
 
-void Configuration::initSettings(bool partialReset)
+void Database::initSettings(bool partialReset)
 {
     //we need to init each block and section with data
     //program area
@@ -10,7 +11,7 @@ void Configuration::initSettings(bool partialReset)
     initGlobalSettings(partialReset);
 }
 
-void Configuration::initProgramSettings(bool partialReset)
+void Database::initProgramSettings(bool partialReset)
 {
     if (partialReset && blocks[CONF_BLOCK_PROGRAM].preserveOnPartialReset)
         return;
@@ -61,7 +62,7 @@ void Configuration::initProgramSettings(bool partialReset)
     }
 }
 
-void Configuration::initUserScales(bool partialReset)
+void Database::initUserScales(bool partialReset)
 {
     if (partialReset && blocks[CONF_BLOCK_USER_SCALE].preserveOnPartialReset)
         return;
@@ -82,7 +83,7 @@ void Configuration::initUserScales(bool partialReset)
     }
 }
 
-void Configuration::initPadCalibration(bool partialReset)
+void Database::initPadCalibration(bool partialReset)
 {
     if (partialReset && blocks[CONF_BLOCK_PAD_CALIBRATION].preserveOnPartialReset)
         return;
@@ -133,7 +134,7 @@ void Configuration::initPadCalibration(bool partialReset)
     }
 }
 
-void Configuration::initGlobalSettings(bool partialReset)
+void Database::initGlobalSettings(bool partialReset)
 {
     if (partialReset && blocks[CONF_BLOCK_GLOBAL_SETTINGS].preserveOnPartialReset)
         return;

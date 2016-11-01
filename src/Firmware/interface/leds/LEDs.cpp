@@ -1,6 +1,6 @@
 #include "LEDs.h"
 #include "../pads/Pads.h"
-#include "../../eeprom/Configuration.h"
+#include "../../database/Database.h"
 #include "../pads/Pads.h"
 
 uint32_t    ledBlinkTimer[NUMBER_OF_LEDS];
