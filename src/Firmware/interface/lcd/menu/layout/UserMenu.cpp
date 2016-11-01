@@ -122,22 +122,22 @@ void Menu::createUserMenuLayout()
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].argument.argument1 = (uint8_t)noteOffType_noteOnZeroVel;
             }
 
-            menuItem[userMenuItem_midiSettings_transportCC].stringPointer = midiSettings_transport_string;
-            menuItem[userMenuItem_midiSettings_transportCC].level = 24;
-            menuItem[userMenuItem_midiSettings_transportCC].function = NULL;
+            menuItem[userMenuItem_midiSettings_transport].stringPointer = midiSettings_transport_string;
+            menuItem[userMenuItem_midiSettings_transport].level = 24;
+            menuItem[userMenuItem_midiSettings_transport].function = NULL;
 
             {
-                menuItem[userMenuItem_midiSettings_transportCC_enabled].stringPointer = enabled_string_string;
-                menuItem[userMenuItem_midiSettings_transportCC_enabled].level = 241;
-                menuItem[userMenuItem_midiSettings_transportCC_enabled].checkable = true;
-                menuItem[userMenuItem_midiSettings_transportCC_enabled].function = checkTransportCC;
-                menuItem[userMenuItem_midiSettings_transportCC_enabled].argument.argument1 = 1;
+                menuItem[userMenuItem_midiSettings_transport_mmc].stringPointer = midiSettings_transport_MMC_string;
+                menuItem[userMenuItem_midiSettings_transport_mmc].level = 241;
+                menuItem[userMenuItem_midiSettings_transport_mmc].checkable = true;
+                menuItem[userMenuItem_midiSettings_transport_mmc].function = checkTransportCC;
+                menuItem[userMenuItem_midiSettings_transport_mmc].argument.argument1 = 0;
 
-                menuItem[userMenuItem_midiSettings_transportCC_disabled].stringPointer = disabled_string_string;
-                menuItem[userMenuItem_midiSettings_transportCC_disabled].level = 242;
-                menuItem[userMenuItem_midiSettings_transportCC_disabled].checkable = true;
-                menuItem[userMenuItem_midiSettings_transportCC_disabled].function = checkTransportCC;
-                menuItem[userMenuItem_midiSettings_transportCC_disabled].argument.argument1 = 0;
+                menuItem[userMenuItem_midiSettings_transport_cc].stringPointer = midiSettings_transport_CC_string;
+                menuItem[userMenuItem_midiSettings_transport_cc].level = 242;
+                menuItem[userMenuItem_midiSettings_transport_cc].checkable = true;
+                menuItem[userMenuItem_midiSettings_transport_cc].function = checkTransportCC;
+                menuItem[userMenuItem_midiSettings_transport_cc].argument.argument1 = 1;
             }
         }
 
