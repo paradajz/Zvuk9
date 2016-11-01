@@ -100,9 +100,9 @@ const uint8_t defaultLocalProgramSettingArray[] =
 #define MIDI_SETTING_RUNNING_STATUS                 0x00 //disabled
 #define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_standardNoteOff
 #define MIDI_SETTING_TRANSPORT_CC                   0x00 //disabled
-#define MIDI_SETTING_TRANSPORT_CC_PLAY              50
-#define MIDI_SETTING_TRANSPORT_CC_STOP              51
-#define MIDI_SETTING_TRANSPORT_CC_RECORD            52
+#define MIDI_SETTING_TRANSPORT_CC_PLAY              125
+#define MIDI_SETTING_TRANSPORT_CC_STOP              126
+#define MIDI_SETTING_TRANSPORT_CC_RECORD            127
 
 const uint8_t defaultMIDIsettingArray[] =
 {

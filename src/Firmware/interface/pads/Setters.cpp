@@ -232,7 +232,7 @@ changeOutput_t Pads::changeCC(bool direction, coordinateType_t type, int8_t step
     //public function
     changeOutput_t result = outputChanged;
     uint8_t startPad = !splitEnabled ? 0 : getLastTouchedPad();
-    uint8_t compareValue = 127;
+    uint8_t compareValue = 124; //last three values are reserved for play, stop and record
     bool compareResult;
     uint8_t changedValue = 0;
     bool changeAllowed = true;
@@ -265,23 +265,9 @@ changeOutput_t Pads::changeCC(bool direction, coordinateType_t type, int8_t step
     tempResult = variablePointer[startPad] + steps;
 
     if (direction)
-    {
-        while ((tempResult == MIDI_SETTING_TRANSPORT_CC_PLAY) || (tempResult == MIDI_SETTING_TRANSPORT_CC_STOP) || (tempResult == MIDI_SETTING_TRANSPORT_CC_RECORD))
-        {
-            tempResult += 1;
-        }
-
         compareResult = tempResult > compareValue;
-    }
     else
-    {
-        while ((tempResult == MIDI_SETTING_TRANSPORT_CC_PLAY) || (tempResult == MIDI_SETTING_TRANSPORT_CC_STOP) || (tempResult == MIDI_SETTING_TRANSPORT_CC_RECORD))
-        {
-            tempResult -= 1;
-        }
-
         compareResult = tempResult < compareValue;
-    }
 
     if (!compareResult)
     {
