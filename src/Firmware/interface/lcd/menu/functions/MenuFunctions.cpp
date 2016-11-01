@@ -83,10 +83,17 @@ bool factoryReset(functionArgument argument)
 
         if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))
         {
-            wait_ms(500); //don't clear lcd immediately
             leds.setFadeSpeed(1);
+            //first, set all full leds to dim state
+            for (int i=0; i<NUMBER_OF_LEDS; i++)
+            {
+                if (leds.getLEDstate(i) == ledStateFull)
+                    board.setLEDstate(i, ledStateDim);
+            }
+            wait_ms(1500);
+            //now, turn all leds off
             leds.allLEDsOff();
-            wait_ms(2000);
+            wait_ms(1000);
             db.factoryReset((factoryResetType_t)argument.argument1);
             reboot();
         }

@@ -54,6 +54,12 @@ void LEDs::allLEDsOff()
         board.setLEDstate(i, ledStateOff);
 }
 
+void LEDs::allLEDsDim()
+{
+    for (int i=0; i<NUMBER_OF_LEDS; i++)
+        board.setLEDstate(i, ledStateDim);
+}
+
 void LEDs::allLEDsOn()
 {
     for (int i=0; i<NUMBER_OF_LEDS; i++)

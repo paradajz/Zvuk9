@@ -10,6 +10,7 @@ class LEDs
     void init();
     void update();
     void allLEDsOn();
+    void allLEDsDim();
     void allLEDsOff();
 
     void displayActiveNoteLEDs(bool padEditMode = false, uint8_t padNumber = 0);
