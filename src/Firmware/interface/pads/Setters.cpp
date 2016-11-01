@@ -238,6 +238,7 @@ changeOutput_t Pads::changeCC(bool direction, coordinateType_t type, int8_t step
     bool changeAllowed = true;
     uint8_t *variablePointer;
     uint16_t configurationID;
+    int16_t tempResult = 0;
 
     if (!direction)
     {
@@ -261,14 +262,31 @@ changeOutput_t Pads::changeCC(bool direction, coordinateType_t type, int8_t step
         return noChange;
     }
 
+    tempResult = variablePointer[startPad] + steps;
+
     if (direction)
-        compareResult = variablePointer[startPad] + steps > compareValue;
+    {
+        while ((tempResult == MIDI_SETTING_TRANSPORT_CC_PLAY) || (tempResult == MIDI_SETTING_TRANSPORT_CC_STOP) || (tempResult == MIDI_SETTING_TRANSPORT_CC_RECORD))
+        {
+            tempResult += 1;
+        }
+
+        compareResult = tempResult > compareValue;
+    }
     else
-        compareResult = variablePointer[startPad] + steps < compareValue;
+    {
+        while ((tempResult == MIDI_SETTING_TRANSPORT_CC_PLAY) || (tempResult == MIDI_SETTING_TRANSPORT_CC_STOP) || (tempResult == MIDI_SETTING_TRANSPORT_CC_RECORD))
+        {
+            tempResult -= 1;
+        }
+
+        compareResult = tempResult < compareValue;
+    }
 
     if (!compareResult)
     {
-        changedValue = variablePointer[startPad]+steps;
+        //value is fine
+        changedValue = tempResult;
     }
     else
     {
