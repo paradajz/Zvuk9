@@ -12,6 +12,13 @@ typedef enum
     transportRecordOff
 } transportControl_t;
 
+typedef enum
+{
+    transportMMC,
+    transportCC,
+    transportMMC_CC
+} transportControlType_t;
+
 class Buttons
 {
     public:
@@ -21,10 +28,8 @@ class Buttons
     void enable(int8_t buttonID = -1);
     void disable(int8_t buttonID = -1);
 
-    void enableTransportCC();
-    void disableTransportCC();
-
-    bool transportCCenabled();
+    void setTransportControlType(transportControlType_t type);
+    transportControlType_t getTransportControlType();
 
     //getters
     bool getButtonState(uint8_t buttonNumber);
@@ -55,7 +60,7 @@ class Buttons
     bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
     bool processingEnabled;
     uint32_t userMenuTimeout;
-    bool transportCCenabled_;
+    transportControlType_t transportControlType;
 };
 
 extern Buttons buttons;

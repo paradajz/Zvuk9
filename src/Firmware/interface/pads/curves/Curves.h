@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <avr/pgmspace.h>
+#include <math.h>
 
 #include "../DataTypes.h"
 
@@ -17,6 +18,14 @@ typedef enum
     curveTypeExp = curveTypeLog+1,
     NUMBER_OF_CURVES = curveTypeExp+1
 } curveType_t;
+
+#define LOG_05  (double)log((double)0.5)
+
+double bias(double b, double x);
+
+double gain(double g, double x);
+
+double gamma(double g, double x);
 
 class Curves
 {

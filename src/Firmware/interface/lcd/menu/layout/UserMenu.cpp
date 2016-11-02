@@ -131,13 +131,19 @@ void Menu::createUserMenuLayout()
                 menuItem[userMenuItem_midiSettings_transport_mmc].level = 241;
                 menuItem[userMenuItem_midiSettings_transport_mmc].checkable = true;
                 menuItem[userMenuItem_midiSettings_transport_mmc].function = checkTransportCC;
-                menuItem[userMenuItem_midiSettings_transport_mmc].argument.argument1 = 0;
+                menuItem[userMenuItem_midiSettings_transport_mmc].argument.argument1 = transportMMC;
 
                 menuItem[userMenuItem_midiSettings_transport_cc].stringPointer = midiSettings_transport_CC_string;
                 menuItem[userMenuItem_midiSettings_transport_cc].level = 242;
                 menuItem[userMenuItem_midiSettings_transport_cc].checkable = true;
                 menuItem[userMenuItem_midiSettings_transport_cc].function = checkTransportCC;
-                menuItem[userMenuItem_midiSettings_transport_cc].argument.argument1 = 1;
+                menuItem[userMenuItem_midiSettings_transport_cc].argument.argument1 = transportCC;
+
+                menuItem[userMenuItem_midiSettings_transport_mmc_cc].stringPointer = midiSettings_transport_MMC_CC_string;
+                menuItem[userMenuItem_midiSettings_transport_mmc_cc].level = 243;
+                menuItem[userMenuItem_midiSettings_transport_mmc_cc].checkable = true;
+                menuItem[userMenuItem_midiSettings_transport_mmc_cc].function = checkTransportCC;
+                menuItem[userMenuItem_midiSettings_transport_mmc_cc].argument.argument1 = transportMMC_CC;
             }
         }
 

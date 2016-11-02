@@ -33,6 +33,7 @@ typedef enum
 
     userMenuItem_midiSettings_transport_mmc,
     userMenuItem_midiSettings_transport_cc,
+    userMenuItem_midiSettings_transport_mmc_cc,
 
     USER_MENU_ITEMS
 } userMenuItems_t;

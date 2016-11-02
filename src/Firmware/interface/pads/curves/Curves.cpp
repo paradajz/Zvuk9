@@ -2,9 +2,6 @@
 #include "../Pads.h"
 #include "Values.h"
 #include <avr/pgmspace.h>
-#include <math.h>
-
-#define LOG_05      (double)log((double)0.5)
 
 #define WIDE_MIDDLE_GAIN    2
 #define WIDE_ENDS_GAIN      8
@@ -20,9 +17,14 @@ double bias(double b, double x)
 double gain(double g, double x)
 {
     if (x < 0.5)
-        return bias(1-g, 2*x)/2;
+    return bias(1-g, 2*x)/2;
     else
-        return 1 - bias(1-g,2 - 2*x)/2;
+    return 1 - bias(1-g,2 - 2*x)/2;
+}
+
+double gamma(double g, double x)
+{
+    return pow(x, (1.0/g));
 }
 
 uint8_t map_u8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max)

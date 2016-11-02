@@ -262,19 +262,32 @@ bool checkNoteOffStatus(functionArgument argument)
 
 bool checkTransportCC(functionArgument argument)
 {
+    switch((transportControlType_t)argument.argument1)
+    {
+        case transportCC:
+        case transportMMC:
+        case transportMMC_CC:
+        //nothing
+        break;
+
+        default:
+        //invalid argument
+        return false;
+    }
+
     switch(argument.argument2)
     {
         case true:
         //switch option
         #ifdef NDEBUG
-        (bool)argument.argument1 ? buttons.enableTransportCC() : buttons.disableTransportCC();
+        buttons.setTransportControlType((transportControlType_t)argument.argument1);
         db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID, argument.argument1);
         #endif
         return true;
 
         case false:
         #ifdef NDEBUG
-        return (buttons.transportCCenabled() == (bool)argument.argument1);
+        return (buttons.getTransportControlType() == (transportControlType_t)argument.argument1);
         #endif
         break;
 

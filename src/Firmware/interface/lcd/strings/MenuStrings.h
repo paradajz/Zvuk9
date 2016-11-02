@@ -57,6 +57,7 @@ const char midiSettings_transport_string[] PROGMEM = "Transport controls";
 
 const char midiSettings_transport_MMC_string[] PROGMEM = "MMC";
 const char midiSettings_transport_CC_string[] PROGMEM = "CC";
+const char midiSettings_transport_MMC_CC_string[] PROGMEM = "MMC+CC";
 
 const char aftertouchType_channel_string[] PROGMEM = "Channel";
 const char aftertouchType_poly_string[] PROGMEM = "Poly";

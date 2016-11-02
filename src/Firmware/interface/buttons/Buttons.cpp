@@ -176,10 +176,21 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
             case BUTTON_TRANSPORT_PLAY:
             type = transportPlay;
             #ifdef NDEBUG
-            if (!transportCCenabled_)
-                sysExArray[4] = 0x02;
-            else
+            switch(transportControlType)
+            {
+                case transportCC:
                 midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_PLAY, 127, 1);
+                break;
+
+                case transportMMC:
+                sysExArray[4] = 0x02;
+                break;
+
+                case transportMMC_CC:
+                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_PLAY, 127, 1);
+                sysExArray[4] = 0x02;
+                break;
+            }
             #endif
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateFull);
             break;
@@ -187,10 +198,21 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
             case BUTTON_TRANSPORT_STOP:
             type = transportStop;
             #ifdef NDEBUG
-            if (!transportCCenabled_)
-                sysExArray[4] = 0x01;
-            else
+            switch(transportControlType)
+            {
+                case transportCC:
                 midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_STOP, 127, 1);
+                break;
+
+                case transportMMC:
+                sysExArray[4] = 0x01;
+                break;
+
+                case transportMMC_CC:
+                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_STOP, 127, 1);
+                sysExArray[4] = 0x01;
+                break;
+            }
             #endif
             leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateOff);
             leds.setLEDstate(LED_TRANSPORT_STOP, ledStateOff);
@@ -202,10 +224,21 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
                 type = transportRecordOff;
                 #ifdef NDEBUG
-                if (!transportCCenabled_)
-                    sysExArray[4] = 0x07;
-                else
+                switch(transportControlType)
+                {
+                    case transportCC:
                     midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
+                    break;
+
+                    case transportMMC:
+                    sysExArray[4] = 0x07;
+                    break;
+
+                    case transportMMC_CC:
+                    midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
+                    sysExArray[4] = 0x07;
+                    break;
+                }
                 #endif
             }
             else
@@ -213,10 +246,21 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
                 type = transportRecordOn;
                 #ifdef NDEBUG
-                if (!transportCCenabled_)
-                    sysExArray[4] = 0x06;
-                else
+                switch(transportControlType)
+                {
+                    case transportCC:
                     midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 127, 1);
+                    break;
+
+                    case transportMMC:
+                    sysExArray[4] = 0x06;
+                    break;
+
+                    case transportMMC_CC:
+                    midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 127, 1);
+                    sysExArray[4] = 0x06;
+                    break;
+                }
                 #endif
             }
             break;
@@ -231,7 +275,7 @@ void Buttons::handleTransportControlEvent(uint8_t buttonNumber, bool state)
     }
 
     #ifdef NDEBUG
-    if (!transportCCenabled_)
+    if ((transportControlType == transportMMC) || (transportControlType == transportMMC_CC))
         midi.sendSysEx(6, sysExArray, true);
     #endif
 
@@ -386,19 +430,14 @@ void Buttons::handleOctaveEvent(bool direction, bool state)
     }
 }
 
-void Buttons::enableTransportCC()
+void Buttons::setTransportControlType(transportControlType_t type)
 {
-    transportCCenabled_ = true;
+    transportControlType = type;
 }
 
-void Buttons::disableTransportCC()
+transportControlType_t Buttons::getTransportControlType()
 {
-    transportCCenabled_ = false;
-}
-
-bool Buttons::transportCCenabled()
-{
-    return transportCCenabled_;
+    return transportControlType;
 }
 
 Buttons buttons;
