@@ -3,8 +3,8 @@
 #include "Values.h"
 #include <avr/pgmspace.h>
 
-#define WIDE_MIDDLE_GAIN    2
-#define WIDE_ENDS_GAIN      8
+#define WIDE_MIDDLE_GAIN    8
+#define WIDE_ENDS_GAIN      2
 
 #define LOG_CURVE_INDEX     0
 #define EXP_CURVE_INDEX     1
