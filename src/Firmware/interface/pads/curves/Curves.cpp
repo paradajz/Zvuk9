@@ -59,13 +59,13 @@ Curves::Curves()    {
 
 uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uint8_t index, uint8_t min, uint8_t max)
 {
-    if ((uint8_t)type != lastCurve[(uint8_t)coordinate])
+    if ((uint8_t)type != lastCurve[(uint8_t)coordinate] || min != lastMin[(uint8_t)coordinate] || max != lastMax[(uint8_t)coordinate])
     {
-        bool minMax_differ = (min || (max != 127));
-
         #ifdef DEBUG
         printf("Setting up new x/y scale\n");
         #endif
+
+        bool minMax_differ = (min || (max != 127));
 
         if (type == curveTypeLinear)
         {
