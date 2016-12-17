@@ -3,9 +3,9 @@
 #include "../../database/Defaults.h"
 
 //don't check velocity for PAD_PRESS_DEBOUNCE_TIMEms after pad has just been pressed
-#define PAD_PRESS_DEBOUNCE_TIME             5
+#define PAD_PRESS_DEBOUNCE_TIME             3
 //pad is considered released PAD_RELEASE_DEBOUNCE_TIMEms after releasing pad
-#define PAD_RELEASE_DEBOUNCE_TIME           15
+#define PAD_RELEASE_DEBOUNCE_TIME           10
 
 //send x/y and then notes after this delay to reduce glide effect
 #define PAD_NOTE_SEND_DELAY                 20
@@ -43,4 +43,4 @@
 #define MIN_Y_VALUE                         450
 #define MAX_Y_VALUE                         620
 
-#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER    10
+#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER    5
