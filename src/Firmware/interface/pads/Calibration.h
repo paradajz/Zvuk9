@@ -3,7 +3,7 @@
 #include "../../database/Defaults.h"
 
 //don't check velocity for PAD_PRESS_DEBOUNCE_TIMEms after pad has just been pressed
-#define PAD_PRESS_DEBOUNCE_TIME             15
+#define PAD_PRESS_DEBOUNCE_TIME             5
 //pad is considered released PAD_RELEASE_DEBOUNCE_TIMEms after releasing pad
 #define PAD_RELEASE_DEBOUNCE_TIME           15
 
@@ -43,4 +43,4 @@
 #define MIN_Y_VALUE                         450
 #define MAX_Y_VALUE                         620
 
-#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER    100
+#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER    10
