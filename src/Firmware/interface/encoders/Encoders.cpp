@@ -68,7 +68,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
     uint8_t value;
     int8_t activePreset;
     bool padsReleased = pads.allPadsReleased();
-    coordinateType_t coordinate = coordinateX;
+    padCoordinate_t coordinate = coordinateX;
     ccLimitType_t limit = ccLimitTypeMin;
 
     switch(encoderNumber)

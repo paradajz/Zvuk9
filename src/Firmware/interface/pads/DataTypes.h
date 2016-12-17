@@ -46,7 +46,8 @@ typedef enum
     coordinateX,
     coordinateY,
     coordinateZ,
-} coordinateType_t;
+    PAD_COORDINATES
+} padCoordinate_t;
 
 typedef enum
 {

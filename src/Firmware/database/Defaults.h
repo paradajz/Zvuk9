@@ -43,8 +43,8 @@
 #define GLOBAL_PROGRAM_SETTING_X_MAX                127
 #define GLOBAL_PROGRAM_SETTING_Y_MIN                0
 #define GLOBAL_PROGRAM_SETTING_Y_MAX                127
-#define GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN         curveTypeLinear
-#define GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN         curveTypeLinear
+#define GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN         curveLinear
+#define GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN         curveLinear
 
 //put global settings in array for easier access
 const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] =
@@ -76,8 +76,8 @@ const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] =
 #define LOCAL_PROGRAM_SETTING_X_MAX                 127
 #define LOCAL_PROGRAM_SETTING_Y_MIN                 0
 #define LOCAL_PROGRAM_SETTING_Y_MAX                 127
-#define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN          curveTypeLinear
-#define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN          curveTypeLinear
+#define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN          curveLinear
+#define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN          curveLinear
 
 const uint8_t defaultLocalProgramSettingArray[] =
 {
@@ -116,7 +116,7 @@ const uint8_t defaultMIDIsettingArray[] =
 };
 
 #define PRESSURE_SETTING_SENSITIVITY                0x00
-#define PRESSURE_SETTING_CURVE                      curveTypeLinear
+#define PRESSURE_SETTING_CURVE                      curveLinear
 
 const uint8_t defaultPressureSettingsArray[] =
 {

@@ -32,42 +32,61 @@ uint8_t map_u8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 };
 
-Curves::Curves()    {
-
+Curves::Curves()
+{
     //def const
-    for (int i=0; i<3; i++)
+    for (int i=0; i<PAD_COORDINATES; i++)
     {
-        lastCurve[i] = curveTypeLinear;
-    }
-
-    for (int i=0; i<2; i++)
-    {
+        lastCurve[i] = curveLinear;
         lastMin[i] = 0;
         lastMax[i] = 127;
-    }
 
-    //x+y+z
-    for (int i=0; i<3; i++)
-    {
         for (int j=0; j<128; j++)
-        {
             scale[i][j] = j;
-        }
     }
-
 }
 
-uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uint8_t index, uint8_t min, uint8_t max)
+uint8_t Curves::getCurveValue(padCoordinate_t coordinate, curve_t curve, uint8_t index, uint8_t min, uint8_t max)
 {
-    if ((uint8_t)type != lastCurve[(uint8_t)coordinate] || min != lastMin[(uint8_t)coordinate] || max != lastMax[(uint8_t)coordinate])
+    bool minMax_differ = false;
+
+    switch(coordinate)
+    {
+        case coordinateX:
+        case coordinateY:
+        //check min/max for these coordinates
+        if (min || (max != 127))
+        {
+            if (min != lastMin[(uint8_t)coordinate])
+            {
+                lastMin[(uint8_t)coordinate] = min;
+                minMax_differ = true;
+            }
+
+            if (max != lastMax[(uint8_t)coordinate])
+            {
+                lastMax[(uint8_t)coordinate] = max;
+                minMax_differ = true;
+            }
+        }
+        break;
+
+        case coordinateZ:
+        //no min/max checking
+        minMax_differ = false;
+        break;
+
+        default:
+        return 0;
+    }
+
+    if ((uint8_t)curve != lastCurve[(uint8_t)coordinate] || minMax_differ)
     {
         #ifdef DEBUG
         printf("Setting up new x/y scale\n");
         #endif
 
-        bool minMax_differ = (min || (max != 127));
-
-        if (type == curveTypeLinear)
+        if (curve == curveLinear)
         {
             //setup curve manually
             if (minMax_differ)
@@ -81,11 +100,11 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uin
                     scale[(uint8_t)coordinate][i] = i;
             }
         }
-        else if ((type == curveTypeLog) || (type == curveTypeExp))
+        else if ((curve == curveLog) || (curve == curveExp))
         {
-            if (type == curveTypeLog)
+            if (curve == curveLog)
                 index = LOG_CURVE_INDEX;
-            else if (type == curveTypeExp)
+            else if (curve == curveExp)
                 index = EXP_CURVE_INDEX;
             else
                 return 0; //error
@@ -96,9 +115,9 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uin
         {
             double curveGain_double;
             //scale gain value to values 0.0-1.0
-            if (type == curveTypeWideEnds)
+            if (curve == curveWideEnds)
                 curveGain_double = (uint8_t)WIDE_MIDDLE_GAIN/10.0;
-            else if (type == curveTypeWideMiddle)
+            else if (curve == curveWideMiddle)
                 curveGain_double = (uint8_t)WIDE_ENDS_GAIN/10.0;
             else
                 return 0; //error
@@ -142,13 +161,7 @@ uint8_t Curves::getCurveValue(coordinateType_t coordinate, curveType_t type, uin
             }
         }
 
-        lastCurve[(uint8_t)coordinate] = (uint8_t)type;
-
-        if (minMax_differ)
-        {
-            lastMin[(uint8_t)coordinate] = min;
-            lastMax[(uint8_t)coordinate] = max;
-        }
+        lastCurve[(uint8_t)coordinate] = (uint8_t)curve;
     }
 
     return scale[(uint8_t)coordinate][index];

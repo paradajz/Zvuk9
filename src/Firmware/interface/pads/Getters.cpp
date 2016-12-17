@@ -9,7 +9,7 @@ void Pads::getConfiguration()
     //globals
     aftertouchType = (aftertouchType_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
     pressureSensitivity = (pressureSensitivity_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID);
-    pressureCurve = (curveType_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID);
+    pressureCurve = (curve_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID);
 
     //read pad configuration from EEPROM
     getProgramParameters();
@@ -408,7 +408,7 @@ uint8_t Pads::getActiveScale()
     return activeScale;
 }
 
-uint8_t Pads::getCCcurve(coordinateType_t coordinate, uint8_t padNumber)
+uint8_t Pads::getCCcurve(padCoordinate_t coordinate, uint8_t padNumber)
 {
     switch(coordinate)
     {
@@ -423,7 +423,7 @@ uint8_t Pads::getCCcurve(coordinateType_t coordinate, uint8_t padNumber)
     }
 }
 
-uint8_t Pads::getCClimitValue(coordinateType_t type, ccLimitType_t limitType, uint8_t padNumber)
+uint8_t Pads::getCClimitValue(padCoordinate_t type, ccLimitType_t limitType, uint8_t padNumber)
 {
     switch(type)
     {
@@ -445,7 +445,7 @@ uint8_t Pads::getCClimitValue(coordinateType_t type, ccLimitType_t limitType, ui
     }
 }
 
-uint8_t Pads::getCCvalue(coordinateType_t type, uint8_t padNumber)
+uint8_t Pads::getCCvalue(padCoordinate_t type, uint8_t padNumber)
 {
     switch(type)
     {
@@ -606,7 +606,7 @@ pressureSensitivity_t Pads::getPressureSensitivity()
     return pressureSensitivity;
 }
 
-curveType_t Pads::getPressureCurve()
+curve_t Pads::getPressureCurve()
 {
     return pressureCurve;
 }

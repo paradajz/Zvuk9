@@ -123,7 +123,7 @@ bool enableCalibration(functionArgument argument)
         return false;
     }
 
-    pads.setCalibrationMode(true, (coordinateType_t)argument.argument1);
+    pads.setCalibrationMode(true, (padCoordinate_t)argument.argument1);
     display.clearLine(1);
     display.clearLine(2);
     display.clearLine(3);
@@ -328,11 +328,11 @@ bool checkPressureSensitivity(functionArgument argument)
 
 bool checkPressureCurve(functionArgument argument)
 {
-    switch((curveType_t)argument.argument1)
+    switch((curve_t)argument.argument1)
     {
-        case curveTypeLinear:
-        case curveTypeLog:
-        case curveTypeExp:
+        case curveLinear:
+        case curveLog:
+        case curveExp:
         //ok
         break;
 
@@ -344,12 +344,12 @@ bool checkPressureCurve(functionArgument argument)
     switch(argument.argument2)
     {
         case true:
-        pads.setPressureCurve((curveType_t)argument.argument1);
+        pads.setPressureCurve((curve_t)argument.argument1);
         return true;
         break;
 
         case false:
-        return (pads.getPressureCurve() == (curveType_t)argument.argument1);
+        return (pads.getPressureCurve() == (curve_t)argument.argument1);
         break;
 
     }

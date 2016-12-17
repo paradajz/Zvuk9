@@ -71,13 +71,13 @@ class Pads
 
     //CC
     //getters
-    uint8_t getCCvalue(coordinateType_t type, uint8_t padNumber);
-    uint8_t getCClimitValue(coordinateType_t type, ccLimitType_t limitType, uint8_t padNumber);
-    uint8_t getCCcurve(coordinateType_t curve, uint8_t padNumber);
+    uint8_t getCCvalue(padCoordinate_t type, uint8_t padNumber);
+    uint8_t getCClimitValue(padCoordinate_t type, ccLimitType_t limitType, uint8_t padNumber);
+    uint8_t getCCcurve(padCoordinate_t curve, uint8_t padNumber);
     //setters
-    changeOutput_t changeCC(bool direction, coordinateType_t type, int8_t steps);
-    changeOutput_t changeCClimits(bool direction, coordinateType_t coordinate, ccLimitType_t limitType, int8_t steps);
-    changeOutput_t setCCcurve(bool direction, coordinateType_t coordinate, int8_t steps=1);
+    changeOutput_t changeCC(bool direction, padCoordinate_t type, int8_t steps);
+    changeOutput_t changeCClimits(bool direction, padCoordinate_t coordinate, ccLimitType_t limitType, int8_t steps);
+    changeOutput_t setCCcurve(bool direction, padCoordinate_t coordinate, int8_t steps=1);
 
     //midi channel
     uint8_t getMIDIchannel(uint8_t pad);
@@ -96,15 +96,15 @@ class Pads
     //pressure info
     pressureSensitivity_t getPressureSensitivity();
     void setPressureSensitivity(pressureSensitivity_t type);
-    curveType_t getPressureCurve();
-    void setPressureCurve(curveType_t curve);
+    curve_t getPressureCurve();
+    void setPressureCurve(curve_t curve);
 
     uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
 
     //calibration
-    bool calibrate(coordinateType_t type, calibrationDirection direction, uint8_t pad, uint16_t limit);
-    void setCalibrationMode(bool state, coordinateType_t type = coordinateX);
-    void setCalibration(coordinateType_t type, calibrationDirection direction, bool state);
+    bool calibrate(padCoordinate_t type, calibrationDirection direction, uint8_t pad, uint16_t limit);
+    void setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
+    void setCalibration(padCoordinate_t type, calibrationDirection direction, bool state);
     void resetCalibration();
 
     private:
@@ -129,13 +129,13 @@ class Pads
 
     //midi scaling
     uint8_t scalePressure(uint8_t pad, int16_t pressure, pressureType_t type);
-    uint8_t scaleXY(uint8_t pad, int16_t xyValue, coordinateType_t type);
+    uint8_t scaleXY(uint8_t pad, int16_t xyValue, padCoordinate_t type);
 
     //data sampling/debouncing
     void addPressureSamples(int16_t pressure);
     bool pressureSampled();
     bool pressureStable(uint8_t padNumber, bool pressDetected);
-    int16_t getMedianValueXYZ(coordinateType_t coordinate);
+    int16_t getMedianValueXYZ(padCoordinate_t coordinate);
 
     //data processing
     bool pressureUpdated(uint8_t pad);
@@ -289,11 +289,11 @@ class Pads
     bool        calibrationEnabled;
     int16_t     minCalibrationValue,
                 maxCalibrationValue;
-    coordinateType_t activeCalibration;
+    padCoordinate_t activeCalibration;
 
     //pressure info
     pressureSensitivity_t pressureSensitivity;
-    curveType_t pressureCurve;
+    curve_t pressureCurve;
 };
 
 extern Pads pads;

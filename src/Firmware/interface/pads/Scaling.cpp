@@ -29,7 +29,7 @@ inline uint8_t invertRange(uint8_t value, uint8_t min, uint8_t max)
     return (max + min) - value;
 }
 
-uint8_t Pads::scaleXY(uint8_t pad, int16_t xyValue, coordinateType_t type)
+uint8_t Pads::scaleXY(uint8_t pad, int16_t xyValue, padCoordinate_t type)
 {
     switch (type)
     {

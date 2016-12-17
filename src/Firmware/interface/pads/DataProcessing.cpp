@@ -4,7 +4,7 @@
 
 const uint8_t pressureReductionConstant = 0b11111100;
 
-int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)
+int16_t Pads::getMedianValueXYZ(padCoordinate_t coordinate)
 {
     int16_t medianValue = 0;
 
@@ -36,6 +36,9 @@ int16_t Pads::getMedianValueXYZ(coordinateType_t coordinate)
         else
             medianValue = (pressureValueSamples[0] <= pressureValueSamples[1]) ? pressureValueSamples[0] : pressureValueSamples[1];
         break;
+
+        default:
+        return 0;
 
     }
 
@@ -77,7 +80,7 @@ bool Pads::checkX(uint8_t pad)
     }
 
     int16_t xValue = scaleXY(pad, medianValue, coordinateX);
-    xValue = curves.getCurveValue(coordinateX, (curveType_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
+    xValue = curves.getCurveValue(coordinateX, (curve_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
     bool xChanged = false;
 
@@ -138,7 +141,7 @@ bool Pads::checkY(uint8_t pad)
     }
 
     int16_t yValue = scaleXY(pad, medianValue, coordinateY);
-    curves.getCurveValue(coordinateY, (curveType_t)padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
+    yValue = curves.getCurveValue(coordinateY, (curve_t)padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
 
     bool yChanged = false;
 

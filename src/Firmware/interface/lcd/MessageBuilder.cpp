@@ -56,7 +56,7 @@ void LCD::displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t pa
     displayPadAmount(_splitState, padNumber);
 }
 
-void LCD::displayCCchange(coordinateType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)
+void LCD::displayCCchange(padCoordinate_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)
 {
     uint8_t size = 0;
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(ccArray[(uint8_t)type])));
@@ -66,7 +66,7 @@ void LCD::displayCCchange(coordinateType_t type, bool _splitState, uint8_t ccVal
     displayPadAmount(_splitState, padNumber);
 }
 
-void LCD::displayCurveChange(coordinateType_t coordinate, bool _splitState, int8_t curveValue, uint8_t padNumber)
+void LCD::displayCurveChange(padCoordinate_t coordinate, bool _splitState, int8_t curveValue, uint8_t padNumber)
 {
     uint8_t size = 0;
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
@@ -74,19 +74,19 @@ void LCD::displayCurveChange(coordinateType_t coordinate, bool _splitState, int8
 
     switch(curveValue)
     {
-        case curveTypeLinear:
+        case curveLinear:
         strcpy_P(tempBuffer, curveTypeLinear_string);
         strcat(stringBuffer, tempBuffer);
         size += progmemCharArraySize(curveTypeLinear_string);
         break;
 
-        case curveTypeWideEnds:
+        case curveWideEnds:
         strcpy_P(tempBuffer, curveTypeWideEnds_string);
         strcat(stringBuffer, tempBuffer);
         size += progmemCharArraySize(curveTypeWideEnds_string);
         break;
 
-        case curveTypeWideMiddle:
+        case curveWideMiddle:
         strcpy_P(tempBuffer, curveTypeWideMiddle_string);
         strcat(stringBuffer, tempBuffer);
         size += progmemCharArraySize(curveTypeWideMiddle_string);
@@ -101,7 +101,7 @@ void LCD::displayCurveChange(coordinateType_t coordinate, bool _splitState, int8
     displayPadAmount(_splitState, padNumber);
 }
 
-void LCD::displayCClimitChange(coordinateType_t coordinate, ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)
+void LCD::displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)
 {
     uint8_t size = 0;
 
@@ -488,7 +488,7 @@ void LCD::displayAftertouch(uint8_t afterTouch)
     updateDisplay(lcdElements.aftertouch.row, text, lcdElements.aftertouch.startIndex, false, size);
 }
 
-void LCD::displayXYposition(uint8_t position, coordinateType_t type)
+void LCD::displayXYposition(uint8_t position, padCoordinate_t type)
 {
     uint8_t lcdCoordinate = 0, size = 0, lcdRow = 0;
 
@@ -522,7 +522,7 @@ void LCD::displayXYposition(uint8_t position, coordinateType_t type)
     updateDisplay(lcdRow, text, lcdCoordinate, false, size);
 }
 
-void LCD::displayXYcc(uint8_t ccXY, coordinateType_t type)
+void LCD::displayXYcc(uint8_t ccXY, padCoordinate_t type)
 {
     uint8_t lcdCoordinate = 0, size = 0, lcdRow = 0;
 
@@ -687,7 +687,7 @@ void LCD::clearAftertouch()
     updateDisplay(lcdElements.aftertouch.row, text, lcdElements.aftertouch.startIndex, false, size);
 }
 
-void LCD::clearXYposition(coordinateType_t type)
+void LCD::clearXYposition(padCoordinate_t type)
 {
     strcpy_P(stringBuffer, xyPositionClear_string);
     uint8_t size = progmemCharArraySize(xyPositionClear_string);
@@ -707,7 +707,7 @@ void LCD::clearXYposition(coordinateType_t type)
     }
 }
 
-void LCD::clearXYcc(coordinateType_t type)
+void LCD::clearXYcc(padCoordinate_t type)
 {
     strcpy_P(stringBuffer, xyCCclear_string);
     uint8_t size = progmemCharArraySize(xyCCclear_string);

@@ -62,7 +62,7 @@ void Pads::splitOnOff()
     #endif
 }
 
-bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint8_t pad, uint16_t limit)
+bool Pads::calibrate(padCoordinate_t type, calibrationDirection direction, uint8_t pad, uint16_t limit)
 {
     int16_t *variablePointer;
     uint8_t configurationSection;
@@ -137,7 +137,7 @@ bool Pads::calibrate(coordinateType_t type, calibrationDirection direction, uint
     return false;
 }
 
-void Pads::setCalibrationMode(bool state, coordinateType_t type)
+void Pads::setCalibrationMode(bool state, padCoordinate_t type)
 {
     calibrationEnabled = state;
     activeCalibration = type;
@@ -227,7 +227,7 @@ void Pads::changeActiveOctave(bool direction)
         activeOctave++;
 }
 
-changeOutput_t Pads::changeCC(bool direction, coordinateType_t type, int8_t steps)
+changeOutput_t Pads::changeCC(bool direction, padCoordinate_t type, int8_t steps)
 {
     //public function
     changeOutput_t result = outputChanged;
@@ -311,7 +311,7 @@ changeOutput_t Pads::changeCC(bool direction, coordinateType_t type, int8_t step
     return result;
 }
 
-changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate, ccLimitType_t limitType, int8_t steps)
+changeOutput_t Pads::changeCClimits(bool direction, padCoordinate_t coordinate, ccLimitType_t limitType, int8_t steps)
 {
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
@@ -442,7 +442,7 @@ changeOutput_t Pads::changeCClimits(bool direction, coordinateType_t coordinate,
     return result;
 }
 
-changeOutput_t Pads::setCCcurve(bool direction, coordinateType_t coordinate, int8_t steps)
+changeOutput_t Pads::setCCcurve(bool direction, padCoordinate_t coordinate, int8_t steps)
 {
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
@@ -1181,7 +1181,7 @@ void Pads::setPressureSensitivity(pressureSensitivity_t type)
     getPressureLimits();
 }
 
-void Pads::setPressureCurve(curveType_t curve)
+void Pads::setPressureCurve(curve_t curve)
 {
     pressureCurve = curve;
     db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID, curve);

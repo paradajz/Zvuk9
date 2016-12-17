@@ -51,13 +51,13 @@ class LCD
 
     void displayVelocity(uint8_t velocity);
     void displayAftertouch(uint8_t afterTouch);
-    void displayXYposition(uint8_t position, coordinateType_t type);
-    void displayXYcc(uint8_t ccXY, coordinateType_t type);
+    void displayXYposition(uint8_t position, padCoordinate_t type);
+    void displayXYcc(uint8_t ccXY, padCoordinate_t type);
 
     void clearVelocity();
     void clearAftertouch();
-    void clearXYposition(coordinateType_t type);
-    void clearXYcc(coordinateType_t type);
+    void clearXYposition(padCoordinate_t type);
+    void clearXYcc(padCoordinate_t type);
     void clearPadEditMode();
     void clearPad();
     void clearMIDIchannel();
@@ -67,9 +67,9 @@ class LCD
 
     void displayTransportControl(transportControl_t type);
     void displayOnOff(onOff_t type, bool _splitState, uint8_t functionState, uint8_t padNumber);
-    void displayCurveChange(coordinateType_t coordinate, bool _splitState, int8_t curveValue, uint8_t padNumber);
-    void displayCClimitChange(coordinateType_t coordinate, ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
-    void displayCCchange(coordinateType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayCurveChange(padCoordinate_t coordinate, bool _splitState, int8_t curveValue, uint8_t padNumber);
+    void displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
+    void displayCCchange(padCoordinate_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
     void displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t padNumber);
     void displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numberOfNotes, bool padEditMode);
     void displayActiveOctave(int8_t octave);
