@@ -3,7 +3,7 @@
 #include "../../database/Defaults.h"
 
 //don't check velocity for PAD_PRESS_DEBOUNCE_TIMEms after pad has just been pressed
-#define PAD_PRESS_DEBOUNCE_TIME             3
+#define PAD_PRESS_DEBOUNCE_TIME             1
 //pad is considered released PAD_RELEASE_DEBOUNCE_TIMEms after releasing pad
 #define PAD_RELEASE_DEBOUNCE_TIME           10
 
@@ -24,7 +24,7 @@
 #define AFTERTOUCH_INITIAL_VALUE_DELAY      100
 
 //change x/y step difference after this timeout
-#define XY_SEND_TIMEOUT                     30
+#define XY_SEND_TIMEOUT                     20
 //ignore x/y readings change below this timeout
 #define XY_SEND_TIMEOUT_IGNORE              10
 //threshold difference between current and last x/y value after XY_SEND_TIMEOUT of no movement
@@ -37,10 +37,13 @@
 
 #define XY_FLIP_VALUES                      0
 
+//there are three different pressure levels - low, medium, hard
+//medium pressure increase is low level +30%
+//hard pressure increase is low level +50%
 #define MEDIUM_PRESSURE_INCREASE_PERCENT    30
 #define HARD_PRESSURE_INCREASE_PERCENT      50
 
 #define MIN_Y_VALUE                         450
 #define MAX_Y_VALUE                         620
 
-#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER    5
+#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER    100
