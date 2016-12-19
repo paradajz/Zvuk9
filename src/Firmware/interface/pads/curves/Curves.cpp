@@ -17,9 +17,9 @@ double bias(double b, double x)
 double gain(double g, double x)
 {
     if (x < 0.5)
-    return bias(1-g, 2*x)/2;
+        return bias(1-g, 2*x)/2;
     else
-    return 1 - bias(1-g,2 - 2*x)/2;
+        return 1 - bias(1-g,2 - 2*x)/2;
 }
 
 double gamma(double g, double x)
@@ -29,6 +29,9 @@ double gamma(double g, double x)
 
 uint8_t map_u8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max)
 {
+    if ((in_min == out_min) && (in_max == out_max))
+        return x;
+
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 };
 
@@ -50,121 +53,161 @@ uint8_t Curves::getCurveValue(padCoordinate_t coordinate, curve_t curve, uint8_t
 {
     bool minMax_differ = false;
 
-    switch(coordinate)
+    if (coordinate == coordinateX)
     {
-        case coordinateX:
-        case coordinateY:
-        //check min/max for these coordinates
-        if (min || (max != 127))
+        #ifdef DEBUG
+        printf("Requested index: %d\n", index);
+        #endif
+    }
+
+    if (curve == curveLinear)
+    {
+        if (min || (max < 127))
+            return map_u8(index, 0, 127, min, max);
+        else
+            return index;
+    }
+    else
+    {
+        switch(coordinate)
         {
+            case coordinateX:
+            case coordinateY:
+            //check min/max for these coordinates
             if (min != lastMin[(uint8_t)coordinate])
             {
+                #ifdef DEBUG
+                printf("Updating last min value for this scale.\n");
+                #endif
                 lastMin[(uint8_t)coordinate] = min;
                 minMax_differ = true;
             }
 
             if (max != lastMax[(uint8_t)coordinate])
             {
+                #ifdef DEBUG
+                printf("Updating last max value for this scale.\n");
+                #endif
                 lastMax[(uint8_t)coordinate] = max;
                 minMax_differ = true;
             }
+            break;
+
+            case coordinateZ:
+            //no min/max checking
+            minMax_differ = false;
+            break;
+
+            default:
+            return 0;
         }
-        break;
 
-        case coordinateZ:
-        //no min/max checking
-        minMax_differ = false;
-        break;
+        uint8_t numberOfValues = max-min+1;
 
-        default:
-        return 0;
-    }
-
-    if ((uint8_t)curve != lastCurve[(uint8_t)coordinate] || minMax_differ)
-    {
-        #ifdef DEBUG
-        printf("Setting up new x/y scale\n");
-        #endif
-
-        if (curve == curveLinear)
+        if ((uint8_t)curve != lastCurve[(uint8_t)coordinate] || minMax_differ)
         {
-            //setup curve manually
-            if (minMax_differ)
+            #ifdef DEBUG
+            printf("Setting up new x/y scale\n");
+            #endif
+
+            if ((curve == curveLog) || (curve == curveExp))
             {
-                for (int i=0; i<128; i++)
-                    scale[(uint8_t)coordinate][i]= map_u8(i, 0, 127, min, max);
-            }
-            else
-            {
-                for (int i=0; i<128; i++)
-                    scale[(uint8_t)coordinate][i] = i;
-            }
-        }
-        else if ((curve == curveLog) || (curve == curveExp))
-        {
-            if (curve == curveLog)
-                index = LOG_CURVE_INDEX;
-            else if (curve == curveExp)
-                index = EXP_CURVE_INDEX;
-            else
-                return 0; //error
+                //used only for pressure, no min/max checking
+                uint8_t curveIndex = 0;
 
-            memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[index])), 128);
-        }
-        else
-        {
-            double curveGain_double;
-            //scale gain value to values 0.0-1.0
-            if (curve == curveWideEnds)
-                curveGain_double = (uint8_t)WIDE_MIDDLE_GAIN/10.0;
-            else if (curve == curveWideMiddle)
-                curveGain_double = (uint8_t)WIDE_ENDS_GAIN/10.0;
-            else
-                return 0; //error
-
-            uint8_t numberOfValues = max-min;
-            double step, stepValue = 0.0;
-
-            //scale range
-            step = 1.0/(double)numberOfValues;
-
-            for (int i=0; i<=numberOfValues; i++)
-            {
-                //make sure that curve extremes are correct
-                if (!i)
-                    scale[(uint8_t)coordinate][i] = 0;
-                else if (i == numberOfValues)
-                    scale[(uint8_t)coordinate][i] = numberOfValues;
+                if (curve == curveLog)
+                    curveIndex = LOG_CURVE_INDEX;
+                else if (curve == curveExp)
+                    curveIndex = EXP_CURVE_INDEX;
                 else
-                    scale[(uint8_t)coordinate][i] = round(gain(curveGain_double, stepValue) * numberOfValues); //round up
+                return 0; //error
 
-                stepValue += step;
+                memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[curveIndex])), 128);
             }
-
-            if (min > 0)
+            else
             {
-                //if min value is zero, curve is already scaled
-                uint8_t tempArray[numberOfValues+1];
+                double curveGain_double;
+                //scale gain value to values 0.0-1.0
+                if (curve == curveWideEnds)
+                    curveGain_double = (uint8_t)WIDE_MIDDLE_GAIN/10.0;
+                else if (curve == curveWideMiddle)
+                    curveGain_double = (uint8_t)WIDE_ENDS_GAIN/10.0;
+                else
+                    return 0; //error
 
-                for (int i=0; i<=numberOfValues; i++)
-                    tempArray[i] = scale[(uint8_t)coordinate][i];
+                double step, stepValue = 0.0;
 
-                for (int i=0; i<=numberOfValues; i++)
+                #ifdef DEBUG
+                printf("Total of %d values for this scale.\n", numberOfValues);
+                #endif
+
+                //scale range
+                step = 1.0/(double)numberOfValues;
+
+                #ifdef DEBUG
+                printf("Printing scale values.\n");
+                #endif
+
+                for (int i=0; i<numberOfValues; i++)
                 {
+                    //make sure that curve extremes are correct
                     if (!i)
-                        scale[(uint8_t)coordinate][i] = min;
-                    else if (i == max)
-                        scale[(uint8_t)coordinate][i] = max;
+                        scale[(uint8_t)coordinate][i] = 0;
+                    else if (i == numberOfValues-1)
+                        scale[(uint8_t)coordinate][i] = numberOfValues-1;
                     else
-                        scale[(uint8_t)coordinate][i] = map_u8(tempArray[i], 0, numberOfValues, min, max);
+                        scale[(uint8_t)coordinate][i] = round(gain(curveGain_double, stepValue) * (numberOfValues-1)); //round up
+
+                    stepValue += step;
+                }
+
+                if (min > 0)
+                {
+                    //if min value is zero, curve is already scaled
+                    uint8_t tempArray[numberOfValues];
+
+                    for (int i=0; i<numberOfValues; i++)
+                        tempArray[i] = scale[(uint8_t)coordinate][i];
+
+                    for (int i=0; i<numberOfValues; i++)
+                    {
+                        if (!i)
+                            scale[(uint8_t)coordinate][i] = min;
+                        else if (i == max)
+                            scale[(uint8_t)coordinate][i] = max;
+                        else
+                            scale[(uint8_t)coordinate][i] = map_u8(tempArray[i], 0, numberOfValues-1, min, max);
+                    }
                 }
             }
+
+            lastCurve[(uint8_t)coordinate] = (uint8_t)curve;
+
+            #ifdef DEBUG
+            printf("Printing scale values.\n");
+            for (int i=0; i<numberOfValues; i++)
+                printf("Index: %d, value: %d\n", i, scale[(uint8_t)coordinate][i]);
+            #endif
         }
 
-        lastCurve[(uint8_t)coordinate] = (uint8_t)curve;
-    }
+        if (coordinate == coordinateX)
+        {
+            #ifdef DEBUG
+            printf("Returning value: %d\n", scale[(uint8_t)coordinate][index]);
+            #endif
+        }
 
-    return scale[(uint8_t)coordinate][index];
+        //scale index if necessary
+        if (min || max < 127)
+        {
+            index = map_u8(index, 0, 127, 0, numberOfValues-1);
+            #ifdef DEBUG
+            printf("Scaled index: %d\n", index);
+            #endif
+        }
+
+        return scale[(uint8_t)coordinate][index];
+    }
 }
 
 Curves curves;
