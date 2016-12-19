@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#read value written inside MAJOR file
-major=$(head -n 1 MAJOR)
+#count all tags with "v*.0" pattern and assign value to $major
+major=$(git tag -l "v*.0" | wc -l)
 
 #list all tags descending until major tag is found, count the output and assign result to $minor
 minor=$(git for-each-ref --format='%(*creatordate:raw)%(creatordate:raw) %(refname) %(*objectname) %(objectname)' refs/tags | sort -r | awk '{ print $3 }' | sed -e 's/refs\/tags\///g' | sed '/v*.0/Q' | wc -l)
@@ -37,5 +37,5 @@ else
 fi
 
 #output $major, $minor and $revision into separate files
-echo "software version: $major.$minor.$revision.$development"
+echo "$major.$minor.$revision.$development"
 echo "$major,$minor,$revision,$development" > version
