@@ -9,7 +9,7 @@ const char presetMajor_string[] PROGMEM = "Major";
 const char presetHarmonicMajor_string[] PROGMEM = "Harmonic Major";
 const char presetMinorPentatonic_string[] PROGMEM = "Minor Pentatonic";
 const char presetMajorPentatonic_string[] PROGMEM = "Major Pentatonic";
-const char presetUser_string[] PROGMEM = "User preset";
+const char presetUser_string[] PROGMEM = "User scale";
 
 PGM_P const presetNameArray[] PROGMEM =
 {

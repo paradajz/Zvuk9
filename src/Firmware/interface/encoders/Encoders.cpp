@@ -55,7 +55,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         return;
     }
 
-    //allow only program and preset encoder while in menu
+    //allow only program and scale encoder while in menu
     if (menu.menuDisplayed())
     {
         if (!((encoderNumber == PROGRAM_ENCODER) || (encoderNumber == PRESET_ENCODER)))
@@ -122,13 +122,13 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
                     activeProgram = (NUMBER_OF_PROGRAMS-1);
                 pads.setActiveProgram(activeProgram);
 
-                //get last active preset on current program
+                //get last active scale on current program
                 uint8_t currentPreset = pads.getActiveScale();
 
-                //preset is changed
+                //scale is changed
                 leds.displayActiveNoteLEDs();
 
-                //display preset on display
+                //display scale on display
                 display.displayProgramAndScale(activeProgram+1, currentPreset);
             }
         }
@@ -161,7 +161,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
         pads.setActiveScale(activePreset);
         leds.displayActiveNoteLEDs();
 
-        //display preset on display
+        //display scale on display
         display.displayProgramAndScale(pads.getActiveProgram()+1, activePreset);
         break;
 

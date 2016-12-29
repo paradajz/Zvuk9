@@ -422,7 +422,7 @@ void LCD::displayFirmwareUpdated()
 
 void LCD::displayProgramAndScale(uint8_t program, uint8_t scale)
 {
-    //program and preset are displayed in single row
+    //program and scale are displayed in single row
     uint8_t size = 0;
     strcpy_P(stringBuffer, program_string);
     size = progmemCharArraySize(program_string);
