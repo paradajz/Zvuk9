@@ -169,7 +169,6 @@ bool Pads::checkY(uint8_t pad)
 
 bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
 {
-
     //pad is pressed
     if (lastMIDInoteState[pad])
     {
