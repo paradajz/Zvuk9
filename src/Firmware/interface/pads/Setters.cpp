@@ -693,14 +693,17 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange)
 
     }
 
-    if (abs(noteShiftLevel) == (uint8_t)currentScaleType)
-        noteShiftLevel = 0;
+    if (!internalChange)
+    {
+        if (abs(noteShiftLevel) == (uint8_t)currentScaleType)
+            noteShiftLevel = 0;
+    }
 
     if (!internalChange)
         db.update(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, noteShiftLevel);
 
     #ifdef DEBUG
-    printf("Shifted note: %d\n", noteShiftLevel);
+    printf_P(PSTR("Notes shifted %s"), direction ? "up\n" : "down\n");
     #endif
 
     for (int i=0; i<MAX_PADS; i++)
