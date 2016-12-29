@@ -228,6 +228,8 @@ void Menu::exitMenu()
     buttons.enable();
     activeMenu = noMenu;
     functionRunning = false;
+
+    exitTime = rTimeMillis();
 }
 
 bool Menu::menuDisplayed()
@@ -371,6 +373,11 @@ void Menu::confirmOption(bool confirm)
 void Menu::stopFunction()
 {
     functionRunning = false;
+}
+
+uint32_t Menu::getExitTime()
+{
+    return exitTime;
 }
 
 Menu menu;

@@ -6,12 +6,13 @@
 #include "../lcd/menu/Menu.h"
 #include "../../database/Database.h"
 
-#define ENCODER_SPEED_1         1
-#define ENCODER_SPEED_2         5
+#define ENCODER_SPEED_1             1
+#define ENCODER_SPEED_2             5
 
-#define SPEED_TIMEOUT           100
+#define SPEED_TIMEOUT               100
+#define ENCODER_DEBOUNCE_TIME       500
 
-#define ENCODER_DEBOUNCE_TIME   500
+#define SCALE_ENC_DISABLE_MENU_EXIT 2000
 
 Encoders::Encoders()
 {
@@ -140,6 +141,9 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
             menu.confirmOption(direction);
             return;
         }
+
+        if (rTimeMillis() - menu.getExitTime() < SCALE_ENC_DISABLE_MENU_EXIT)
+            return; //disable this encoder 1sec after menu is exited to avoid accidental scale change
 
         if (!padsReleased)
         {
