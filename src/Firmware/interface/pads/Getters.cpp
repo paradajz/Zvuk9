@@ -218,7 +218,7 @@ void Pads::generateScale(scale_t scale)
         //finally, apply note shift
         if (noteShiftLevel < 0)
         {
-            int8_t temp = noteShiftLevel *= -1;
+            uint8_t temp = abs(noteShiftLevel);
             for (int i=0; i<temp; i++)
                 shiftNote(false, true);
         }
