@@ -5,8 +5,7 @@
 #include "lcd/lcd.h"
 #include "Variables.h"
 #include "Constants.h"
-
-uint32_t rTimeMs();
+#include "reset/Reset.h"
 
 typedef enum
 {

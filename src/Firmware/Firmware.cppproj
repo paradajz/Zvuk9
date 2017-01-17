@@ -251,6 +251,12 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="board\Board.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="board\reset\Reset.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\reset\Reset.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="board\Variables.h">
       <SubType>compile</SubType>
     </Compile>
@@ -665,12 +671,6 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="database\layout\MemoryLayout.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="core\reset\Reset.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="core\reset\Reset.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="interface\buttons\Buttons.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -868,6 +868,7 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Folder Include="board\lcd\" />
     <Folder Include="board\pins\" />
     <Folder Include="board\pins\board_v1\" />
+    <Folder Include="board\reset\" />
     <Folder Include="core\adc\" />
     <Folder Include="core\i2c\" />
     <Folder Include="core\helpers" />
@@ -893,7 +894,6 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Folder Include="core\usb\vserial\" />
     <Folder Include="database" />
     <Folder Include="core" />
-    <Folder Include="core\reset" />
     <Folder Include="database\layout" />
     <Folder Include="interface\" />
     <Folder Include="interface\buttons\" />
