@@ -34,7 +34,7 @@ void Encoders::update(bool process)
         if (encoderSteps == 0)
             continue;
 
-        uint32_t timeDifference = rTimeMillis() - lastStepTime[i];
+        uint32_t timeDifference = rTimeMs() - lastStepTime[i];
         uint8_t steps = ENCODER_SPEED_1;
 
         if (timeDifference > SPEED_TIMEOUT)
@@ -42,7 +42,7 @@ void Encoders::update(bool process)
         else
             steps = ENCODER_SPEED_2;
 
-        lastStepTime[i] = rTimeMillis();
+        lastStepTime[i] = rTimeMs();
         handleEncoder(i, (encoderSteps > 0), steps);
     }
 }
@@ -142,7 +142,7 @@ void Encoders::handleEncoder(uint8_t encoderNumber, bool direction, uint8_t step
             return;
         }
 
-        if (rTimeMillis() - menu.getExitTime() < SCALE_ENC_DISABLE_MENU_EXIT)
+        if (rTimeMs() - menu.getExitTime() < SCALE_ENC_DISABLE_MENU_EXIT)
             return; //disable this encoder 1sec after menu is exited to avoid accidental scale change
 
         if (!padsReleased)

@@ -43,7 +43,7 @@ void LCD::init()
 
 void LCD::update()
 {
-    if ((rTimeMillis() - lastLCDupdateTime) < LCD_REFRESH_TIME)
+    if ((rTimeMs() - lastLCDupdateTime) < LCD_REFRESH_TIME)
         return; //we don't need to update lcd in real time
 
     //get message status to determine what to print
@@ -115,7 +115,7 @@ void LCD::update()
         lineChange[i] = false;
     }
 
-    lastLCDupdateTime = rTimeMillis();
+    lastLCDupdateTime = rTimeMs();
 }
 
 messageStatus_t LCD::getMessageStatus()
@@ -132,7 +132,7 @@ messageStatus_t LCD::getMessageStatus()
 
     if (messageActivated)
     {
-        if (!((rTimeMillis() - messageDisplayTime) > LCD_MESSAGE_DURATION))
+        if (!((rTimeMs() - messageDisplayTime) > LCD_MESSAGE_DURATION))
             return messageDisplayed;
 
         messageActivated = false;
@@ -157,7 +157,7 @@ void LCD::checkScroll(uint8_t row)
     if (!scrollEnabled[row])
         return;
 
-    if ((rTimeMillis() - lastScrollTime) < LCD_SCROLL_TIME)
+    if ((rTimeMs() - lastScrollTime) < LCD_SCROLL_TIME)
         return;
 
     //copy string up to scrollStartIndex
@@ -187,13 +187,13 @@ void LCD::checkScroll(uint8_t row)
     }
 
     lineChange[row] = true;
-    lastScrollTime = rTimeMillis();
+    lastScrollTime = rTimeMs();
 }
 
 void LCD::displayMessage(uint8_t row, const char *message)
 {
     strcpy(lcdLineMessage[row], message);
-    messageDisplayTime = rTimeMillis();
+    messageDisplayTime = rTimeMs();
     displayMessage_var = true;
 }
 

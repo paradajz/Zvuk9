@@ -13,4 +13,4 @@
 #include "usb/midi/Descriptors.h"
 #endif
 #include "PinManipulation.h"
-#include "wait/Wait.h"
+#include "timer/Timing.h"

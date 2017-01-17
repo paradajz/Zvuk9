@@ -38,11 +38,11 @@ void LEDs::update()
     {
         if (board.ledBlinking(i))
         {
-            if ((rTimeMillis() - ledBlinkTimer[i]) > LED_BLINK_TIME)
+            if ((rTimeMs() - ledBlinkTimer[i]) > LED_BLINK_TIME)
             {
                 board.setLEDstate(i, board.getLEDstate(i), ledBlinkState[i]);
                 ledBlinkState[i] = !ledBlinkState[i];
-                ledBlinkTimer[i] = rTimeMillis();
+                ledBlinkTimer[i] = rTimeMs();
             }
         }
     }

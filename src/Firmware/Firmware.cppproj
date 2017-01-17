@@ -239,9 +239,6 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="board\LEDs.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\Millis.cpp">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="board\Pads.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -279,6 +276,12 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="core\PinManipulation.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="core\timer\RunTime.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="core\timer\Timing.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="core\uart\UART.cpp">
@@ -632,10 +635,7 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="core\usb\vserial\Descriptors.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="core\wait\Wait.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="core\wait\Wait.h">
+    <Compile Include="core\timer\Wait.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="database\Blocks.h">
@@ -873,7 +873,7 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Folder Include="board\pins\board_v1\" />
     <Folder Include="core\adc\" />
     <Folder Include="core\i2c\" />
-    <Folder Include="core\wait" />
+    <Folder Include="core\timer" />
     <Folder Include="core\uart\" />
     <Folder Include="core\usb\" />
     <Folder Include="core\usb\lufa\" />

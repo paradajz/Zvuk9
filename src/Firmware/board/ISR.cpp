@@ -1,5 +1,7 @@
 #include "Board.h"
 
+volatile uint32_t rTime_ms;
+
 volatile uint8_t *tccraArray[] =
 {
     &TCCR2A,

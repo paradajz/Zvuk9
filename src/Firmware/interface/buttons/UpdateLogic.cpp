@@ -30,7 +30,7 @@ Buttons::Buttons()
 void Buttons::init()
 {
     mapButtonsToLEDs();
-    uint32_t currentTime = rTimeMillis();
+    uint32_t currentTime = rTimeMs();
     processingEnabled = false;
     transportControlType = (transportControlType_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID);
 
@@ -40,7 +40,7 @@ void Buttons::init()
         //read all buttons without activating event handlers
         update();
     }
-    while ((rTimeMillis() - currentTime) < 100);
+    while ((rTimeMs() - currentTime) < 100);
 
     if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP))
     {
@@ -55,7 +55,7 @@ void Buttons::init()
 
 void Buttons::update()
 {
-    if (!((rTimeMillis() - lastCheckTime) > EXPANDER_CHECK_TIME))
+    if (!((rTimeMs() - lastCheckTime) > EXPANDER_CHECK_TIME))
         return;
 
     if (!board.buttonDataAvailable())
@@ -85,9 +85,9 @@ void Buttons::update()
         //measure the time the button is pressed
         if (!userMenuTimeout)
         {
-            userMenuTimeout = rTimeMillis();
+            userMenuTimeout = rTimeMs();
         }
-        else if (((rTimeMillis() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed())
+        else if (((rTimeMs() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed())
         {
             userMenuTimeout = 0;
             menu.displayMenu(userMenu);
@@ -106,7 +106,7 @@ void Buttons::update()
         userMenuTimeout = 0;
     }
 
-    lastCheckTime = rTimeMillis();
+    lastCheckTime = rTimeMs();
 }
 
 bool Buttons::getButtonState(uint8_t buttonNumber)

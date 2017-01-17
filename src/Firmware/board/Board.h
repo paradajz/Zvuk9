@@ -7,7 +7,7 @@
 #include "Variables.h"
 #include "Constants.h"
 
-uint32_t rTimeMillis();
+uint32_t rTimeMs();
 
 typedef enum
 {

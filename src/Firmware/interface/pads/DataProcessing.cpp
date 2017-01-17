@@ -84,12 +84,12 @@ bool Pads::checkX(uint8_t pad)
 
     bool xChanged = false;
 
-    if ((rTimeMillis() - xSendTimer[pad]) > XY_SEND_TIMEOUT)
+    if ((rTimeMs() - xSendTimer[pad]) > XY_SEND_TIMEOUT)
     {
         if (abs(xValue - lastXMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP)
             xChanged = true;
     }
-    else if ((xValue != lastXMIDIvalue[pad]) && ((rTimeMillis() - xSendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
+    else if ((xValue != lastXMIDIvalue[pad]) && ((rTimeMs() - xSendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
     {
         xChanged = true;
     }
@@ -97,9 +97,9 @@ bool Pads::checkX(uint8_t pad)
     if (xChanged)
     {
         lastXMIDIvalue[pad] = xValue;
-        xSendTimer[pad] = rTimeMillis();
+        xSendTimer[pad] = rTimeMs();
 
-        padDebounceTimer[pad] = rTimeMillis(); //why? investigate
+        padDebounceTimer[pad] = rTimeMs(); //why? investigate
         return true;
     }
 
@@ -145,12 +145,12 @@ bool Pads::checkY(uint8_t pad)
 
     bool yChanged = false;
 
-    if ((rTimeMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT)
+    if ((rTimeMs() - ySendTimer[pad]) > XY_SEND_TIMEOUT)
     {
         if (abs(yValue - lastYMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP)
             yChanged = true;
     }
-    else if ((yValue != lastYMIDIvalue[pad]) && ((rTimeMillis() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
+    else if ((yValue != lastYMIDIvalue[pad]) && ((rTimeMs() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
     {
         yChanged = true;
     }
@@ -158,9 +158,9 @@ bool Pads::checkY(uint8_t pad)
     if (yChanged)
     {
         lastYMIDIvalue[pad] = yValue;
-        ySendTimer[pad] = rTimeMillis();
+        ySendTimer[pad] = rTimeMs();
 
-        padDebounceTimer[pad] = rTimeMillis(); //why? investigate
+        padDebounceTimer[pad] = rTimeMs(); //why? investigate
         return true;
     }
 
@@ -176,13 +176,13 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
         if (velocityAvailable)
         {
             //pad has just been pressed, start the timer and return false
-            aftertouchActivationDelay[pad] = rTimeMillis();
+            aftertouchActivationDelay[pad] = rTimeMs();
             return false;
         }
         else
         {
             //when pad is just pressed, wait a bit for pressure to stabilize
-            if ((rTimeMillis() - aftertouchActivationDelay[pad]) < AFTERTOUCH_INITIAL_VALUE_DELAY)
+            if ((rTimeMs() - aftertouchActivationDelay[pad]) < AFTERTOUCH_INITIAL_VALUE_DELAY)
                 return false;
         }
 
@@ -191,7 +191,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
         if (!calibratedPressureAfterTouch)
             return false; //don't allow aftertouch 0
 
-        uint32_t timeDifference = rTimeMillis() - lastAftertouchUpdateTime[pad];
+        uint32_t timeDifference = rTimeMs() - lastAftertouchUpdateTime[pad];
         bool updateAftertouch = false;
 
         //if it's been more than AFTERTOUCH_SEND_TIMEOUT since last time aftertouch was sent, aftertouch value
@@ -212,7 +212,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
         if (updateAftertouch)
         {
             lastAftertouchValue[pad] = calibratedPressureAfterTouch;
-            lastAftertouchUpdateTime[pad] = rTimeMillis();
+            lastAftertouchUpdateTime[pad] = rTimeMs();
 
             if (!aftertouchActivated[pad])
                 aftertouchActivated[pad] = true;
@@ -516,11 +516,11 @@ bool Pads::pressureStable(uint8_t pad, bool pressDetected)
         {
             firstPressureValueDelayTimerStarted[pad] = true;
             padDebounceTimerStarted[pad] = false;
-            firstPressureValueDelayTimer[pad] = rTimeMillis();
+            firstPressureValueDelayTimer[pad] = rTimeMs();
             return false;
         }
 
-        return (rTimeMillis() - firstPressureValueDelayTimer[pad] > PAD_PRESS_DEBOUNCE_TIME);
+        return (rTimeMs() - firstPressureValueDelayTimer[pad] > PAD_PRESS_DEBOUNCE_TIME);
     }
     else
     {
@@ -528,11 +528,11 @@ bool Pads::pressureStable(uint8_t pad, bool pressDetected)
         {
             padDebounceTimerStarted[pad] = true;
             firstPressureValueDelayTimerStarted[pad] = false;
-            padDebounceTimer[pad] = rTimeMillis();
+            padDebounceTimer[pad] = rTimeMs();
             return false;
         }
 
-        return (rTimeMillis() - padDebounceTimer[pad] > PAD_RELEASE_DEBOUNCE_TIME);
+        return (rTimeMs() - padDebounceTimer[pad] > PAD_RELEASE_DEBOUNCE_TIME);
     }
 }
 
@@ -708,7 +708,7 @@ bool Pads::checkNoteBuffer()
     //this is fifo (circular) buffer
     //check first element in buffer
     //if first element (note) can't pass this condition, none of the other elements can, so return
-    if ((rTimeMillis() - noteTime) < PAD_NOTE_SEND_DELAY)
+    if ((rTimeMs() - noteTime) < PAD_NOTE_SEND_DELAY)
         return false;
 
     //send
@@ -944,7 +944,7 @@ void Pads::storeNotes(uint8_t pad)
 
     pad_buffer[i] = pad;
     velocity_buffer[i] = lastVelocityValue[pad];
-    pad_note_timer_buffer[i] = rTimeMillis();
+    pad_note_timer_buffer[i] = rTimeMs();
     note_buffer_head = i;
 }
 

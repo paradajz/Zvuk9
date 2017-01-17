@@ -229,7 +229,7 @@ void Menu::exitMenu()
     activeMenu = noMenu;
     functionRunning = false;
 
-    exitTime = rTimeMillis();
+    exitTime = rTimeMs();
 }
 
 bool Menu::menuDisplayed()
