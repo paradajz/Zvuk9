@@ -75,6 +75,7 @@ class LCD
     void displayActiveOctave(int8_t octave);
     void displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value);
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
+    void displayNoNotesError();
     void displayPadEditMode(uint8_t padNumber);
     void displayOutOfRange();
     void displayMaxNotesSet();

@@ -296,14 +296,16 @@ void Buttons::handleTonicEvent(note_t note, bool state)
         {
             case outputChanged:
             leds.displayActiveNoteLEDs();
+            display.displayNoteChange(result, tonicChange, activeTonic);
+            break;
+
+            case noChange:
+            display.displayNoNotesError();
             break;
 
             default:
             break;
         }
-
-        //always do this
-        display.displayNoteChange(result, tonicChange, activeTonic);
     }
     else
     {

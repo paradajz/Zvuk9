@@ -288,6 +288,13 @@ void LCD::displayEditModeNotAllowed(padEditModeResult_t errorType)
     }
 }
 
+void LCD::displayNoNotesError()
+{
+    strcpy_P(stringBuffer, noNotes_string);
+    uint8_t size = progmemCharArraySize(noNotes_string);
+    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+}
+
 void LCD::displayTransportControl(transportControl_t type)
 {
     uint8_t size = 0;

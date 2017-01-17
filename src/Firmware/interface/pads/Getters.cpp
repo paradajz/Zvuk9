@@ -479,13 +479,13 @@ note_t Pads::getActiveTonic()
             if (padNote[0][i] != BLANK_NOTE)
                 return getTonicFromNote(padNote[0][i]+noteShiftAmount[i]);
         }
+        return MIDI_NOTES;
     }
     else
     {
         //predefined scale tonic is written in eeprom
         uint16_t tonicIndex = PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
         return (note_t)db.read(CONF_BLOCK_PROGRAM, programScalePredefinedSection, tonicIndex);
-
     }
 
     return MIDI_NOTES;
