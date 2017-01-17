@@ -7,6 +7,8 @@
 #include "../lcd/menu/Menu.h"
 #include "../../database/Database.h"
 
+extern void (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (bool state);
+
 note_t Buttons::getTonicFromButton(uint8_t buttonNumber)
 {
     switch(buttonNumber)

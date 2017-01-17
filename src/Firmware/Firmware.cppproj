@@ -683,6 +683,15 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="interface\buttons\DataTypes.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\buttons\handlers\Handlers.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\buttons\handlers\Handlers.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\buttons\handlers\Init.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\buttons\Map.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -912,6 +921,7 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Folder Include="database\layout" />
     <Folder Include="interface\" />
     <Folder Include="interface\buttons\" />
+    <Folder Include="interface\buttons\handlers" />
     <Folder Include="interface\encoders\" />
     <Folder Include="interface\lcd\" />
     <Folder Include="interface\lcd\menu\" />
