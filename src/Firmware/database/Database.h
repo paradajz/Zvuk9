@@ -3,7 +3,6 @@
 #include <stdio.h> 
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
-#include "UniqueID.h"
 #include "Config.h"
 #include "Defaults.h"
 #include "Blocks.h"

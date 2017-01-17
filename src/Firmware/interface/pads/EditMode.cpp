@@ -8,7 +8,7 @@ bool editModeActivated = false;
 void Pads::setupPadEditMode(uint8_t pad)
 {
     #ifdef DEBUG
-    printf("Editing pad %d\n", pad);
+    printf_P(PSTR("Editing pad %d\n"), pad);
     #endif
 
     display.displayPadEditMode(pad + 1);
@@ -26,7 +26,7 @@ void Pads::displayActivePadNotes(uint8_t pad)
     int8_t octaveArray[NOTES_PER_PAD];
 
     //#ifdef DEBUG
-    //printf("Assigned notes:\n");
+    //printf_P("Assigned notes:\n");
     //#endif
 
     for (int i=0; i<NOTES_PER_PAD; i++)
@@ -39,7 +39,7 @@ void Pads::displayActivePadNotes(uint8_t pad)
         noteCounter++;
 
         //#ifdef DEBUG
-        //printf("%d\n", padNote[pad][i]);
+        //printf_P("%d\n", padNote[pad][i]);
         //#endif
     }
 

@@ -19,15 +19,15 @@ void Pads::getConfiguration()
 void Pads::getProgramParameters()
 {
     #ifdef DEBUG
-    printf("Printing out program settings\n");
+    printf_P(PSTR("Printing out program settings\n"));
     #endif
 
     activeProgram = db.read(CONF_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
     activeScale = db.read(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram);
 
     #ifdef DEBUG
-    printf("Active program: %d\n", activeProgram+1);
-    printf("Active scale: %d\n", activeScale);
+    printf_P(PSTR("Active program: %d\n"), activeProgram+1);
+    printf_P(PSTR("Active scale: %d\n"), activeScale);
     #endif
 
     getPadParameters();
@@ -40,7 +40,7 @@ void Pads::getPadParameters()
     splitEnabled = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #ifdef DEBUG
-    printf("Printing out pad configuration\n");
+    printf_P(PSTR("Printing out pad configuration\n"));
     #endif
 
     if (!splitEnabled)
@@ -48,7 +48,7 @@ void Pads::getPadParameters()
         //split off
         //apply global settings to pads
         #ifdef DEBUG
-        printf("All pad parameters are global - split is off\n");
+        printf_P(PSTR("All pad parameters are global - split is off\n"));
         #endif
 
         for (int i=0; i<MAX_PADS; i++)
@@ -69,26 +69,26 @@ void Pads::getPadParameters()
         }
 
         //#ifdef DEBUG
-        //printf("X send enabled: %d\n", xSendEnabled[0]);
-        //printf("Y send enabled: %d\n", ySendEnabled[0]);
-        //printf("Note send enabled: %d\n", noteSendEnabled[0]);
-        //printf("Aftertouch send enabled: %d\n", aftertouchSendEnabled[0]);
-        //printf("CC X MIDI ID: %d\n", ccXPad[0]);
-        //printf("CC Y MIDI ID: %d\n", ccYPad[0]);
-        //printf("CC X lower limit: %d\n", ccXminPad[0]);
-        //printf("CC X upper limit: %d\n", ccXmaxPad[0]);
-        //printf("CC Y lower limit: %d\n", ccYminPad[0]);
-        //printf("CC Y upper limit: %d\n", ccYmaxPad[0]);
-        //printf("Pad curve for X: %d\n", padCurveX[0]);
-        //printf("Pad curve for Y: %d\n", padCurveY[0]);
-        //printf("MIDI channel: %d\n", midiChannel[0]);
+        //printf_P("X send enabled: %d\n", xSendEnabled[0]);
+        //printf_P("Y send enabled: %d\n", ySendEnabled[0]);
+        //printf_P("Note send enabled: %d\n", noteSendEnabled[0]);
+        //printf_P("Aftertouch send enabled: %d\n", aftertouchSendEnabled[0]);
+        //printf_P("CC X MIDI ID: %d\n", ccXPad[0]);
+        //printf_P("CC Y MIDI ID: %d\n", ccYPad[0]);
+        //printf_P("CC X lower limit: %d\n", ccXminPad[0]);
+        //printf_P("CC X upper limit: %d\n", ccXmaxPad[0]);
+        //printf_P("CC Y lower limit: %d\n", ccYminPad[0]);
+        //printf_P("CC Y upper limit: %d\n", ccYmaxPad[0]);
+        //printf_P("Pad curve for X: %d\n", padCurveX[0]);
+        //printf_P("Pad curve for Y: %d\n", padCurveY[0]);
+        //printf_P("MIDI channel: %d\n", midiChannel[0]);
         //#endif
     }
     else
     {
         //split on
         #ifdef DEBUG
-        printf("Pads have individual settings\n");
+        printf_P(PSTR("Pads have individual settings\n"));
         #endif
 
         //pads have individual settings
@@ -109,20 +109,20 @@ void Pads::getPadParameters()
             midiChannel[i]              = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
 
             //#ifdef DEBUG
-            //printf("Pad %d", i+1);
-            //printf("X send enabled: %d\n", xSendEnabled[i]);
-            //printf("Y send enabled: %d\n", ySendEnabled[i]);
-            //printf("Note send enabled: %d\n", noteSendEnabled[i]);
-            //printf("Aftertouch send enabled: %d\n", aftertouchSendEnabled[i]);
-            //printf("CC X MIDI ID: %d\n", ccXPad[i]);
-            //printf("CC Y MIDI ID: %d\n", ccYPad[i]);
-            //printf("CC X lower limit: %d\n", ccXminPad[i]);
-            //printf("CC X upper limit: %d\n", ccXmaxPad[i]);
-            //printf("CC Y lower limit: %d\n", ccYminPad[i]);
-            //printf("CC Y upper limit: %d\n", ccYmaxPad[i]);
-            //printf("Pad curve for X: %d\n", padCurveX[i]);
-            //printf("Pad curve for Y: %d\n", padCurveY[i]);
-            //printf("MIDI channel: %d\n", midiChannel[i]);
+            //printf_P("Pad %d", i+1);
+            //printf_P("X send enabled: %d\n", xSendEnabled[i]);
+            //printf_P("Y send enabled: %d\n", ySendEnabled[i]);
+            //printf_P("Note send enabled: %d\n", noteSendEnabled[i]);
+            //printf_P("Aftertouch send enabled: %d\n", aftertouchSendEnabled[i]);
+            //printf_P("CC X MIDI ID: %d\n", ccXPad[i]);
+            //printf_P("CC Y MIDI ID: %d\n", ccYPad[i]);
+            //printf_P("CC X lower limit: %d\n", ccXminPad[i]);
+            //printf_P("CC X upper limit: %d\n", ccXmaxPad[i]);
+            //printf_P("CC Y lower limit: %d\n", ccYminPad[i]);
+            //printf_P("CC Y upper limit: %d\n", ccYmaxPad[i]);
+            //printf_P("Pad curve for X: %d\n", padCurveX[i]);
+            //printf_P("Pad curve for Y: %d\n", padCurveY[i]);
+            //printf_P("MIDI channel: %d\n", midiChannel[i]);
             //#endif
         }
     }
@@ -139,8 +139,8 @@ void Pads::getPadParameters()
 void Pads::getScaleParameters()
 {
     //#ifdef DEBUG
-    //printf("Printing out scale settings\n");
-    //printf("Scale: %d\n", activeScale);
+    //printf_P("Printing out scale settings\n");
+    //printf_P("Scale: %d\n", activeScale);
     //#endif
 
     //clear all pad notes before assigning new ones
@@ -161,7 +161,7 @@ void Pads::getScaleParameters()
         {
             activeOctave = getOctaveFromNote(padNote[0][i]);
             #ifdef DEBUG
-            printf("Active octave: %d\n", activeOctave);
+            printf_P(PSTR("Active octave: %d\n"), activeOctave);
             #endif
             break;
         }
@@ -179,9 +179,9 @@ void Pads::generateScale(scale_t scale)
         noteShiftLevel = db.read(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
 
         #ifdef DEBUG
-        printf("Octave: %d\n", octave);
-        printf("Tonic: %d\n", tonic);
-        printf("Shift: %d\n", noteShiftLevel);
+        printf_P(PSTR("Octave: %d\n"), octave);
+        printf_P(PSTR("Tonic: %d\n"), tonic);
+        printf_P(PSTR("Shift: %d\n"), noteShiftLevel);
         #endif
 
         uint8_t noteCounter = 0;
@@ -232,7 +232,7 @@ void Pads::generateScale(scale_t scale)
     {
         //user scales
         //#ifdef DEBUG
-        //printf("User scale %d\n", scale-PREDEFINED_SCALES);
+        //printf_P("User scale %d\n", scale-PREDEFINED_SCALES);
         //#endif
 
         uint16_t noteID = (scale - PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
@@ -245,13 +245,13 @@ void Pads::generateScale(scale_t scale)
     }
 
     //#ifdef DEBUG
-    //printf("Printing out notes for pads\n");
+    //printf_P("Printing out notes for pads\n");
     //for (int i=0; i<MAX_PADS; i++)
     //{
-        //printf("Pad %d: \n", i+1);
+        //printf_P("Pad %d: \n", i+1);
 //
         //for (int j=0; j<NOTES_PER_PAD; j++)
-            //printf("%d\n", padNote[i][j]);
+            //printf_P("%d\n", padNote[i][j]);
     //}
     //#endif
 }
@@ -259,7 +259,7 @@ void Pads::generateScale(scale_t scale)
 void Pads::getPadLimits()
 {
     #ifdef DEBUG
-    printf("Printing out limits for pads\n");
+    printf_P(PSTR("Printing out limits for pads\n"));
     #endif
     setPressureSensitivity(pressureSensitivity);
     getXLimits();
@@ -297,7 +297,7 @@ void Pads::getPressureLimits()
             padPressureLimitUpper[i] = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
 
         #ifdef DEBUG
-        printf("Upper pressure limit for pad %d: %d\n", i, padPressureLimitUpper[i]);
+        printf_P(PSTR("Upper pressure limit for pad %d: %d\n"), i, padPressureLimitUpper[i]);
         #endif
     }
 }
@@ -305,7 +305,7 @@ void Pads::getPressureLimits()
 void Pads::getXLimits()
 {
     #ifdef DEBUG
-    printf("Printing out X limits for pads\n");
+    printf_P(PSTR("Printing out X limits for pads\n"));
     #endif
 
     for (int i=0; i<MAX_PADS; i++)
@@ -314,20 +314,20 @@ void Pads::getXLimits()
         padXLimitUpper[i] = db.read(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, i);
 
         #ifdef DEBUG
-        printf("Lower X limit for pad %d: %d\n", i, padXLimitLower[i]);
-        printf("Upper X limit for pad %d: %d\n", i, padXLimitUpper[i]);
+        printf_P(PSTR("Lower X limit for pad %d: %d\n"), i, padXLimitLower[i]);
+        printf_P(PSTR("Upper X limit for pad %d: %d\n"), i, padXLimitUpper[i]);
         #endif
     }
 
     #ifdef DEBUG
-    printf("\n");
+    printf_P(PSTR("\n"));
     #endif
 }
 
 void Pads::getYLimits()
 {
     #ifdef DEBUG
-    printf("Printing out Y limits for pads\n");
+    printf_P(PSTR("Printing out Y limits for pads\n"));
     #endif
 
     for (int i=0; i<MAX_PADS; i++)
@@ -336,20 +336,20 @@ void Pads::getYLimits()
         padYLimitUpper[i] = db.read(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, i);
 
         #ifdef DEBUG
-        printf("Lower Y limit for pad %d: %d\n", i, padYLimitLower[i]);
-        printf("Upper Y limit for pad %d: %d\n", i, padYLimitUpper[i]);
+        printf_P(PSTR("Lower Y limit for pad %d: %d\n"), i, padYLimitLower[i]);
+        printf_P(PSTR("Upper Y limit for pad %d: %d\n"), i, padYLimitUpper[i]);
         #endif
     }
 
     #ifdef DEBUG
-    printf("\n");
+    printf_P(PSTR("\n"));
     #endif
 }
 
 void Pads::getAftertouchLimits()
 {
     #ifdef DEBUG
-    printf("Printing out aftertouch limits for pads\n");
+    printf_P(PSTR("Printing out aftertouch limits for pads\n"));
     #endif
 
     for (int i=0; i<MAX_PADS; i++)
@@ -360,8 +360,8 @@ void Pads::getAftertouchLimits()
         padAftertouchLimitUpper[i] = upperLimit;
 
         #ifdef DEBUG
-        printf("Lower aftertouch limit for pad %d: %d\n", i, padAftertouchLimitLower[i]);
-        printf("Upper aftertouch limit for pad %d: %d\n", i, padAftertouchLimitUpper[i]);
+        printf_P(PSTR("Lower aftertouch limit for pad %d: %d\n"), i, padAftertouchLimitLower[i]);
+        printf_P(PSTR("Upper aftertouch limit for pad %d: %d\n"), i, padAftertouchLimitUpper[i]);
         #endif
     }
 }

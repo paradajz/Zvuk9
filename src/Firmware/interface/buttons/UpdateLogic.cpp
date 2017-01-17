@@ -92,7 +92,7 @@ void Buttons::update()
             userMenuTimeout = 0;
             menu.displayMenu(userMenu);
             #ifdef DEBUG
-            printf("Entering user menu\n");
+            printf_P(PSTR("Entering user menu\n"));
             #endif
             //disable buttons while in menu
             buttons.disable();

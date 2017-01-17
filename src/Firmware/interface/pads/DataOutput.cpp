@@ -9,9 +9,9 @@
 void Pads::sendX(uint8_t pad)
 {
     #ifdef DEBUG
-    printf("X for pad %d: ", pad);
-    printf("%d\n", lastXMIDIvalue[pad]);
-    printf("X CC: %d\n", ccXPad[pad]);
+    printf_P(PSTR("X for pad %d: "), pad);
+    printf_P(PSTR("%d\n"), lastXMIDIvalue[pad]);
+    printf_P(PSTR("X CC: %d\n"), ccXPad[pad]);
     #else
     midi.sendControlChange(ccXPad[pad], lastXMIDIvalue[pad], midiChannel[pad]);
     #endif
@@ -20,9 +20,9 @@ void Pads::sendX(uint8_t pad)
 void Pads::sendY(uint8_t pad)
 {
     #ifdef DEBUG
-    printf("Y for pad %d: ", pad);
-    printf("%d\n", lastYMIDIvalue[pad]);
-    printf("Y CC: %d\n", ccYPad[pad]);
+    printf_P(PSTR("Y for pad %d: "), pad);
+    printf_P(PSTR("%d\n"), lastYMIDIvalue[pad]);
+    printf_P(PSTR("Y CC: %d\n"), ccYPad[pad]);
     #else
     midi.sendControlChange(ccYPad[pad], lastYMIDIvalue[pad], midiChannel[pad]);
     #endif
@@ -37,7 +37,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)
         case true:
         //note on
         #ifdef DEBUG
-        printf("Pad %d pressed. Notes:\n", pad);
+        printf_P(PSTR("Pad %d pressed. Notes:\n"), pad);
         #endif
 
         for (int i=0; i<NOTES_PER_PAD; i++)
@@ -46,21 +46,21 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)
                 continue;
 
             #ifdef DEBUG
-            printf("%d\n", padNote[pad][i]);
+            printf_P(PSTR("%d\n"), padNote[pad][i]);
             #else
             midi.sendNoteOn(padNote[pad][i], velocity, midiChannel[pad]);
             #endif
         }
 
         #ifdef DEBUG
-        printf("Velocity: %d\n", velocity);
+        printf_P(PSTR("Velocity: %d\n"), velocity);
         #endif
         break;
 
         case false:
         //note off
         #ifdef DEBUG
-        printf("Pad %d released. Notes: \n", pad);
+        printf_P(PSTR("Pad %d released. Notes: \n"), pad);
         #endif
         //some special considerations here
         for (int i=0; i<NOTES_PER_PAD; i++)
@@ -99,7 +99,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)
             if (sendOff)
             {
                 #ifdef DEBUG
-                printf("%d\n", padNote[pad][i]);
+                printf_P(PSTR("%d\n"), padNote[pad][i]);
                 #else
                 uint8_t velocity_ = 0;
                 midi.sendNoteOff(padNote[pad][i], velocity_, midiChannel[pad]);
@@ -122,7 +122,7 @@ void Pads::sendAftertouch(uint8_t pad)
     {
         case aftertouchPoly:
         #ifdef DEBUG
-        printf("Sending key aftertouch, pad %d: %d\n", pad, lastAftertouchValue[pad]);
+        printf_P(PSTR("Sending key aftertouch, pad %d: %d\n"), pad, lastAftertouchValue[pad]);
         #else
         for (int i=0; i<NOTES_PER_PAD; i++)
         {
@@ -134,7 +134,7 @@ void Pads::sendAftertouch(uint8_t pad)
 
         case aftertouchChannel:
         #ifdef DEBUG
-        printf("Sending channel aftertouch: %d\n", maxAftertouchValue);
+        printf_P(PSTR("Sending channel aftertouch: %d\n"), maxAftertouchValue);
         #else
         midi.sendAfterTouch(maxAftertouchValue, midiChannel[pad]);
         #endif

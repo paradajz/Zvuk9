@@ -146,7 +146,7 @@ bool padEditMode(functionArgument argument)
         //normally, this is called in automatically in Pads.cpp
         //but on first occasion call it manually
         #ifdef DEBUG
-        printf("Pad edit mode\n");
+        printf_P(PSTR("Pad edit mode\n"));
         #endif
         pads.setupPadEditMode(lastTouchedPad);
         leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);

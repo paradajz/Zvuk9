@@ -183,7 +183,7 @@ void Menu::updateMenuScreen()
     }
 
     #ifdef DEBUG
-    printf("\nmenuHierarchyPosition: %d\n", menuHierarchyPosition);
+    printf_P(PSTR("\nmenuHierarchyPosition: %d\n"), menuHierarchyPosition);
     #endif
 }
 
@@ -217,7 +217,7 @@ void Menu::changeOption(bool direction)
 void Menu::exitMenu()
 {
     #ifdef DEBUG
-    printf("Exiting menu\n");
+    printf_P(PSTR("Exiting menu\n"));
     #endif
 
     //exit menu and restore initial state

@@ -64,7 +64,7 @@ bool Pads::checkX(uint8_t pad)
             minCalibrationValue = medianValue;
 
             #ifdef DEBUG
-            printf("Calibrating lowest value for X, pad %d: %d\n", pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
+            printf_P(PSTR("Calibrating lowest value for X, pad %d: %d\n"), pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
             #endif
             calibrate(coordinateX, lower, pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
         }
@@ -73,7 +73,7 @@ bool Pads::checkX(uint8_t pad)
             maxCalibrationValue = medianValue;
 
             #ifdef DEBUG
-            printf("Calibrating max value for X, pad %d: %d\n", pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
+            printf_P(PSTR("Calibrating max value for X, pad %d: %d\n"), pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
             #endif
             calibrate(coordinateX, upper, pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
         }
@@ -125,7 +125,7 @@ bool Pads::checkY(uint8_t pad)
             minCalibrationValue = medianValue;
 
             #ifdef DEBUG
-            printf("Calibrating lowest value for Y, pad %d: %d\n", pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
+            printf_P(PSTR("Calibrating lowest value for Y, pad %d: %d\n"), pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
             #endif
             calibrate(coordinateY, lower, pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
         }
@@ -134,7 +134,7 @@ bool Pads::checkY(uint8_t pad)
             maxCalibrationValue = medianValue;
 
             #ifdef DEBUG
-            printf("Calibrating max value for Y, pad %d: %d\n", pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
+            printf_P(PSTR("Calibrating max value for Y, pad %d: %d\n"), pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
             #endif
             calibrate(coordinateY, upper, pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
         }
@@ -261,7 +261,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                         maxAftertouchValue = calibratedPressureAfterTouch;
 
                         #ifdef DEBUG
-                        printf("Maximum channel aftertouch updated: %d", maxAftertouchValue);
+                        printf_P(PSTR("Maximum channel aftertouch updated: %d"), maxAftertouchValue);
                         #endif
 
                         return true;
@@ -596,7 +596,7 @@ bool Pads::checkVelocity(uint8_t pad)
 //
             //pads.calibrate(activeCalibration, upper, pad, maxCalibrationValue);
             //#ifdef DEBUG
-            //printf("New max calibration value, pressure, pad %d: %d\n", pad, maxCalibrationValue);
+            //printf_P("New max calibration value, pressure, pad %d: %d\n", pad, maxCalibrationValue);
             //#endif
 //
         //}
@@ -936,7 +936,7 @@ void Pads::storeNotes(uint8_t pad)
     if (note_buffer_tail == i)
     {
         #ifdef DEBUG
-        printf("Oops, buffer full. Waiting...\n");
+        printf_P(PSTR("Oops, buffer full. Waiting...\n"));
         #endif
 
         while (!checkNoteBuffer());

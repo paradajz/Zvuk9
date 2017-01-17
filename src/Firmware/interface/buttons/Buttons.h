@@ -2,7 +2,6 @@
 #include "../pads/Pads.h"
 
 #include "../leds/LEDs.h"
-#include "../../core/Core.h"
 
 typedef enum
 {

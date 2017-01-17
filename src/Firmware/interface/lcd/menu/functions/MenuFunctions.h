@@ -15,7 +15,7 @@
 //
     //uint8_t SigReadAddress = 0x0E;
 //
-    //printf("Device serial number: ");
+    //printf_P("Device serial number: ");
 //
     //for (uint8_t SerialCharNum = 0; SerialCharNum < 20; SerialCharNum++)
     //{
@@ -32,8 +32,8 @@
         //dev_signature[SerialCharNum] = /*cpu_to_le16*/((SerialByte >= 10) ?
         //(('A' - 10) + SerialByte) : ('0' + SerialByte));
 //
-        //printf("%d", dev_signature[SerialCharNum]);
-    //}   printf("\n");
+        //printf_P("%d", dev_signature[SerialCharNum]);
+    //}   printf_P("\n");
 //
     //SREG = curr_int;
 //}

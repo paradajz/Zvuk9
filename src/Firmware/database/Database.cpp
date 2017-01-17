@@ -136,7 +136,7 @@ int16_t Database::read(uint8_t blockID, uint8_t sectionID, uint16_t parameterID)
         if (startAddress > EEPROM_SIZE)
         {
             #ifdef DEBUG
-            printf("Requested address out of EEPROM memory range\n");
+            printf_P(PSTR("Requested address out of EEPROM memory range\n"));
             #endif
             return 0;
         }
@@ -164,7 +164,7 @@ bool Database::update(uint8_t blockID, uint8_t sectionID, int16_t parameterID, i
     if (startAddress > EEPROM_SIZE)
     {
         #ifdef DEBUG
-        printf("Requested address out of EEPROM memory range\n");
+        printf_P(PSTR("Requested address out of EEPROM memory range\n"));
         #endif
         return 0;
     }
@@ -251,7 +251,7 @@ void Database::queueData(uint16_t eepromAddress, uint16_t data, uint8_t paramete
     if (eeprom_update_buffer_tail == index)
     {
         #ifdef DEBUG
-        printf("Oops, buffer full. Waiting...\n");
+        printf_P(PSTR("Oops, buffer full. Waiting...\n"));
         #endif
 
         while (!checkQueue());

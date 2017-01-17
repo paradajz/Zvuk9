@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../core/Core.h"
 #include "pins/board_v1/Map.h"
 #include "pins/board_v1/Pins.h"
 #include "lcd/lcd.h"

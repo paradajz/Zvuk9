@@ -12,5 +12,6 @@
 #ifdef NDEBUG
 #include "usb/midi/Descriptors.h"
 #endif
-#include "PinManipulation.h"
+#include "helpers/PinManipulation.h"
+#include "helpers/BitManipulation.h"
 #include "timer/Timing.h"
