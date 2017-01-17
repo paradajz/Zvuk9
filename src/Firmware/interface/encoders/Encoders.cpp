@@ -1,18 +1,11 @@
 #include "Encoders.h"
 
 #include "Encoders.h"
+#include "Config.h"
 #include "../pads/Pads.h"
 #include "../buttons/Buttons.h"
 #include "../lcd/menu/Menu.h"
 #include "../../database/Database.h"
-
-#define ENCODER_SPEED_1             1
-#define ENCODER_SPEED_2             5
-
-#define SPEED_TIMEOUT               100
-#define ENCODER_DEBOUNCE_TIME       500
-
-#define SCALE_ENC_DISABLE_MENU_EXIT 2000
 
 Encoders::Encoders()
 {

@@ -1,21 +1,10 @@
 #pragma once
 
-#include <avr/eeprom.h>
-#include <stdlib.h>
 #include "curves/Curves.h"
 #include "scales/Scales.h"
 #include "Calibration.h"
 #include "../../board/Board.h"
-
-#define CONNECTED_PADS          9
-
-#define MEDIAN_RUNS_XY          1
-#define NUMBER_OF_SAMPLES       3
-
-#define DEFAULT_XY_AT_VALUE     255
-#define PAD_NOTE_BUFFER_SIZE    32
-
-#define NOTES_PER_PAD           7
+#include "Config.h"
 
 const uint8_t padID[] = { PAD_0, PAD_1, PAD_2, PAD_3, PAD_4, PAD_5, PAD_6, PAD_7, PAD_8 };
 

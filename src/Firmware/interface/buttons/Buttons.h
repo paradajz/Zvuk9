@@ -1,22 +1,8 @@
 #pragma once
+
+#include "DataTypes.h"
 #include "../pads/Pads.h"
-
 #include "../leds/LEDs.h"
-
-typedef enum
-{
-    transportStop,
-    transportPlay,
-    transportRecordOn,
-    transportRecordOff
-} transportControl_t;
-
-typedef enum
-{
-    transportMMC,
-    transportCC,
-    transportMMC_CC
-} transportControlType_t;
 
 class Buttons
 {

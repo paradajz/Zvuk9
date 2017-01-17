@@ -34,12 +34,6 @@ void EVENT_USB_Device_ConfigurationChanged(void);
 #include "Config.h"
 #include "DataTypes.h"
 
-#include <avr/io.h>
-#include <avr/wdt.h>
-#include <avr/power.h>
-#include <avr/interrupt.h>
-#include <stdbool.h>
-
 class MIDI
 {
     public:

@@ -15,3 +15,4 @@
 #define NUMBER_OF_LCD_ROWS              4
 
 #define MAX_TEXT_SIZE                   (NUMBER_OF_LCD_COLUMNS+10)
+#define SCROLL_LINE_LENGTH              (NUMBER_OF_LCD_COLUMNS-5)

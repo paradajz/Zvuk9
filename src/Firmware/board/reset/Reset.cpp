@@ -1,7 +1,4 @@
 #include "Reset.h"
-#include <util/delay.h>
-#include <avr/wdt.h>
-#include <avr/interrupt.h>
 
 #define WDFR 3
 

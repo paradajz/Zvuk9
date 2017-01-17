@@ -677,10 +677,19 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="interface\buttons\Buttons.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\buttons\Config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\buttons\DataTypes.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\buttons\Map.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\buttons\UpdateLogic.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\encoders\Config.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\encoders\Encoders.cpp">
@@ -689,13 +698,16 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="interface\encoders\Encoders.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\lcd\DataTypes.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\lcd\Layout.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\LCD.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\LCDsettings.h">
+    <Compile Include="interface\lcd\Config.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\Macros.h">
@@ -774,6 +786,9 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\pads\Calibration.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\pads\Config.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\pads\curves\Curves.cpp">

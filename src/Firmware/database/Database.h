@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stdio.h> 
-#include <avr/pgmspace.h>
-#include <avr/eeprom.h>
 #include "Config.h"
 #include "Defaults.h"
 #include "Blocks.h"

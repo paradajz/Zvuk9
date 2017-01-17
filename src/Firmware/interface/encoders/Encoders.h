@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../board/Board.h"
-#include <stdlib.h>
 
 #define PROGRAM_ENCODER         0
 #define PRESET_ENCODER          1

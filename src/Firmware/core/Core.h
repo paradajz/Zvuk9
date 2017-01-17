@@ -4,6 +4,8 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
+#include <avr/eeprom.h>
+#include <avr/pgmspace.h>
 
 #include "adc/ADC.h"
 #include "i2c/i2c_master.h"

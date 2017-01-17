@@ -22,10 +22,6 @@
        See the C include lcd.h file for a description of each function
        
 *****************************************************************************/
-#include <inttypes.h>
-#include <avr/io.h>
-#include <avr/pgmspace.h>
-#include <util/delay.h>
 #include "lcd.h"
 
 #if LCD_IO_MODE

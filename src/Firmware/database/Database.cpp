@@ -1,5 +1,4 @@
 #include "Database.h"
-#include <util/delay.h>
 
 #ifdef DEBUG
 #include "../vserial/Serial.h"

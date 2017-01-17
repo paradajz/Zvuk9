@@ -1,5 +1,4 @@
 #pragma once
-#include <avr/io.h>
 
 //mux
 //common

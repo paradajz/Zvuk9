@@ -1,12 +1,8 @@
 #include "Buttons.h"
 
-#include <util/delay.h>
+#include "Config.h"
 #include "../lcd/menu/Menu.h"
 #include "../../database/Database.h"
-
-//time after which expanders are checked in ms
-#define EXPANDER_CHECK_TIME         5
-#define USER_MENU_TIMEOUT           3000
 
 //shift new values from button in this variable
 //if it's 0xFF or buttonDebounceCompare, its reading is stable

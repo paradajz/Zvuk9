@@ -1,8 +1,6 @@
 #include "Pads.h"
 #include "../../database/Database.h"
 #include "../../sysex/SysEx.h"
-#include <avr/cpufunc.h>
-#include <util/delay.h>
 
 Pads::Pads()
 {

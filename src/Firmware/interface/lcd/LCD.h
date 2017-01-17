@@ -3,7 +3,8 @@
 #include "../../board/Board.h"
 #include "../buttons/Buttons.h"
 #include "../pads/Pads.h"
-#include "LCDsettings.h"
+#include "Config.h"
+#include "DataTypes.h"
 
 #ifdef DEBUG
 #include "../../vserial/Serial.h"
@@ -13,27 +14,6 @@
 #include "strings/Strings.h"
 #include <string.h>
 #include <stdlib.h>
-
-typedef enum
-{
-    noMessage,
-    showMessage,
-    messageDisplayed,
-    clearMessage
-} messageStatus_t;
-
-typedef enum
-{
-    userMenu,
-    serviceMenu,
-    noMenu
-} menuType_t;
-
-typedef enum
-{
-    text,
-    message
-} lcdTextType;
 
 #define SPACE_CHAR          32
 
