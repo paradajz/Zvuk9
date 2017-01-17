@@ -2,7 +2,6 @@
 #include "Serial.h"
 
 #include <string.h>
-#include <stdlib.h>
 
 /** LUFA CDC Class driver interface configuration and state information. This structure is
  *  passed to all CDC Class driver functions, so that multiple instances of the same class
