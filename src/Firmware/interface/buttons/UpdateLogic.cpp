@@ -8,6 +8,8 @@
 //if it's 0xFF or buttonDebounceCompare, its reading is stable
 const uint8_t buttonDebounceCompare = 0b11110000;
 
+extern void (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (uint8_t data, bool state);
+
 Buttons::Buttons()
 {
     //default constructor
@@ -25,7 +27,7 @@ Buttons::Buttons()
 
 void Buttons::init()
 {
-    mapButtonsToLEDs();
+    mapButtonsToNotes();
     uint32_t currentTime = rTimeMs();
     processingEnabled = false;
     transportControlType = (transportControlType_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID);
@@ -71,7 +73,16 @@ void Buttons::update()
             //update previous button state with current one
             setButtonState(i, state);
             if (processingEnabled)
-                processButton(i, state);
+            {
+                if (buttonEnabled[i])
+                    (*buttonHandler[i])(i, state);
+
+                //resume button processing
+                if (!buttonEnabled[i] && !getButtonState(i))
+                {
+                    buttonEnabled[i] = true;
+                }
+            }
         }
     }
 
@@ -117,65 +128,6 @@ bool Buttons::buttonDebounced(uint8_t buttonNumber, uint8_t state)
 
     //if button is debounced, return true
     return ((previousButtonState[buttonNumber] == buttonDebounceCompare) || (previousButtonState[buttonNumber] == 0xFF));
-}
-
-void Buttons::processButton(uint8_t buttonNumber, bool state)
-{
-    if (buttonEnabled[buttonNumber])
-    {
-        switch (buttonNumber)
-        {
-            case BUTTON_ON_OFF_AFTERTOUCH:
-            case BUTTON_ON_OFF_NOTES:
-            case BUTTON_ON_OFF_X:
-            case BUTTON_ON_OFF_Y:
-            case BUTTON_ON_OFF_SPLIT:
-            handleOnOffEvent(buttonNumber, state);
-            break;
-
-            case BUTTON_OCTAVE_DOWN:
-            handleOctaveEvent(false, state);
-            break;
-
-            case BUTTON_OCTAVE_UP:
-            handleOctaveEvent(true, state);
-            break;
-
-            case BUTTON_TRANSPORT_STOP:
-            case BUTTON_TRANSPORT_PLAY:
-            case BUTTON_TRANSPORT_RECORD:
-            handleTransportControlEvent(buttonNumber, state);
-            break;
-
-            case BUTTON_NOTE_C_SHARP:
-            case BUTTON_NOTE_D_SHARP:
-            case BUTTON_NOTE_F_SHARP:
-            case BUTTON_NOTE_G_SHARP:
-            case BUTTON_NOTE_A_SHARP:
-            case BUTTON_NOTE_C:
-            case BUTTON_NOTE_D:
-            case BUTTON_NOTE_E:
-            case BUTTON_NOTE_F:
-            case BUTTON_NOTE_G:
-            case BUTTON_NOTE_A:
-            case BUTTON_NOTE_B:
-            note_t note = getTonicFromButton(buttonNumber);
-            handleTonicEvent(note, state);
-            break;
-        }
-    }
-
-    //resume all callbacks
-    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
-    {
-        if (!buttonEnabled[i] && !getButtonState(i))
-        {
-            buttonEnabled[i] = true;
-            //reset blinking
-            uint8_t ledNumber = getLEDnumberFromButton(i);
-            leds.setLEDstate(ledNumber, leds.getLEDstate(ledNumber), false);
-        }
-    }
 }
 
 void Buttons::setButtonState(uint8_t buttonNumber, uint8_t state)
