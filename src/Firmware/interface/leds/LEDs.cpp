@@ -3,9 +3,6 @@
 #include "../../database/Database.h"
 #include "../pads/Pads.h"
 
-uint32_t    ledBlinkTimer[NUMBER_OF_LEDS];
-bool        ledBlinkState[NUMBER_OF_LEDS];
-
 const uint8_t ledNoteArray[] =
 {
     LED_NOTE_C,
@@ -29,50 +26,51 @@ LEDs::LEDs()
 
 void LEDs::init()
 {
-    
+    setFadeSpeed(DEFAULT_FADE_SPEED);
 }
 
-void LEDs::update()
+void LEDs::setAllOff()
 {
     for (int i=0; i<NUMBER_OF_LEDS; i++)
+        setLEDstate(i, ledStateOff);
+}
+
+void LEDs::setAllOn()
+{
+    for (int i=0; i<NUMBER_OF_LEDS; i++)
+        setLEDstate(i, ledStateFull);
+}
+
+void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state)
+{
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        if (board.ledBlinking(i))
+        switch(state)
         {
-            if ((rTimeMs() - ledBlinkTimer[i]) > LED_BLINK_TIME)
-            {
-                board.setLEDstate(i, board.getLEDstate(i), ledBlinkState[i]);
-                ledBlinkState[i] = !ledBlinkState[i];
-                ledBlinkTimer[i] = rTimeMs();
-            }
+            case ledStateOff:
+            ledState[ledNumber] = 0;
+            break;
+
+            case ledStateDim:
+            //clear intensity bit
+            bitClear(ledState[ledNumber], LED_INTENSITY_BIT);
+            //set active and constant on bit
+            bitSet(ledState[ledNumber], LED_ACTIVE_BIT);
+            bitSet(ledState[ledNumber], LED_CONSTANT_ON_BIT);
+            break;
+
+            case ledStateFull:
+            //set full intensity bit
+            bitSet(ledState[ledNumber], LED_INTENSITY_BIT);
+            //set active and constant on bit
+            bitSet(ledState[ledNumber], LED_ACTIVE_BIT);
+            bitSet(ledState[ledNumber], LED_CONSTANT_ON_BIT);
+            break;
+
+            default:
+            return;
         }
     }
-}
-
-void LEDs::allLEDsOff()
-{
-    for (int i=0; i<NUMBER_OF_LEDS; i++)
-        board.setLEDstate(i, ledStateOff);
-}
-
-void LEDs::allLEDsDim()
-{
-    for (int i=0; i<NUMBER_OF_LEDS; i++)
-        board.setLEDstate(i, ledStateDim);
-}
-
-void LEDs::allLEDsOn()
-{
-    for (int i=0; i<NUMBER_OF_LEDS; i++)
-        board.setLEDstate(i, ledStateFull);
-}
-
-void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state, bool blink)
-{
-    board.setLEDstate(ledNumber, state, blink);
-    ledBlinkState[ledNumber] = blink;
-
-    if (state == ledStateOff)
-        ledBlinkTimer[ledNumber] = 0;
 }
 
 uint8_t LEDs::getLEDnumberFromTonic(note_t note)
@@ -82,35 +80,41 @@ uint8_t LEDs::getLEDnumberFromTonic(note_t note)
 
 ledState_t LEDs::getLEDstate(uint8_t ledNumber)
 {
-    return board.getLEDstate(ledNumber);
+    if (!bitRead(ledState[ledNumber], LED_CONSTANT_ON_BIT))
+        return ledStateOff;
+    else if (bitRead(ledState[ledNumber], LED_INTENSITY_BIT))
+        return ledStateFull;
+    else
+        return ledStateDim;
+
+    return ledStateOff;
 }
 
 void LEDs::setFadeSpeed(uint8_t speed)
 {
-    board.setPWMsteps(speed);
+    pwmSteps = speed;
 }
 
 void LEDs::tonicLEDsOff()
 {
     for (int i=0; i<MIDI_NOTES; i++)
-        board.setLEDstate(ledNoteArray[i], ledStateOff);
+        setLEDstate(ledNoteArray[i], ledStateOff);
 
 }
 
 void LEDs::setNoteLEDstate(note_t note, ledState_t state)
 {
     uint8_t ledNumber = getLEDnumberFromTonic(note);
-    board.setLEDstate(ledNumber, state);
+    setLEDstate(ledNumber, state);
 }
 
 ledState_t LEDs::getTonicLEDstate(note_t note)
 {
-    return board.getLEDstate(getLEDnumberFromTonic(note));
+    return getLEDstate(getLEDnumberFromTonic(note));
 }
 
 void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad)
 {
-
     uint8_t tonicArray[NOTES_PER_PAD],
             octaveArray[NOTES_PER_PAD],
             padNote,

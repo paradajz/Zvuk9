@@ -2,7 +2,7 @@
 
     Zvuk9 MIDI controller firmware
     Author: Igor Petrovic
-    Ad Bit LLC 2014-2016
+    Ad Bit LLC 2014-2017
 
 */
 
@@ -40,14 +40,14 @@ bool onCustom(uint8_t value)
 
         case REBOOT_STRING:
         leds.setFadeSpeed(1);
-        leds.allLEDsOff();
+        leds.setAllOff();
         wait_ms(1500);
         reboot();
         return true;
 
         case FACTORY_RESET_STRING:
         leds.setFadeSpeed(1);
-        leds.allLEDsOff();
+        leds.setAllOff();
         wait_ms(1500);
         db.factoryReset(factoryReset_partial);
         reboot();
@@ -83,19 +83,19 @@ void startUpAnimation()
     }
 
     //turn all leds on slowly
-    leds.allLEDsOn();
+    leds.setAllOn();
 
     sei();
 
     display.displayHelloMessage();
 
-    wait_ms(800);
+    wait_ms(1500);
 
     //restore led states
     for (int i=0; i<NUMBER_OF_LEDS; i++)
         leds.setLEDstate(i, tempLedStateArray[i]);
 
-    wait_ms(1800);
+    wait_ms(1500);
 
     //restore normal fade speed
     leds.setFadeSpeed(DEFAULT_FADE_SPEED);
@@ -150,6 +150,7 @@ int main()
     menu.init();
     leds.init();
     pads.init();
+    encoders.init();
 
     leds.displayActiveNoteLEDs();
 
@@ -183,7 +184,6 @@ int main()
         buttons.update();
         encoders.update();
         display.update();
-        leds.update();
 
         #ifdef DEBUG
         vserial.update();

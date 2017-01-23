@@ -455,7 +455,7 @@ bool Pads::xUpdated(uint8_t pad)
     //read x three times and get median value
     static uint8_t xSampleCounter = 0;
     static uint8_t medianRunCounter = 0;
-    int16_t xValue = board.getPadX();
+    int16_t xValue = board.getPadX(pad);
 
     xValueSamples[xSampleCounter] = xValue;
     xSampleCounter++;
@@ -484,7 +484,7 @@ bool Pads::yUpdated(uint8_t pad)
     //read x three times and get median value
     static uint8_t ySampleCounter = 0;
     static uint8_t medianRunCounter = 0;
-    int16_t yValue = board.getPadY();
+    int16_t yValue = board.getPadY(pad);
 
     yValueSamples[ySampleCounter] = yValue;
     ySampleCounter++;
@@ -549,7 +549,7 @@ bool Pads::pressureSampled()
 
 bool Pads::pressureUpdated(uint8_t pad)
 {
-    int16_t pressure = board.getPadPressure();
+    int16_t pressure = board.getPadPressure(pad);
     addPressureSamples(pressure);
 
     if (!pressureSampled())
@@ -952,8 +952,7 @@ void Pads::setNextPad()
 {
     switchToNextPad = false;
     activePad++;
+
     if (activePad == CONNECTED_PADS)
         activePad = 0;
-
-    board.setMuxInput(activePad);
 }

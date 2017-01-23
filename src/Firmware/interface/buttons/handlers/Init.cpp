@@ -4,7 +4,7 @@
 
 void (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (uint8_t data, bool state);
 
-void handlerInit()
+void initHandlers_buttons()
 {
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
         buttonHandler[i] = NULL;

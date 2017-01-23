@@ -4,8 +4,11 @@
 #include "../../buttons/Buttons.h"
 #include "../../leds/LEDs.h"
 #include "../../lcd/LCD.h"
+#ifdef NDEBUG
+#include "../../../midi/MIDI.h"
+#endif
 
-void handleNotes(uint8_t id, bool state)
+void handleOnOff(uint8_t id, bool state)
 {
     if (pads.editModeActive())
         return;

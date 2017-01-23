@@ -1,11 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <inttypes.h>
-#include <avr/pgmspace.h>
-#include <math.h>
-
 #include "../DataTypes.h"
 
 typedef enum

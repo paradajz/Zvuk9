@@ -2,7 +2,7 @@
 
 uint32_t mcpData = 0;
 
-void Board::write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)
+void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)
 {
     i2c_start((address << 1) + I2C_WRITE);
     i2c_write(reg);
@@ -10,7 +10,7 @@ void Board::write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)
     i2c_stop();
 }
 
-uint8_t Board::read_I2C_reg(uint8_t address, uint8_t reg)
+uint8_t read_I2C_reg(uint8_t address, uint8_t reg)
 {
     uint8_t value;
 

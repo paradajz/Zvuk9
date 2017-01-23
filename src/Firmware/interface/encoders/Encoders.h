@@ -1,19 +1,7 @@
 #pragma once
 
 #include "../../board/Board.h"
-
-#define PROGRAM_ENCODER         0
-#define PRESET_ENCODER          1
-
-#define X_CC_ENCODER            8
-#define X_MAX_ENCODER           3
-#define X_MIN_ENCODER           6
-#define X_CURVE_ENCODER         2
-
-#define Y_CC_ENCODER            7
-#define Y_MAX_ENCODER           9
-#define Y_MIN_ENCODER           5
-#define Y_CURVE_ENCODER         4
+#include "Config.h"
 
 class Encoders
 {

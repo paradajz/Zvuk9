@@ -88,11 +88,11 @@ bool factoryReset(functionArgument argument)
             for (int i=0; i<NUMBER_OF_LEDS; i++)
             {
                 if (leds.getLEDstate(i) == ledStateFull)
-                    board.setLEDstate(i, ledStateDim);
+                    leds.setLEDstate(i, ledStateDim);
             }
             wait_ms(1500);
             //now, turn all leds off
-            leds.allLEDsOff();
+            leds.setAllOff();
             wait_ms(1000);
             db.factoryReset((factoryResetType_t)argument.argument1);
             reboot();

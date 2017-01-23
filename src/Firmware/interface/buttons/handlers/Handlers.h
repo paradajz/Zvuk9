@@ -1,6 +1,6 @@
 #pragma once
 
-void handlerInit();
+void initHandlers_buttons();
 
 //on/off functions
 void handleOnOff(uint8_t id, bool state);

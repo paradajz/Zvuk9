@@ -113,7 +113,6 @@ class Pads
     void getPadParameters();
 
     //hardware control
-    void setMuxInput(uint8_t muxInput);
     void setNextPad();
 
     //midi scaling
