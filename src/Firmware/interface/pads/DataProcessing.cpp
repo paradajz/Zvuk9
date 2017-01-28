@@ -322,8 +322,6 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
 */
 void Pads::update()
 {
-    uint8_t pad = padID[activePad];
-
     static bool velocityAvailable = false;
     static bool aftertouchAvailable = false;
     static bool xAvailable = false;
@@ -333,26 +331,26 @@ void Pads::update()
 
     if (!switchToXYread)
     {
-        if (pressureUpdated(pad))
+        if (pressureUpdated(activePad))
         {
             //all needed pressure samples are obtained
-            velocityAvailable = checkVelocity(pad);
-            aftertouchAvailable = checkAftertouch(pad, velocityAvailable);
+            velocityAvailable = checkVelocity(activePad);
+            aftertouchAvailable = checkAftertouch(activePad, velocityAvailable);
 
         }
     }
     else
     {
         //don't update x/y if pressure isn't read
-        if (xUpdated(pad))
+        if (xUpdated(activePad))
         {
-            xAvailable = checkX(pad);
+            xAvailable = checkX(activePad);
             xUpdated_var = true;
         }
 
-        if (yUpdated(pad))
+        if (yUpdated(activePad))
         {
-            yAvailable = checkY(pad);
+            yAvailable = checkY(activePad);
             yUpdated_var = true;
         }
 
@@ -374,9 +372,9 @@ void Pads::update()
 
             //if pad is pressed, update last pressed pad
             //if it's released clear it from history
-            updateLastPressedPad(pad, lastMIDInoteState[pad]);
+            updateLastPressedPad(activePad, lastMIDInoteState[activePad]);
 
-            if (!lastMIDInoteState[pad])
+            if (!lastMIDInoteState[activePad])
             {
                 //lcd restore detection
                 //display data from last touched pad if current pad is released
@@ -386,18 +384,18 @@ void Pads::update()
 
             if (!editModeActive())
             {
-                if (lastMIDInoteState[pad] && splitEnabled)
+                if (lastMIDInoteState[activePad] && splitEnabled)
                 {
                     //update function leds only once, on press
                     //don't update if split is disabled (no need)
-                    setFunctionLEDs(pad);
+                    setFunctionLEDs(activePad);
                 }
             }
             else
             {
                  //setup pad edit mode on press for current pad
-                if (lastMIDInoteState[pad])
-                    setupPadEditMode(pad);
+                if (lastMIDInoteState[activePad])
+                    setupPadEditMode(activePad);
             }
         }
 
@@ -407,7 +405,7 @@ void Pads::update()
         {
             //don't send midi data while in menu
             if (!menu.menuDisplayed())
-                checkMIDIdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                checkMIDIdata(activePad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
             if (restoreLCD)
             {
@@ -423,16 +421,16 @@ void Pads::update()
             {
                 //if two pads are pressed, update data only from last pressed pad
                 //i hate this function
-                if (pad == getLastTouchedPad())
+                if (activePad == getLastTouchedPad())
                 {
                     if (menu.menuDisplayed())
                     {
                         if (calibrationEnabled)
-                            checkLCDdata(pad, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
+                            checkLCDdata(activePad, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
                     }
                     else
                     {
-                        checkLCDdata(pad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                        checkLCDdata(activePad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
                     }
                 }
             }
@@ -455,7 +453,7 @@ bool Pads::xUpdated(uint8_t pad)
     //read x three times and get median value
     static uint8_t xSampleCounter = 0;
     static uint8_t medianRunCounter = 0;
-    int16_t xValue = board.getPadX(pad);
+    int16_t xValue = board.getPadX();
 
     xValueSamples[xSampleCounter] = xValue;
     xSampleCounter++;
@@ -484,7 +482,7 @@ bool Pads::yUpdated(uint8_t pad)
     //read x three times and get median value
     static uint8_t ySampleCounter = 0;
     static uint8_t medianRunCounter = 0;
-    int16_t yValue = board.getPadY(pad);
+    int16_t yValue = board.getPadY();
 
     yValueSamples[ySampleCounter] = yValue;
     ySampleCounter++;
@@ -549,7 +547,7 @@ bool Pads::pressureSampled()
 
 bool Pads::pressureUpdated(uint8_t pad)
 {
-    int16_t pressure = board.getPadPressure(pad);
+    int16_t pressure = board.getPadPressure();
     addPressureSamples(pressure);
 
     if (!pressureSampled())
@@ -955,4 +953,6 @@ void Pads::setNextPad()
 
     if (activePad == CONNECTED_PADS)
         activePad = 0;
+
+    board.selectPad(activePad);
 }

@@ -27,9 +27,10 @@ class Board : BoardCommon
     bool buttonDataAvailable();
     bool getButtonState(uint8_t buttonID);
 
-    int16_t getPadPressure(uint8_t pad);
-    int16_t getPadX(uint8_t pad);
-    int16_t getPadY(uint8_t pad);
+    void selectPad(uint8_t pad);
+    int16_t getPadPressure();
+    int16_t getPadX();
+    int16_t getPadY();
 
     private:
     void initTimers();

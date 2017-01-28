@@ -9,3 +9,16 @@
 #define PAD_6                       6
 #define PAD_7                       7
 #define PAD_8                       8
+
+const uint8_t padIDArray[] =
+{
+    PAD_0,
+    PAD_1,
+    PAD_2,
+    PAD_3,
+    PAD_4,
+    PAD_5,
+    PAD_6,
+    PAD_7,
+    PAD_8
+};

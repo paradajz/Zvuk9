@@ -6,8 +6,6 @@
 #include "../../board/Board.h"
 #include "Config.h"
 
-const uint8_t padID[] = { PAD_0, PAD_1, PAD_2, PAD_3, PAD_4, PAD_5, PAD_6, PAD_7, PAD_8 };
-
 class Pads
 {
     public:

@@ -119,18 +119,21 @@ void setupY()
     setADCchannel(adcPinReadOrder_board[readY]);
 }
 
-int16_t Board::getPadPressure(uint8_t pad)
+void Board::selectPad(uint8_t pad)
 {
-    int16_t value1, value2;
-
     static int8_t lastPad = -1;
 
     //do this only once
     if (lastPad != pad)
     {
-        setMuxInput(pad);
+        setMuxInput(padIDArray[pad]);
         lastPad = pad;
     }
+}
+
+int16_t Board::getPadPressure()
+{
+    int16_t value1, value2;
 
     setupPressure();
     setADCchannel(adcPinReadOrder_board[readPressure0]);
@@ -141,13 +144,13 @@ int16_t Board::getPadPressure(uint8_t pad)
     return (1023 - (value2 - value1));
 }
 
-int16_t Board::getPadX(uint8_t pad)
+int16_t Board::getPadX()
 {
     setupX();
     return getADCvalue();
 }
 
-int16_t Board::getPadY(uint8_t pad)
+int16_t Board::getPadY()
 {
     setupY();
     return getADCvalue();
