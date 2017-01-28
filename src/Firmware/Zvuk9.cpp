@@ -27,9 +27,9 @@ bool onCustom(uint8_t value)
     switch(value)
     {
         case FIRMWARE_VERSION_STRING:
-        sysEx.addToResponse(getSWversion(swVersion_major));
-        sysEx.addToResponse(getSWversion(swVersion_minor));
-        sysEx.addToResponse(getSWversion(swVersion_revision));
+        sysEx.addToResponse(getSWversion(version_major));
+        sysEx.addToResponse(getSWversion(version_minor));
+        sysEx.addToResponse(getSWversion(version_revision));
         return true;
 
         case HARDWARE_VERSION_STRING:
@@ -89,13 +89,13 @@ void startUpAnimation()
 
     display.displayHelloMessage();
 
-    wait_ms(1500);
+    wait_ms(1000);
 
     //restore led states
     for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
         leds.setLEDstate(i, tempLedStateArray[i]);
 
-    wait_ms(1500);
+    wait_ms(1000);
 
     //restore normal fade speed
     leds.setFadeSpeed(DEFAULT_FADE_SPEED);

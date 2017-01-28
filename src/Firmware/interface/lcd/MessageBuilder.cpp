@@ -414,13 +414,11 @@ void LCD::displayFirmwareUpdated()
     size = 0;
     strcpy_P(stringBuffer, deviceInfo_swVersion_string);
     size += progmemCharArraySize(deviceInfo_swVersion_string);
-    addNumberToCharArray(getSWversion(swVersion_major), size);
+    addNumberToCharArray(getSWversion(version_major), size);
     appendText(".", size);
-    addNumberToCharArray(getSWversion(swVersion_minor), size);
+    addNumberToCharArray(getSWversion(version_minor), size);
     appendText(".", size);
-    addNumberToCharArray(getSWversion(swVersion_revision), size);
-    if (getSWversion(swVersion_development))
-        appendText("d", size);
+    addNumberToCharArray(getSWversion(version_revision), size);
 
     updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
 }
@@ -775,14 +773,11 @@ void LCD::displayDeviceInfo()
     uint8_t size = 0;
     strcpy_P(stringBuffer, deviceInfo_swVersion_string);
     size += progmemCharArraySize(deviceInfo_swVersion_string);
-    addNumberToCharArray(getSWversion(swVersion_major), size);
+    addNumberToCharArray(getSWversion(version_major), size);
     appendText(".", size);
-    addNumberToCharArray(getSWversion(swVersion_minor), size);
+    addNumberToCharArray(getSWversion(version_minor), size);
     appendText(".", size);
-    addNumberToCharArray(getSWversion(swVersion_revision), size);
-
-    if (getSWversion(swVersion_development))
-        appendText("d", size);
+    addNumberToCharArray(getSWversion(version_revision), size);
 
     updateDisplay(1, text, 0, true, size);
 

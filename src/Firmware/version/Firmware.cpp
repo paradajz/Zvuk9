@@ -1,5 +1,7 @@
 #include "Firmware.h"
 
+#include "Firmware.h"
+
 bool checkNewRevision()
 {
     //current app crc is written to last flash location
@@ -18,17 +20,16 @@ bool checkNewRevision()
     return false;
 }
 
-int16_t getSWversion(swVersion_t point)
+uint8_t getSWversion(version_t point)
 {
     switch(point)
     {
-        case swVersion_major:
-        case swVersion_minor:
-        case swVersion_revision:
-        case swVersion_development:
-        return pgm_read_word_far(VERSION_POINT_LOCATION+(uint8_t)point*2);
+        case version_major:
+        case version_minor:
+        case version_revision:
+        return (uint8_t)pgm_read_word_far(VERSION_POINT_LOCATION+(uint8_t)point*2);
 
         default:
-        return -1;
+        return 0;
     }
 }

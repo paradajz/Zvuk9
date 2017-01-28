@@ -111,6 +111,9 @@
     <PostBuildEvent>REM running version script
 call cd $(SolutionDir)
 call cd ..\tools
+call cp ..\version\MAJOR MAJOR
+call cp ..\version\MINOR MINOR
+call cp ..\version\REVISION REVISION
 call bin\sh.exe -l version_script.sh
 
 REM converting hex to bin and adding crc
@@ -120,8 +123,8 @@ REM calling version_append
 call version_append.exe
 call del version
 
-REM move binary to root dir
-call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
+REM move binary to bin dir
+call move FLASH.bin ..\bin\FLASH.bin</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
