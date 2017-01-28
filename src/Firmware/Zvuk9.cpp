@@ -70,11 +70,11 @@ bool onSet(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newV
 void startUpAnimation()
 {
     //slow down fading for effect
-    leds.setFadeSpeed(1);
+    leds.setFadeSpeed(2);
 
-    ledState_t tempLedStateArray[NUMBER_OF_LEDS];
+    ledState_t tempLedStateArray[MAX_NUMBER_OF_LEDS];
 
-    for (int i=0; i<NUMBER_OF_LEDS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
     {
         //copy ledstates to temp field
         tempLedStateArray[i] = leds.getLEDstate(i);
@@ -92,7 +92,7 @@ void startUpAnimation()
     wait_ms(1500);
 
     //restore led states
-    for (int i=0; i<NUMBER_OF_LEDS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
         leds.setLEDstate(i, tempLedStateArray[i]);
 
     wait_ms(1500);

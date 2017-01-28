@@ -75,6 +75,26 @@ void Board::initTimers()
 
 inline void checkLEDs()
 {
+    if (blinkEnabled)
+    {
+        if (!blinkTimerCounter)
+        {
+            //change blinkBit state and write it into ledState variable if LED is in blink state
+            for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
+            {
+                if (bitRead(ledState[i], LED_BLINK_ON_BIT))
+                {
+                    if (blinkState)
+                        bitSet(ledState[i], LED_BLINK_STATE_BIT);
+                    else
+                        bitClear(ledState[i], LED_BLINK_STATE_BIT);
+                }
+            }
+
+            blinkState = !blinkState;
+        }
+    }
+
     //if there is an active LED in current column, turn on LED row
     //do fancy transitions here
     for (int i=0; i<NUMBER_OF_LED_ROWS; i++)
@@ -200,6 +220,10 @@ ISR(TIMER3_COMPA_vect)
     activateOutputColumn();
     checkLEDs();
     activeLEDcolumn++;
+    blinkTimerCounter++;
+
+    if (blinkTimerCounter >= ledBlinkTime)
+        blinkTimerCounter = 0;
 
     uint32_t ms;
     ms = rTime_ms;

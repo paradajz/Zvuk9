@@ -2,6 +2,7 @@
 #include "../pads/Pads.h"
 #include "../../database/Database.h"
 #include "../pads/Pads.h"
+#include "Variables.h"
 
 const uint8_t ledNoteArray[] =
 {
@@ -27,17 +28,18 @@ LEDs::LEDs()
 void LEDs::init()
 {
     setFadeSpeed(DEFAULT_FADE_SPEED);
+    setBlinkSpeed(DEFAULT_BLINK_SPEED);
 }
 
 void LEDs::setAllOff()
 {
-    for (int i=0; i<NUMBER_OF_LEDS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
         setLEDstate(i, ledStateOff);
 }
 
 void LEDs::setAllOn()
 {
-    for (int i=0; i<NUMBER_OF_LEDS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
         setLEDstate(i, ledStateFull);
 }
 
@@ -71,6 +73,89 @@ void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state)
             return;
         }
     }
+
+    checkBlinkLEDs();
+}
+
+void LEDs::setBlinkState(uint8_t ledID, bool state, bool forceOn)
+{
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    {
+        switch(state)
+        {
+            case true:
+            bitSet(ledState[ledID], LED_BLINK_STATE_BIT);
+            bitSet(ledState[ledID], LED_BLINK_ON_BIT);
+            break;
+
+            case false:
+            bitClear(ledState[ledID], LED_BLINK_STATE_BIT);
+            bitClear(ledState[ledID], LED_BLINK_ON_BIT);
+            break;
+        }
+
+        if (forceOn)
+        {
+            bitWrite(ledState[ledID], LED_ACTIVE_BIT, forceOn);
+        }
+    }
+
+    checkBlinkLEDs();
+}
+
+bool LEDs::getBlinkState(uint8_t ledID)
+{
+    bool value;
+
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    {
+        value = bitRead(ledState[ledID], LED_BLINK_ON_BIT);
+    }
+
+    return value;
+}
+
+void LEDs::checkBlinkLEDs()
+{
+    //this function will disable blinking
+    //if none of the LEDs is in blinking state
+
+    //else it will enable it
+
+    bool _blinkEnabled = false;
+    uint8_t ledState;
+
+    //if any LED is blinking, set _blinkEnabled to true and exit the loop
+    for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
+    {
+        ledState = getState(i);
+        if (bitRead(ledState, LED_BLINK_ON_BIT) && bitRead(ledState, LED_ACTIVE_BIT))
+        {
+            _blinkEnabled = true;
+            break;
+        }
+    }
+
+    if (_blinkEnabled && !blinkEnabled)
+    {
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+        {
+            blinkEnabled = true;
+            blinkState = true;
+            blinkTimerCounter = 0;
+        }
+    }
+    else if (!_blinkEnabled && blinkEnabled)
+    {
+        //don't bother reseting variables if blinking is already disabled
+        //reset blinkState to default value
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+        {
+            blinkState = true;
+            blinkTimerCounter = 0;
+            blinkEnabled = false;
+        }
+    }
 }
 
 uint8_t LEDs::getLEDnumberFromTonic(note_t note)
@@ -95,11 +180,19 @@ void LEDs::setFadeSpeed(uint8_t speed)
     pwmSteps = speed;
 }
 
+void LEDs::setBlinkSpeed(uint16_t blinkTime)
+{
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    {
+        ledBlinkTime = blinkTime*100;
+        blinkTimerCounter = 0;
+    }
+}
+
 void LEDs::tonicLEDsOff()
 {
     for (int i=0; i<MIDI_NOTES; i++)
         setLEDstate(ledNoteArray[i], ledStateOff);
-
 }
 
 void LEDs::setNoteLEDstate(note_t note, ledState_t state)
@@ -163,6 +256,19 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad)
         }
         break;
     }
+}
+
+//internal - get raw led state value
+uint8_t LEDs::getState(uint8_t ledID)
+{
+    uint8_t returnValue;
+
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    {
+        returnValue = ledState[ledID];
+    }
+
+    return returnValue;
 }
 
 LEDs leds;

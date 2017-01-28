@@ -14,7 +14,22 @@ void handleOnOff(uint8_t id, bool state)
         return;
 
     if (state)
-        return;
+    {
+        if (id == BUTTON_ON_OFF_NOTES)
+        {
+            leds.setBlinkState(LED_ON_OFF_NOTES, true, true);
+            return;
+        }
+        else if (id == BUTTON_ON_OFF_SPLIT)
+        {
+            leds.setBlinkState(LED_ON_OFF_SPLIT, true, true);
+            return;
+        }
+        else
+        {
+            return;
+        }
+    }
 
     //determine action based on pressed button
 
@@ -35,6 +50,7 @@ void handleOnOff(uint8_t id, bool state)
             ledState = ledStateFull;
         else
             ledState = ledStateOff;
+        leds.setBlinkState(ledNumber, false);
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
@@ -75,6 +91,7 @@ void handleOnOff(uint8_t id, bool state)
         pads.splitOnOff();
         lcdMessageType = onOff_split;
         pads.getSplitState() ? ledState = ledStateFull : ledState = ledStateOff;
+        leds.setBlinkState(ledNumber, false);
         break;
 
         default:

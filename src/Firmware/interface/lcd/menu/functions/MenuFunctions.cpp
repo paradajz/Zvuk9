@@ -85,7 +85,7 @@ bool factoryReset(functionArgument argument)
         {
             leds.setFadeSpeed(1);
             //first, set all full leds to dim state
-            for (int i=0; i<NUMBER_OF_LEDS; i++)
+            for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
             {
                 if (leds.getLEDstate(i) == ledStateFull)
                     leds.setLEDstate(i, ledStateDim);
