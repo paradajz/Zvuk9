@@ -70,7 +70,7 @@ bool onSet(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newV
 void startUpAnimation()
 {
     //slow down fading for effect
-    leds.setFadeSpeed(2);
+    leds.setFadeSpeed(3);
 
     ledState_t tempLedStateArray[MAX_NUMBER_OF_LEDS];
 

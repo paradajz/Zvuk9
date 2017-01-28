@@ -7,8 +7,8 @@
 #define LED_BLINK_STATE_BIT                 0x03
 #define LED_INTENSITY_BIT                   0x04
 
-#define DEFAULT_FADE_SPEED                  4
-#define DEFAULT_BLINK_SPEED                 2
+#define DEFAULT_FADE_SPEED                  6
+#define DEFAULT_BLINK_SPEED                 3
 
 #define LED_NO_INTENSITY                    0
 #define LED_FULL_INTENSITY                  NUMBER_OF_LED_TRANSITIONS-1
