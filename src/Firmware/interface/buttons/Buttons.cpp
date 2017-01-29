@@ -82,11 +82,8 @@ void Buttons::update()
             setButtonState(i, state);
             if (processingEnabled)
             {
-                if (buttonEnabled[i])
-                {
-                    if (buttonHandler[i] != NULL)
-                        (*buttonHandler[i])(i, state);
-                }
+                if (buttonHandler[i] != NULL)
+                    (*buttonHandler[i])(i, state);
 
                 //resume button processing
                 if (!buttonEnabled[i] && !getButtonState(i))
@@ -175,6 +172,11 @@ void Buttons::setTransportControlType(transportControlType_t type)
 transportControlType_t Buttons::getTransportControlType()
 {
     return transportControlType;
+}
+
+bool Buttons::getButtonEnableState(uint8_t buttonID)
+{
+    return buttonEnabled[buttonID];
 }
 
 Buttons buttons;

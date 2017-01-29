@@ -13,6 +13,37 @@ void handleOnOff(uint8_t id, bool state)
     if (pads.editModeActive())
         return;
 
+    if (!buttons.getButtonEnableState(id))
+    {
+        //button disabled
+        if (!state)
+        {
+            switch(id)
+            {
+                case BUTTON_ON_OFF_NOTES:
+                //stop blinking
+                leds.setBlinkState(LED_ON_OFF_NOTES, false);
+                //make sure led state is correct
+                //hack: notes on/off can only be ledStateOff (0) or ledStateFull (2) - multiply by 2
+                leds.setLEDstate(LED_ON_OFF_NOTES, (ledState_t)(pads.getMIDISendState(onOff_notes, pads.getLastTouchedPad())*2));
+                break;
+
+                case BUTTON_ON_OFF_SPLIT:
+                //stop blinking
+                leds.setBlinkState(LED_ON_OFF_SPLIT, false);
+                //make sure led state is correct
+                //hack: split can only be ledStateOff (0) or ledStateFull (2) - multiply by 2
+                leds.setLEDstate(LED_ON_OFF_SPLIT, (ledState_t)(pads.getSplitState()*2));
+                break;
+
+                default:
+                return;
+            }
+        }
+
+        return;
+    }
+
     if (state)
     {
         if (id == BUTTON_ON_OFF_NOTES)
@@ -105,6 +136,9 @@ void handleOnOff(uint8_t id, bool state)
 void handleTransportControl(uint8_t id, bool state)
 {
     if (pads.editModeActive())
+        return;
+
+    if (!buttons.getButtonEnableState(id))
         return;
 
     #ifdef NDEBUG
@@ -224,6 +258,9 @@ void handleTransportControl(uint8_t id, bool state)
 
 void handleUpDown(uint8_t id, bool state)
 {
+    if (!buttons.getButtonEnableState(id))
+        return;
+
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
     bool direction = false;
 
@@ -344,6 +381,9 @@ void handleUpDown(uint8_t id, bool state)
 void handleTonic(uint8_t id, bool state)
 {
     if (state)
+        return;
+
+    if (!buttons.getButtonEnableState(id))
         return;
 
     note_t note = buttons.getTonicFromButton(id);

@@ -13,6 +13,8 @@ class Buttons
     void enable(int8_t buttonID = -1);
     void disable(int8_t buttonID = -1);
 
+    bool getButtonEnableState(uint8_t buttonID);
+
     void setTransportControlType(transportControlType_t type);
     transportControlType_t getTransportControlType();
 
