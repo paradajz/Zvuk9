@@ -7,7 +7,6 @@ src/Bootloader/Bootloader.componentinfo.xml
 src/Bootloader/Debug/
 src/Bootloader/Release/
 src/Bootloader/doxyfile
-FLASH.bin
 tools/tmp/*
 w.zip
 w/*
