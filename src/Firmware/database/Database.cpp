@@ -168,6 +168,11 @@ bool Database::update(uint8_t blockID, uint8_t sectionID, int16_t parameterID, i
         return 0;
     }
 
+    if (blockID == CONF_BLOCK_GLOBAL_SETTINGS)
+    {
+        printf_P(PSTR("last block address is: %d\n"), startAddress + parameterID);
+    }
+
     uint8_t parameterType = getParameterType(blockID, sectionID);
 
     uint8_t arrayIndex;

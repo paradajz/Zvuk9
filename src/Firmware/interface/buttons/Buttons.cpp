@@ -97,23 +97,26 @@ void Buttons::update()
     //check split button for entering into user menu
     if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])
     {
-        //measure the time the button is pressed
-        if (!userMenuTimeout)
+        if (!pads.editModeActive())
         {
-            userMenuTimeout = rTimeMs();
-        }
-        else if (((rTimeMs() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed())
-        {
-            userMenuTimeout = 0;
-            menu.displayMenu(userMenu);
-            #ifdef DEBUG
-            printf_P(PSTR("Entering user menu\n"));
-            #endif
-            //disable buttons while in menu
-            buttons.disable();
-            //turn off blinky led
-            leds.setLEDstate(LED_ON_OFF_SPLIT, leds.getLEDstate(LED_ON_OFF_SPLIT));
+            //measure the time the button is pressed
+            if (!userMenuTimeout)
+            {
+                userMenuTimeout = rTimeMs();
+            }
+            else if (((rTimeMs() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed())
+            {
+                userMenuTimeout = 0;
+                menu.displayMenu(userMenu);
+                #ifdef DEBUG
+                printf_P(PSTR("Entering user menu\n"));
+                #endif
+                //disable buttons while in menu
+                buttons.disable();
+                //turn off blinky led
+                leds.setLEDstate(LED_ON_OFF_SPLIT, leds.getLEDstate(LED_ON_OFF_SPLIT));
 
+            }
         }
     }
     else
