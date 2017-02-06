@@ -10,3 +10,6 @@ src/Bootloader/doxyfile
 tools/tmp/*
 w.zip
 w/*
+tools/MAJOR
+tools/MINOR
+tools/REVISION
