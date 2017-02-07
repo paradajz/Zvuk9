@@ -915,7 +915,7 @@ changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)
     bool shiftDirection;
 
     if (currentScaleTonic == MIDI_NOTES)
-        return result; //pad has no notes
+        return notAllowed; //pad has no notes
 
     shiftDirection = (uint8_t)currentScaleTonic < (uint8_t)newTonic;
 

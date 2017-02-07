@@ -396,11 +396,12 @@ void handleTonic(uint8_t id, bool state)
         switch(result)
         {
             case outputChanged:
+            case noChange:
             leds.displayActiveNoteLEDs();
             display.displayNoteChange(result, tonicChange, activeTonic);
             break;
 
-            case noChange:
+            case notAllowed:
             display.displayNoNotesError();
             break;
 
