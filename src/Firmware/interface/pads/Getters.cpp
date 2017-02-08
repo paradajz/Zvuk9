@@ -521,15 +521,15 @@ bool Pads::isPredefinedScale(uint8_t scale)
     return (scale < PREDEFINED_SCALES);
 }
 
-uint8_t Pads::getPadNote(uint8_t pad, uint8_t note)
+uint8_t Pads::getPadNote(uint8_t pad, uint8_t noteIndex)
 {
     if (pad >= MAX_PADS)
         return 0;
 
-    if (note >= NOTES_PER_PAD)
+    if (noteIndex >= NOTES_PER_PAD)
         return 0;
 
-    return padNote[pad][note];
+    return padNote[pad][noteIndex];
 }
 
 bool Pads::noteActive(note_t note)
@@ -584,20 +584,6 @@ bool Pads::allPadsReleased()
         if (isPadPressed(i)) return false;
 
     return true;
-}
-
-uint8_t Pads::padsPressed()
-{
-    //returns number of pressed pads
-    uint8_t numberOfPressedPads = 0;
-
-    for (int i=0; i<MAX_PADS; i++)
-    {
-        if (isPadPressed(i))
-            numberOfPressedPads++;
-    }
-
-    return numberOfPressedPads;
 }
 
 pressureSensitivity_t Pads::getPressureSensitivity()

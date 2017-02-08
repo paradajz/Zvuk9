@@ -223,7 +223,7 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)
         case true:
         if (!noteCounter || !noteSendEnabled[pad])
         {
-            display.displayActivePadNotes(0, 0, 0, editModeActive());
+            display.displayActivePadNotes(0, 0, 0, getEditModeState());
             return;
         }
 
@@ -237,7 +237,7 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)
             octaveArray[i] = normalizeOctave(getOctaveFromNote(noteArray[i]));
         }
 
-        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, editModeActive());
+        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, getEditModeState());
         display.displayVelocity(velocity);
 
         if (isPredefinedScale(activeScale))
@@ -249,7 +249,7 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)
 
         case false:
         //note off
-        display.displayActivePadNotes(0, 0, 0, editModeActive());
+        display.displayActivePadNotes(0, 0, 0, getEditModeState());
         break;
     }
 }

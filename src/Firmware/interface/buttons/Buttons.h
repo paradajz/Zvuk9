@@ -21,6 +21,7 @@ class Buttons
     //getters
     bool getButtonState(uint8_t buttonNumber);
     note_t getTonicFromButton(uint8_t buttonNumber);
+    uint8_t getLastPressedButton();
 
     private:
     void handleTransportControlEvent(uint8_t buttonNumber, bool state);
@@ -43,6 +44,7 @@ class Buttons
     uint32_t userMenuTimeout;
     transportControlType_t transportControlType;
     note_t buttonToNoteArray[MAX_NUMBER_OF_BUTTONS];
+    uint8_t lastPressedButton;
 };
 
 extern Buttons buttons;

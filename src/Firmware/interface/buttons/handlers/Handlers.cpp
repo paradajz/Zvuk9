@@ -10,7 +10,7 @@
 
 void handleOnOff(uint8_t id, bool state)
 {
-    if (pads.editModeActive())
+    if (pads.getEditModeState())
         return;
 
     if (!buttons.getButtonEnableState(id))
@@ -74,7 +74,7 @@ void handleOnOff(uint8_t id, bool state)
         case BUTTON_ON_OFF_NOTES:
         ledNumber = LED_ON_OFF_NOTES;
 
-        pads.midiSendOnOff(onOff_notes);
+        pads.setMIDISendState(onOff_notes, !pads.getMIDISendState(onOff_notes, lastTouchedPad));
         lcdMessageType = onOff_notes;
 
         if (pads.getMIDISendState(onOff_notes, lastTouchedPad))
@@ -85,7 +85,7 @@ void handleOnOff(uint8_t id, bool state)
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
-        pads.midiSendOnOff(onOff_aftertouch);
+        pads.setMIDISendState(onOff_aftertouch, !pads.getMIDISendState(onOff_aftertouch, lastTouchedPad));
         lcdMessageType = onOff_aftertouch;
         ledNumber = LED_ON_OFF_AFTERTOUCH;
 
@@ -96,7 +96,7 @@ void handleOnOff(uint8_t id, bool state)
         break;
 
         case BUTTON_ON_OFF_X:
-        pads.midiSendOnOff(onOff_x);
+        pads.setMIDISendState(onOff_x, !pads.getMIDISendState(onOff_x, lastTouchedPad));
         lcdMessageType = onOff_x;
         ledNumber = LED_ON_OFF_X;
 
@@ -107,7 +107,7 @@ void handleOnOff(uint8_t id, bool state)
         break;
 
         case BUTTON_ON_OFF_Y:
-        pads.midiSendOnOff(onOff_y);
+        pads.setMIDISendState(onOff_y, !pads.getMIDISendState(onOff_y, lastTouchedPad));
         lcdMessageType = onOff_y;
         ledNumber = LED_ON_OFF_Y;
 
@@ -119,7 +119,7 @@ void handleOnOff(uint8_t id, bool state)
 
         case BUTTON_ON_OFF_SPLIT:
         ledNumber = LED_ON_OFF_SPLIT;
-        pads.splitOnOff();
+        pads.setSplitState(!pads.getSplitState());
         lcdMessageType = onOff_split;
         pads.getSplitState() ? ledState = ledStateFull : ledState = ledStateOff;
         leds.setBlinkState(ledNumber, false);
@@ -135,7 +135,7 @@ void handleOnOff(uint8_t id, bool state)
 
 void handleTransportControl(uint8_t id, bool state)
 {
-    if (pads.editModeActive())
+    if (pads.getEditModeState())
         return;
 
     if (!buttons.getButtonEnableState(id))
@@ -272,15 +272,12 @@ void handleUpDown(uint8_t id, bool state)
         //try to enter pad edit mode
         if (pads.isUserScale(pads.getActiveScale()))
         {
-            pads.setEditMode(!pads.editModeActive());
-
-            if (pads.editModeActive())
+            if (pads.getEditModeState())
             {
                 //check if last touched pad is pressed
                 if (pads.isPadPressed(pads.getLastTouchedPad()))
                 {
                     display.displayEditModeNotAllowed(padNotReleased);
-                    pads.setEditMode(false);
                 }
                 else
                 {
@@ -289,7 +286,7 @@ void handleUpDown(uint8_t id, bool state)
                     #ifdef DEBUG
                     printf_P(PSTR("Pad edit mode\n"));
                     #endif
-                    pads.setupPadEditMode(pads.getLastTouchedPad());
+                    pads.setEditModeState(true, pads.getLastTouchedPad());
 
                     leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
                     leds.setLEDstate(LED_OCTAVE_UP, ledStateFull);
@@ -299,7 +296,7 @@ void handleUpDown(uint8_t id, bool state)
             {
                 leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                 leds.setLEDstate(LED_OCTAVE_UP, ledStateOff);
-                pads.exitPadEditMode();
+                pads.setEditModeState(false);
             }
         }
         else
@@ -315,7 +312,7 @@ void handleUpDown(uint8_t id, bool state)
     }
     else
     {
-        bool editMode = pads.editModeActive();
+        bool editMode = pads.getEditModeState();
 
         switch(editMode)
         {
@@ -388,7 +385,7 @@ void handleTonic(uint8_t id, bool state)
 
     note_t note = buttons.getTonicFromButton(id);
 
-    if (!pads.editModeActive())
+    if (!pads.getEditModeState())
     {
         changeOutput_t result = pads.setTonic(note);
         note_t activeTonic = pads.getActiveTonic();

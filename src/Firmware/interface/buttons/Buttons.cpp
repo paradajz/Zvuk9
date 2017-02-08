@@ -80,6 +80,7 @@ void Buttons::update()
 
             //update previous button state with current one
             setButtonState(i, state);
+            lastPressedButton = i;
             if (processingEnabled)
             {
                 if (buttonHandler[i] != NULL)
@@ -97,7 +98,7 @@ void Buttons::update()
     //check split button for entering into user menu
     if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])
     {
-        if (!pads.editModeActive())
+        if (!pads.getEditModeState())
         {
             //measure the time the button is pressed
             if (!userMenuTimeout)
@@ -180,6 +181,11 @@ transportControlType_t Buttons::getTransportControlType()
 bool Buttons::getButtonEnableState(uint8_t buttonID)
 {
     return buttonEnabled[buttonID];
+}
+
+uint8_t Buttons::getLastPressedButton()
+{
+    return lastPressedButton;
 }
 
 Buttons buttons;

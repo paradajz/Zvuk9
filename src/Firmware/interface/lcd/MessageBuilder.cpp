@@ -587,7 +587,7 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
 
     //pad edit mode and regular mode differ in start index of notes
     //change scroll start index depending on whether pad edit mode is active
-    if (!pads.editModeActive())
+    if (!pads.getEditModeState())
         display.setScrollStart(lcdElements.notes.row, lcdElements.notes.startIndex);
     else
         display.setScrollStart(lcdElements.notes.row, 0);
@@ -615,7 +615,7 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
                 addSpaceToCharArray(size, 1);
         }
 
-        if (pads.editModeActive())
+        if (pads.getEditModeState())
             updateDisplay(lcdElements.notes.row, text, 0, true, size);
         else
             updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size);

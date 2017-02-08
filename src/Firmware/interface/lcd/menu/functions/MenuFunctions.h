@@ -44,8 +44,6 @@ bool factoryReset(functionArgument argument);
 
 bool deviceInfo(functionArgument argument);
 
-bool padEditMode(functionArgument argument);
-
 bool enableCalibration(functionArgument argument);
 
 //check functions

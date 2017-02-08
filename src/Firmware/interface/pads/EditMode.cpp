@@ -5,16 +5,31 @@
 
 bool editModeActivated = false;
 
-void Pads::setupPadEditMode(uint8_t pad)
+void Pads::setEditModeState(bool state, uint8_t pad)
 {
-    #ifdef DEBUG
-    printf_P(PSTR("Editing pad %d\n"), pad);
-    #endif
+    switch(state)
+    {
+        case true:
+        #ifdef DEBUG
+        printf_P(PSTR("Editing pad %d\n"), pad);
+        #endif
 
-    display.displayPadEditMode(pad + 1);
-    display.displayActiveOctave(normalizeOctave(activeOctave));
-    displayActivePadNotes(pad);
-    leds.displayActiveNoteLEDs(true, pad);
+        editModeActivated = true;
+
+        display.displayPadEditMode(pad + 1);
+        display.displayActiveOctave(normalizeOctave(activeOctave));
+        displayActivePadNotes(pad);
+        leds.displayActiveNoteLEDs(true, pad);
+        break;
+
+        case false:
+        editModeActivated = false;
+        display.clearPadEditMode();
+        display.displayProgramAndScale(activeProgram+1, activeScale);
+        //after exiting from pad edit mode, restore note led states
+        leds.displayActiveNoteLEDs();
+        break;
+    }
 }
 
 void Pads::displayActivePadNotes(uint8_t pad)
@@ -46,21 +61,7 @@ void Pads::displayActivePadNotes(uint8_t pad)
     display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, true);
 }
 
-void Pads::exitPadEditMode()
-{
-    editModeActivated = false;
-    display.clearPadEditMode();
-    display.displayProgramAndScale(activeProgram+1, activeScale);
-    //after exiting from pad edit mode, restore note led states
-    leds.displayActiveNoteLEDs();
-}
-
-bool Pads::editModeActive()
+bool Pads::getEditModeState()
 {
     return editModeActivated;
-}
-
-void Pads::setEditMode(bool state)
-{
-    editModeActivated = state;
 }

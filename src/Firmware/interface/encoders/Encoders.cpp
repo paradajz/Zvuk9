@@ -38,7 +38,7 @@ void Encoders::update(bool process)
 
         lastStepTime[i] = rTimeMs();
 
-        if (pads.editModeActive())
+        if (pads.getEditModeState())
         {
             display.displayPadEditChangeParametersError();
             return;

@@ -129,7 +129,7 @@ void handleCC(uint8_t id, bool direction, uint8_t steps)
         break;
     }
 
-    pads.changeCC(direction, coordinate, steps);
+    pads.changeCCvalue(direction, coordinate, steps);
     display.displayCCchange(coordinate,  splitState, pads.getCCvalue(coordinate, lastTouchedPad), lastTouchedPad+1);
 }
 
@@ -170,7 +170,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         break;
     }
 
-    pads.changeCClimits(direction, coordinate, limit, steps);
+    pads.changeCClimitValue(direction, coordinate, limit, steps);
     uint8_t value = pads.getCClimitValue(coordinate, limit, lastTouchedPad);
     display.displayCClimitChange(coordinate, limit, splitState, value, lastTouchedPad+1);
 }

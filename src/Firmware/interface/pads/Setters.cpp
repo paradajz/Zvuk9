@@ -51,9 +51,9 @@ void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)
     }
 }
 
-void Pads::splitOnOff()
+void Pads::setSplitState(bool state)
 {
-    splitEnabled = !splitEnabled;
+    splitEnabled = state;
     db.update(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitEnabled);
     getPadParameters();
 
@@ -227,7 +227,7 @@ void Pads::changeActiveOctave(bool direction)
         activeOctave++;
 }
 
-changeOutput_t Pads::changeCC(bool direction, padCoordinate_t type, int8_t steps)
+changeOutput_t Pads::changeCCvalue(bool direction, padCoordinate_t type, int8_t steps)
 {
     //public function
     changeOutput_t result = outputChanged;
@@ -311,7 +311,7 @@ changeOutput_t Pads::changeCC(bool direction, padCoordinate_t type, int8_t steps
     return result;
 }
 
-changeOutput_t Pads::changeCClimits(bool direction, padCoordinate_t coordinate, ccLimitType_t limitType, int8_t steps)
+changeOutput_t Pads::changeCClimitValue(bool direction, padCoordinate_t coordinate, ccLimitType_t limitType, int8_t steps)
 {
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
@@ -1062,9 +1062,8 @@ void Pads::checkRemainingNoteShift()
 
 }
 
-void Pads::midiSendOnOff(onOff_t type)
+void Pads::setMIDISendState(onOff_t type, bool state)
 {
-    bool newState;
     bool *variablePointer;
 
     switch(type)
@@ -1103,16 +1102,16 @@ void Pads::midiSendOnOff(onOff_t type)
 
     if (!splitEnabled)
     {
-        newState = !variablePointer[0];
+        variablePointer[0] = state;
 
         for (int i=0; i<MAX_PADS; i++)
-            setMIDISendState(type, i, newState);
+            setMIDISendState(type, i, state);
 
         #ifdef DEBUG
-        printf_P(PSTR("%s for all pads\n"), newState ? "on" : "off");
+        printf_P(PSTR("%s for all pads\n"), state ? "on" : "off");
         #endif
 
-        if (!newState && (type == onOff_notes))
+        if (!state && (type == onOff_notes))
         {
             //we have turned notes off for all pads
             //if there are pressed pads, send notes off
@@ -1129,15 +1128,15 @@ void Pads::midiSendOnOff(onOff_t type)
     {
         //feature splitting is on
         uint8_t lastPressedPad = getLastTouchedPad();
-        newState = !variablePointer[lastPressedPad];
+        variablePointer[lastPressedPad] = state;
 
-        setMIDISendState(type, lastPressedPad, newState);
+        setMIDISendState(type, lastPressedPad, state);
 
         #ifdef DEBUG
-        printf_P(PSTR("%s for pad %d\n"), newState ? "on" : "off");
+        printf_P(PSTR("%s for pad %d\n"), state ? "on" : "off");
         #endif
 
-        if (!newState && (type == onOff_notes))
+        if (!state && (type == onOff_notes))
         {
             uint8_t pressedPads = 0;
 
@@ -1149,7 +1148,7 @@ void Pads::midiSendOnOff(onOff_t type)
     }
 }
 
-void Pads::setPadPressed(uint8_t padNumber, bool padState)
+void Pads::setPadPressState(uint8_t padNumber, bool padState)
 {
     bitWrite(padPressed, padNumber, padState);
 }
