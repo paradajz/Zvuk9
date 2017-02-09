@@ -5,13 +5,17 @@ LCD::LCD()
     displayMessage_var = false;
     messageDisplayTime = 0;
     _delay_ms(250);
+    #ifdef BOARD_R1
     lcd_init(LCD_DISP_ON);
+    #endif
     setupLCDlayout();
 }
 
 void LCD::init()
 {
+    #ifdef BOARD_R1
     lcd_clrscr();
+    #endif
 
     for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
     {
@@ -35,7 +39,9 @@ void LCD::init()
    displayMessage_var = false;
 
    _delay_ms(100);
+   #ifdef BOARD_R1
    lcd_gotoxy(0,0);
+   #endif
 }
 
 void LCD::update()

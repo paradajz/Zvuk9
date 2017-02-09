@@ -87,9 +87,9 @@ void startUpAnimation()
 
     sei();
 
-    display.displayHelloMessage();
+    //display.displayHelloMessage();
 
-    wait_ms(1000);
+    wait_ms(3500);
 
     //restore led states
     for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
@@ -117,22 +117,22 @@ int main()
     {
         char tempBuffer[20];
 
-        strcpy_P(tempBuffer, restoringDefaults_string);
-        lcd_clrscr();
-        lcd_gotoxy(0, 0);
-        lcd_puts(tempBuffer);
-        lcd_gotoxy(0, 1);
-        wait_ms(2000);
-        strcpy_P(tempBuffer, pleaseWait_string);
-        lcd_puts(tempBuffer);
-        wait_ms(2000);
+        //strcpy_P(tempBuffer, restoringDefaults_string);
+        //lcd_clrscr();
+        //lcd_gotoxy(0, 0);
+        //lcd_puts(tempBuffer);
+        //lcd_gotoxy(0, 1);
+        //wait_ms(2000);
+        //strcpy_P(tempBuffer, pleaseWait_string);
+        //lcd_puts(tempBuffer);
+        //wait_ms(2000);
 
         db.factoryReset(factoryReset_restore);
 
-        lcd_gotoxy(0,2);
-        strcpy_P(tempBuffer, complete_string);
-        lcd_puts(tempBuffer);
-        wait_ms(2000);
+        //lcd_gotoxy(0,2);
+        //strcpy_P(tempBuffer, complete_string);
+        //lcd_puts(tempBuffer);
+        //wait_ms(2000);
     }
 
     #ifdef NDEBUG
@@ -160,9 +160,11 @@ int main()
     sei();
     #endif
 
-    display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());
+    //display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());
 
-    buttons.init();
+    while(1);
+
+    //buttons.init();
 
     if (checkNewRevision())
         display.displayFirmwareUpdated();

@@ -203,9 +203,9 @@ inline void ledRowsOff()
 inline void activateOutputColumn()
 {
     //clear current decoder state
-    PORTB &= DECODER_CLEAR_MASK;
+    DECODER_OUT_PORT &= DECODER_CLEAR_MASK;
     //activate new column
-    PORTB |= decoderStateArray[activeLEDcolumn];
+    DECODER_OUT_PORT |= decoderStateArray[activeLEDcolumn];
 
     _NOP();
 }
@@ -231,9 +231,11 @@ ISR(TIMER3_COMPA_vect)
     //update run time
     rTime_ms = ms;
 
+    #ifdef BOARD_R1
     for (int i=0; i<NUMBER_OF_ENCODERS; i++)
     {
         bitWrite(encoderBuffer[i], 1, readPin(*encoderPort1Array[i], encoderPinIndex1Array[i]));
         bitWrite(encoderBuffer[i], 0, readPin(*encoderPort2Array[i], encoderPinIndex2Array[i]));
     }
+    #endif
 }

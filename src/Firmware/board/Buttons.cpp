@@ -48,9 +48,11 @@ void Board::initButtons()
     write_I2C_reg(expanderAddress[1], gppuAddress[0], 0xFF);    //expander 2, turn on pull-ups, PORTA
     write_I2C_reg(expanderAddress[1], gppuAddress[1], 0xFF);    //expander 2, turn on pull-ups, PORTB
 }
+#endif
 
 bool Board::buttonDataAvailable()
 {
+    #ifdef BOARD_R1
     mcpData <<= 8;
     mcpData |= read_I2C_reg(expanderAddress[0], gpioAddress[0]);     //expander A, GPIOA
     mcpData <<= 8;
@@ -59,12 +61,16 @@ bool Board::buttonDataAvailable()
     mcpData |= read_I2C_reg(expanderAddress[1], gpioAddress[0]);     //expander B, GPIOA
     mcpData <<= 8;
     mcpData |= read_I2C_reg(expanderAddress[1], gpioAddress[1]);     //expander B, GPIOB
+    #endif
 
     return true;
 }
 
 bool Board::getButtonState(uint8_t buttonID)
 {
+    #ifdef BOARD_R1
     return !((mcpData >> buttonID) & 0x01);
+    #elif defined (BOARD_R2)
+    return false;
+    #endif
 }
-#endif

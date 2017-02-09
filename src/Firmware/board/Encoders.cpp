@@ -3,6 +3,7 @@
 uint16_t            encoderData[NUMBER_OF_ENCODERS];
 volatile uint8_t    encoderBuffer[NUMBER_OF_ENCODERS];
 
+#ifdef BOARD_R1
 volatile uint8_t *encoderPort1Array[] =
 {
     &ENCODER_PAIR_00_PIN_0_PORT,
@@ -30,6 +31,7 @@ volatile uint8_t *encoderPort2Array[] =
     &ENCODER_PAIR_08_PIN_1_PORT,
     &ENCODER_PAIR_09_PIN_1_PORT
 };
+#endif
 
 #ifdef BOARD_R1
 void Board::initEncoders()

@@ -8,8 +8,10 @@ Board::Board()
 void Board::init()
 {
     initTimers();
+    #ifdef BOARD_R1
     initEncoders();
     initButtons();
+    #endif
     initLEDs();
     initPads();
 };
