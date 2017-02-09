@@ -1,5 +1,4 @@
 #include "Board.h"
-#include "Variables.h"
 
 Board::Board()
 {

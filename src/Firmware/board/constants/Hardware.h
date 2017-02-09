@@ -8,4 +8,6 @@
 #define MAX_NUMBER_OF_LEDS          (NUMBER_OF_LED_COLUMNS*NUMBER_OF_LED_ROWS)
 
 //uncomment if leds use reverse logic for setting on/off state
-//#define LED_INVERT
+#ifdef BOARD_R2
+#define LED_INVERT
+#endif

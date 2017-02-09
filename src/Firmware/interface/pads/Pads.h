@@ -81,7 +81,7 @@ class Pads
     curve_t getPressureCurve();
     void setPressureCurve(curve_t curve);
 
-    uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
+    uint16_t map(uint16_t x, uint16_t in_min, uint16_t in_max, uint16_t out_min, uint16_t out_max);
 
     //calibration
     bool calibrate(padCoordinate_t type, calibrationDirection direction, uint8_t pad, uint16_t limit);

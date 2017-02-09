@@ -8,8 +8,8 @@ void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)
     bool *variablePointer;
     uint16_t configurationID;
 
-    switch(type)    {
-
+    switch(type)
+    {
         case onOff_notes:
         variablePointer = noteSendEnabled;
         configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID;

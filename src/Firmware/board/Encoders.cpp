@@ -31,6 +31,7 @@ volatile uint8_t *encoderPort2Array[] =
     &ENCODER_PAIR_09_PIN_1_PORT
 };
 
+#ifdef BOARD_R1
 void Board::initEncoders()
 {
     for (int i=0; i<NUMBER_OF_ENCODERS; i++)
@@ -45,6 +46,7 @@ void Board::initEncoders()
         encoderData[i] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);   //set number of pulses to 8
     }
 }
+#endif
 
 inline int8_t readEncoder(uint8_t encoderID, uint8_t pairState)
 {

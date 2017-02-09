@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Pins.h"
+#include "../pins/Pins.h"
 
 #define PROGRAM_ENCODER         0
 #define PRESET_ENCODER          1
@@ -15,6 +15,7 @@
 #define Y_MIN_ENCODER           5
 #define Y_CURVE_ENCODER         4
 
+#ifdef BOARD_R1
 const uint8_t encoderPinIndex1Array[] =
 {
     ENCODER_PAIR_00_PIN_0_PIN,
@@ -42,3 +43,4 @@ const uint8_t encoderPinIndex2Array[] =
     ENCODER_PAIR_08_PIN_1_PIN,
     ENCODER_PAIR_09_PIN_1_PIN
 };
+#endif

@@ -784,11 +784,11 @@ void LCD::displayDeviceInfo()
     size = 0;
     strcpy_P(stringBuffer, deviceInfo_hwVersion_string);
     size += progmemCharArraySize(deviceInfo_hwVersion_string);
-    addNumberToCharArray(hardwareVersion.major, size);
+    addNumberToCharArray(HARDWARE_VERSION_MAJOR, size);
     appendText(".", size);
-    addNumberToCharArray(hardwareVersion.minor, size);
+    addNumberToCharArray(HARDWARE_VERSION_MINOR, size);
     appendText(".", size);
-    addNumberToCharArray(hardwareVersion.revision, size);
+    addNumberToCharArray(HARDWARE_VERSION_REVISION, size);
     updateDisplay(2, text, 0, true, size);
 
     strcpy_P(stringBuffer, emptyLine_string);

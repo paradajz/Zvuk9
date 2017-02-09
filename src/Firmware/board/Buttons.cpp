@@ -1,5 +1,6 @@
 #include "Board.h"
 
+#ifdef BOARD_R1
 uint32_t mcpData = 0;
 
 void write_I2C_reg(uint8_t address, uint8_t reg, uint8_t value)
@@ -66,3 +67,4 @@ bool Board::getButtonState(uint8_t buttonID)
 {
     return !((mcpData >> buttonID) & 0x01);
 }
+#endif
