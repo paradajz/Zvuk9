@@ -2,11 +2,11 @@
 
 #include "../../../board/Board.h"
 
-void (*encoderHandler[NUMBER_OF_ENCODERS]) (uint8_t id, bool state, uint8_t steps);
+void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, bool state, uint8_t steps);
 
 void initHandlers_encoders()
 {
-    for (int i=0; i<NUMBER_OF_ENCODERS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
         encoderHandler[i] = NULL;
 
     encoderHandler[PROGRAM_ENCODER] = handleProgram;

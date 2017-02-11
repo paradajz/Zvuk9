@@ -31,13 +31,13 @@
 //LEDs
 
 #define LED_ROW_1_PORT              PORTB
-#define LED_ROW_1_PIN               5
+#define LED_ROW_1_PIN               4
 
 #define LED_ROW_2_PORT              PORTB
-#define LED_ROW_2_PIN               6
+#define LED_ROW_2_PIN               5
 
 #define LED_ROW_3_PORT              PORTB
-#define LED_ROW_3_PIN               4
+#define LED_ROW_3_PIN               6
 
 #define DECODER_OUT_1_PORT          PORTC
 #define DECODER_OUT_1_PIN           0
@@ -51,9 +51,9 @@
 #define DECODER_OUT_PORT            PORTC
 
 //used to clear all select bits in encoder (valid only if all three pins are on same port)
-#define DECODER_CLEAR_MASK          0b11111000
+#define DECODER_OUT_CLEAR_MASK      0b11111000
 
-const uint8_t decoderStateArray[] =
+const uint8_t decoderOutOrderArray[] =
 {
     0b00000000,
     0b00000001,
@@ -75,6 +75,23 @@ const uint8_t decoderStateArray[] =
 
 #define DECODER_IN_A2_PORT          PORTC
 #define DECODER_IN_A2_PIN           5
+
+#define DECODER_IN_PORT             PORTC
+
+//used to clear all select bits in encoder (valid only if all three pins are on same port)
+#define DECODER_IN_CLEAR_MASK       0b11000111
+
+const uint8_t decoderInOrderArray[] =
+{
+    0b00000000,
+    0b00001000,
+    0b00010000,
+    0b00011000,
+    0b00100000,
+    0b00101000,
+    0b00110000,
+    0b00111000
+};
 
 #define INPUT_SHIFT_REG_IN_PORT     PORTD
 #define INPUT_SHIFT_REG_IN_PIN      5

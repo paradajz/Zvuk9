@@ -99,7 +99,7 @@
       <Value>F_USB=16000000UL</Value>
       <Value>USE_LUFA_CONFIG_HEADER</Value>
       <Value>START_UP_ANIMATION</Value>
-      <Value>BOARD_R1</Value>
+      <Value>BOARD_R2</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
@@ -261,10 +261,16 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="board\constants\LEDs.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\Encoders.cpp">
+    <Compile Include="board\encoders\v1.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\encoders\v2.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\Import.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\InMatrix.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\ISR.cpp">
@@ -288,7 +294,13 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="board\map\Encoders.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\map\LEDs.h">
+    <Compile Include="board\map\leds\LEDs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\map\leds\v1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\map\leds\v2.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\map\Map.h">
@@ -971,6 +983,8 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Folder Include="board\constants\" />
     <Folder Include="board\lcd\" />
     <Folder Include="board\map\" />
+    <Folder Include="board\encoders" />
+    <Folder Include="board\map\leds" />
     <Folder Include="board\pins\" />
     <Folder Include="board\variables\" />
     <Folder Include="core\adc\" />

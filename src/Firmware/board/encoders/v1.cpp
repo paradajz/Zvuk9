@@ -1,9 +1,9 @@
-#include "Board.h"
-
-uint16_t            encoderData[NUMBER_OF_ENCODERS];
-volatile uint8_t    encoderBuffer[NUMBER_OF_ENCODERS];
+#include "../Board.h"
 
 #ifdef BOARD_R1
+uint16_t            encoderData[MAX_NUMBER_OF_ENCODERS];
+volatile uint8_t    encoderBuffer[MAX_NUMBER_OF_ENCODERS];
+
 volatile uint8_t *encoderPort1Array[] =
 {
     &ENCODER_PAIR_00_PIN_0_PORT,
@@ -31,12 +31,10 @@ volatile uint8_t *encoderPort2Array[] =
     &ENCODER_PAIR_08_PIN_1_PORT,
     &ENCODER_PAIR_09_PIN_1_PORT
 };
-#endif
 
-#ifdef BOARD_R1
 void Board::initEncoders()
 {
-    for (int i=0; i<NUMBER_OF_ENCODERS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
     {
         setInput(*(encoderPort1Array[i]), encoderPinIndex1Array[i]);
         setInput(*(encoderPort2Array[i]), encoderPinIndex2Array[i]);
@@ -48,7 +46,6 @@ void Board::initEncoders()
         encoderData[i] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);   //set number of pulses to 8
     }
 }
-#endif
 
 inline int8_t readEncoder(uint8_t encoderID, uint8_t pairState)
 {
@@ -103,3 +100,4 @@ int8_t Board::getEncoderState(uint8_t encoderNumber)
     uint8_t tempBuffer = encoderBuffer[encoderNumber];
     return readEncoder(encoderNumber, tempBuffer);
 }
+#endif

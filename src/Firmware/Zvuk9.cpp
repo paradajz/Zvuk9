@@ -87,9 +87,11 @@ void startUpAnimation()
 
     sei();
 
+    #ifdef BOARD_R1
     display.displayHelloMessage();
+    #endif
 
-    wait_ms(3500);
+    wait_ms(2000);
 
     //restore led states
     for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
@@ -115,6 +117,7 @@ int main()
     db.init();
     if (!db.checkSignature())
     {
+        #ifdef BOARD_R1
         char tempBuffer[20];
 
         strcpy_P(tempBuffer, restoringDefaults_string);
@@ -126,13 +129,16 @@ int main()
         strcpy_P(tempBuffer, pleaseWait_string);
         lcd_puts(tempBuffer);
         wait_ms(2000);
+        #endif
 
         db.factoryReset(factoryReset_restore);
 
+        #ifdef BOARD_R1
         lcd_gotoxy(0,2);
         strcpy_P(tempBuffer, complete_string);
         lcd_puts(tempBuffer);
         wait_ms(2000);
+        #endif
     }
 
     #ifdef NDEBUG
@@ -180,38 +186,40 @@ int main()
 
     while(1)
     {
-        pads.update();
-        buttons.update();
-        encoders.update();
+        //pads.update();
+        //buttons.update();
+        //encoders.update();
+        #ifdef BOARD_R1
         display.update();
+        #endif
 
         #ifdef DEBUG
         vserial.update();
         #endif
 
-        #ifdef ENABLE_ASYNC_UPDATE
-        //write to eeprom when all pads are released
-        if (pads.allPadsReleased())
-            db.checkQueue();
-        #endif
-
-        #ifdef NDEBUG
-        if (midi.read(usbInterface))
-        {
-            //new message on usb
-            midiMessageType_t messageType = midi.getType(usbInterface);
-
-            switch(messageType)
-            {
-                case midiMessageSystemExclusive:
-                sysEx.handleSysEx(midi.getSysExArray(usbInterface), midi.getSysExArrayLength(usbInterface));
-                break;
-
-                default:
-                break;
-            }
-        }
-        #endif
+        //#ifdef ENABLE_ASYNC_UPDATE
+        ////write to eeprom when all pads are released
+        //if (pads.allPadsReleased())
+            //db.checkQueue();
+        //#endif
+//
+        //#ifdef NDEBUG
+        //if (midi.read(usbInterface))
+        //{
+            ////new message on usb
+            //midiMessageType_t messageType = midi.getType(usbInterface);
+//
+            //switch(messageType)
+            //{
+                //case midiMessageSystemExclusive:
+                //sysEx.handleSysEx(midi.getSysExArray(usbInterface), midi.getSysExArrayLength(usbInterface));
+                //break;
+//
+                //default:
+                //break;
+            //}
+        //}
+        //#endif
     }
 
     return 0;

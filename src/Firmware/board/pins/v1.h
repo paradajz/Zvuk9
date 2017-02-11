@@ -51,9 +51,9 @@
 #define DECODER_OUT_PORT            PORTB
 
 //used to clear all select bits in encoder (valid only if all three pins are on same port)
-#define DECODER_CLEAR_MASK          0b11110001
+#define DECODER_OUT_CLEAR_MASK      0b11110001
 
-const uint8_t decoderStateArray[] =
+const uint8_t decoderOutOrderArray[] =
 {
     0b00000000,
     0b00000010,

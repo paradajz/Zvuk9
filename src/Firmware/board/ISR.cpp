@@ -203,12 +203,50 @@ inline void ledRowsOff()
 inline void activateOutputColumn()
 {
     //clear current decoder state
-    DECODER_OUT_PORT &= DECODER_CLEAR_MASK;
+    DECODER_OUT_PORT &= DECODER_OUT_CLEAR_MASK;
     //activate new column
-    DECODER_OUT_PORT |= decoderStateArray[activeLEDcolumn];
+    DECODER_OUT_PORT |= decoderOutOrderArray[activeLEDcolumn];
 
     _NOP();
 }
+
+#ifdef BOARD_R2
+inline void activateInputColumn(uint8_t column)
+{
+    //clear current decoder state
+    DECODER_IN_PORT &= DECODER_IN_CLEAR_MASK;
+    //activate new column
+    DECODER_IN_PORT |= decoderInOrderArray[column];
+
+    _NOP();
+}
+
+inline void storeDigitalIn(uint8_t column, uint8_t bufferIndex)
+{
+    uint8_t data = 0;
+    uint8_t dataReorder = 0;
+
+    //make room for new data
+    inputBuffer[bufferIndex] <<= 8;
+
+    //pulse latch pin
+    pulseLowToHigh(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
+
+    for (int i=0; i<8; i++)
+    {
+        data <<= 1;
+        data |= readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN);
+        //pulse clock pin
+        pulseHightToLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
+    }
+
+    //reorder data to match rows on PCB layout
+    //for (int i=0; i<8; i++)
+        //bitWrite(dataReorder, i, bitRead(data, dmRowBitArray[i]));
+
+    inputBuffer[bufferIndex] |= (uint64_t)data;
+}
+#endif
 
 ISR(TIMER3_COMPA_vect)
 {
@@ -232,10 +270,28 @@ ISR(TIMER3_COMPA_vect)
     rTime_ms = ms;
 
     #ifdef BOARD_R1
-    for (int i=0; i<NUMBER_OF_ENCODERS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
     {
         bitWrite(encoderBuffer[i], 1, readPin(*encoderPort1Array[i], encoderPinIndex1Array[i]));
         bitWrite(encoderBuffer[i], 0, readPin(*encoderPort2Array[i], encoderPinIndex2Array[i]));
     }
+    #elif defined (BOARD_R2)
+    ////read input matrix
+    //uint8_t bufferIndex = digital_buffer_head + 1;
+//
+    //if (bufferIndex >= DIGITAL_BUFFER_SIZE)
+        //bufferIndex = 0;
+//
+    //if (digital_buffer_tail == bufferIndex)
+        //return; //buffer full, exit
+//
+    //inputBuffer[bufferIndex] = 0;
+    //digital_buffer_head = bufferIndex;
+//
+    //for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
+    //{
+        //activateInputColumn(i);
+        //storeDigitalIn(i, bufferIndex);
+    //}
     #endif
 }

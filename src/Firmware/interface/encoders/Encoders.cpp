@@ -5,12 +5,12 @@
 #include "../../database/Database.h"
 #include "handlers/Handlers.h"
 
-extern void (*encoderHandler[NUMBER_OF_ENCODERS]) (uint8_t id, bool state, uint8_t steps);
+extern void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, bool state, uint8_t steps);
 
 Encoders::Encoders()
 {
     //default constructor
-    for (int i=0; i<NUMBER_OF_ENCODERS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
         lastStepTime[i] = 0;
 }
 
@@ -21,7 +21,7 @@ void Encoders::init()
 
 void Encoders::update(bool process)
 {
-    for (int i=0; i<NUMBER_OF_ENCODERS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
     {
         int8_t encoderSteps = board.getEncoderState(i);
 

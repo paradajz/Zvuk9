@@ -48,11 +48,9 @@ void Board::initButtons()
     write_I2C_reg(expanderAddress[1], gppuAddress[0], 0xFF);    //expander 2, turn on pull-ups, PORTA
     write_I2C_reg(expanderAddress[1], gppuAddress[1], 0xFF);    //expander 2, turn on pull-ups, PORTB
 }
-#endif
 
 bool Board::buttonDataAvailable()
 {
-    #ifdef BOARD_R1
     mcpData <<= 8;
     mcpData |= read_I2C_reg(expanderAddress[0], gpioAddress[0]);     //expander A, GPIOA
     mcpData <<= 8;
@@ -61,16 +59,39 @@ bool Board::buttonDataAvailable()
     mcpData |= read_I2C_reg(expanderAddress[1], gpioAddress[0]);     //expander B, GPIOA
     mcpData <<= 8;
     mcpData |= read_I2C_reg(expanderAddress[1], gpioAddress[1]);     //expander B, GPIOB
-    #endif
 
     return true;
 }
 
 bool Board::getButtonState(uint8_t buttonID)
 {
-    #ifdef BOARD_R1
     return !((mcpData >> buttonID) & 0x01);
-    #elif defined (BOARD_R2)
-    return false;
-    #endif
 }
+#elif defined (BOARD_R2)
+bool buttonsProcessed;
+
+bool Board::buttonDataAvailable()
+{
+    checkInputMatrixBufferCopy();
+
+    bool returnValue = true;
+    bool _dmBufferCopied = dmBufferCopied;
+
+    if (!_dmBufferCopied)
+        returnValue = copyInputMatrixBuffer();  //buffer isn't copied
+
+    buttonsProcessed = true;
+
+    return returnValue;
+}
+
+bool Board::getButtonState(uint8_t buttonIndex)
+{
+    uint8_t row = buttonIndex/NUMBER_OF_BUTTON_COLUMNS;
+    //invert column order
+    uint8_t column = (NUMBER_OF_BUTTON_COLUMNS-1) - buttonIndex % NUMBER_OF_BUTTON_COLUMNS;
+    buttonIndex = column*8 + row;
+
+    return !((inputMatrixBufferCopy >> buttonIndex) & 0x01);
+}
+#endif
