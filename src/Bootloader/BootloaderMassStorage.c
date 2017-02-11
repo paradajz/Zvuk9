@@ -35,9 +35,9 @@
 
 #define  INCLUDE_FROM_BOOTLOADER_MASSSTORAGE_C
 #include "BootloaderMassStorage.h"
-#include "Pins.h"
-#include "PinManipulation.h"
-#include <util/crc16.h>
+#include "inc/Pins.h"
+#include "inc/PinManipulation.h"
+#include "inc/SignalLogic.h"
 
 /** LUFA Mass Storage Class driver interface configuration and state information. This structure is
  *  passed to all Mass Storage Class driver functions, so that multiple instances of the same class
@@ -76,35 +76,56 @@ bool RunBootloader = true;
  */
 static uint8_t TicksSinceLastCommand = 0;
 
-//check whether we should jump to bootloader or application
+#define REBOOT_VALUE_EEPROM_LOCATION    EEPROM_FILE_SIZE_BYTES
+#define BTLDR_REBOOT_VALUE              0x47
+#define APP_REBOOT_VALUE                0xFF
+
+/** Special startup routine to check if the bootloader was started via a watchdog reset, and if the magic application
+ *  start key has been loaded into \ref MagicBootKey. If the bootloader started via the watchdog and the key is valid,
+ *  this will force the user application to start via a software jump.
+ */
 void Application_Jump_Check(void)
 {
-    bool JumpToApplication = false;
+	bool JumpToApplication = false;
 
-    //make sure bootloader button is configured as input
-    setInputMacro(BTLDR_BUTTON_DDR, BTLDR_BUTTON_PIN_INDEX);
+	/* Check if the device's BOOTRST fuse is set */
+    //note: it is set on zvuk9 board
+	if (boot_lock_fuse_bits_get(GET_HIGH_FUSE_BITS) & FUSE_BOOTRST)
+	{
+        //if rx/tx MIDI pins are connected together on startup, jump to bootloader
+        //configure rx/tx pins
+        setInput(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN);
+        setHigh(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN);
 
-    //a bit of cheating - HWBE fuse is unprogrammed, however, we are using HWB pin to
-    //detect whether we should run bootloader or not
-    //check if buton on HWB pin is released
-    if (!((BTLDR_BUTTON_PIN_REGISTER >> BTLDR_BUTTON_PIN_INDEX) & 0x01))
-    {
-        //bootloader button is released
-        JumpToApplication = true;
-    }
+        //add some delay before reading pin
+        _delay_ms(10);
 
-    /* Don't run the user application if the reset vector is blank (no app loaded) */
-    bool ApplicationValid = (pgm_read_word_near(0) != 0xFFFF);
+        bool hardwareTrigger = readPin(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN) == BOOTLOADER_ENABLE_SIGNAL;
+        bool softwareTrigger = eeprom_read_byte((uint8_t*)EEPROM_FILE_SIZE_BYTES) == BTLDR_REBOOT_VALUE;
 
-    /* If a request has been made to jump to the user application, honor it */
-    if (JumpToApplication && ApplicationValid)
-    {
-        /* Turn off the watchdog */
-        MCUSR &= ~(1 << WDRF);
-        wdt_disable();
-        // cppcheck-suppress constStatement
-        ((void (*)(void))0x0000)();
-    }
+        if (!hardwareTrigger && !softwareTrigger)
+            JumpToApplication = true;
+
+		/* Clear reset source */
+		MCUSR &= ~(1 << EXTRF);
+	}
+
+	/* Don't run the user application if the reset vector is blank (no app loaded) */
+	bool ApplicationValid = (pgm_read_word_near(0) != 0xFFFF);
+
+	/* If a request has been made to jump to the user application, honor it */
+	if (JumpToApplication && ApplicationValid)
+	{
+		/* Turn off the watchdog */
+		MCUSR &= ~(1 << WDRF);
+		wdt_disable();
+
+		/* Clear the boot key and jump to the user application */
+		eeprom_write_byte((uint8_t*)REBOOT_VALUE_EEPROM_LOCATION, APP_REBOOT_VALUE);
+
+		// cppcheck-suppress constStatement
+		((void (*)(void))0x0000)();
+	}
 }
 
 /** Main program entry point. This routine configures the hardware required by the application, then

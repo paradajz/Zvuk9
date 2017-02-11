@@ -20,10 +20,10 @@
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
     <ProgFlashFromRam>true</ProgFlashFromRam>
-    <RamSnippetAddress />
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
     <UncachedRange />
     <preserveEEPROM>true</preserveEEPROM>
-    <OverrideVtorValue />
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
     <BootSegment>2</BootSegment>
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <AsfFrameworkConfig>
@@ -176,7 +176,22 @@
         <board id="lufa.boards.dummy.avr8" value="Add" config="" content-id="0e160d5c-e331-48d9-850b-e0387912171b" />
       </framework-data>
     </AsfFrameworkConfig>
-    <avrtool />
+    <avrtool>com.atmel.avrdbg.tool.ispmk2</avrtool>
+    <avrtoolserialnumber>0000B0026998</avrtoolserialnumber>
+    <avrdeviceexpectedsignature>0x1E9782</avrdeviceexpectedsignature>
+    <avrtoolinterface>ISP</avrtoolinterface>
+    <avrtoolinterfaceclock>125000</avrtoolinterfaceclock>
+    <com_atmel_avrdbg_tool_ispmk2>
+      <ToolOptions>
+        <InterfaceProperties>
+          <IspClock>125000</IspClock>
+        </InterfaceProperties>
+        <InterfaceName>ISP</InterfaceName>
+      </ToolOptions>
+      <ToolType>com.atmel.avrdbg.tool.ispmk2</ToolType>
+      <ToolNumber>0000B0026998</ToolNumber>
+      <ToolName>AVRISP mkII</ToolName>
+    </com_atmel_avrdbg_tool_ispmk2>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -240,11 +255,11 @@
     <PostBuildEvent>REM uploading bootloader using usbasp
 call cd $(SolutionDir)
 call cd ..\tools
-call avrdude -p usb1286 -c usbasp -e
-call avrdude -p usb1286 -c usbasp -U lock:w:0x3F:m
-call avrdude -p usb1286 -c usbasp -U lfuse:w:0xff:m -U hfuse:w:0xd0:m -U efuse:w:0xf8:m
-call avrdude.exe -p usb1286 -c usbasp -U flash:w:"$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex":i
-avrdude -p usb1286 -c usbasp -U lock:w:0x0C:m</PostBuildEvent>
+REM call avrdude -p usb1286 -c usbasp -e
+REM call avrdude -p usb1286 -c usbasp -U lock:w:0x3F:m
+REM call avrdude -p usb1286 -c usbasp -U lfuse:w:0xff:m -U hfuse:w:0xd0:m -U efuse:w:0xf8:m
+REM call avrdude.exe -p usb1286 -c usbasp -U flash:w:"$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex":i
+REM avrdude -p usb1286 -c usbasp -U lock:w:0x0C:m</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -433,6 +448,15 @@ avrdude -p usb1286 -c usbasp -U lock:w:0x0C:m</PostBuildEvent>
     <None Include="Descriptors.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="inc\PinManipulation.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="inc\Pins.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="inc\SignalLogic.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Lib\SCSI.c">
       <SubType>compile</SubType>
     </Compile>
@@ -562,12 +586,6 @@ avrdude -p usb1286 -c usbasp -U lock:w:0x0C:m</PostBuildEvent>
     <None Include="src\LUFA\LUFA\Drivers\USB\Class\Common\CDCClassCommon.h">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="PinManipulation.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="Pins.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\LUFA\LUFA\Drivers\USB\Class\Common\HIDParser.c">
       <SubType>compile</SubType>
     </Compile>
@@ -689,6 +707,7 @@ avrdude -p usb1286 -c usbasp -U lock:w:0x0C:m</PostBuildEvent>
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Lib\" />
+    <Folder Include="inc" />
     <Folder Include="src\" />
     <Folder Include="src\config\" />
     <Folder Include="src\LUFA\" />
