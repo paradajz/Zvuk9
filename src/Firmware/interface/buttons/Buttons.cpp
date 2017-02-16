@@ -9,6 +9,7 @@
 #include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
 #include "handlers/Handlers.h"
+#include "../encoders/Encoders.h"
 
 //shift new values from button in this variable
 //if it's 0xFF or buttonDebounceCompare, its reading is stable
@@ -93,8 +94,12 @@ void Buttons::processButton(uint8_t buttonID, bool state)
         lastPressedButton = buttonID;
         if (processingEnabled)
         {
-            if (buttonHandler[buttonID] != NULL)
-                (*buttonHandler[buttonID])(buttonID, state);
+            //if (buttonHandler[buttonID] != NULL)
+                //(*buttonHandler[buttonID])(buttonID, state);
+            //else
+            //{
+                printf_P(PSTR("Button %d changed\n"), buttonID);
+            //}
 
             //resume button processing
             if (!buttonEnabled[buttonID] && !getButtonState(buttonID))
@@ -122,9 +127,9 @@ void Buttons::update()
         #ifdef BOARD_R2
         uint8_t encoderPairIndex = board.getEncoderPair(i);
 
-        //if (0)
-            //buttonState = false;    //button is member of encoder pair, always set state to released
-        //else
+        if (encoders.isEnabled(encoderPairIndex))
+            buttonState = false;    //button is member of encoder pair, always set state to released
+        else
             buttonState = board.getButtonState(i);
         #elif defined (BOARD_R1)
         buttonState = board.getButtonState(i);
@@ -134,34 +139,34 @@ void Buttons::update()
     }
 
     //check split button for entering into user menu
-    //if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])
-    //{
-        //if (!pads.getEditModeState())
-        //{
-            ////measure the time the button is pressed
-            //if (!userMenuTimeout)
-            //{
-                //userMenuTimeout = rTimeMs();
-            //}
-            //else if (((rTimeMs() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed())
-            //{
-                //userMenuTimeout = 0;
-                //menu.displayMenu(userMenu);
-                //#ifdef DEBUG
-                //printf_P(PSTR("Entering user menu\n"));
-                //#endif
-                ////disable buttons while in menu
-                //buttons.disable();
-                ////turn off blinky led
-                //leds.setLEDstate(LED_ON_OFF_SPLIT, leds.getLEDstate(LED_ON_OFF_SPLIT));
-//
-            //}
-        //}
-    //}
-    //else
-    //{
-        //userMenuTimeout = 0;
-    //}
+    if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])
+    {
+        if (!pads.getEditModeState())
+        {
+            //measure the time the button is pressed
+            if (!userMenuTimeout)
+            {
+                userMenuTimeout = rTimeMs();
+            }
+            else if (((rTimeMs() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed())
+            {
+                userMenuTimeout = 0;
+                menu.displayMenu(userMenu);
+                #ifdef DEBUG
+                printf_P(PSTR("Entering user menu\n"));
+                #endif
+                //disable buttons while in menu
+                buttons.disable();
+                //turn off blinky led
+                leds.setLEDstate(LED_ON_OFF_SPLIT, leds.getLEDstate(LED_ON_OFF_SPLIT));
+
+            }
+        }
+    }
+    else
+    {
+        userMenuTimeout = 0;
+    }
 
     #ifdef BOARD_R1
     lastCheckTime = rTimeMs();

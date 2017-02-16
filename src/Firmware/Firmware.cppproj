@@ -306,7 +306,13 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="board\map\buttons\R2.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\map\Encoders.h">
+    <Compile Include="board\map\encoders\Encoders.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\map\encoders\R1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\map\encoders\R2.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\map\leds\LEDs.h">
@@ -1008,6 +1014,7 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Folder Include="board\map\leds" />
     <Folder Include="board\buttons" />
     <Folder Include="board\map\buttons" />
+    <Folder Include="board\map\encoders" />
     <Folder Include="board\pins\" />
     <Folder Include="board\variables\" />
     <Folder Include="core\adc\" />

@@ -7,3 +7,10 @@
 #define ENCODER_DEBOUNCE_TIME       500
 
 #define SCALE_ENC_DISABLE_MENU_EXIT 2000
+
+#ifdef BOARD_R2
+const uint8_t encoderPairs[MAX_NUMBER_OF_ENCODERS] =
+{
+    
+};
+#endif

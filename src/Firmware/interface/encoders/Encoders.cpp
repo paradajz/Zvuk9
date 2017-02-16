@@ -17,6 +17,17 @@ Encoders::Encoders()
 void Encoders::init()
 {
     initHandlers_encoders();
+
+    for (int i=0; i<sizeof(encoderMap); i++)
+        encoderEnabled[encoderMap[i]] = true;
+
+    #ifdef BOARD_R2
+    encoderInverted[PROGRAM_ENCODER] = true;
+    encoderInverted[X_MAX_ENCODER] = true;
+    encoderInverted[Y_MAX_ENCODER] = true;
+    encoderInverted[X_CURVE_ENCODER] = true;
+    encoderInverted[Y_CURVE_ENCODER] = true;
+    #endif
 }
 
 void Encoders::update(bool process)
@@ -24,15 +35,20 @@ void Encoders::update(bool process)
     #ifdef BOARD_R2
     if (!board.encoderDataAvailable())
         return;
-    return;
     #endif
 
     for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
     {
+        if (!isEnabled(i))
+            continue;
+
         int8_t encoderSteps = board.getEncoderState(i);
 
         if (encoderSteps == 0)
             continue;
+
+        if (encoderInverted[i])
+            encoderSteps *= -1;
 
         uint32_t timeDifference = rTimeMs() - lastStepTime[i];
         uint8_t steps = ENCODER_SPEED_1;
@@ -66,6 +82,11 @@ void Encoders::update(bool process)
 void Encoders::flush()
 {
     update(false);
+}
+
+bool Encoders::isEnabled(uint8_t encoderID)
+{
+    return encoderEnabled[encoderID];
 }
 
 Encoders encoders;

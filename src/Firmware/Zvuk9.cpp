@@ -197,29 +197,29 @@ int main()
         vserial.update();
         #endif
 
-        //#ifdef ENABLE_ASYNC_UPDATE
-        ////write to eeprom when all pads are released
-        //if (pads.allPadsReleased())
-            //db.checkQueue();
-        //#endif
-//
-        //#ifdef NDEBUG
-        //if (midi.read(usbInterface))
-        //{
-            ////new message on usb
-            //midiMessageType_t messageType = midi.getType(usbInterface);
-//
-            //switch(messageType)
-            //{
-                //case midiMessageSystemExclusive:
-                //sysEx.handleSysEx(midi.getSysExArray(usbInterface), midi.getSysExArrayLength(usbInterface));
-                //break;
-//
-                //default:
-                //break;
-            //}
-        //}
-        //#endif
+        #ifdef ENABLE_ASYNC_UPDATE
+        //write to eeprom when all pads are released
+        if (pads.allPadsReleased())
+            db.checkQueue();
+        #endif
+
+        #ifdef NDEBUG
+        if (midi.read(usbInterface))
+        {
+            //new message on usb
+            midiMessageType_t messageType = midi.getType(usbInterface);
+
+            switch(messageType)
+            {
+                case midiMessageSystemExclusive:
+                sysEx.handleSysEx(midi.getSysExArray(usbInterface), midi.getSysExArrayLength(usbInterface));
+                break;
+
+                default:
+                break;
+            }
+        }
+        #endif
     }
 
     return 0;
