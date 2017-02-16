@@ -18,7 +18,6 @@ inline void activateInputColumn(uint8_t column) __attribute__((always_inline));
 inline void storeDigitalIn(uint8_t column, uint8_t bufferIndex) __attribute__((always_inline));
 #endif
 inline void activateOutputColumn() __attribute__((always_inline));
-inline int8_t readEncoder(uint8_t encoderID, uint8_t pairState) __attribute__((always_inline));
 
 class Board
 {
@@ -39,16 +38,16 @@ class Board
     #endif
 
     private:
+    void initPins();
     void initTimers();
     #ifdef BOARD_R1
     void initButtons();
-    void initEncoders();
     #endif
-    void initLEDs();
-    void initPads();
+    void initEncoders();
     #ifdef BOARD_R2
     bool copyInputMatrixBuffer();
     void checkInputMatrixBufferCopy();
+    int8_t readEncoder(uint8_t encoderID, uint8_t pairState);
     #endif
 };
 

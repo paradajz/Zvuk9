@@ -28,7 +28,7 @@ bool Board::copyInputMatrixBuffer()
     int8_t bufferSize = getInputMatrixBufferSize();
 
     if (bufferSize <= 0)
-    return false;
+        return false;
 
     //some data in buffer
     //copy oldest member of buffer to inputMatrixBufferCopy
@@ -38,7 +38,7 @@ bool Board::copyInputMatrixBuffer()
     uint8_t index = digital_buffer_tail + 1;
 
     if (index >= DIGITAL_BUFFER_SIZE)
-    index = 0;
+        index = 0;
 
     cli();
     inputMatrixBufferCopy = inputBuffer[index];

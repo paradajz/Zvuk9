@@ -224,7 +224,6 @@ inline void activateInputColumn(uint8_t column)
 inline void storeDigitalIn(uint8_t column, uint8_t bufferIndex)
 {
     uint8_t data = 0;
-    uint8_t dataReorder = 0;
 
     //make room for new data
     inputBuffer[bufferIndex] <<= 8;
@@ -239,10 +238,6 @@ inline void storeDigitalIn(uint8_t column, uint8_t bufferIndex)
         //pulse clock pin
         pulseHightToLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
     }
-
-    //reorder data to match rows on PCB layout
-    //for (int i=0; i<8; i++)
-        //bitWrite(dataReorder, i, bitRead(data, dmRowBitArray[i]));
 
     inputBuffer[bufferIndex] |= (uint64_t)data;
 }
@@ -276,22 +271,22 @@ ISR(TIMER3_COMPA_vect)
         bitWrite(encoderBuffer[i], 0, readPin(*encoderPort2Array[i], encoderPinIndex2Array[i]));
     }
     #elif defined (BOARD_R2)
-    ////read input matrix
-    //uint8_t bufferIndex = digital_buffer_head + 1;
-//
-    //if (bufferIndex >= DIGITAL_BUFFER_SIZE)
-        //bufferIndex = 0;
-//
-    //if (digital_buffer_tail == bufferIndex)
-        //return; //buffer full, exit
-//
-    //inputBuffer[bufferIndex] = 0;
-    //digital_buffer_head = bufferIndex;
-//
-    //for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
-    //{
-        //activateInputColumn(i);
-        //storeDigitalIn(i, bufferIndex);
-    //}
+    //read input matrix
+    uint8_t bufferIndex = digital_buffer_head + 1;
+
+    if (bufferIndex >= DIGITAL_BUFFER_SIZE)
+        bufferIndex = 0;
+
+    if (digital_buffer_tail == bufferIndex)
+        return; //buffer full, exit
+
+    inputBuffer[bufferIndex] = 0;
+    digital_buffer_head = bufferIndex;
+
+    for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
+    {
+        activateInputColumn(i);
+        storeDigitalIn(i, bufferIndex);
+    }
     #endif
 }

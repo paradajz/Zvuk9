@@ -187,8 +187,8 @@ int main()
     while(1)
     {
         //pads.update();
-        //buttons.update();
-        //encoders.update();
+        buttons.update();
+        encoders.update();
         #ifdef BOARD_R1
         display.update();
         #endif

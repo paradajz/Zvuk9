@@ -1,0 +1,129 @@
+#ifdef BOARD_R1
+#include "../Board.h"
+
+void Board::initPins()
+{
+    //encoder 0, pin 1
+    setInput(ENCODER_00_PIN_0_PORT, ENCODER_00_PIN_0_PIN);
+    setHigh(ENCODER_00_PIN_0_PORT, ENCODER_00_PIN_0_PIN);
+
+    //encoder 0, pin 2
+    setInput(ENCODER_00_PIN_1_PORT, ENCODER_00_PIN_1_PIN);
+    setHigh(ENCODER_00_PIN_1_PORT, ENCODER_00_PIN_1_PIN);
+
+    //encoder 1, pin 1
+    setInput(ENCODER_01_PIN_0_PORT, ENCODER_01_PIN_0_PIN);
+    setHigh(ENCODER_01_PIN_0_PORT, ENCODER_01_PIN_0_PIN);
+
+    //encoder 1, pin 2
+    setInput(ENCODER_01_PIN_1_PORT, ENCODER_01_PIN_1_PIN);
+    setHigh(ENCODER_01_PIN_1_PIN ENCODER_01_PIN_1_PIN);
+
+    //encoder 2, pin 1
+    setInput(ENCODER_02_PIN_0_PORT, ENCODER_02_PIN_0_PIN);
+    setHigh(ENCODER_02_PIN_0_PORT, ENCODER_02_PIN_0_PIN);
+
+    //encoder 2, pin 2
+    setInput(ENCODER_02_PIN_1_PORT, ENCODER_02_PIN_1_PIN);
+    setHigh(ENCODER_02_PIN_1_PORT, ENCODER_02_PIN_1_PIN);
+
+    //encoder 3, pin 1
+    setInput(ENCODER_03_PIN_0_PORT, ENCODER_03_PIN_0_PIN);
+    setInput(ENCODER_03_PIN_0_PORT, ENCODER_03_PIN_0_PIN);
+
+    //encoder 3, pin 2
+    setInput(ENCODER_03_PIN_1_PORT, ENCODER_03_PIN_1_PIN);
+    setInput(ENCODER_03_PIN_1_PORT, ENCODER_03_PIN_1_PIN);
+
+    //encoder 4, pin 1
+    setInput(ENCODER_04_PIN_0_PORT, ENCODER_04_PIN_0_PIN);
+    setInput(ENCODER_04_PIN_0_PORT, ENCODER_04_PIN_0_PIN);
+
+    //encoder 4, pin 2
+    setInput(ENCODER_04_PIN_1_PORT, ENCODER_04_PIN_1_PIN);
+    setInput(ENCODER_04_PIN_1_PORT, ENCODER_04_PIN_1_PIN);
+
+    //encoder 5, pin 1
+    setInput(ENCODER_05_PIN_0_PORT, ENCODER_05_PIN_0_PIN);
+    setInput(ENCODER_05_PIN_0_PORT, ENCODER_05_PIN_0_PIN);
+
+    //encoder 5, pin 2
+    setInput(ENCODER_05_PIN_1_PORT, ENCODER_05_PIN_1_PIN);
+    setInput(ENCODER_05_PIN_1_PORT, ENCODER_05_PIN_1_PIN);
+
+    //encoder 6, pin 1
+    setInput(ENCODER_06_PIN_0_PORT, ENCODER_06_PIN_0_PIN);
+    setInput(ENCODER_06_PIN_0_PORT, ENCODER_06_PIN_0_PIN);
+
+    //encoder 6, pin 2
+    setInput(ENCODER_06_PIN_1_PORT, ENCODER_06_PIN_1_PIN);
+    setInput(ENCODER_06_PIN_1_PORT, ENCODER_06_PIN_1_PIN);
+
+    //encoder 7, pin 1
+    setInput(ENCODER_07_PIN_0_PORT, ENCODER_07_PIN_0_PIN);
+    setInput(ENCODER_07_PIN_0_PORT, ENCODER_07_PIN_0_PIN);
+
+    //encoder 7, pin 2
+    setInput(ENCODER_07_PIN_1_PORT, ENCODER_07_PIN_1_PIN);
+    setInput(ENCODER_07_PIN_1_PORT, ENCODER_07_PIN_1_PIN);
+
+    //encoder 8, pin 1
+    setInput(ENCODER_08_PIN_0_PORT, ENCODER_08_PIN_0_PIN);
+    setInput(ENCODER_08_PIN_0_PORT, ENCODER_08_PIN_0_PIN);
+
+    //encoder 8, pin 2
+    setInput(ENCODER_08_PIN_1_PORT, ENCODER_08_PIN_1_PIN);
+    setInput(ENCODER_08_PIN_1_PORT, ENCODER_08_PIN_1_PIN);
+
+    //encoder 9, pin 1
+    setInput(ENCODER_09_PIN_0_PORT, ENCODER_09_PIN_0_PIN);
+    setInput(ENCODER_09_PIN_0_PORT, ENCODER_09_PIN_0_PIN);
+
+    setInput(ENCODER_09_PIN_1_PORT, ENCODER_09_PIN_1_PIN);
+    setInput(ENCODER_09_PIN_1_PORT, ENCODER_09_PIN_1_PIN);
+
+    //leds
+    setOutput(LED_ROW_1_PORT, LED_ROW_1_PIN);
+    setOutput(LED_ROW_2_PORT, LED_ROW_2_PIN);
+    setOutput(LED_ROW_3_PORT, LED_ROW_3_PIN);
+
+    #ifdef LED_INVERT
+    setHigh(LED_ROW_1_PORT, LED_ROW_1_PIN);
+    setHigh(LED_ROW_2_PORT, LED_ROW_2_PIN);
+    setHigh(LED_ROW_3_PORT, LED_ROW_3_PIN);
+    #else
+    setLow(LED_ROW_1_PORT, LED_ROW_1_PIN);
+    setLow(LED_ROW_2_PORT, LED_ROW_2_PIN);
+    setLow(LED_ROW_3_PORT, LED_ROW_3_PIN);
+    #endif
+
+    setOutput(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN);
+    setOutput(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN);
+    setOutput(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN);
+
+    setLow(DECODER_OUT_1_PORT, DECODER_OUT_1_PIN);
+    setLow(DECODER_OUT_2_PORT, DECODER_OUT_2_PIN);
+    setLow(DECODER_OUT_3_PORT, DECODER_OUT_3_PIN);
+
+    //pads
+    setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
+    setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
+    setOutput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
+    setOutput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
+
+    setOutput(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN);
+    setOutput(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN);
+    setOutput(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN);
+    setOutput(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN);
+
+    setLow(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN);
+    setLow(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN);
+    setLow(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN);
+    setLow(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN);
+
+    setHigh(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
+    setHigh(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
+    setHigh(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
+    setHigh(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
+}
+#endif

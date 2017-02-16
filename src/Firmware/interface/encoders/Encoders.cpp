@@ -21,6 +21,12 @@ void Encoders::init()
 
 void Encoders::update(bool process)
 {
+    #ifdef BOARD_R2
+    if (!board.encoderDataAvailable())
+        return;
+    return;
+    #endif
+
     for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
     {
         int8_t encoderSteps = board.getEncoderState(i);
