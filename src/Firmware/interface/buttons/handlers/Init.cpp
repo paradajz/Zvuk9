@@ -38,4 +38,7 @@ void initHandlers_buttons()
     buttonHandler[BUTTON_NOTE_G] = handleTonic;
     buttonHandler[BUTTON_NOTE_A] = handleTonic;
     buttonHandler[BUTTON_NOTE_B] = handleTonic;
+
+    buttonHandler[BUTTON_PROGRAM_ENC] = handleProgramEncButton;
+    buttonHandler[BUTTON_PRESET_ENC] = handlePresetEncButton;
 }

@@ -229,7 +229,6 @@ void Pads::changeActiveOctave(bool direction)
 
 changeOutput_t Pads::changeCCvalue(bool direction, padCoordinate_t type, int8_t steps)
 {
-    //public function
     changeOutput_t result = outputChanged;
     uint8_t startPad = !splitEnabled ? 0 : getLastTouchedPad();
     uint8_t compareValue = 124; //last three values are reserved for play, stop and record
@@ -297,6 +296,9 @@ changeOutput_t Pads::changeCCvalue(bool direction, padCoordinate_t type, int8_t 
             //local
             db.update(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram), changedValue);
             variablePointer[startPad] = changedValue;
+            #ifdef DEBUG
+            printf_P(PSTR("%s CC for pad %d: %d\n"), type == coordinateX ? "X" : "Y", startPad, changedValue);
+            #endif
             break;
 
             case false:
@@ -304,6 +306,9 @@ changeOutput_t Pads::changeCCvalue(bool direction, padCoordinate_t type, int8_t 
             db.update(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
             for (int i=0; i<MAX_PADS; i++)
                 variablePointer[i] = changedValue;
+            #ifdef DEBUG
+            printf_P(PSTR("%s CC for all pads: %d\n"), type == coordinateX ? "X" : "Y", changedValue);
+            #endif
             break;
         }
     }

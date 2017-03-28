@@ -75,6 +75,7 @@
             <Value>F_CPU=16000000UL</Value>
             <Value>BOARD=BOARD_NONE</Value>
             <Value>USE_LUFA_CONFIG_HEADER</Value>
+            <Value>__AT_AT90USB1286__</Value>
           </ListValues>
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
@@ -100,6 +101,7 @@
             <Value>USE_LUFA_CONFIG_HEADER</Value>
             <Value>START_UP_ANIMATION</Value>
             <Value>BOARD_R2</Value>
+            <Value>__AT_AT90USB1286__</Value>
           </ListValues>
         </avrgcccpp.compiler.symbols.DefSymbols>
         <avrgcccpp.compiler.directories.IncludePaths>
@@ -163,6 +165,7 @@ call move FLASH.bin ..\bin\FLASH.bin</PostBuildEvent>
             <Value>USE_LUFA_CONFIG_HEADER</Value>
             <Value>F_USB=16000000UL</Value>
             <Value>DEBUG</Value>
+            <Value>__AT_AT90USB1286__</Value>
           </ListValues>
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
@@ -191,6 +194,7 @@ call move FLASH.bin ..\bin\FLASH.bin</PostBuildEvent>
             <Value>DEBUG</Value>
             <Value>START_UP_ANIMATION</Value>
             <Value>BOARD_R2</Value>
+            <Value>__AT_AT90USB1286__</Value>
           </ListValues>
         </avrgcccpp.compiler.symbols.DefSymbols>
         <avrgcccpp.compiler.directories.IncludePaths>
@@ -231,7 +235,9 @@ call version_append.exe
 call del version
 
 REM move binary to root dir
-call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
+call move FLASH.bin ..\FLASH.bin
+
+rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="board\Board.cpp">
@@ -285,13 +291,154 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="board\ISR.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\lcd\lcd.cpp">
+    <Compile Include="board\lcd\hd44780\lcd.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\lcd\lcd.h">
+    <Compile Include="board\lcd\hd44780\lcd.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\lcd\lcd_definitions.h">
+    <Compile Include="board\lcd\hd44780\lcd_definitions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\LCD.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_bitmap.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_circle.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_clip.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_com_api.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_com_api_16gr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_com_atmega_hw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_com_io.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_com_null.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_com_std_sw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_cursor.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_delay.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_dev_a2_micro_printer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_dev_flipdisc_2x7.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_dev_gprof.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_dev_null.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_dev_ssd1322_nhd31oled_bw.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_dev_ssd1322_nhd31oled_gr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_ellipse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_font.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_font_data.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_line.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_ll_api.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_page.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb14v1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb16h1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb16h2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb16v1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb16v2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb32h1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb8h1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb8h1f.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb8h2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb8h8.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb8v1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb8v2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pbxh16.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pbxh24.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_polygon.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_rot.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_scale.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_state.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_u16toa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_u8toa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_virtual_screen.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\LEDs.cpp">
@@ -327,7 +474,13 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="board\map\Map.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\map\Pads.h">
+    <Compile Include="board\map\pads\Pads.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\map\pads\R1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\map\pads\R2.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\Pads.cpp">
@@ -858,7 +1011,10 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Compile Include="interface\lcd\menu\Menu.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\MessageBuilder.cpp">
+    <Compile Include="interface\lcd\message_builder\MessageBuilder.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\lcd\message_builder\Messages.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\strings\Calibration.h">
@@ -1009,12 +1165,16 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
   <ItemGroup>
     <Folder Include="board\constants\" />
     <Folder Include="board\lcd\" />
+    <Folder Include="board\lcd\hd44780" />
+    <Folder Include="board\lcd\u8glib" />
+    <Folder Include="board\lcd\u8glib\src\" />
     <Folder Include="board\map\" />
     <Folder Include="board\encoders" />
     <Folder Include="board\map\leds" />
     <Folder Include="board\buttons" />
     <Folder Include="board\map\buttons" />
     <Folder Include="board\map\encoders" />
+    <Folder Include="board\map\pads" />
     <Folder Include="board\pins\" />
     <Folder Include="board\variables\" />
     <Folder Include="core\adc\" />
@@ -1054,6 +1214,7 @@ call move FLASH.bin ..\FLASH.bin</PostBuildEvent>
     <Folder Include="interface\lcd\menu\items" />
     <Folder Include="interface\lcd\menu\layout" />
     <Folder Include="interface\lcd\menu\functions" />
+    <Folder Include="interface\lcd\message_builder" />
     <Folder Include="interface\lcd\strings\" />
     <Folder Include="interface\leds\" />
     <Folder Include="interface\pads\" />

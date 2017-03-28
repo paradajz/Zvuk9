@@ -3,28 +3,17 @@
 #ifdef BOARD_R2
 bool buttonsProcessed;
 
+volatile uint8_t    buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
+uint8_t             inputBuffer[NUMBER_OF_BUTTON_COLUMNS];
+
 bool Board::buttonDataAvailable()
 {
-    checkInputMatrixBufferCopy();
-
-    bool returnValue = true;
-    bool _dmBufferCopied = dmBufferCopied;
-
-    if (!_dmBufferCopied)
-        returnValue = copyInputMatrixBuffer();  //buffer isn't copied
-
-    buttonsProcessed = true;
-
-    return returnValue;
+    return true;
 }
 
-bool Board::getButtonState(uint8_t buttonIndex)
-{
-    uint8_t row = buttonIndex/NUMBER_OF_BUTTON_COLUMNS;
-    //invert column order
-    uint8_t column = (NUMBER_OF_BUTTON_COLUMNS-1) - buttonIndex % NUMBER_OF_BUTTON_COLUMNS;
-    buttonIndex = column*8 + row;
 
-    return !((inputMatrixBufferCopy >> buttonIndex) & 0x01);
+uint8_t Board::getButtonState(uint8_t buttonIndex)
+{
+    return buttonDebounceCounter[buttonIndex];
 }
 #endif

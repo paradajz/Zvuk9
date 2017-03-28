@@ -137,10 +137,10 @@ void Menu::updateMenuScreen()
 
     //we can display up to three options/suboptions at the time
     //newSelectedOption needs to be subtracted by 1 since indexing uses 1 as starting point
-    uint8_t markerOption = ((currentOption-1) > (NUMBER_OF_LCD_ROWS-2)) ? (NUMBER_OF_LCD_ROWS-2) : (currentOption-1);
+    uint8_t markerOption = ((currentOption-1) > (LCD_HEIGHT-2)) ? (LCD_HEIGHT-2) : (currentOption-1);
     //position from which we start retrieving menu items
-    uint8_t startPosition = ((currentOption-1) > (NUMBER_OF_LCD_ROWS-2)) ? currentOption-1-(NUMBER_OF_LCD_ROWS-2) : 0;
-    uint8_t itemsIterate = items > (NUMBER_OF_LCD_ROWS-1) ? (NUMBER_OF_LCD_ROWS-1) : items;
+    uint8_t startPosition = ((currentOption-1) > (LCD_HEIGHT-2)) ? currentOption-1-(LCD_HEIGHT-2) : 0;
+    uint8_t itemsIterate = items > (LCD_HEIGHT-1) ? (LCD_HEIGHT-1) : items;
 
     for (int i=0; i<itemsIterate; i++)
     {
@@ -160,7 +160,7 @@ void Menu::updateMenuScreen()
         {
             //checked and unchecked strings have the same size
             uint8_t checkMarkerSize = progmemCharArraySize(checked_string);
-            uint8_t spaceFill = NUMBER_OF_LCD_COLUMNS - size - checkMarkerSize;
+            uint8_t spaceFill = LCD_WIDTH - size - checkMarkerSize;
             addSpaceToCharArray(size, spaceFill);
             size += checkMarkerSize;
 
@@ -172,13 +172,13 @@ void Menu::updateMenuScreen()
         updateDisplay(i+1, text, 0, true, size);
     }
 
-    if (items < (NUMBER_OF_LCD_ROWS-1))
+    if (items < (LCD_HEIGHT-1))
     {
         //clear rows if needed
         strcpy_P(stringBuffer, emptyLine_string);
         size = progmemCharArraySize(emptyLine_string);
 
-        for (int i=items+1; i<NUMBER_OF_LCD_ROWS; i++)
+        for (int i=items+1; i<LCD_HEIGHT; i++)
             updateDisplay(i, text, 0, true, size);
     }
 

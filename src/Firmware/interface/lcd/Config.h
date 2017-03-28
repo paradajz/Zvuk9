@@ -4,15 +4,28 @@
 
 #define LCD_MESSAGE_DURATION            1500
 
+#ifdef BOARD_R1
 //sync refresh time with this setting to show x/y and notes at the same time
 #define LCD_REFRESH_TIME                PAD_NOTE_SEND_DELAY
+#elif defined BOARD_R2
+#define LCD_REFRESH_TIME                100
+#endif
 
 #define LCD_SCROLL_TIME                 300
 
 #define LCD_PAD_DATA_CLEAR_DELAY        300
 
-#define NUMBER_OF_LCD_COLUMNS           20
-#define NUMBER_OF_LCD_ROWS              4
+#ifdef BOARD_R1
+#define LCD_WIDTH                       20
+#define LCD_HEIGHT                      4
+#elif defined (BOARD_R2)
+#define LCD_WIDTH                       35
+#define LCD_HEIGHT                      4
+#define ROW_SPACING                     15
+#endif
 
-#define MAX_TEXT_SIZE                   (NUMBER_OF_LCD_COLUMNS+10)
-#define SCROLL_LINE_LENGTH              (NUMBER_OF_LCD_COLUMNS-5)
+#ifdef BOARD_R1
+#define MAX_TEXT_SIZE                   (LCD_WIDTH+10)
+#elif defined (BOARD_R2)
+#define MAX_TEXT_SIZE                   LCD_WIDTH
+#endif

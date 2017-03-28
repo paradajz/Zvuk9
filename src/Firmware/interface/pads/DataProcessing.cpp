@@ -4,49 +4,25 @@
 
 const uint8_t pressureReductionConstant = 0b11111100;
 
-uint16_t Pads::getAverageValue(padCoordinate_t coordinate)
-{
-    switch(coordinate)
-    {
-        case coordinateX:
-        return xValueSample >> SAMPLE_SHIFT_AMOUNT;
-        break;
-
-        case coordinateY:
-        return yValueSample >> SAMPLE_SHIFT_AMOUNT;
-        break;
-
-        case coordinateZ:
-        return pressureValueSample >> SAMPLE_SHIFT_AMOUNT;
-        break;
-
-        default:
-        return 0;
-
-    }
-}
-
-bool Pads::checkX(uint8_t pad)
+bool Pads::checkX(uint8_t pad, uint16_t x)
 {
     if (pressureReduction[pad])
         return false;
 
-    int16_t medianValue = getAverageValue(coordinateX);
-
     if (calibrationEnabled && (activeCalibration == coordinateX))
     {
-        if ((medianValue < minCalibrationValue) && (medianValue != minCalibrationValue) && (medianValue >= DEFAULT_PAD_X_LIMIT_LOWER))
+        if ((x < minCalibrationValue) && (x != minCalibrationValue) && (x >= DEFAULT_PAD_X_LIMIT_LOWER))
         {
-            minCalibrationValue = medianValue;
+            minCalibrationValue = x;
 
             #ifdef DEBUG
             printf_P(PSTR("Calibrating lowest value for X, pad %d: %d\n"), pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
             #endif
             calibrate(coordinateX, lower, pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
         }
-        else if ((medianValue > maxCalibrationValue) && (medianValue != maxCalibrationValue) && maxCalibrationValue && (medianValue <= DEFAULT_PAD_X_LIMIT_UPPER))
+        else if ((x > maxCalibrationValue) && (x != maxCalibrationValue) && maxCalibrationValue && (x <= DEFAULT_PAD_X_LIMIT_UPPER))
         {
-            maxCalibrationValue = medianValue;
+            maxCalibrationValue = x;
 
             #ifdef DEBUG
             printf_P(PSTR("Calibrating max value for X, pad %d: %d\n"), pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
@@ -55,7 +31,7 @@ bool Pads::checkX(uint8_t pad)
         }
     }
 
-    int16_t xValue = scaleXY(pad, medianValue, coordinateX);
+    int16_t xValue = scaleXY(pad, x, coordinateX);
     xValue = curves.getCurveValue(coordinateX, (curve_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
     bool xChanged = false;
@@ -75,34 +51,32 @@ bool Pads::checkX(uint8_t pad)
         lastXMIDIvalue[pad] = xValue;
         xSendTimer[pad] = rTimeMs();
 
-        padDebounceTimer[pad] = rTimeMs(); //why? investigate
+        padDebounceTimer[pad] = rTimeMs();
         return true;
     }
 
     return false;
 }
 
-bool Pads::checkY(uint8_t pad)
+bool Pads::checkY(uint8_t pad, uint16_t y)
 {
     if (pressureReduction[pad])
         return false;
 
-    int16_t medianValue = getAverageValue(coordinateY);
-
     if (calibrationEnabled && (activeCalibration == coordinateY))
     {
-        if ((medianValue < minCalibrationValue) && (medianValue != minCalibrationValue) && (medianValue >= DEFAULT_PAD_Y_LIMIT_LOWER))
+        if ((y < minCalibrationValue) && (y != minCalibrationValue) && (y >= DEFAULT_PAD_Y_LIMIT_LOWER))
         {
-            minCalibrationValue = medianValue;
+            minCalibrationValue = y;
 
             #ifdef DEBUG
             printf_P(PSTR("Calibrating lowest value for Y, pad %d: %d\n"), pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
             #endif
             calibrate(coordinateY, lower, pad, minCalibrationValue+X_MIN_CALIBRATION_OFFSET);
         }
-        else if ((medianValue > maxCalibrationValue) && (medianValue != maxCalibrationValue) && maxCalibrationValue && (medianValue <= DEFAULT_PAD_Y_LIMIT_UPPER))
+        else if ((y > maxCalibrationValue) && (y != maxCalibrationValue) && maxCalibrationValue && (y <= DEFAULT_PAD_Y_LIMIT_UPPER))
         {
-            maxCalibrationValue = medianValue;
+            maxCalibrationValue = y;
 
             #ifdef DEBUG
             printf_P(PSTR("Calibrating max value for Y, pad %d: %d\n"), pad, maxCalibrationValue+X_MAX_CALIBRATION_OFFSET);
@@ -111,7 +85,7 @@ bool Pads::checkY(uint8_t pad)
         }
     }
 
-    int16_t yValue = scaleXY(pad, medianValue, coordinateY);
+    int16_t yValue = scaleXY(pad, y, coordinateY);
     yValue = curves.getCurveValue(coordinateY, (curve_t)padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
 
     bool yChanged = false;
@@ -208,7 +182,8 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                 {
                     maxAftertouchValue = calibratedPressureAfterTouch;
                     return true;
-                } else if (padsPressed > 1)
+                }
+                else if (padsPressed > 1)
                 {
                     //find max pressure
                     uint8_t tempMaxValue = 0;
@@ -286,46 +261,41 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
     return false;
 }
 
-/*
-* This function is responsible for updating pad states. Function only updates one reading at the time
-* to avoid blocking other parts of code. Three samples are needed to update pressure, three to update
-* X, and three more to update Y. X/Y are read only if pressure is detected.
-*/
 //this is a horrible function
 //go away
 void Pads::update()
 {
-    static bool velocityAvailable = false;
-    static bool aftertouchAvailable = false;
-    static bool xAvailable = false;
-    static bool yAvailable = false;
+    bool velocityAvailable = false;
+    bool aftertouchAvailable = false;
+    bool xAvailable = false;
+    bool yAvailable = false;
     bool restoreLCD = false;
 
-    if (!switchToXYread)
+    if (!board.padDataAvailable())
+        return;
+
+    uint16_t pressure;
+    uint16_t x;
+    uint16_t y;
+
+    for (int i=0; i<MAX_PADS; i++)
     {
-        if (pressureUpdated(activePad))
+        pressure = board.getPadPressure(i);
+
+        //detect if pressure is increasing or decreasing, but only if pad is pressed
+        pressureReduction[i] = isPadPressed(i) ? pressure < (uint16_t)lastPressureValue[i] : 0;
+
+        velocityAvailable = checkVelocity(i, pressure);
+        aftertouchAvailable = checkAftertouch(i, velocityAvailable);
+
+        if (isPadPressed(i))
         {
-            //all needed pressure samples are obtained
-            velocityAvailable = checkVelocity(activePad);
-            aftertouchAvailable = checkAftertouch(activePad, velocityAvailable);
-
+            x = board.getPadX(i);
+            y = board.getPadY(i);
+            xAvailable = checkX(i, x);
+            yAvailable = checkY(i, y);
         }
-    }
-    else
-    {
-        //don't update x/y if pressure isn't read
-        if (xyUpdated(activePad))
-        {
-            xAvailable = checkX(activePad);
-            yAvailable = checkY(activePad);
 
-            switchToXYread = false;
-            switchToNextPad = true;
-        }
-    }
-
-    if (switchToNextPad)
-    {
         //if we got to this point, everything that can be read is read
         if (velocityAvailable)
         {
@@ -333,9 +303,9 @@ void Pads::update()
 
             //if pad is pressed, update last pressed pad
             //if it's released clear it from history
-            updateLastPressedPad(activePad, lastMIDInoteState[activePad]);
+            updateLastPressedPad(i, lastMIDInoteState[i]);
 
-            if (!lastMIDInoteState[activePad])
+            if (!lastMIDInoteState[i])
             {
                 //lcd restore detection
                 //display data from last touched pad if current pad is released
@@ -345,71 +315,72 @@ void Pads::update()
 
             if (!getEditModeState())
             {
-                if (lastMIDInoteState[activePad] && splitEnabled)
+                if (lastMIDInoteState[i] && splitEnabled)
                 {
                     //update function leds only once, on press
                     //don't update if split is disabled (no need)
-                    setFunctionLEDs(activePad);
+                    setFunctionLEDs(i);
                 }
-                if (lastMIDInoteState[activePad])
+
+                if (lastMIDInoteState[i])
                 {
-                    uint8_t lastPressedButton = buttons.getLastPressedButton();
-                    if (buttons.getButtonState(lastPressedButton))
-                    {
-                        switch(lastPressedButton)
-                        {
-                            case BUTTON_ON_OFF_X:
-                            buttons.disable(lastPressedButton);
-                            noteSendEnabled[getLastTouchedPad()] = false;
-                            ySendEnabled[getLastTouchedPad()] = false;
-                            aftertouchSendEnabled[getLastTouchedPad()] = false;
-                            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
-                            leds.setLEDstate(LED_ON_OFF_NOTES, ledStateOff);
-                            leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
-                            break;
-
-                            case BUTTON_ON_OFF_Y:
-                            buttons.disable(lastPressedButton);
-                            noteSendEnabled[getLastTouchedPad()] = false;
-                            xSendEnabled[getLastTouchedPad()] = false;
-                            aftertouchSendEnabled[getLastTouchedPad()] = false;
-                            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
-                            leds.setLEDstate(LED_ON_OFF_NOTES, ledStateOff);
-                            leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
-                            break;
-
-                            case BUTTON_ON_OFF_NOTES:
-                            buttons.disable(lastPressedButton);
-                            xSendEnabled[getLastTouchedPad()] = false;
-                            ySendEnabled[getLastTouchedPad()] = false;
-                            aftertouchSendEnabled[getLastTouchedPad()] = false;
-                            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
-                            leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
-                            leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
-                            break;
-
-                            case BUTTON_ON_OFF_AFTERTOUCH:
-                            buttons.disable(lastPressedButton);
-                            noteSendEnabled[getLastTouchedPad()] = false;
-                            ySendEnabled[getLastTouchedPad()] = false;
-                            xSendEnabled[getLastTouchedPad()] = false;
-                            leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
-                            leds.setLEDstate(LED_ON_OFF_NOTES, ledStateOff);
-                            leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
-                            break;
-
-                            default:
-                            //do nothing
-                            break;
-                        }
-                    }
+                    //uint8_t lastPressedButton = buttons.getLastPressedButton();
+                    //if (buttons.getButtonState(lastPressedButton))
+                    //{
+                    //switch(lastPressedButton)
+                    //{
+                    //case BUTTON_ON_OFF_X:
+                    //buttons.disable(lastPressedButton);
+                    //noteSendEnabled[getLastTouchedPad()] = false;
+                    //ySendEnabled[getLastTouchedPad()] = false;
+                    //aftertouchSendEnabled[getLastTouchedPad()] = false;
+                    //leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
+                    //leds.setLEDstate(LED_ON_OFF_NOTES, ledStateOff);
+                    //leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
+                    //break;
+                    //
+                    //case BUTTON_ON_OFF_Y:
+                    //buttons.disable(lastPressedButton);
+                    //noteSendEnabled[getLastTouchedPad()] = false;
+                    //xSendEnabled[getLastTouchedPad()] = false;
+                    //aftertouchSendEnabled[getLastTouchedPad()] = false;
+                    //leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
+                    //leds.setLEDstate(LED_ON_OFF_NOTES, ledStateOff);
+                    //leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
+                    //break;
+                    //
+                    //case BUTTON_ON_OFF_NOTES:
+                    //buttons.disable(lastPressedButton);
+                    //xSendEnabled[getLastTouchedPad()] = false;
+                    //ySendEnabled[getLastTouchedPad()] = false;
+                    //aftertouchSendEnabled[getLastTouchedPad()] = false;
+                    //leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
+                    //leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
+                    //leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
+                    //break;
+                    //
+                    //case BUTTON_ON_OFF_AFTERTOUCH:
+                    //buttons.disable(lastPressedButton);
+                    //noteSendEnabled[getLastTouchedPad()] = false;
+                    //ySendEnabled[getLastTouchedPad()] = false;
+                    //xSendEnabled[getLastTouchedPad()] = false;
+                    //leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
+                    //leds.setLEDstate(LED_ON_OFF_NOTES, ledStateOff);
+                    //leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
+                    //break;
+                    //
+                    //default:
+                    ////do nothing
+                    //break;
+                    //}
+                    //}
                 }
             }
             else
             {
-                 //setup pad edit mode on press for current pad
-                if (lastMIDInoteState[activePad])
-                    setEditModeState(true, activePad);
+                //setup pad edit mode on press for current pad
+                if (lastMIDInoteState[i])
+                    setEditModeState(true, i);
             }
         }
 
@@ -419,7 +390,7 @@ void Pads::update()
         {
             //don't send midi data while in menu
             if (!menu.menuDisplayed())
-                checkMIDIdata(activePad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                checkMIDIdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
             if (restoreLCD)
             {
@@ -429,49 +400,32 @@ void Pads::update()
                     checkLCDdata(padIndex, true, true, true, true);
 
                 if (splitEnabled)
-                    setFunctionLEDs(padIndex);
+                setFunctionLEDs(padIndex);
             }
             else
             {
                 //if two pads are pressed, update data only from last pressed pad
                 //i hate this function
-                if (activePad == getLastTouchedPad())
+                if (i == getLastTouchedPad())
                 {
                     if (menu.menuDisplayed())
                     {
                         if (calibrationEnabled)
-                            checkLCDdata(activePad, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
+                        checkLCDdata(i, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
                     }
                     else
                     {
-                        checkLCDdata(activePad, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                        checkLCDdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
                     }
                 }
             }
         }
-
-        setNextPad();
-
-        velocityAvailable = false;
-        aftertouchAvailable = false;
-        xAvailable = false;
-        yAvailable = false;
     }
+
+    board.samplePads();
 
     checkRemainingOctaveShift();
     checkRemainingNoteShift();
-}
-
-bool Pads::xyUpdated(uint8_t pad)
-{
-    int16_t xValue = board.getPadX();
-    int16_t yValue = board.getPadY();
-
-    xValueSample += xValue;
-    yValueSample += yValue;
-    xySampleCounter++;
-
-    return (xySampleCounter == NUMBER_OF_SAMPLES);
 }
 
 bool Pads::pressureStable(uint8_t pad, bool pressDetected)
@@ -502,75 +456,10 @@ bool Pads::pressureStable(uint8_t pad, bool pressDetected)
     }
 }
 
-void Pads::addPressureSample(int16_t value)
+bool Pads::checkVelocity(uint8_t pad, uint16_t pressure)
 {
-    pressureValueSample += value;
-    pressureSampleCounter++;
-}
-
-bool Pads::pressureSampled()
-{
-    return (pressureSampleCounter == NUMBER_OF_SAMPLES);
-}
-
-bool Pads::pressureUpdated(uint8_t pad)
-{
-    int16_t pressure = board.getPadPressure();
-    addPressureSample(pressure);
-
-    if (!pressureSampled())
-    {
-        return false;
-    }
-    else
-    {
-        //we have pressure
-        //reset pressure sample counter
-        pressureSampleCounter = 0;
-
-        //detect if pressure is increasing or decreasing, but only if pad is pressed
-        if (isPadPressed(pad))
-        {
-            //pressureReduction[pad] = abs(getMedianValueXYZ(coordinateZ) - lastPressureValue[pad]) > 5;
-            pressureReduction[pad] = getAverageValue(coordinateZ) < (uint16_t)lastPressureValue[pad];
-        }
-        else
-        {
-            pressureReduction[pad] = 0;
-        }
-
-        return true;
-    }
-}
-
-bool Pads::checkVelocity(uint8_t pad)
-{
-    //we've taken 3 pressure samples so far, get median value
-    int16_t medianValue = getAverageValue(coordinateZ);
-
-    //if (calibrationEnabled && (activeCalibration == coordinateZ) && (medianValue > DEFAULT_PAD_PRESSURE_LIMIT_LOWER)) {
-//
-        ////calibration is enabled
-        //int16_t medianValue = getMedianValueXYZ(activeCalibration);
-//
-        ////we are only updating max calibration value for pressure
-//
-        //if (medianValue > maxCalibrationValue)
-        //maxCalibrationValue = medianValue;
-//
-        //if (maxCalibrationValue < 1024 && (maxCalibrationValue > DEFAULT_PAD_PRESSURE_LIMIT_LOWER)) {
-//
-            //pads.calibrate(activeCalibration, upper, pad, maxCalibrationValue);
-            //#ifdef DEBUG
-            //printf_P("New max calibration value, pressure, pad %d: %d\n", pad, maxCalibrationValue);
-            //#endif
-//
-        //}
-//
-    //}
-
     //calibrate pressure based on median value (0-1023 -> 0-127)
-    uint8_t calibratedPressure = scalePressure(pad, medianValue, pressureVelocity);
+    uint8_t calibratedPressure = scalePressure(pad, pressure, pressureVelocity);
     calibratedPressure = curves.getCurveValue(coordinateZ, pressureCurve, calibratedPressure, 0, 127);
 
     bool pressDetected = (calibratedPressure > 0);
@@ -595,8 +484,7 @@ bool Pads::checkVelocity(uint8_t pad)
             }
 
             //always update lastPressure value
-            lastPressureValue[pad] = medianValue;
-            switchToXYread = true;
+            lastPressureValue[pad] = pressure;
             break;
 
             case false:
@@ -609,14 +497,10 @@ bool Pads::checkVelocity(uint8_t pad)
                 lastXMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
                 lastYMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
                 bitWrite(padPressed, pad, false);  //set pad not pressed
-                switchToXYread = false;
             }
             break;
         }
     }
-
-    if (!switchToXYread)
-        switchToNextPad = true;
 
     return returnValue;
 }
@@ -912,20 +796,4 @@ void Pads::storeNotes(uint8_t pad)
     velocity_buffer[i] = lastVelocityValue[pad];
     pad_note_timer_buffer[i] = rTimeMs();
     note_buffer_head = i;
-}
-
-void Pads::setNextPad()
-{
-    switchToNextPad = false;
-    xValueSample = 0;
-    yValueSample = 0;
-    pressureValueSample = 0;
-    activePad++;
-    pressureSampleCounter = 0;
-    xySampleCounter = 0;
-
-    if (activePad == CONNECTED_PADS)
-        activePad = 0;
-
-    board.selectPad(activePad);
 }

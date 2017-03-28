@@ -29,4 +29,32 @@ const uint8_t encoderMap[] =
     Y_CURVE_ENCODER
 };
 
+const uint8_t pulsesPerStep[] =
+{
+    2,
+    2,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+};
+
+const uint8_t encInverted[] =
+{
+    1,  //PROGRAM_ENCODER
+    1,  //PRESET_ENCODER
+    0,  //X_CC_ENCODER
+    0,  //X_MIN_ENCODER
+    1,  //X_MAX_ENCODER
+    1,  //X_CURVE_ENCODER
+    0,  //Y_CC_ENCODER
+    0,  //Y_MIN_ENCODER
+    1,  //Y_MAX_ENCODER
+    1   //Y_CURVE_ENCODER
+};
+
 #endif

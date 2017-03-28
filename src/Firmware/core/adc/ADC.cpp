@@ -41,9 +41,9 @@ void setUpADC()
     for (int i=0; i<5; i++)
         getADCvalue(); //few dummy reads to init adc
 
-    //#if ADC_INTERRUPT == 1
-    //adcInterruptEnable();
-    //#endif
+    #if ADC_INTERRUPT == 1
+    adcInterruptEnable();
+    #endif
 }
 
 void setADCchannel(uint8_t channel)
@@ -70,11 +70,6 @@ int16_t getADCvalue()
 
     while (ADCSRA & (1<<ADSC));
     return ADC;
-}
-
-ISR(ADC_vect)
-{
-    adcValue = ADC;
 }
 
 bool analogReadInProgress()

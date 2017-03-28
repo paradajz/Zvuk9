@@ -104,28 +104,18 @@ class Pads
     void getAftertouchLimits();
     void getPadParameters();
 
-    //hardware control
-    void setNextPad();
-
     //midi scaling
     uint8_t scalePressure(uint8_t pad, int16_t pressure, pressureType_t type);
     uint8_t scaleXY(uint8_t pad, int16_t xyValue, padCoordinate_t type);
 
     //data sampling/debouncing
-    void addPressureSample(int16_t pressure);
-    bool pressureSampled();
     bool pressureStable(uint8_t padNumber, bool pressDetected);
-    uint16_t getAverageValue(padCoordinate_t coordinate);
-
-    //data processing
-    bool pressureUpdated(uint8_t pad);
-    bool xyUpdated(uint8_t pad);
 
     //data availability checks
     bool checkAftertouch(uint8_t pad, bool velocityAvailable);
-    bool checkX(uint8_t pad);
-    bool checkY(uint8_t pad);
-    bool checkVelocity(uint8_t pad);
+    bool checkX(uint8_t pad, uint16_t x);
+    bool checkY(uint8_t pad, uint16_t y);
+    bool checkVelocity(uint8_t pad, uint16_t pressure);
 
     //pad press updating/info
     void setPadPressState(uint8_t padNumber, bool padState);
@@ -175,11 +165,6 @@ class Pads
     //last raw pressure value
     //needed to get correct aftertouch value
     int16_t                 lastPressureValue[MAX_PADS];
-
-    //raw values
-    uint16_t                xValueSample,
-                            yValueSample,
-                            pressureValueSample;
 
     //store press states for all pads inside this variable
     uint16_t                padPressed;
@@ -234,14 +219,7 @@ class Pads
                             lastAftertouchUpdateTime[MAX_PADS],
                             aftertouchActivationDelay[MAX_PADS];
 
-    uint8_t                 pressureReduction[MAX_PADS];
-    uint8_t                 pressureSampleCounter,
-                            xySampleCounter;
-
-    //pad read control
-    uint8_t                 activePad;
-    bool                    switchToNextPad,
-                            switchToXYread;
+    bool                    pressureReduction[MAX_PADS];
 
     //used to shift octave once all pads are released
     int8_t                  octaveShiftAmount[MAX_PADS];

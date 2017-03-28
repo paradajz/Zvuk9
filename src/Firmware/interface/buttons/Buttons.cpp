@@ -15,8 +15,6 @@
 //if it's 0xFF or buttonDebounceCompare, its reading is stable
 #ifdef BOARD_R1
 const uint8_t buttonDebounceCompare = 0b11110000;
-#elif defined (BOARD_R2)
-const uint8_t buttonDebounceCompare = 0b10000000;
 #endif
 
 extern void (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (uint8_t data, bool state);
@@ -49,8 +47,12 @@ void Buttons::init()
     }
     while ((rTimeMs() - currentTime) < 100);
 
+    #ifdef BOARD_R1
     if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP))
+    #elif defined BOARD_R2
+    if (getButtonState(BUTTON_PROGRAM_ENC) && getButtonState(BUTTON_PRESET_ENC))
     {
+    #endif
         menu.displayMenu(serviceMenu);
         disable();
     }
@@ -78,12 +80,16 @@ void Buttons::setButtonState(uint8_t buttonID, bool state)
     bitWrite(buttonPressed[arrayIndex], buttonIndex, state);
 }
 
-void Buttons::processButton(uint8_t buttonID, bool state)
+void Buttons::processButton(uint8_t buttonID, uint8_t state)
 {
     bool debounced = buttonDebounced(buttonID, state);
 
     if (debounced)
     {
+        #ifdef BOARD_R2
+        state = state == 0xFF;
+        #endif
+
         //if button state is same as last one, do nothing
         //act on change only
         if (state == getButtonState(buttonID))
@@ -92,14 +98,16 @@ void Buttons::processButton(uint8_t buttonID, bool state)
         //update previous button state with current one
         setButtonState(buttonID, state);
         lastPressedButton = buttonID;
+
+        //#ifdef DEBUG
+        //printf_P(PSTR("Button %d %s.\n"), buttonID, state ? "pressed" : "released");
+        //#endif
+//
+        //return;
+
         if (processingEnabled)
         {
-            //if (buttonHandler[buttonID] != NULL)
-                //(*buttonHandler[buttonID])(buttonID, state);
-            //else
-            //{
-                printf_P(PSTR("Button %d changed\n"), buttonID);
-            //}
+            (*buttonHandler[buttonID])(buttonID, state);
 
             //resume button processing
             if (!buttonEnabled[buttonID] && !getButtonState(buttonID))
@@ -120,24 +128,18 @@ void Buttons::update()
     if (!board.buttonDataAvailable())
         return;
 
+    uint8_t buttonState;
+
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
     {
-        bool buttonState;
+        if (buttonHandler[i] == NULL)
+            continue;
 
-        #ifdef BOARD_R2
-        uint8_t encoderPairIndex = board.getEncoderPair(i);
-
-        if (encoders.isEnabled(encoderPairIndex))
-            buttonState = false;    //button is member of encoder pair, always set state to released
-        else
-            buttonState = board.getButtonState(i);
-        #elif defined (BOARD_R1)
         buttonState = board.getButtonState(i);
-        #endif
-
         processButton(i, buttonState);
     }
 
+    #ifdef BOARD_R1
     //check split button for entering into user menu
     if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])
     {
@@ -167,6 +169,7 @@ void Buttons::update()
     {
         userMenuTimeout = 0;
     }
+    #endif
 
     #ifdef BOARD_R1
     lastCheckTime = rTimeMs();
@@ -175,11 +178,15 @@ void Buttons::update()
 
 bool Buttons::buttonDebounced(uint8_t buttonID, uint8_t state)
 {
+    #ifdef BOARD_R1
     //shift new button reading into previousButtonState
     buttonDebounceCounter[buttonID] = (buttonDebounceCounter[buttonID] << 1) | state | buttonDebounceCompare;
 
     //if button is debounced, return true
     return ((buttonDebounceCounter[buttonID] == buttonDebounceCompare) || (buttonDebounceCounter[buttonID] == 0xFF));
+    #elif defined BOARD_R2
+    return ((state == 0xFF) || (state == BUTTON_DEBOUNCE_COMPARE));
+    #endif
 }
 
 void Buttons::enable(int8_t buttonID)

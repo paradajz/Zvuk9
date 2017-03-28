@@ -4,6 +4,7 @@
 #include "../../buttons/Buttons.h"
 #include "../../leds/LEDs.h"
 #include "../../lcd/LCD.h"
+#include "../../lcd/menu/Menu.h"
 #ifdef NDEBUG
 #include "../../../midi/MIDI.h"
 #endif
@@ -414,4 +415,20 @@ void handleTonic(uint8_t id, bool state)
         pads.displayActivePadNotes(pad);
         leds.displayActiveNoteLEDs(true, pad);
     }
+}
+
+void handleProgramEncButton(uint8_t id, bool state)
+{
+    if (state && !menu.menuDisplayed())
+    {
+        menu.displayMenu(userMenu);
+        #ifdef DEBUG
+        printf_P(PSTR("Entering user menu\n"));
+        #endif
+    }
+}
+
+void handlePresetEncButton(uint8_t id, bool state)
+{
+    
 }

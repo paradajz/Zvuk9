@@ -31,20 +31,20 @@ bool factoryReset(functionArgument argument)
 
                     switch(i)
                     {
-                        case 0:
-                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
-                        lcd_putc('x');
-                        break;
-
-                        case 6:
-                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_7_LOCATION, 2);
-                        lcd_putc('x');
-                        break;
-
-                        case 8:
-                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_9_LOCATION, 2);
-                        lcd_putc('x');
-                        break;
+                        //case 0:
+                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
+                        //lcd_putc('x');
+                        //break;
+//
+                        //case 6:
+                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_7_LOCATION, 2);
+                        //lcd_putc('x');
+                        //break;
+//
+                        //case 8:
+                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_9_LOCATION, 2);
+                        //lcd_putc('x');
+                        //break;
 
                         default:
                         break;
@@ -59,20 +59,20 @@ bool factoryReset(functionArgument argument)
 
                     switch(i)
                     {
-                        case 0:
-                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
-                        lcd_putc(' ');
-                        break;
-
-                        case 6:
-                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_7_LOCATION, 2);
-                        lcd_putc(' ');
-                        break;
-
-                        case 8:
-                        lcd_gotoxy(FACTORY_RESET_STRING_PAD_9_LOCATION, 2);
-                        lcd_putc(' ');
-                        break;
+                        //case 0:
+                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
+                        //lcd_putc(' ');
+                        //break;
+//
+                        //case 6:
+                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_7_LOCATION, 2);
+                        //lcd_putc(' ');
+                        //break;
+//
+                        //case 8:
+                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_9_LOCATION, 2);
+                        //lcd_putc(' ');
+                        //break;
 
                         default:
                         break;

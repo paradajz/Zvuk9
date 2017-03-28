@@ -12,8 +12,6 @@
 
 #include "Macros.h"
 #include "strings/Strings.h"
-#include <string.h>
-#include <stdlib.h>
 
 #define SPACE_CHAR          32
 
@@ -23,7 +21,7 @@ class LCD
     LCD();
     void init();
     void update();
-    void displayHelloMessage();
+    void displayWelcomeMessage();
     void displayProgramAndScale(uint8_t program, uint8_t scale);
     void clearLine(uint8_t row);
 
@@ -130,19 +128,19 @@ class LCD
     uint32_t lastLCDupdateTime;
 
     bool displayMessage_var;
-    bool lineChange[NUMBER_OF_LCD_ROWS];
-    bool scrollEnabled[NUMBER_OF_LCD_ROWS];
-    bool scrollDirection[NUMBER_OF_LCD_ROWS];
+    bool lineChange[LCD_HEIGHT];
+    bool scrollEnabled[LCD_HEIGHT];
+    bool scrollDirection[LCD_HEIGHT];
     bool messageActivated;
 
-    int8_t scrollIndex[NUMBER_OF_LCD_ROWS];
+    int8_t scrollIndex[LCD_HEIGHT];
 
-    uint8_t scrollStartIndex[NUMBER_OF_LCD_ROWS];
+    uint8_t scrollStartIndex[LCD_HEIGHT];
 
-    char lcdLine[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
-    char lcdLineMessage[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
-    char lastLCDLine[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
-    char lcdLineScroll[NUMBER_OF_LCD_ROWS][MAX_TEXT_SIZE+1];
+    char lcdLine[LCD_HEIGHT][MAX_TEXT_SIZE+1];
+    char lcdLineMessage[LCD_HEIGHT][MAX_TEXT_SIZE+1];
+    char lastLCDLine[LCD_HEIGHT][MAX_TEXT_SIZE+1];
+    char lcdLineScroll[LCD_HEIGHT][MAX_TEXT_SIZE+1];
 
     typedef struct
     {
@@ -170,6 +168,8 @@ class LCD
     } lcdElements_t;
 
     lcdElements_t lcdElements;
+
+    void draw();
 };
 
 extern LCD display;

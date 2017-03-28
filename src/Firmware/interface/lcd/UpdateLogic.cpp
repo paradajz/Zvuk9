@@ -1,5 +1,9 @@
 #include "LCD.h"
 
+#ifdef BOARD_R2
+u8g_t u8g;
+#endif
+
 LCD::LCD()
 {
     displayMessage_var = false;
@@ -15,9 +19,22 @@ void LCD::init()
 {
     #ifdef BOARD_R1
     lcd_clrscr();
+    #elif defined (BOARD_R2)
+    /*
+        SCK:    PORTB, Bit 1 --> PN(1,1)
+        MOSI:   PORTB, Bit 2 --> PN(1,2)
+        CS:     PORTA, Bit 4 --> PN(0,4)
+        A0:     PORTA, Bit 3 --> PN(0,3)
+        RESET:  PORTA, Bit 5 --> PN(0,5)
+    */
+
+    u8g_InitHWSPI(&u8g, &u8g_dev_ssd1322_nhd31oled_2x_bw_hw_spi, PN(0,4), PN(0,3), PN(0,5));
+    u8g_Begin(&u8g);
+    u8g_SetFont(&u8g, u8g_font_profont15);
+    u8g_SetCursorFont(&u8g, u8g_font_profont15);
     #endif
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+    for (int i=0; i<LCD_HEIGHT; i++)
     {
         lineChange[i] = false;
         scrollEnabled[i] = false;
@@ -27,13 +44,18 @@ void LCD::init()
     }
 
     //init char arrays
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+    for (int i=0; i<LCD_HEIGHT; i++)
     {
         lcdLine[i][0] = '\0';
         lcdLineMessage[i][0] = '\0';
         lastLCDLine[i][0] = '\0';
         lcdLineScroll[i][0] = '\0';
     }
+
+    //empty init, hacky
+    lineChange[0] = true;
+    update();
+    lineChange[0] = false;
 
    lastScrollTime = 0;
    displayMessage_var = false;
@@ -44,10 +66,20 @@ void LCD::init()
    #endif
 }
 
+void LCD::draw()
+{
+    //for (int i=0; i<LCD_HEIGHT; i++)
+    //{
+        //u8g_DrawStr(&u8g, 0, ROW_SPACING * (i+1), lcdLine[i]);
+    //}
+}
+
 void LCD::update()
 {
+    #ifdef BOARD_R1
     if ((rTimeMs() - lastLCDupdateTime) < LCD_REFRESH_TIME)
         return; //we don't need to update lcd in real time
+    #endif
 
     //get message status to determine what to print
     messageStatus_t messageStatus = getMessageStatus();
@@ -55,12 +87,22 @@ void LCD::update()
     //use char pointer to point to line we're going to print
     char *charPointer;
 
-    for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+    #ifdef BOARD_R2
+    bool proceed = false;
+    #endif
+
+    for (int i=0; i<LCD_HEIGHT; i++)
     {
+        //display on r2 is larger - no scrolling required
+        #ifdef BOARD_R1
         checkScroll(i);
+        #endif
 
         if (!lineChange[i])
             continue;
+
+        //change occurred
+        proceed = true;
 
         switch(messageStatus)
         {
@@ -79,13 +121,14 @@ void LCD::update()
             break;
         }
 
+        #ifdef BOARD_R1
         //this is to avoid buffer overflow when comparing current and previous
         //lines and current is longer than previous
         uint8_t characters = strlen(charPointer);
         uint8_t last_characters = strlen(lastLCDLine[i]);
 
-        if (characters >= NUMBER_OF_LCD_COLUMNS)
-            characters = NUMBER_OF_LCD_COLUMNS;
+        if (characters >= LCD_WIDTH)
+            characters = LCD_WIDTH;
 
         for (int j=0; j<characters; j++)
         {
@@ -99,33 +142,66 @@ void LCD::update()
             }
             else
             {
-            //this index is longer then previous line, just print
-            lcd_gotoxy(j, i);
-            lcd_putc(charPointer[j]);
+                //this index is longer then previous line, just print
+                lcd_gotoxy(j, i);
+                lcd_putc(charPointer[j]);
             }
         }
 
         //now fill remaining columns with spaces
-        for (int j=characters; j<NUMBER_OF_LCD_COLUMNS; j++)
+        for (int j=characters; j<LCD_WIDTH; j++)
         {
             lcd_gotoxy(j, i);
             lcd_putc(SPACE_CHAR);
         }
+        #endif
 
         //lastLCDLine doesn't need to be null-terminated
         //because of other checks
         strcpy(lastLCDLine[i], charPointer);
-        lineChange[i] = false;
     }
 
+    #ifdef BOARD_R2
+    if (proceed)
+    {
+        if (messageStatus == showMessage)
+        {
+            u8g_FirstPage(&u8g);
+            do
+            {
+                u8g_DrawStr(&u8g, 0, ROW_SPACING, lcdLineMessage[0]);
+                u8g_DrawStr(&u8g, 0, ROW_SPACING * 2, lcdLineMessage[1]);
+                u8g_DrawStr(&u8g, 0, ROW_SPACING * 3, lcdLineMessage[2]);
+                u8g_DrawStr(&u8g, 0, ROW_SPACING * 4, lcdLineMessage[3]);
+            } while (u8g_NextPage(&u8g));
+        }
+        else
+        {
+            u8g_FirstPage(&u8g);
+            do
+            {
+                u8g_DrawStr(&u8g, 0, ROW_SPACING, lcdLine[0]);
+                u8g_DrawStr(&u8g, 0, ROW_SPACING * 2, lcdLine[1]);
+                u8g_DrawStr(&u8g, 0, ROW_SPACING * 3, lcdLine[2]);
+                u8g_DrawStr(&u8g, 0, ROW_SPACING * 4, lcdLine[3]);
+            } while (u8g_NextPage(&u8g));
+        }
+    }
+    #endif
+
+    for (int i=0; i<LCD_HEIGHT; i++)
+        lineChange[i] = false;
+
+    #ifdef BOARD_R1
     lastLCDupdateTime = rTimeMs();
+    #endif
 }
 
 messageStatus_t LCD::getMessageStatus()
 {
     if (displayMessage_var)
     {
-        for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+        for (int i=0; i<LCD_HEIGHT; i++)
             lineChange[i] = true;
         displayMessage_var = false;
         messageActivated = true;
@@ -140,12 +216,12 @@ messageStatus_t LCD::getMessageStatus()
 
         messageActivated = false;
 
-        for (int i=0; i<NUMBER_OF_LCD_ROWS; i++)
+        for (int i=0; i<LCD_HEIGHT; i++)
         {
-            for (int j=0; j<NUMBER_OF_LCD_COLUMNS; j++)
+            for (int j=0; j<LCD_WIDTH; j++)
                 lcdLineMessage[i][j] = ' ';
 
-            lcdLineMessage[i][NUMBER_OF_LCD_COLUMNS] = '\0';
+            lcdLineMessage[i][LCD_WIDTH] = '\0';
             lineChange[i] = true;
         }
 
@@ -168,12 +244,12 @@ void LCD::checkScroll(uint8_t row)
         lcdLineScroll[row][i] = lcdLine[row][i];
 
     //scrollIndex is validated below
-    for (int i=scrollStartIndex[row]; i<NUMBER_OF_LCD_COLUMNS; i++)
+    for (int i=scrollStartIndex[row]; i<LCD_WIDTH; i++)
         lcdLineScroll[row][i] = lcdLine[row][i+scrollIndex[row]];
 
     if (scrollDirection[row])
     {
-        if (((int8_t)strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (NUMBER_OF_LCD_COLUMNS - scrollStartIndex[row] - 1))
+        if (((int8_t)strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (LCD_WIDTH - scrollStartIndex[row] - 1))
             scrollIndex[row]++;
         else
             scrollDirection[row] = false;
@@ -250,7 +326,7 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 
     lineChange[row] = true;
 
-    if (size > NUMBER_OF_LCD_COLUMNS)
+    if (size > LCD_WIDTH)
     {
         scrollEnabled[row] = true;
         scrollDirection[row] = true;

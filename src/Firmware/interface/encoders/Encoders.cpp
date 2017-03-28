@@ -10,55 +10,36 @@ extern void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, bool state, u
 Encoders::Encoders()
 {
     //default constructor
-    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
+    for (int i=0; i<CONNECTED_ENCODERS; i++)
         lastStepTime[i] = 0;
 }
 
 void Encoders::init()
 {
     initHandlers_encoders();
-
-    for (int i=0; i<sizeof(encoderMap); i++)
-        encoderEnabled[encoderMap[i]] = true;
-
-    #ifdef BOARD_R2
-    encoderInverted[PROGRAM_ENCODER] = true;
-    encoderInverted[X_MAX_ENCODER] = true;
-    encoderInverted[Y_MAX_ENCODER] = true;
-    encoderInverted[X_CURVE_ENCODER] = true;
-    encoderInverted[Y_CURVE_ENCODER] = true;
-    #endif
 }
 
 void Encoders::update(bool process)
 {
-    #ifdef BOARD_R2
-    if (!board.encoderDataAvailable())
-        return;
-    #endif
+    int8_t steps;
 
-    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
+    uint32_t currentTime = rTimeMs();
+
+    for (int i=0; i<CONNECTED_ENCODERS; i++)
     {
-        if (!isEnabled(i))
+        steps = board.getEncoderState(i);
+
+        if (steps == 0)
             continue;
 
-        int8_t encoderSteps = board.getEncoderState(i);
+        bool direction = steps > 0;
 
-        if (encoderSteps == 0)
-            continue;
+        uint32_t timeDifference = currentTime - lastStepTime[i];
 
-        if (encoderInverted[i])
-            encoderSteps *= -1;
-
-        uint32_t timeDifference = rTimeMs() - lastStepTime[i];
-        uint8_t steps = ENCODER_SPEED_1;
-
-        if (timeDifference > SPEED_TIMEOUT)
-            steps = ENCODER_SPEED_1;
-        else
+        if (timeDifference < SPEED_TIMEOUT)
             steps = ENCODER_SPEED_2;
 
-        lastStepTime[i] = rTimeMs();
+        lastStepTime[i] = currentTime;
 
         if (pads.getEditModeState())
         {
@@ -70,23 +51,18 @@ void Encoders::update(bool process)
         //no message on display? maybe TO-DO
         if (menu.menuDisplayed())
         {
-            if (!((i == PROGRAM_ENCODER) || (i == PRESET_ENCODER)))
+            if (!((encoderMap[i] == PROGRAM_ENCODER) || (encoderMap[i] == PRESET_ENCODER)))
                 return;
         }
 
-        if (encoderHandler[i] != NULL)
-            (*encoderHandler[i])(i, (encoderSteps > 0), abs(steps));
+        if (encoderHandler[encoderMap[i]] != NULL)
+            (*encoderHandler[encoderMap[i]])(encoderMap[i], direction, abs(steps));
     }
 }
 
 void Encoders::flush()
 {
     update(false);
-}
-
-bool Encoders::isEnabled(uint8_t encoderID)
-{
-    return encoderEnabled[encoderID];
 }
 
 Encoders encoders;

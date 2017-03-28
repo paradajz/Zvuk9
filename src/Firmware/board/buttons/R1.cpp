@@ -63,7 +63,7 @@ bool Board::buttonDataAvailable()
     return true;
 }
 
-bool Board::getButtonState(uint8_t buttonID)
+uint8_t Board::getButtonState(uint8_t buttonID)
 {
     return !((mcpData >> buttonID) & 0x01);
 }

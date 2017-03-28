@@ -26,3 +26,6 @@
 #define BUTTON_TRANSPORT_PLAY       27
 #define BUTTON_TRANSPORT_STOP       28
 #define BUTTON_TRANSPORT_RECORD     19
+
+#define BUTTON_PROGRAM_ENC          6
+#define BUTTON_PRESET_ENC           5

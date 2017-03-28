@@ -87,9 +87,7 @@ void startUpAnimation()
 
     sei();
 
-    #ifdef BOARD_R1
-    display.displayHelloMessage();
-    #endif
+    display.displayWelcomeMessage();
 
     wait_ms(2000);
 
@@ -184,14 +182,14 @@ int main()
     sysEx.addCustomRequest(FACTORY_RESET_STRING);
     #endif
 
+    setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
+
     while(1)
     {
         //pads.update();
         buttons.update();
         encoders.update();
-        #ifdef BOARD_R1
         display.update();
-        #endif
 
         #ifdef DEBUG
         vserial.update();

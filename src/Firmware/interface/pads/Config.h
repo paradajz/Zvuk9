@@ -2,9 +2,6 @@
 
 #define CONNECTED_PADS          9
 
-#define NUMBER_OF_SAMPLES       4
-#define SAMPLE_SHIFT_AMOUNT     2
-
 #define DEFAULT_XY_AT_VALUE     255
 #define PAD_NOTE_BUFFER_SIZE    32
 

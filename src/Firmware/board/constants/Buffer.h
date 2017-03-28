@@ -1,3 +1,3 @@
 #pragma once
 
-#define DIGITAL_BUFFER_SIZE 2
+#define DIGITAL_BUFFER_SIZE 30

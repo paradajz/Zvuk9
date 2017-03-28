@@ -35,7 +35,7 @@ class Buttons
     //button-to-led mapping
     void mapButtonsToNotes();
 
-    void processButton(uint8_t button, bool state);
+    void processButton(uint8_t button, uint8_t state);
     void setButtonState(uint8_t buttonID, bool state);
 
     uint32_t lastCheckTime;
@@ -45,8 +45,10 @@ class Buttons
     transportControlType_t transportControlType;
     note_t buttonToNoteArray[MAX_NUMBER_OF_BUTTONS];
     uint8_t lastPressedButton;
-    uint8_t     buttonPressed[MAX_NUMBER_OF_BUTTONS/8+1],
-                buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
+    uint8_t     buttonPressed[MAX_NUMBER_OF_BUTTONS/8+1];
+    #ifdef BOARD_R1
+    uint8_t buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
+    #endif
 };
 
 extern Buttons buttons;

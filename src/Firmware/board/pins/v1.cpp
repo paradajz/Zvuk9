@@ -17,7 +17,7 @@ void Board::initPins()
 
     //encoder 1, pin 2
     setInput(ENCODER_01_PIN_1_PORT, ENCODER_01_PIN_1_PIN);
-    setHigh(ENCODER_01_PIN_1_PIN ENCODER_01_PIN_1_PIN);
+    setHigh(ENCODER_01_PIN_1_PORT, ENCODER_01_PIN_1_PIN);
 
     //encoder 2, pin 1
     setInput(ENCODER_02_PIN_0_PORT, ENCODER_02_PIN_0_PIN);

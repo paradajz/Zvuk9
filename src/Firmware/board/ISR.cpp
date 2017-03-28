@@ -221,30 +221,31 @@ inline void activateInputColumn(uint8_t column)
     _NOP();
 }
 
-inline void storeDigitalIn(uint8_t column, uint8_t bufferIndex)
+inline void storeDigitalIn(uint8_t column)
 {
-    uint8_t data = 0;
-
-    //make room for new data
-    inputBuffer[bufferIndex] <<= 8;
+    uint8_t buttonNumber;
+    bool state;
 
     //pulse latch pin
     pulseLowToHigh(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
 
     for (int i=0; i<8; i++)
     {
-        data <<= 1;
-        data |= readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN);
+        //invert row, starting from last one
+        buttonNumber = column + ((7-i)*NUMBER_OF_BUTTON_COLUMNS);
+        state = !readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN);
+        buttonDebounceCounter[buttonNumber] = (buttonDebounceCounter[buttonNumber] << 1) | state | BUTTON_DEBOUNCE_COMPARE;
+        inputBuffer[column] <<= 1;
+        inputBuffer[column] |= state;
         //pulse clock pin
         pulseHightToLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
     }
-
-    inputBuffer[bufferIndex] |= (uint64_t)data;
 }
 #endif
 
 ISR(TIMER3_COMPA_vect)
 {
+    setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
     ledRowsOff();
 
     if (activeLEDcolumn == NUMBER_OF_LED_COLUMNS)
@@ -271,22 +272,55 @@ ISR(TIMER3_COMPA_vect)
         bitWrite(encoderBuffer[i], 0, readPin(*encoderPort2Array[i], encoderPinIndex2Array[i]));
     }
     #elif defined (BOARD_R2)
-    //read input matrix
-    uint8_t bufferIndex = digital_buffer_head + 1;
-
-    if (bufferIndex >= DIGITAL_BUFFER_SIZE)
-        bufferIndex = 0;
-
-    if (digital_buffer_tail == bufferIndex)
-        return; //buffer full, exit
-
-    inputBuffer[bufferIndex] = 0;
-    digital_buffer_head = bufferIndex;
 
     for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
     {
         activateInputColumn(i);
-        storeDigitalIn(i, bufferIndex);
+        storeDigitalIn(i);
+    }
+
+    uint8_t column;
+    uint8_t row;
+    uint8_t pairState;
+
+    for (int i=0; i<CONNECTED_ENCODERS; i++)
+    {
+        column = encoderMap[i] % NUMBER_OF_BUTTON_COLUMNS;
+        row = (encoderMap[i] << 1)/NUMBER_OF_BUTTON_COLUMNS;
+        pairState = (inputBuffer[column] >> row) & 0x03;
+
+        //get last encoder direction
+        bool lastDirection = bitRead(encoderState[i], 7);
+
+        //shift in new encoder readings
+        encoderState[i] <<= 2;
+        encoderState[i] |= pairState;
+        encoderState[i] &= 0x8F;
+
+        bitWrite(encoderState[i], 7, lastDirection);
+
+        int8_t newPulse = encoderLookUpTable[encoderState[i] & 0x0F];
+
+        if (!newPulse)
+            continue;
+
+        bool newDirection = encoderLookUpTable[encoderState[i] & 0x0F] > 0;
+
+        //add new pulse count
+        encPulses_x4[i] += newPulse;
+
+        //update new direction
+        bitWrite(encoderState[i], 7, newDirection);
+
+        if (lastDirection != newDirection)
+            continue;
+
+        if (encPulses_x4[i] % pulsesPerStep[i])
+            continue;
+
+        encPulses[i] += newDirection ? 1 : -1;
+        encPulses_x4[i] = 0;
     }
     #endif
+    setHigh(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
 }
