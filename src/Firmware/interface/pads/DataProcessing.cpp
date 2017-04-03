@@ -265,10 +265,10 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
 //go away
 void Pads::update()
 {
-    bool velocityAvailable = false;
-    bool aftertouchAvailable = false;
-    bool xAvailable = false;
-    bool yAvailable = false;
+    bool velocityAvailable;
+    bool aftertouchAvailable;
+    bool xAvailable;
+    bool yAvailable;
     bool restoreLCD = false;
 
     if (!board.padDataAvailable())
@@ -282,6 +282,18 @@ void Pads::update()
     {
         pressure = board.getPadPressure(i);
 
+        xAvailable = false;
+        yAvailable = false;
+        velocityAvailable = false;
+        aftertouchAvailable = false;
+
+        //#ifdef DEBUG
+        //if (pressure > 0)
+        //{
+            //printf_P(PSTR("Pressure for pad %d: %d\n"), i, pressure);
+        //}
+        //continue;
+        //#endif
         //detect if pressure is increasing or decreasing, but only if pad is pressed
         pressureReduction[i] = isPadPressed(i) ? pressure < (uint16_t)lastPressureValue[i] : 0;
 

@@ -56,7 +56,14 @@ void Encoders::update(bool process)
         }
 
         if (encoderHandler[encoderMap[i]] != NULL)
+        {
+            #ifdef BOARD_R2
+            //cancel preset button modifier with any other encoder
+            if ((encoderMap[i] != PRESET_ENCODER) && buttons.getModifierState())
+                buttons.setModifierState(false);
+            #endif
             (*encoderHandler[encoderMap[i]])(encoderMap[i], direction, abs(steps));
+        }
     }
 }
 

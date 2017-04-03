@@ -66,14 +66,6 @@ void LCD::init()
    #endif
 }
 
-void LCD::draw()
-{
-    //for (int i=0; i<LCD_HEIGHT; i++)
-    //{
-        //u8g_DrawStr(&u8g, 0, ROW_SPACING * (i+1), lcdLine[i]);
-    //}
-}
-
 void LCD::update()
 {
     #ifdef BOARD_R1
@@ -111,7 +103,21 @@ void LCD::update()
             break;
 
             case messageDisplayed:
-            return; //line change + message shown = wait
+            if (messageTime != INFINITE_MESSAGE_TIME)
+            {
+                //line change + message shown = wait
+                return;
+            }
+            else
+            {
+                removeMessage();
+                if (scrollEnabled[i])
+                    charPointer = lcdLineScroll[i];
+                else
+                    charPointer = lcdLine[i];
+                break;
+            }
+            break;
 
             default:
             if (scrollEnabled[i])
@@ -162,7 +168,9 @@ void LCD::update()
     }
 
     #ifdef BOARD_R2
-    if (proceed)
+    static uint8_t updated = 0;
+
+    if (proceed || updated)
     {
         if (messageStatus == showMessage)
         {
@@ -177,14 +185,20 @@ void LCD::update()
         }
         else
         {
-            u8g_FirstPage(&u8g);
-            do
+            if (!updated)
             {
+                u8g_FirstPage(&u8g);
+                updated = 1;
+            }
+            //do
+            //{
                 u8g_DrawStr(&u8g, 0, ROW_SPACING, lcdLine[0]);
                 u8g_DrawStr(&u8g, 0, ROW_SPACING * 2, lcdLine[1]);
                 u8g_DrawStr(&u8g, 0, ROW_SPACING * 3, lcdLine[2]);
                 u8g_DrawStr(&u8g, 0, ROW_SPACING * 4, lcdLine[3]);
-            } while (u8g_NextPage(&u8g));
+            //}
+            if (!u8g_NextPage(&u8g))
+                updated = 0;
         }
     }
     #endif
@@ -211,24 +225,31 @@ messageStatus_t LCD::getMessageStatus()
 
     if (messageActivated)
     {
-        if (!((rTimeMs() - messageDisplayTime) > LCD_MESSAGE_DURATION))
+        if ((!((rTimeMs() - messageDisplayTime) > LCD_MESSAGE_DURATION)) || (messageTime == INFINITE_MESSAGE_TIME))
             return messageDisplayed;
 
-        messageActivated = false;
-
-        for (int i=0; i<LCD_HEIGHT; i++)
-        {
-            for (int j=0; j<LCD_WIDTH; j++)
-                lcdLineMessage[i][j] = ' ';
-
-            lcdLineMessage[i][LCD_WIDTH] = '\0';
-            lineChange[i] = true;
-        }
+        removeMessage();
 
         return clearMessage;
     }
 
     return noMessage;
+}
+
+void LCD::removeMessage()
+{
+    messageActivated = false;
+
+    for (int i=0; i<LCD_HEIGHT; i++)
+    {
+        for (int j=0; j<LCD_WIDTH; j++)
+            lcdLineMessage[i][j] = ' ';
+
+        lcdLineMessage[i][LCD_WIDTH] = '\0';
+            lineChange[i] = true;
+    }
+
+    messageTime = 0;
 }
 
 void LCD::checkScroll(uint8_t row)
@@ -274,6 +295,10 @@ void LCD::displayMessage(uint8_t row, const char *message)
     strcpy(lcdLineMessage[row], message);
     messageDisplayTime = rTimeMs();
     displayMessage_var = true;
+
+    //reset if set before
+    if (messageTime == INFINITE_MESSAGE_TIME)
+        messageTime = 0;
 }
 
 void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite, bool endOfLine)
@@ -342,6 +367,11 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 void LCD::setScrollStart(uint8_t row, uint8_t index)
 {
     scrollStartIndex[row] = index;
+}
+
+void LCD::setMessageTime(int32_t msgTime)
+{
+    messageTime = -1;
 }
 
 LCD display;

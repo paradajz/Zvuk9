@@ -182,11 +182,9 @@ int main()
     sysEx.addCustomRequest(FACTORY_RESET_STRING);
     #endif
 
-    setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
-
     while(1)
     {
-        //pads.update();
+        pads.update();
         buttons.update();
         encoders.update();
         display.update();

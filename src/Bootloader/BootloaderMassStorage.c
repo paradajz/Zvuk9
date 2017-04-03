@@ -90,8 +90,8 @@ void Application_Jump_Check(void)
 
 	/* Check if the device's BOOTRST fuse is set */
     //note: it is set on zvuk9 board
-	if (boot_lock_fuse_bits_get(GET_HIGH_FUSE_BITS) & FUSE_BOOTRST)
-	{
+	//if (boot_lock_fuse_bits_get(GET_HIGH_FUSE_BITS) & FUSE_BOOTRST)
+	//{
         //if rx/tx MIDI pins are connected together on startup, jump to bootloader
         //configure rx/tx pins
         setInput(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN);
@@ -108,7 +108,7 @@ void Application_Jump_Check(void)
 
 		/* Clear reset source */
 		MCUSR &= ~(1 << EXTRF);
-	}
+	//}
 
 	/* Don't run the user application if the reset vector is blank (no app loaded) */
 	bool ApplicationValid = (pgm_read_word_near(0) != 0xFFFF);

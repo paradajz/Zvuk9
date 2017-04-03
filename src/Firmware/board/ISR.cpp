@@ -245,7 +245,6 @@ inline void storeDigitalIn(uint8_t column)
 
 ISR(TIMER3_COMPA_vect)
 {
-    setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
     ledRowsOff();
 
     if (activeLEDcolumn == NUMBER_OF_LED_COLUMNS)
@@ -322,5 +321,4 @@ ISR(TIMER3_COMPA_vect)
         encPulses_x4[i] = 0;
     }
     #endif
-    setHigh(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
 }

@@ -11,8 +11,8 @@ volatile uint8_t activePad;
 volatile uint8_t activeReadout;
 volatile uint8_t sampleCounter;
 
-#define SAMPLE_SHIFT_AMOUNT     3
-#define PAD_SAMPLES             8
+#define SAMPLE_SHIFT_AMOUNT     2
+#define PAD_SAMPLES             4
 
 //multiplexer pins
 const uint8_t muxCommonPinsAnalogRead[] =
@@ -136,24 +136,24 @@ uint16_t Board::getPadPressure(uint8_t pad)
 {
     uint16_t value1, value2;
 
-    value1 = padPressure1[pad];
-    value2 = padPressure2[pad];
+    value1 = padPressure1[pad] >> SAMPLE_SHIFT_AMOUNT;
+    value2 = padPressure2[pad] >> SAMPLE_SHIFT_AMOUNT;
 
-    return (1023 - (value2 - value1)) >> SAMPLE_SHIFT_AMOUNT;
+    return (1023 - (value2 - value1));
 }
 
 uint16_t Board::getPadX(uint8_t pad)
 {
-    return padX[pad];
+    return padX[pad] >> SAMPLE_SHIFT_AMOUNT;
 }
 
 uint16_t Board::getPadY(uint8_t pad)
 {
-    return padY[pad];
+    return padY[pad] >> SAMPLE_SHIFT_AMOUNT;
 }
 
 ISR(ADC_vect)
-{   return;
+{
     //now we have first pressure value
     readingPointer[activePad] += ADC;
     activePad++;

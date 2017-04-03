@@ -7,4 +7,4 @@
 #define MAX_SECTIONS        10
 #define START_OFFSET        5
 //unique ID (used to detect if EEPROM has been formatted)
-#define EEPROM_UNIQUE_ID    47
+#define EEPROM_UNIQUE_ID    46

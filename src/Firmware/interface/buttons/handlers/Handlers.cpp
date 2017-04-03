@@ -430,5 +430,20 @@ void handleProgramEncButton(uint8_t id, bool state)
 
 void handlePresetEncButton(uint8_t id, bool state)
 {
-    
+    if (!state)
+        return;
+
+    buttons.setModifierState(!buttons.getModifierState());
+
+    if (buttons.getModifierState())
+    {
+        //midi channel change mode, display on lcd
+        uint8_t lastTouchedPad = pads.getLastTouchedPad();
+        display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
+    }
+    else
+    {
+        //return
+        display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());
+    }
 }

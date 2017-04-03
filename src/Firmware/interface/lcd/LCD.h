@@ -65,6 +65,8 @@ class LCD
     void displayNoteShiftLevel(int8_t level);
     void displayNoteUpDown(bool state, int8_t shiftLevel = 0);
 
+    void setMessageTime(int32_t msgTime);
+
     inline uint8_t getNumberOfDigits(int32_t number)
     {
         if (number < 10)            return 1;
@@ -122,6 +124,7 @@ class LCD
     void checkScroll(uint8_t row);
     void displayPadAmount(bool singlePad, uint8_t padNumber);
     void setupLCDlayout();
+    void removeMessage();
 
     uint32_t messageDisplayTime;
     uint32_t lastScrollTime;
@@ -141,6 +144,8 @@ class LCD
     char lcdLineMessage[LCD_HEIGHT][MAX_TEXT_SIZE+1];
     char lastLCDLine[LCD_HEIGHT][MAX_TEXT_SIZE+1];
     char lcdLineScroll[LCD_HEIGHT][MAX_TEXT_SIZE+1];
+
+    int32_t messageTime;
 
     typedef struct
     {
@@ -168,8 +173,6 @@ class LCD
     } lcdElements_t;
 
     lcdElements_t lcdElements;
-
-    void draw();
 };
 
 extern LCD display;

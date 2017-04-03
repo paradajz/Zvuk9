@@ -20,6 +20,7 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
         return;
     }
 
+    #ifdef BOARD_R1
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     if (buttons.getButtonState(BUTTON_ON_OFF_SPLIT))
@@ -43,6 +44,7 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
         display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
     }
     else
+    #endif
     {
         int8_t activeProgram = pads.getActiveProgram();
 
@@ -86,23 +88,50 @@ void handleScale(uint8_t id, bool direction, uint8_t steps)
     if (rTimeMs() - menu.getExitTime() < SCALE_ENC_DISABLE_MENU_EXIT)
         return; //disable this encoder for a while after menu is exited to avoid accidental scale change
 
-    int8_t activePreset = pads.getActiveScale();
+    #ifdef BOARD_R2
+    uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
-    if (direction)
-        activePreset++;
+    if (buttons.getModifierState())
+    {
+        //change midi channel
+        buttons.disable(BUTTON_ON_OFF_SPLIT);
+
+        uint8_t midiChannel = pads.getMIDIchannel(lastTouchedPad);
+
+        if (direction)
+            midiChannel++;
+        else
+            midiChannel--;
+
+        if (midiChannel < 1)
+            midiChannel = 16;
+        if (midiChannel > 16)
+            midiChannel = 1;
+
+        pads.setMIDIchannel(lastTouchedPad, midiChannel);
+        display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
+    }
     else
+    #endif
+    {
+        int8_t activePreset = pads.getActiveScale();
+
+        if (direction)
+        activePreset++;
+        else
         activePreset--;
 
-    if (activePreset == (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES))
+        if (activePreset == (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES))
         activePreset = 0;
-    else if (activePreset < 0)
+        else if (activePreset < 0)
         activePreset = (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1);
 
-    pads.setActiveScale(activePreset);
-    leds.displayActiveNoteLEDs();
+        pads.setActiveScale(activePreset);
+        leds.displayActiveNoteLEDs();
 
-    //display scale on display
-    display.displayProgramAndScale(pads.getActiveProgram()+1, activePreset);
+        //display scale on display
+        display.displayProgramAndScale(pads.getActiveProgram()+1, activePreset);
+    }
 }
 
 void handleCC(uint8_t id, bool direction, uint8_t steps)

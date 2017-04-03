@@ -99,12 +99,6 @@ void Buttons::processButton(uint8_t buttonID, uint8_t state)
         setButtonState(buttonID, state);
         lastPressedButton = buttonID;
 
-        //#ifdef DEBUG
-        //printf_P(PSTR("Button %d %s.\n"), buttonID, state ? "pressed" : "released");
-        //#endif
-//
-        //return;
-
         if (processingEnabled)
         {
             (*buttonHandler[buttonID])(buttonID, state);
@@ -228,6 +222,16 @@ bool Buttons::getButtonEnableState(uint8_t buttonID)
 uint8_t Buttons::getLastPressedButton()
 {
     return lastPressedButton;
+}
+
+void Buttons::setModifierState(bool state)
+{
+    modifierActive = state;
+}
+
+bool Buttons::getModifierState()
+{
+    return modifierActive;
 }
 
 Buttons buttons;

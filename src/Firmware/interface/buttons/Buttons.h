@@ -24,6 +24,10 @@ class Buttons
 
     bool getButtonState(uint8_t buttonID);
 
+    void setButtonState(uint8_t buttonID, bool state);
+    void setModifierState(bool state);
+    bool getModifierState();
+
     private:
     void handleTransportControlEvent(uint8_t buttonNumber, bool state);
     void handleTonicEvent(note_t note, bool state);
@@ -36,7 +40,6 @@ class Buttons
     void mapButtonsToNotes();
 
     void processButton(uint8_t button, uint8_t state);
-    void setButtonState(uint8_t buttonID, bool state);
 
     uint32_t lastCheckTime;
     bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
@@ -49,6 +52,7 @@ class Buttons
     #ifdef BOARD_R1
     uint8_t buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
     #endif
+    bool modifierActive;
 };
 
 extern Buttons buttons;

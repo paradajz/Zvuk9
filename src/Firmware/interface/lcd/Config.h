@@ -29,3 +29,5 @@
 #elif defined (BOARD_R2)
 #define MAX_TEXT_SIZE                   LCD_WIDTH
 #endif
+
+#define INFINITE_MESSAGE_TIME           -1

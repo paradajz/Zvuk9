@@ -25,6 +25,9 @@ void LCD::displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t pa
     addNumberToCharArray(channel, size);
     updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
     displayPadAmount(_splitState, padNumber);
+    #ifdef BOARD_R2
+    display.setMessageTime(INFINITE_MESSAGE_TIME);
+    #endif
 }
 
 void LCD::displayCCchange(padCoordinate_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)
