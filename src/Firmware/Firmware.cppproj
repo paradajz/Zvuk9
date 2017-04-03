@@ -309,9 +309,6 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="board\lcd\u8glib\src\u8g_bitmap.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\lcd\u8glib\src\u8g_circle.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="board\lcd\u8glib\src\u8g_clip.c">
       <SubType>compile</SubType>
     </Compile>
@@ -339,9 +336,6 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="board\lcd\u8glib\src\u8g_delay.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\lcd\u8glib\src\u8g_dev_a2_micro_printer.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="board\lcd\u8glib\src\u8g_dev_flipdisc_2x7.c">
       <SubType>compile</SubType>
     </Compile>
@@ -355,9 +349,6 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\lcd\u8glib\src\u8g_dev_ssd1322_nhd31oled_gr.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\lcd\u8glib\src\u8g_ellipse.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\lcd\u8glib\src\u8g_font.c">
@@ -436,9 +427,6 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\lcd\u8glib\src\u8g_u8toa.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\lcd\u8glib\src\u8g_virtual_screen.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\LEDs.cpp">

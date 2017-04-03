@@ -144,12 +144,12 @@ uint16_t Board::getPadPressure(uint8_t pad)
 
 uint16_t Board::getPadX(uint8_t pad)
 {
-    return padX[pad] >> SAMPLE_SHIFT_AMOUNT;
+    return padY[pad] >> SAMPLE_SHIFT_AMOUNT;
 }
 
 uint16_t Board::getPadY(uint8_t pad)
 {
-    return padY[pad] >> SAMPLE_SHIFT_AMOUNT;
+    return padX[pad] >> SAMPLE_SHIFT_AMOUNT;
 }
 
 ISR(ADC_vect)
