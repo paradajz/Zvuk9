@@ -187,7 +187,7 @@ int main()
         pads.update();
         buttons.update();
         encoders.update();
-        //display.update();
+        display.update();
 
         #ifdef DEBUG
         vserial.update();
