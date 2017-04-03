@@ -357,6 +357,9 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="board\lcd\u8glib\src\u8g_pb.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="board\lcd\u8glib\src\u8g_pb16h1.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="board\lcd\u8glib\src\u8g_pb32h1.c">
       <SubType>compile</SubType>
     </Compile>
@@ -364,9 +367,6 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\lcd\u8glib\src\u8g_pbxh16.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\lcd\u8glib\src\u8g_pbxh24.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\lcd\u8glib\src\u8g_rot.c">
