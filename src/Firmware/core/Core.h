@@ -16,6 +16,7 @@
 #include "adc/ADC.h"
 #include "i2c/i2c_master.h"
 #include "uart/UART.h"
+#include "spi/SPI.h"
 #ifdef NDEBUG
 #include "usb/midi/Descriptors.h"
 #endif

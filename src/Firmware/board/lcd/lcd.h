@@ -3,5 +3,5 @@
 #ifdef BOARD_R1
 #include "hd44780/lcd.h"
 #elif defined (BOARD_R2)
-#include "u8glib/src/u8g.h"
+#include "U8g2/src/U8x8lib.h"
 #endif

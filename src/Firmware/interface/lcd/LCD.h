@@ -15,6 +15,10 @@
 
 #define SPACE_CHAR          32
 
+#ifdef BOARD_R2
+extern U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
+#endif
+
 class LCD
 {
     public:

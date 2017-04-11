@@ -19,7 +19,6 @@ void LCD::displayPadAmount(bool singlePad, uint8_t padNumber)
 
 void LCD::displayWelcomeMessage()
 {
-    #ifdef BOARD_R1
     strcpy_P(stringBuffer, welcome_string);
 
     uint8_t charIndex = 0;
@@ -27,21 +26,15 @@ void LCD::displayWelcomeMessage()
     while (stringBuffer[charIndex] != '\0')
     {
         //write directly to screen
+        #ifdef BOARD_R1
         lcd_putc(stringBuffer[charIndex]);
         wait_ms(75);
+        #elif defined (BOARD_R2)
+        u8x8.drawGlyph(10+charIndex, 2, stringBuffer[charIndex]);
+        wait_ms(50);
+        #endif
         charIndex++;
     }
-    #elif defined (BOARD_R2)
-    uint8_t size = progmemCharArraySize(welcome_string);
-    for (int i=1; i<=size; i++)
-    {
-        strcpy_P(stringBuffer, welcome_string);
-        lineChange[0] = true;
-        stringBuffer[i] = '\0';
-        strcpy(lcdLine[0], stringBuffer);
-        update();
-    }
-    #endif
 
     strcpy_P(stringBuffer, welcome_string);
     strcpy(lastLCDLine[0], stringBuffer);

@@ -103,7 +103,24 @@ const uint8_t decoderInOrderArray[] =
 #define INPUT_SHIFT_REG_LATCH_PIN   7
 
 //LCD
-//todo
+#define LCD_DC_PORT                 PORTA
+#define LCD_DC_PIN                  3
+
+#define LCD_CS_PORT                 PORTA
+#define LCD_CS_PIN                  4
+
+#define LCD_RESET_PORT              PORTA
+#define LCD_RESET_PIN               5
+
+//SPI
+#define SPI_CLOCK_PORT              PORTB
+#define SPI_CLOCK_PIN               1
+
+#define SPI_MOSI_PORT               PORTB
+#define SPI_MOSI_PIN                2
+
+#define SPI_SS_PORT                 PORTB
+#define SPI_SS_PIN                  0
 
 //bootloader button
 #define BTLDR_BUTTON_PORT           PORTE

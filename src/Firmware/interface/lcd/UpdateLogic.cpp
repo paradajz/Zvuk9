@@ -1,7 +1,7 @@
 #include "LCD.h"
 
 #ifdef BOARD_R2
-u8g_t u8g;
+U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
 #endif
 
 LCD::LCD()
@@ -20,18 +20,12 @@ void LCD::init()
     #ifdef BOARD_R1
     lcd_clrscr();
     #elif defined (BOARD_R2)
-    /*
-        SCK:    PORTB, Bit 1 --> PN(1,1)
-        MOSI:   PORTB, Bit 2 --> PN(1,2)
-        CS:     PORTA, Bit 4 --> PN(0,4)
-        A0:     PORTA, Bit 3 --> PN(0,3)
-        RESET:  PORTA, Bit 5 --> PN(0,5)
-    */
+    u8x8.begin();
+    u8x8.setPowerSave(0);
+    u8x8.setFlipMode(1);
 
-    u8g_InitHWSPI(&u8g, &u8g_dev_ssd1322_nhd31oled_2x_bw_hw_spi, PN(0,4), PN(0,3), PN(0,5));
-    u8g_Begin(&u8g);
-    u8g_SetFont(&u8g, u8g_font_profont15);
-    u8g_SetCursorFont(&u8g, u8g_font_profont15);
+    u8x8.setFont(u8x8_font_pressstart2p_r);
+    u8x8.clear();
     #endif
 
     for (int i=0; i<LCD_HEIGHT; i++)
@@ -79,10 +73,6 @@ void LCD::update()
     //use char pointer to point to line we're going to print
     char *charPointer;
 
-    #ifdef BOARD_R2
-    bool proceed = false;
-    #endif
-
     for (int i=0; i<LCD_HEIGHT; i++)
     {
         //display on r2 is larger - no scrolling required
@@ -92,9 +82,6 @@ void LCD::update()
 
         if (!lineChange[i])
             continue;
-
-        //change occurred
-        proceed = true;
 
         switch(messageStatus)
         {
@@ -127,14 +114,16 @@ void LCD::update()
             break;
         }
 
-        #ifdef BOARD_R1
         //this is to avoid buffer overflow when comparing current and previous
         //lines and current is longer than previous
         uint8_t characters = strlen(charPointer);
         uint8_t last_characters = strlen(lastLCDLine[i]);
 
+        #ifdef BOARD_R1
+        //lcd on board 2 is wider, don't check
         if (characters >= LCD_WIDTH)
             characters = LCD_WIDTH;
+        #endif
 
         for (int j=0; j<characters; j++)
         {
@@ -142,66 +131,41 @@ void LCD::update()
             {
                 if (charPointer[j] != lastLCDLine[i][j])
                 {
+                    #ifdef BOARD_R1
                     lcd_gotoxy(j, i);
                     lcd_putc(charPointer[j]);
+                    #elif defined (BOARD_R2)
+                    u8x8.drawGlyph(j, i, charPointer[j]);
+                    #endif
                 }
             }
             else
             {
                 //this index is longer then previous line, just print
+                #ifdef BOARD_R1
                 lcd_gotoxy(j, i);
                 lcd_putc(charPointer[j]);
+                #elif defined (BOARD_R2)
+                u8x8.drawGlyph(j, i, charPointer[j]);
+                #endif
             }
         }
 
         //now fill remaining columns with spaces
         for (int j=characters; j<LCD_WIDTH; j++)
         {
+            #ifdef BOARD_R1
             lcd_gotoxy(j, i);
             lcd_putc(SPACE_CHAR);
+            #elif defined (BOARD_R2)
+            u8x8.drawGlyph(j, i, SPACE_CHAR);
+            #endif
         }
-        #endif
 
         //lastLCDLine doesn't need to be null-terminated
         //because of other checks
         strcpy(lastLCDLine[i], charPointer);
     }
-
-    #ifdef BOARD_R2
-    static uint8_t updated = 0;
-
-    if (proceed || updated)
-    {
-        if (messageStatus == showMessage)
-        {
-            u8g_FirstPage(&u8g);
-            do
-            {
-                u8g_DrawStr(&u8g, 0, ROW_SPACING, lcdLineMessage[0]);
-                u8g_DrawStr(&u8g, 0, ROW_SPACING * 2, lcdLineMessage[1]);
-                u8g_DrawStr(&u8g, 0, ROW_SPACING * 3, lcdLineMessage[2]);
-                u8g_DrawStr(&u8g, 0, ROW_SPACING * 4, lcdLineMessage[3]);
-            } while (u8g_NextPage(&u8g));
-        }
-        else
-        {
-            if (!updated)
-            {
-                u8g_FirstPage(&u8g);
-                updated = 1;
-            }
-            //do
-            //{
-                u8g_DrawStr(&u8g, 0, ROW_SPACING, lcdLine[0]);
-                u8g_DrawStr(&u8g, 0, ROW_SPACING * 2, lcdLine[1]);
-                u8g_DrawStr(&u8g, 0, ROW_SPACING * 3, lcdLine[2]);
-                u8g_DrawStr(&u8g, 0, ROW_SPACING * 4, lcdLine[3]);
-            //}
-            if (!u8g_NextPage(&u8g))
-                updated = 0;
-        }
-    }
-    #endif
 
     for (int i=0; i<LCD_HEIGHT; i++)
         lineChange[i] = false;
