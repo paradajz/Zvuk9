@@ -29,12 +29,13 @@ class Board
     uint8_t getButtonState(uint8_t buttonID);
     bool padDataAvailable();
     void samplePads();
-    uint16_t getPadPressure(uint8_t pad);
-    uint16_t getPadX(uint8_t pad);
-    uint16_t getPadY(uint8_t pad);
     #ifdef BOARD_R2
     uint8_t getEncoderPair(uint8_t buttonID);
     #endif
+    void selectPad(uint8_t pad);
+    int16_t getPadPressure();
+    int16_t getPadX();
+    int16_t getPadY();
 
     private:
     void initPins();

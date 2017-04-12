@@ -137,7 +137,7 @@ void Buttons::update()
     //check split button for entering into user menu
     if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])
     {
-        if (!pads.getEditModeState())
+        if (!pads.editModeActive())
         {
             //measure the time the button is pressed
             if (!userMenuTimeout)

@@ -184,7 +184,7 @@ int main()
 
     while(1)
     {
-        //pads.update();
+        pads.update();
         buttons.update();
         encoders.update();
         display.update();

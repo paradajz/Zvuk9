@@ -40,6 +40,7 @@ void Pads::init()
 {
     getConfiguration();
     setupSysEx();
+    board.selectPad(activePad);
 }
 
 void Pads::setupSysEx()

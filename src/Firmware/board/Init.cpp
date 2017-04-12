@@ -8,5 +8,5 @@ void Board::init()
     initEncoders();
     initButtons();
     #endif
-    initPads();
+    setUpADC();
 };

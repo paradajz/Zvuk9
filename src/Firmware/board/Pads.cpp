@@ -1,28 +1,5 @@
 #include "Board.h"
 
-volatile uint16_t padPressure1[MAX_PADS];
-volatile uint16_t padPressure2[MAX_PADS];
-volatile uint16_t padX[MAX_PADS];
-volatile uint16_t padY[MAX_PADS];
-
-volatile uint16_t *readingPointer;
-
-volatile uint8_t activePad;
-volatile uint8_t activeReadout;
-volatile uint8_t sampleCounter;
-
-#define SAMPLE_SHIFT_AMOUNT     2
-#define PAD_SAMPLES             4
-
-//multiplexer pins
-const uint8_t muxCommonPinsAnalogRead[] =
-{
-    MUX_COMMON_PIN_0_PIN,
-    MUX_COMMON_PIN_1_PIN,
-    MUX_COMMON_PIN_2_PIN,
-    MUX_COMMON_PIN_3_PIN
-};
-
 const uint8_t padIDArray[] =
 {
     PAD_0,
@@ -34,6 +11,15 @@ const uint8_t padIDArray[] =
     PAD_6,
     PAD_7,
     PAD_8
+};
+
+//multiplexer pins
+const uint8_t muxCommonPinsAnalogRead[] =
+{
+    MUX_COMMON_PIN_0_PIN,
+    MUX_COMMON_PIN_1_PIN,
+    MUX_COMMON_PIN_2_PIN,
+    MUX_COMMON_PIN_3_PIN
 };
 
 uint8_t adcPinReadOrder_board[] =
@@ -52,12 +38,12 @@ typedef enum
     readY
 } padReadOrder;
 
-inline void nextMuxInput()
+inline void setMuxInput(uint8_t muxInput)
 {
-    bitRead(activePad, 0) ? setHigh(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN) : setLow(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN);
-    bitRead(activePad, 1) ? setHigh(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN) : setLow(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN);
-    bitRead(activePad, 2) ? setHigh(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN) : setLow(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN);
-    bitRead(activePad, 3) ? setHigh(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN) : setLow(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN);
+    bitRead(muxInput, 0) ? setHigh(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN) : setLow(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN);
+    bitRead(muxInput, 1) ? setHigh(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN) : setLow(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN);
+    bitRead(muxInput, 2) ? setHigh(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN) : setLow(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN);
+    bitRead(muxInput, 3) ? setHigh(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN) : setLow(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN);
 
     //add NOPs to compensate for propagation delay
     _NOP(); _NOP(); _NOP();
@@ -66,7 +52,7 @@ inline void nextMuxInput()
     _NOP(); _NOP(); _NOP();
 }
 
-inline void setupPressure()
+void setupPressure()
 {
     //pressure is read from x+/y+
     //set 0/5V across x-/y-
@@ -83,7 +69,7 @@ inline void setupPressure()
     _NOP(); _NOP(); _NOP();
 }
 
-inline void setupX()
+void setupX()
 {
     //x is read from y+
     //set 0/5V across x+/x-
@@ -98,9 +84,11 @@ inline void setupX()
     setHigh(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 
     _NOP(); _NOP(); _NOP();
+
+    setADCchannel(adcPinReadOrder_board[readX]);
 }
 
-inline void setupY()
+void setupY()
 {
     //y is read from x+
     //set 0/5V across y+/y-
@@ -115,107 +103,43 @@ inline void setupY()
     setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 
     _NOP(); _NOP(); _NOP();
+
+    setADCchannel(adcPinReadOrder_board[readY]);
 }
 
-void Board::initPads()
+void Board::selectPad(uint8_t pad)
 {
-    setUpADC();
+    static int8_t lastPad = -1;
+
+    //do this only once
+    if (lastPad != pad)
+    {
+        setMuxInput(padIDArray[pad]);
+        lastPad = pad;
+    }
+}
+
+int16_t Board::getPadPressure()
+{
+    int16_t value1, value2;
+
     setupPressure();
-    nextMuxInput();
     setADCchannel(adcPinReadOrder_board[readPressure0]);
-    readingPointer = padPressure1;
-    startADCconversion();
-}
-
-bool Board::padDataAvailable()
-{
-    return sampleCounter == PAD_SAMPLES;
-}
-
-uint16_t Board::getPadPressure(uint8_t pad)
-{
-    uint16_t value1, value2;
-
-    value1 = padPressure1[pad] >> SAMPLE_SHIFT_AMOUNT;
-    value2 = padPressure2[pad] >> SAMPLE_SHIFT_AMOUNT;
+    value1 = getADCvalue();
+    setADCchannel(adcPinReadOrder_board[readPressure1]);
+    value2 = getADCvalue();
 
     return (1023 - (value2 - value1));
 }
 
-uint16_t Board::getPadX(uint8_t pad)
+int16_t Board::getPadX()
 {
-    return padY[pad] >> SAMPLE_SHIFT_AMOUNT;
+    setupX();
+    return getADCvalue();
 }
 
-uint16_t Board::getPadY(uint8_t pad)
+int16_t Board::getPadY()
 {
-    return padX[pad] >> SAMPLE_SHIFT_AMOUNT;
-}
-
-ISR(ADC_vect)
-{
-    //now we have first pressure value
-    readingPointer[activePad] += ADC;
-    activePad++;
-
-    if (activePad == MAX_PADS)
-    {
-        activeReadout++;
-
-        if (activeReadout == 4)
-        {
-            sampleCounter++;
-            activeReadout = 0;
-        }
-
-        switch(activeReadout)
-        {
-            case 0:
-            setupPressure();
-            setADCchannel(adcPinReadOrder_board[readPressure0]);
-            readingPointer = padPressure1;
-            break;
-
-            case 1:
-            //pressure already setup
-            setADCchannel(adcPinReadOrder_board[readPressure1]);
-            readingPointer = padPressure2;
-            break;
-
-            case 2:
-            setupX();
-            setADCchannel(adcPinReadOrder_board[readX]);
-            readingPointer = padX;
-            break;
-
-            case 3:
-            setupY();
-            setADCchannel(adcPinReadOrder_board[readY]);
-            readingPointer = padY;
-            break;
-        }
-
-        activePad = 0;
-    }
-
-    nextMuxInput();
-
-    if (sampleCounter < PAD_SAMPLES)
-        startADCconversion();
-}
-
-void Board::samplePads()
-{
-    for (int i=0; i<MAX_PADS; i++)
-    {
-        padPressure1[i] = 0;
-        padPressure2[i] = 0;
-        padX[i] = 0;
-        padY[i] = 0;
-    }
-
-    activePad = 0;
-    activeReadout = 0;
-    sampleCounter = 0;
-    startADCconversion();
+    setupY();
+    return getADCvalue();
 }
