@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER            75
+#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER            20
 #define DEFAULT_PAD_PRESSURE_LIMIT_UPPER            380
 
 #define DEFAULT_PAD_X_LIMIT_LOWER                   150
