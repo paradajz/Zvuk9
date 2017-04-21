@@ -41,18 +41,15 @@ class Buttons
 
     void processButton(uint8_t button, uint8_t state);
 
-    uint32_t lastCheckTime;
-    bool buttonEnabled[MAX_NUMBER_OF_BUTTONS];
-    bool processingEnabled;
-    uint32_t userMenuTimeout;
-    transportControlType_t transportControlType;
-    note_t buttonToNoteArray[MAX_NUMBER_OF_BUTTONS];
-    uint8_t lastPressedButton;
-    uint8_t     buttonPressed[MAX_NUMBER_OF_BUTTONS/8+1];
-    #ifdef BOARD_R1
-    uint8_t buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
-    #endif
-    bool modifierActive;
+    uint32_t                lastCheckTime;
+    bool                    buttonEnabled[MAX_NUMBER_OF_BUTTONS];
+    bool                    processingEnabled;
+    uint32_t                userMenuTimeout;
+    transportControlType_t  transportControlType;
+    note_t                  buttonToNoteArray[MAX_NUMBER_OF_BUTTONS];
+    uint8_t                 lastPressedButton;
+    uint8_t                 buttonPressed[MAX_NUMBER_OF_BUTTONS/8+1];
+    bool                    modifierActive;
 };
 
 extern Buttons buttons;

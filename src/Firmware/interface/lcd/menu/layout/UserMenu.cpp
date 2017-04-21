@@ -1,8 +1,7 @@
 #include "../Menu.h"
 #include "../items/UserMenu.h"
 
-#include "../../../../version/Firmware.h"
-#include "../../../../version/Hardware.h"
+#include "../../../../version/Version.h"
 #include "../../../../database/Database.h"
 #include "../../../../midi/DataTypes.h"
 #include "../functions/MenuFunctions.h"
@@ -154,5 +153,5 @@ void Menu::createUserMenuLayout()
     menuItem[userMenuItem_factoryReset].stringPointer = menuOption_factoryReset_string;
     menuItem[userMenuItem_factoryReset].level = 4;
     menuItem[userMenuItem_factoryReset].function = factoryReset;
-    menuItem[userMenuItem_factoryReset].argument.argument1 = (uint8_t)factoryReset_partial;
+    menuItem[userMenuItem_factoryReset].argument.argument1 = (uint8_t)initPartial;
 }

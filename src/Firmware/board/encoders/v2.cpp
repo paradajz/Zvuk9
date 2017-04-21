@@ -1,7 +1,5 @@
 #include "../Board.h"
 
-#if defined (BOARD_R2)
-
 uint8_t Board::getEncoderPair(uint8_t buttonIndex)
 {
     uint8_t row = buttonIndex/NUMBER_OF_BUTTON_COLUMNS;
@@ -29,4 +27,3 @@ int8_t Board::getEncoderState(uint8_t encoderNumber)
 
     return pulses;
 }
-#endif

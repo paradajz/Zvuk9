@@ -4,6 +4,7 @@
 #include "../../lcd/LCD.h"
 #include "../../lcd/menu/Menu.h"
 #include "../../encoders/Encoders.h"
+#include "../../../database/Database.h"
 
 void handleProgram(uint8_t id, bool direction, uint8_t steps)
 {
@@ -20,54 +21,27 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
         return;
     }
 
-    #ifdef BOARD_R1
-    uint8_t lastTouchedPad = pads.getLastTouchedPad();
+    int8_t activeProgram = pads.getActiveProgram();
 
-    if (buttons.getButtonState(BUTTON_ON_OFF_SPLIT))
-    {
-        //change midi channel
-        buttons.disable(BUTTON_ON_OFF_SPLIT);
-
-        uint8_t midiChannel = pads.getMIDIchannel(lastTouchedPad);
-
-        if (direction)
-            midiChannel++;
-        else
-            midiChannel--;
-
-        if (midiChannel < 1)
-            midiChannel = 16;
-        if (midiChannel > 16)
-            midiChannel = 1;
-
-        pads.setMIDIchannel(lastTouchedPad, midiChannel);
-        display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
-    }
+    if (direction)
+        activeProgram++;
     else
-    #endif
-    {
-        int8_t activeProgram = pads.getActiveProgram();
+        activeProgram--;
 
-        if (direction)
-            activeProgram++;
-        else
-            activeProgram--;
+    if (activeProgram == NUMBER_OF_PROGRAMS)
+        activeProgram = 0;
+    else if (activeProgram < 0)
+        activeProgram = (NUMBER_OF_PROGRAMS-1);
+    pads.setActiveProgram(activeProgram);
 
-        if (activeProgram == NUMBER_OF_PROGRAMS)
-            activeProgram = 0;
-        else if (activeProgram < 0)
-            activeProgram = (NUMBER_OF_PROGRAMS-1);
-        pads.setActiveProgram(activeProgram);
+    //get last active scale on current program
+    uint8_t currentPreset = pads.getActiveScale();
 
-        //get last active scale on current program
-        uint8_t currentPreset = pads.getActiveScale();
+    //scale is changed
+    leds.displayActiveNoteLEDs();
 
-        //scale is changed
-        leds.displayActiveNoteLEDs();
-
-        //display scale on display
-        display.displayProgramAndScale(activeProgram+1, currentPreset);
-    }
+    //display scale on display
+    display.displayProgramAndScale(activeProgram+1, currentPreset);
 }
 
 void handleScale(uint8_t id, bool direction, uint8_t steps)
@@ -88,7 +62,6 @@ void handleScale(uint8_t id, bool direction, uint8_t steps)
     if (rTimeMs() - menu.getExitTime() < SCALE_ENC_DISABLE_MENU_EXIT)
         return; //disable this encoder for a while after menu is exited to avoid accidental scale change
 
-    #ifdef BOARD_R2
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     if (buttons.getModifierState())
@@ -112,7 +85,6 @@ void handleScale(uint8_t id, bool direction, uint8_t steps)
         display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
     }
     else
-    #endif
     {
         int8_t activePreset = pads.getActiveScale();
 

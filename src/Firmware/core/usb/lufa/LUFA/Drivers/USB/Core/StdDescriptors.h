@@ -458,12 +458,12 @@
 				USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
 
 				uint16_t TotalConfigurationSize; /**< Size of the configuration descriptor header,
-				                                  *   and all sub descriptors inside the db.
+				                                  *   and all sub descriptors inside the database.
 				                                  */
-				uint8_t  TotalInterfaces; /**< Total number of interfaces in the db. */
+				uint8_t  TotalInterfaces; /**< Total number of interfaces in the database. */
 
-				uint8_t  ConfigurationNumber; /**< Configuration index of the current db. */
-				uint8_t  ConfigurationStrIndex; /**< Index of a string descriptor describing the db. */
+				uint8_t  ConfigurationNumber; /**< Configuration index of the current database. */
+				uint8_t  ConfigurationStrIndex; /**< Index of a string descriptor describing the database. */
 
 				uint8_t  ConfigAttributes; /**< Configuration attributes, comprised of a mask of \c USB_CONFIG_ATTR_* masks.
 				                            *   On all devices, this should include USB_CONFIG_ATTR_RESERVED at a minimum.
@@ -491,11 +491,11 @@
 				                           *   given by the specific class.
 				                           */
 				uint16_t wTotalLength; /**< Size of the configuration descriptor header,
-				                           *   and all sub descriptors inside the db.
+				                           *   and all sub descriptors inside the database.
 				                           */
-				uint8_t  bNumInterfaces; /**< Total number of interfaces in the db. */
-				uint8_t  bConfigurationValue; /**< Configuration index of the current db. */
-				uint8_t  iConfiguration; /**< Index of a string descriptor describing the db. */
+				uint8_t  bNumInterfaces; /**< Total number of interfaces in the database. */
+				uint8_t  bConfigurationValue; /**< Configuration index of the current database. */
+				uint8_t  iConfiguration; /**< Index of a string descriptor describing the database. */
 				uint8_t  bmAttributes; /**< Configuration attributes, comprised of a mask of \c USB_CONFIG_ATTR_* masks.
 				                        *   On all devices, this should include USB_CONFIG_ATTR_RESERVED at a minimum.
 				                        */
@@ -518,7 +518,7 @@
 			{
 				USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
 
-				uint8_t InterfaceNumber; /**< Index of the interface in the current db. */
+				uint8_t InterfaceNumber; /**< Index of the interface in the current database. */
 				uint8_t AlternateSetting; /**< Alternate setting for the interface number. The same
 				                           *   interface number can have multiple alternate settings
 				                           *   with different endpoint configurations, which can be
@@ -548,7 +548,7 @@
 				uint8_t bDescriptorType; /**< Type of the descriptor, either a value in \ref USB_DescriptorTypes_t or a value
 				                          *   given by the specific class.
 				                          */
-				uint8_t bInterfaceNumber; /**< Index of the interface in the current db. */
+				uint8_t bInterfaceNumber; /**< Index of the interface in the current database. */
 				uint8_t bAlternateSetting; /**< Alternate setting for the interface number. The same
 				                            *   interface number can have multiple alternate settings
 				                            *   with different endpoint configurations, which can be

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../../database/Defaults.h"
-
 //don't check velocity for PAD_PRESS_DEBOUNCE_TIMEms after pad has just been pressed
 #define PAD_PRESS_DEBOUNCE_TIME             1
 //pad is considered released PAD_RELEASE_DEBOUNCE_TIMEms after releasing pad
@@ -35,8 +33,6 @@
 #define X_MIN_CALIBRATION_OFFSET            10
 #define X_MAX_CALIBRATION_OFFSET            -10
 
-#define XY_FLIP_VALUES                      0
-
 //there are three different pressure levels - low, medium, hard
 //medium pressure increase is low level +30%
 //hard pressure increase is low level +50%
@@ -45,5 +41,3 @@
 
 #define MIN_Y_VALUE                         450
 #define MAX_Y_VALUE                         620
-
-#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER    100

@@ -1,4 +1,3 @@
-#ifdef BOARD_R2
 #include "../Board.h"
 
 void Board::initPins()
@@ -57,4 +56,3 @@ void Board::initPins()
     setOutput(DECODER_IN_A1_PORT, DECODER_IN_A1_PIN);
     setOutput(DECODER_IN_A2_PORT, DECODER_IN_A2_PIN);
 }
-#endif

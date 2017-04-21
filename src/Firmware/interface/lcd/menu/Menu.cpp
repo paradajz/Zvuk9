@@ -110,17 +110,17 @@ void Menu::getMenuItems()
     //reset current items
     items = 0;
 
-    uint8_t currentDigits = display.getNumberOfDigits(menuHierarchyPosition);
+    uint8_t currentDigits = getNumberOfDigits(menuHierarchyPosition);
     uint8_t currentOption = menuHierarchyPosition % 10;
     uint16_t subtract = (menuHierarchyPosition - currentOption) * (currentDigits > 1);
 
     for (int i=0; i<menuSize; i++)
     {
-        if (display.getNumberOfDigits(menuItem[i].level) == currentDigits)
+        if (getNumberOfDigits(menuItem[i].level) == currentDigits)
         {
             int16_t result = menuItem[i].level - subtract;
 
-            if ((display.getNumberOfDigits(result) == 1) && (result > 0))
+            if ((getNumberOfDigits(result) == 1) && (result > 0))
             {
                 indexes[items] = i;
                 items++;
@@ -150,10 +150,12 @@ void Menu::updateMenuScreen()
         else
             stringBuffer[0] = SPACE_CHAR;
 
+        size = 1;
+
         stringBuffer[1] = '\0';
         strcpy_P(tempBuffer, menuItem[indexes[i+startPosition]].stringPointer);
+        size += strlen(tempBuffer);
         strcat(stringBuffer, tempBuffer);
-        size = 1 + strlen_P(menuItem[indexes[i+startPosition]].stringPointer);
 
         //check for checkable items
         if (menuItem[indexes[i+startPosition]].checkable && menuItem[indexes[i+startPosition]].function != NULL)
@@ -161,7 +163,7 @@ void Menu::updateMenuScreen()
             //checked and unchecked strings have the same size
             uint8_t checkMarkerSize = progmemCharArraySize(checked_string);
             uint8_t spaceFill = LCD_WIDTH - size - checkMarkerSize;
-            addSpaceToCharArray(size, spaceFill);
+            addSpaceToCharArray(spaceFill, size);
             size += checkMarkerSize;
 
             //place checked/unchecked characters at the end of the screen line
@@ -172,18 +174,8 @@ void Menu::updateMenuScreen()
         updateDisplay(i+1, text, 0, true, size);
     }
 
-    if (items < (LCD_HEIGHT-1))
-    {
-        //clear rows if needed
-        strcpy_P(stringBuffer, emptyLine_string);
-        size = progmemCharArraySize(emptyLine_string);
-
-        for (int i=items+1; i<LCD_HEIGHT; i++)
-            updateDisplay(i, text, 0, true, size);
-    }
-
     #ifdef DEBUG
-    printf_P(PSTR("\nmenuHierarchyPosition: %d\n"), menuHierarchyPosition);
+    printf_P(PSTR("menuHierarchyPosition: %d\n"), menuHierarchyPosition);
     #endif
 }
 
@@ -259,6 +251,9 @@ void Menu::confirmOption(bool confirm)
         exitMenu();
         return;
     }
+
+    //clear all lines except for the first one
+    clearLines(1);
 
     if (confirm)
     {

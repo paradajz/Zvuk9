@@ -134,12 +134,12 @@ int16_t Board::getPadPressure()
 
 int16_t Board::getPadX()
 {
-    setupX();
+    setupY();
     return getADCvalue();
 }
 
 int16_t Board::getPadY()
 {
-    setupY();
+    setupX();
     return getADCvalue();
 }

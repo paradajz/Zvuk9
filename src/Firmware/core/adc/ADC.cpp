@@ -1,8 +1,5 @@
 #include "ADC.h"
-#include <avr/cpufunc.h>
-#include <avr/interrupt.h>
-
-int16_t adcValue = 0;
+#include "Config.h"
 
 void setUpADC()
 {
@@ -35,44 +32,35 @@ void setUpADC()
     #error "No ADC reference selected or setting is invalid. Valid options are VREF_AREF, VREF_AVCC, VREF_INTERNAL_2V56 and VREF_INTERNAL_1V1"
     #endif
 
-    adcEnable();
-    setADCchannel(0);
-
-    for (int i=0; i<5; i++)
-        getADCvalue(); //few dummy reads to init adc
-
-    #if ADC_INTERRUPT == 1
-    adcInterruptEnable();
-    #endif
+    //enable ADC
+    ADCSRA |= (1<<ADEN);
 }
 
-void setADCchannel(uint8_t channel)
+void setADCchannel(uint8_t adcChannel)
 {
     //check for valid channel
-    if ((channel < 0) || (channel > 7))
-        return;
+    if ((adcChannel < 0) || (adcChannel > 7))
+    return;
 
     //select ADC channel with safety mask
-    ADMUX = (ADMUX & 0xF0) | (channel & 0x0F);
+    ADMUX = (ADMUX & 0xF0) | (adcChannel & 0x0F);
 
     _NOP();
 }
 
-void disconnectDigitalInADC(uint8_t channel){
-
-    if (channel < 6)
-        DIDR0 |= (1<<channel);
-}
-
-int16_t getADCvalue()
+uint16_t getADCvalue()
 {
-    startADCconversion();
+    //single conversion mode
+    ADCSRA |= (1<<ADSC);
 
+    //wait until ADC conversion is complete
     while (ADCSRA & (1<<ADSC));
+
     return ADC;
 }
 
-bool analogReadInProgress()
+void disconnectDigitalInADC(uint8_t adcChannel)
 {
-    return ((ADCSRA >> ADSC) & 0x01);
+    if (adcChannel < 6)
+    DIDR0 |= (1<<adcChannel);
 }

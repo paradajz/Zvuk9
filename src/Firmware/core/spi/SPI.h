@@ -1,5 +1,11 @@
 #pragma once
 
+///
+/// \brief Setup and manipulation of SPI peripheral.
+/// \defgroup spi SPI
+/// \ingroup core
+/// @{
+
 #define SPI_CLOCK_MASK      0x03
 #define SPI_2XCLOCK_MASK    0x01
 #define SPI_CLOCK_DIV4      0x00
@@ -39,5 +45,13 @@ inline static void setDataMode(uint8_t dataMode)
     SPCR = (SPCR & ~SPI_MODE_MASK) | dataMode;
 }
 
+///
+/// \brief Initialize SPI peripheral.
+///
 void spiInit();
+
+///
+/// \brief Transfers one byte of data using SPI peripheral.
+///
 uint8_t spiTransfer(uint8_t data);
+/// @}

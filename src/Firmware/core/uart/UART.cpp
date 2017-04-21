@@ -1,47 +1,38 @@
 #include "UART.h"
 #include <avr/interrupt.h>
 
-//RX/TX buffer size in bytes
-#define SERIAL_BUFFER_SIZE 64
+RingBuff_t  txBuffer, rxBuffer;
 
-static volatile uint8_t tx_buffer[SERIAL_BUFFER_SIZE];
-static volatile uint8_t rx_buffer[SERIAL_BUFFER_SIZE];
-
-static volatile uint8_t rx_buffer_head = 0;
-static volatile uint8_t rx_buffer_tail = 0;
-
-static volatile uint8_t tx_buffer_head = 0;
-static volatile uint8_t tx_buffer_tail = 0;
-
-static volatile uint8_t transmitting = 0;
-
-bool    rxEnabled,
-        txEnabled;
+bool        rxEnabled,
+            txEnabled;
 
 //isr functions
 
-ISR(USART1_RX_vect)
+///
+/// \brief Default constructor.
+///
+UART::UART()
 {
-    uint8_t c, i;
-
-    c = UDR1;
-    i = rx_buffer_head + 1;
-
-    if (i >= SERIAL_BUFFER_SIZE)
-        i = 0;
-
-    if (i != rx_buffer_tail)
-    {
-        rx_buffer[i] = c;
-        rx_buffer_head = i;
-    }
+    
 }
 
+///
+/// \brief ISR used to store incoming data from UART to buffer.
+///
+ISR(USART1_RX_vect)
+{
+    uint8_t data = UDR1;
+
+    if (!RingBuffer_IsFull(&rxBuffer))
+        RingBuffer_Insert(&rxBuffer, data);
+}
+
+///
+/// \brief ISR used to send data from outgoing buffer to UART.
+///
 ISR(USART1_UDRE_vect)
 {
-    uint8_t i;
-
-    if (tx_buffer_head == tx_buffer_tail)
+    if (RingBuffer_IsEmpty(&txBuffer))
     {
         // buffer is empty, disable transmit interrupt
         if (!rxEnabled)
@@ -51,71 +42,19 @@ ISR(USART1_UDRE_vect)
     }
     else
     {
-        i = tx_buffer_tail + 1;
-
-        if (i >= SERIAL_BUFFER_SIZE)
-            i = 0;
-
-        UDR1 = tx_buffer[i];
-        tx_buffer_tail = i;
+        uint8_t data = RingBuffer_Remove(&txBuffer);
+        UDR1 = data;
     }
 }
 
 ISR(USART1_TX_vect)
 {
-    transmitting = 0;
+    
 }
 
-UART::UART()
-{
-    //default constructor
-}
-
-
-int8_t UART::read(void)
-{
-    uint8_t data, i;
-
-    if (rx_buffer_head == rx_buffer_tail)
-        return -1;
-    i = rx_buffer_tail + 1;
-
-    if (i >= SERIAL_BUFFER_SIZE)
-        i = 0;
-
-    data = rx_buffer[i];
-    rx_buffer_tail = i;
-    return data;
-}
-
-void UART::write(uint8_t data)
-{
-    if (!txEnabled)
-        return;
-
-    uint8_t i;
-
-    if (!(UCSR1B & (1<<TXEN1)))
-        return;
-
-    i = tx_buffer_head + 1;
-
-    if (i >= SERIAL_BUFFER_SIZE)
-        i = 0;
-
-    while (tx_buffer_tail == i); // wait until space in buffer
-
-    tx_buffer[i] = data;
-    transmitting = 1;
-
-    tx_buffer_head = i;
-
-    if (!rxEnabled)
-        UCSR1B = (1<<TXCIE1) | (1<<TXEN1) | (1<<UDRIE1);
-    else
-        UCSR1B = (1<<RXEN1) | (1<<TXCIE1) | (1<<TXEN1) | (1<<RXCIE1) | (1<<UDRIE1);
-}
-
+///
+/// \brief Initializes UART peripheral.
+///
 void UART::begin(uint32_t baudRate, bool enableRX, bool enableTX)
 {
     rxEnabled = enableRX;
@@ -134,39 +73,66 @@ void UART::begin(uint32_t baudRate, bool enableRX, bool enableTX)
         UBRR1 = (baud_count >> 1) - 1;
     }
 
-    if (!(UCSR1B & (1<<TXEN1)))
-    {
-        rx_buffer_head = 0;
-        rx_buffer_tail = 0;
-        tx_buffer_head = 0;
-        tx_buffer_tail = 0;
+    if (enableRX && enableTX)
+        UCSR1B = (1<<RXEN1) | (1<<TXCIE1) | (1<<TXEN1) | (1<<RXCIE1);
+    else if (enableRX && !enableTX)
+        UCSR1B = (1<<RXEN1) | (1<<RXCIE1);
+    else if (enableTX & !enableRX)
+        UCSR1B = (1<<TXCIE1) | (1<<TXEN1);
 
-        transmitting = 0;
+    //8 bit, no parity, 1 stop bit
+    UCSR1C = (1<<UCSZ11) | (1<<UCSZ10);
 
-        UCSR1C = (1<<UCSZ11) | (1<<UCSZ10); //8 bit, no parity, 1 stop bit
-
-        if (enableRX && enableTX)   //enable both rx and tx
-            UCSR1B = (1<<RXEN1) | (1<<TXCIE1) | (1<<TXEN1) | (1<<RXCIE1);
-        else if (enableRX && !enableTX) //enable only receive
-            UCSR1B = (1<<RXEN1) | (1<<RXCIE1);
-        else if (enableTX & !enableRX)  //enable only transmit
-            UCSR1B = (1<<TXCIE1) | (1<<TXEN1);
-    }
+    RingBuffer_InitBuffer(&rxBuffer);
+    RingBuffer_InitBuffer(&txBuffer);
 }
 
-uint16_t UART::available()
+///
+/// \brief Reads a byte from incoming UART buffer
+/// \returns Single byte on success, -1 is buffer is empty.
+///
+uint8_t UART::read()
 {
-    //return available number of bytes in incoming buffer
-    uint8_t head, tail;
+    if (RingBuffer_IsEmpty(&rxBuffer))
+    return -1;
 
-    head = rx_buffer_head;
-    tail = rx_buffer_tail;
-
-    if (head >= tail)
-        return head - tail;
-
-    return SERIAL_BUFFER_SIZE + head - tail;
+    uint8_t data = RingBuffer_Remove(&rxBuffer);
+    return data;
 }
 
-//initialize serial object
+///
+/// \brief Writes single byte to TX buffer.
+/// @param [in] data    Byte value
+/// \returns 0 on success, -1 otherwise.
+///
+int8_t UART::write(uint8_t data)
+{
+    if (!txEnabled)
+        return -1;
+
+    if (!(UCSR1B & (1<<TXEN1)))
+        return -1;
+
+    if (RingBuffer_IsFull(&txBuffer))
+        return -1;
+
+    RingBuffer_Insert(&txBuffer, data);
+
+    if (!rxEnabled)
+        UCSR1B = (1<<TXCIE1) | (1<<TXEN1) | (1<<UDRIE1);
+    else
+        UCSR1B = (1<<RXEN1) | (1<<TXCIE1) | (1<<TXEN1) | (1<<RXCIE1) | (1<<UDRIE1);
+
+    return 0;
+}
+
+///
+/// \brief Checks if any incoming UART data is available.
+/// \returns True if any data is available, false otherwise.
+///
+bool UART::available()
+{
+    return !RingBuffer_IsEmpty(&rxBuffer);
+}
+
 UART uart;

@@ -11,12 +11,6 @@
 #include "handlers/Handlers.h"
 #include "../encoders/Encoders.h"
 
-//shift new values from button in this variable
-//if it's 0xFF or buttonDebounceCompare, its reading is stable
-#ifdef BOARD_R1
-const uint8_t buttonDebounceCompare = 0b11110000;
-#endif
-
 extern void (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (uint8_t data, bool state);
 
 Buttons::Buttons()
@@ -37,7 +31,7 @@ void Buttons::init()
     initHandlers_buttons();
     uint32_t currentTime = rTimeMs();
     processingEnabled = false;
-    transportControlType = (transportControlType_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID);
+    transportControlType = (transportControlType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID);
 
     //read buttons for 0.1 seconds
     do
@@ -47,12 +41,8 @@ void Buttons::init()
     }
     while ((rTimeMs() - currentTime) < 100);
 
-    #ifdef BOARD_R1
-    if (getButtonState(BUTTON_TRANSPORT_PLAY) && getButtonState(BUTTON_TRANSPORT_STOP))
-    #elif defined BOARD_R2
     if (getButtonState(BUTTON_PROGRAM_ENC) && getButtonState(BUTTON_PRESET_ENC))
     {
-    #endif
         menu.displayMenu(serviceMenu);
         disable();
     }
@@ -86,9 +76,7 @@ void Buttons::processButton(uint8_t buttonID, uint8_t state)
 
     if (debounced)
     {
-        #ifdef BOARD_R2
         state = state == 0xFF;
-        #endif
 
         //if button state is same as last one, do nothing
         //act on change only
@@ -114,11 +102,6 @@ void Buttons::processButton(uint8_t buttonID, uint8_t state)
 
 void Buttons::update()
 {
-    #ifdef BOARD_R1
-    if (!((rTimeMs() - lastCheckTime) > EXPANDER_CHECK_TIME))
-        return;
-    #endif
-
     if (!board.buttonDataAvailable())
         return;
 
@@ -132,55 +115,11 @@ void Buttons::update()
         buttonState = board.getButtonState(i);
         processButton(i, buttonState);
     }
-
-    #ifdef BOARD_R1
-    //check split button for entering into user menu
-    if (getButtonState(BUTTON_ON_OFF_SPLIT) && buttonEnabled[BUTTON_ON_OFF_SPLIT])
-    {
-        if (!pads.editModeActive())
-        {
-            //measure the time the button is pressed
-            if (!userMenuTimeout)
-            {
-                userMenuTimeout = rTimeMs();
-            }
-            else if (((rTimeMs() - userMenuTimeout) > USER_MENU_TIMEOUT) && !menu.menuDisplayed())
-            {
-                userMenuTimeout = 0;
-                menu.displayMenu(userMenu);
-                #ifdef DEBUG
-                printf_P(PSTR("Entering user menu\n"));
-                #endif
-                //disable buttons while in menu
-                buttons.disable();
-                //turn off blinky led
-                leds.setLEDstate(LED_ON_OFF_SPLIT, leds.getLEDstate(LED_ON_OFF_SPLIT));
-
-            }
-        }
-    }
-    else
-    {
-        userMenuTimeout = 0;
-    }
-    #endif
-
-    #ifdef BOARD_R1
-    lastCheckTime = rTimeMs();
-    #endif
 }
 
 bool Buttons::buttonDebounced(uint8_t buttonID, uint8_t state)
 {
-    #ifdef BOARD_R1
-    //shift new button reading into previousButtonState
-    buttonDebounceCounter[buttonID] = (buttonDebounceCounter[buttonID] << 1) | state | buttonDebounceCompare;
-
-    //if button is debounced, return true
-    return ((buttonDebounceCounter[buttonID] == buttonDebounceCompare) || (buttonDebounceCounter[buttonID] == 0xFF));
-    #elif defined BOARD_R2
     return ((state == 0xFF) || (state == BUTTON_DEBOUNCE_COMPARE));
-    #endif
 }
 
 void Buttons::enable(int8_t buttonID)

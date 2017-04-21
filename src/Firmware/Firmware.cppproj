@@ -127,23 +127,24 @@
         </avrgcccpp.assembler.general.IncludePaths>
       </AvrGccCpp>
     </ToolchainSettings>
-    <PostBuildEvent>REM running version script
+    <PostBuildEvent>REM cd to tools dir
 call cd $(SolutionDir)
-call cd ..\tools
-call cp ..\version\MAJOR MAJOR
-call cp ..\version\MINOR MINOR
-call cp ..\version\REVISION REVISION
-call bin\sh.exe -l version_script.sh
+call cd ..\tools\
 
-REM converting hex to bin and adding crc
-call srec_cat.exe "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" -intel -fill 0xFF 0x0000 0x1DFFE -Cyclic_Redundancy_Check_16_Big_Endian 0x1DFFE -XMODEM -o "$(SolutionDir)\..\tools\FLASH.bin" -binary
+REM copy compiled hex to current dir
+call cp "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" FLASH.hex
 
-REM calling version_append
+REM get software version and append crc
+call C:\Windows\Sysnative\bash.exe -c "./version_script.sh"
+
+REM append version to bin file
 call version_append.exe
-call del version
 
-REM move binary to bin dir
-call move FLASH.bin ..\bin\FLASH.bin</PostBuildEvent>
+REM remove version
+del version
+
+REM move FLASH.bin to bin dir
+call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -222,31 +223,30 @@ call move FLASH.bin ..\bin\FLASH.bin</PostBuildEvent>
         <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
       </AvrGccCpp>
     </ToolchainSettings>
-    <PostBuildEvent>REM running version script
+    <PostBuildEvent>REM cd to tools dir
 call cd $(SolutionDir)
-call cd ..\tools
-call bin\sh.exe -l version_script.sh
+call cd ..\tools\
 
-REM converting hex to bin and adding crc
-call srec_cat.exe "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" -intel -fill 0xFF 0x0000 0x1DFFE -Cyclic_Redundancy_Check_16_Big_Endian 0x1DFFE -XMODEM -o "$(SolutionDir)\..\tools\FLASH.bin" -binary
+REM copy compiled hex to current dir
+call cp "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" FLASH.hex
 
-REM calling version_append
+REM get software version and append crc
+call C:\Windows\Sysnative\bash.exe -c "./version_script.sh"
+
+REM append version to bin file
 call version_append.exe
-call del version
 
-REM move binary to root dir
-call move FLASH.bin ..\FLASH.bin
+REM remove version
+del version
 
-rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent>
+REM move FLASH.bin to bin dir
+call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="board\Board.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\Board.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\buttons\R1.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\buttons\R2.cpp">
@@ -270,10 +270,13 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="board\constants\LEDs.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\encoders\Common.cpp">
+    <Compile Include="board\constants\Reboot.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\encoders\v1.cpp">
+    <Compile Include="board\DataTypes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\encoders\Common.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\encoders\v2.cpp">
@@ -289,15 +292,6 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\ISR.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\lcd\hd44780\lcd.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\lcd\hd44780\lcd.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\lcd\hd44780\lcd_definitions.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\lcd\LCD.h">
@@ -522,25 +516,16 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="board\map\buttons\Buttons.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\map\buttons\R1.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="board\map\buttons\R2.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\map\encoders\Encoders.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\map\encoders\R1.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="board\map\encoders\R2.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\map\leds\LEDs.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\map\leds\v1.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\map\leds\v2.h">
@@ -552,9 +537,6 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="board\map\pads\Pads.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\map\pads\R1.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="board\map\pads\R2.h">
       <SubType>compile</SubType>
     </Compile>
@@ -564,19 +546,10 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="board\pins\Pins.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\pins\v1.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\pins\v1.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="board\pins\v2.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\pins\v2.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="board\variables\v1.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\variables\v2.h">
@@ -600,19 +573,16 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="core\helpers\BitManipulation.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="core\helpers\Helpers.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="core\helpers\PinManipulation.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="core\i2c\i2c_master.cpp">
+    <Compile Include="core\reset\Reset.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="core\i2c\i2c_master.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="core\reboot\Reboot.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="core\reboot\Reboot.h">
+    <Compile Include="core\reset\Reset.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="core\spi\SPI.cpp">
@@ -621,10 +591,22 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="core\spi\SPI.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="core\timer\RunTime.cpp">
+    <Compile Include="core\strings\Config.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="core\timer\Timing.h">
+    <Compile Include="core\strings\Strings.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="core\strings\Strings.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="core\timing\RunTime.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="core\timing\Timing.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="core\uart\Config.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="core\uart\UART.cpp">
@@ -978,19 +960,22 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="core\usb\vserial\Descriptors.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="core\timer\Wait.cpp">
+    <Compile Include="core\timing\Wait.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="database\Blocks.h">
+    <Compile Include="database\blocks\GlobalSettings.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="database\blocks\PadCalibration.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="database\blocks\Program.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="database\blocks\Scales.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="database\Config.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="database\Defaults.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="database\IDs.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="database\Database.cpp">
@@ -999,13 +984,25 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="database\Database.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="database\layout\Include.h">
+    <Compile Include="database\blocks\Blocks.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="database\layout\Init.cpp">
+    <Compile Include="database\Init.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="database\layout\MemoryLayout.cpp">
+    <Compile Include="database\Layout.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dbms\Config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dbms\DataTypes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dbms\DBMS.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dbms\DBMS.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\buttons\Buttons.h">
@@ -1224,13 +1221,13 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Compile Include="sysex\SysEx.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="version\Firmware.h">
+    <Compile Include="version\Version.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="version\Hardware.h">
+    <Compile Include="version\DataTypes.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="version\Firmware.cpp">
+    <Compile Include="version\Version.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="vserial\Serial.cpp">
@@ -1246,7 +1243,6 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
   <ItemGroup>
     <Folder Include="board\constants\" />
     <Folder Include="board\lcd\" />
-    <Folder Include="board\lcd\hd44780" />
     <Folder Include="board\lcd\U8g2\" />
     <Folder Include="board\lcd\U8g2\src\" />
     <Folder Include="board\lcd\U8g2\src\clib\" />
@@ -1260,11 +1256,11 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Folder Include="board\pins\" />
     <Folder Include="board\variables\" />
     <Folder Include="core\adc\" />
-    <Folder Include="core\i2c\" />
     <Folder Include="core\helpers" />
     <Folder Include="core\spi" />
-    <Folder Include="core\reboot" />
-    <Folder Include="core\timer" />
+    <Folder Include="core\reset" />
+    <Folder Include="core\strings\" />
+    <Folder Include="core\timing" />
     <Folder Include="core\uart\" />
     <Folder Include="core\usb\" />
     <Folder Include="core\usb\lufa\" />
@@ -1286,7 +1282,8 @@ rem call avrdude.exe -p usb1286 -c usbasp -U flash:w:"FLASH.bin"</PostBuildEvent
     <Folder Include="core\usb\vserial\" />
     <Folder Include="database" />
     <Folder Include="core" />
-    <Folder Include="database\layout" />
+    <Folder Include="database\blocks" />
+    <Folder Include="dbms\" />
     <Folder Include="interface\" />
     <Folder Include="interface\buttons\" />
     <Folder Include="interface\buttons\handlers" />

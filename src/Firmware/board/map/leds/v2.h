@@ -1,4 +1,3 @@
-#ifdef BOARD_R2
 #pragma once
 
 #define LED_NOTE_C_SHARP            12
@@ -27,4 +26,3 @@
 
 #define LED_OCTAVE_DOWN             1
 #define LED_OCTAVE_UP               0
-#endif

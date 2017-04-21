@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef BOARD_R2
-
 #define PROGRAM_ENCODER         0
 #define PRESET_ENCODER          8
 
@@ -56,5 +54,3 @@ const uint8_t encInverted[] =
     1,  //Y_MAX_ENCODER
     1   //Y_CURVE_ENCODER
 };
-
-#endif

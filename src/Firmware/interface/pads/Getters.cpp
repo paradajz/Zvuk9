@@ -7,9 +7,9 @@
 void Pads::getConfiguration()
 {
     //globals
-    aftertouchType = (aftertouchType_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
-    pressureSensitivity = (pressureSensitivity_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID);
-    pressureCurve = (curve_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID);
+    aftertouchType = (aftertouchType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
+    pressureSensitivity = (pressureSensitivity_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID);
+    pressureCurve = (curve_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID);
 
     //read pad configuration from EEPROM
     getProgramParameters();
@@ -22,8 +22,8 @@ void Pads::getProgramParameters()
     printf_P(PSTR("Printing out program settings\n"));
     #endif
 
-    activeProgram = db.read(CONF_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
-    activeScale = db.read(CONF_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram);
+    activeProgram = database.read(DB_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
+    activeScale = database.read(DB_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram);
 
     #ifdef DEBUG
     printf_P(PSTR("Active program: %d\n"), activeProgram+1);
@@ -37,7 +37,7 @@ void Pads::getProgramParameters()
 
 void Pads::getPadParameters()
 {
-    splitEnabled = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+    splitEnabled = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #ifdef DEBUG
     printf_P(PSTR("Printing out pad configuration\n"));
@@ -51,21 +51,21 @@ void Pads::getPadParameters()
         printf_P(PSTR("All pad parameters are global - split is off\n"));
         #endif
 
-        for (int i=0; i<MAX_PADS; i++)
+        for (int i=0; i<NUMBER_OF_PADS; i++)
         {
-            xSendEnabled[i]                 = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            ySendEnabled[i]                 = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            noteSendEnabled[i]              = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            aftertouchSendEnabled[i]        = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            ccXPad[i]                       = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_X_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            ccYPad[i]                       = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_Y_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            ccXminPad[i]                    = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            ccXmaxPad[i]                    = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            ccYminPad[i]                    = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            ccYmaxPad[i]                    = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            padCurveX[i]                    = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            padCurveY[i]                    = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            midiChannel[i]                  = db.read(CONF_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            xSendEnabled[i]                 = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            ySendEnabled[i]                 = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            noteSendEnabled[i]              = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            aftertouchSendEnabled[i]        = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            ccXPad[i]                       = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_X_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            ccYPad[i]                       = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_Y_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            ccXminPad[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            ccXmaxPad[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            ccYminPad[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            ccYmaxPad[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            padCurveX[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            padCurveY[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            midiChannel[i]                  = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
         }
 
         //#ifdef DEBUG
@@ -92,21 +92,21 @@ void Pads::getPadParameters()
         #endif
 
         //pads have individual settings
-        for (int i=0; i<MAX_PADS; i++)
+        for (int i=0; i<NUMBER_OF_PADS; i++)
         {
-            xSendEnabled[i]             = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            ySendEnabled[i]             = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            noteSendEnabled[i]          = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            aftertouchSendEnabled[i]    = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            ccXPad[i]                   = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            ccYPad[i]                   = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            ccXminPad[i]                = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            ccXmaxPad[i]                = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            ccYminPad[i]                = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            ccYmaxPad[i]                = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            padCurveX[i]                = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            padCurveY[i]                = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
-            midiChannel[i]              = db.read(CONF_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*MAX_PADS*(uint16_t)activeProgram));
+            xSendEnabled[i]             = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            ySendEnabled[i]             = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            noteSendEnabled[i]          = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            aftertouchSendEnabled[i]    = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            ccXPad[i]                   = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            ccYPad[i]                   = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            ccXminPad[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            ccXmaxPad[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            ccYminPad[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            ccYmaxPad[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            padCurveX[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            padCurveY[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            midiChannel[i]              = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
 
             //#ifdef DEBUG
             //printf_P("Pad %d", i+1);
@@ -144,7 +144,7 @@ void Pads::getScaleParameters()
     //#endif
 
     //clear all pad notes before assigning new ones
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
     {
         for (int j=0; j<NOTES_PER_PAD; j++)
             padNote[i][j] = BLANK_NOTE;
@@ -174,9 +174,9 @@ void Pads::generateScale(scale_t scale)
     {
         //predefined scale
         uint8_t notesPerScale = getNotesPerScale(scale);
-        uint8_t octave = db.read(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
-        note_t tonic = (note_t)db.read(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
-        noteShiftLevel = db.read(CONF_BLOCK_PROGRAM, programScalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+        uint8_t octave = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+        note_t tonic = (note_t)database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+        noteShiftLevel = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
 
         #ifdef DEBUG
         printf_P(PSTR("Octave: %d\n"), octave);
@@ -192,11 +192,11 @@ void Pads::generateScale(scale_t scale)
             noteCounter++;
         }
 
-        if (notesPerScale < MAX_PADS)
+        if (notesPerScale < NUMBER_OF_PADS)
         {
             noteCounter = 0;
 
-            for (int i=notesPerScale; i<MAX_PADS; i++)
+            for (int i=notesPerScale; i<NUMBER_OF_PADS; i++)
             {
                 padNote[i][0] = getScaleNote(scale, noteCounter);
                 //these notes are actually in another octave
@@ -208,7 +208,7 @@ void Pads::generateScale(scale_t scale)
         //default notes in scale are now applied to pads
         //apply saved octave
 
-        for (int i=0; i<MAX_PADS; i++)
+        for (int i=0; i<NUMBER_OF_PADS; i++)
             padNote[i][0] += (MIDI_NOTES*octave);
 
         //now apply saved tonic
@@ -235,12 +235,12 @@ void Pads::generateScale(scale_t scale)
         //printf_P("User scale %d\n", scale-PREDEFINED_SCALES);
         //#endif
 
-        uint16_t noteID = (scale - PREDEFINED_SCALES)*(MAX_PADS*NOTES_PER_PAD);
+        uint16_t noteID = (scale - PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
 
-        for (int i=0; i<MAX_PADS; i++)
+        for (int i=0; i<NUMBER_OF_PADS; i++)
         {
             for (int j=0; j<NOTES_PER_PAD; j++)
-                padNote[i][j] = db.read(CONF_BLOCK_USER_SCALE, padNotesSection, noteID+j+(NOTES_PER_PAD*i));
+                padNote[i][j] = database.read(DB_BLOCK_SCALE, scaleUserSection, noteID+j+(NOTES_PER_PAD*i));
         }
     }
 
@@ -289,9 +289,9 @@ void Pads::getPressureLimits()
         return;
     }
 
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
     {
-        padPressureLimitUpper[i] = db.read(CONF_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
+        padPressureLimitUpper[i] = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
 
         if (percentageIncrease)
             padPressureLimitUpper[i] = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
@@ -308,10 +308,10 @@ void Pads::getXLimits()
     printf_P(PSTR("Printing out X limits for pads\n"));
     #endif
 
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
     {
-        padXLimitLower[i] = db.read(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXlowerSection, i);
-        padXLimitUpper[i] = db.read(CONF_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, i);
+        padXLimitLower[i] = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationXlowerSection, i);
+        padXLimitUpper[i] = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, i);
 
         #ifdef DEBUG
         printf_P(PSTR("Lower X limit for pad %d: %d\n"), i, padXLimitLower[i]);
@@ -330,10 +330,10 @@ void Pads::getYLimits()
     printf_P(PSTR("Printing out Y limits for pads\n"));
     #endif
 
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
     {
-        padYLimitLower[i] = db.read(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYlowerSection, i);
-        padYLimitUpper[i] = db.read(CONF_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, i);
+        padYLimitLower[i] = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationYlowerSection, i);
+        padYLimitUpper[i] = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, i);
 
         #ifdef DEBUG
         printf_P(PSTR("Lower Y limit for pad %d: %d\n"), i, padYLimitLower[i]);
@@ -352,7 +352,7 @@ void Pads::getAftertouchLimits()
     printf_P(PSTR("Printing out aftertouch limits for pads\n"));
     #endif
 
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
     {
         int32_t lowerLimit = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
         int32_t upperLimit = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_UPPER) / 10000;
@@ -485,7 +485,7 @@ note_t Pads::getActiveTonic()
     {
         //predefined scale tonic is written in eeprom
         uint16_t tonicIndex = PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
-        return (note_t)db.read(CONF_BLOCK_PROGRAM, programScalePredefinedSection, tonicIndex);
+        return (note_t)database.read(DB_BLOCK_SCALE, scalePredefinedSection, tonicIndex);
     }
 
     return MIDI_NOTES;
@@ -523,7 +523,7 @@ bool Pads::isPredefinedScale(uint8_t scale)
 
 uint8_t Pads::getPadNote(uint8_t pad, uint8_t noteIndex)
 {
-    if (pad >= MAX_PADS)
+    if (pad >= NUMBER_OF_PADS)
         return 0;
 
     if (noteIndex >= NOTES_PER_PAD)
@@ -536,7 +536,7 @@ bool Pads::noteActive(note_t note)
 {
     //return true if received note is among active notes on some pad
 
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
     {
         for (int j=0; j<NOTES_PER_PAD; j++)
         {
@@ -567,7 +567,7 @@ note_t Pads::getTonicFromNote(uint8_t note)
 uint8_t Pads::getOctaveFromNote(uint8_t note)
 {
     if (note == BLANK_NOTE)
-        return MIDI_OCTAVE_RANGE;
+        return MIDI_NOTES;
 
     return note / MIDI_NOTES;
 }
@@ -580,7 +580,7 @@ bool Pads::isPadPressed(uint8_t padNumber)
 bool Pads::allPadsReleased()
 {
     //return true if all pads are released
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
         if (isPadPressed(i)) return false;
 
     return true;

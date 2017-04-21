@@ -1,7 +1,25 @@
 #include "../LCD.h"
 #include "../../pads/Pads.h"
-#include "../../../version/Firmware.h"
-#include "../../../version/Hardware.h"
+#include "../../../version/Version.h"
+
+char stringBuffer[MAX_TEXT_SIZE+1];
+char tempBuffer[MAX_TEXT_SIZE+1];
+
+void LCD::clearLines(uint8_t startIndex, uint8_t endIndex)
+{
+    strcpy_P(stringBuffer, emptyLine_string);
+    uint8_t size = progmemCharArraySize(emptyLine_string);
+
+    for (int i=startIndex; i<LCD_HEIGHT; i++)
+    {
+        updateDisplay(i, text, 0, true, size);
+    }
+}
+
+uint8_t LCD::getTextCenter(uint8_t textSize)
+{
+    return LCD_WIDTH/2 - (textSize/2);
+}
 
 void LCD::displayPadAmount(bool singlePad, uint8_t padNumber)
 {
@@ -10,7 +28,7 @@ void LCD::displayPadAmount(bool singlePad, uint8_t padNumber)
     size = singlePad ? progmemCharArraySize(padAmountSingle_string) : progmemCharArraySize(padAmountAll_string);
     if (singlePad)
     {
-        addSpaceToCharArray(size, 1);
+        addSpaceToCharArray(1, size);
         addNumberToCharArray(padNumber, size);
     }
 
@@ -22,17 +40,12 @@ void LCD::displayWelcomeMessage()
     strcpy_P(stringBuffer, welcome_string);
 
     uint8_t charIndex = 0;
+    uint8_t location = getTextCenter(progmemCharArraySize(welcome_string));
 
     while (stringBuffer[charIndex] != '\0')
     {
-        //write directly to screen
-        #ifdef BOARD_R1
-        lcd_putc(stringBuffer[charIndex]);
-        wait_ms(75);
-        #elif defined (BOARD_R2)
-        u8x8.drawGlyph(10+charIndex, 2, stringBuffer[charIndex]);
+        u8x8.drawGlyph(location+charIndex, 3, stringBuffer[charIndex]);
         wait_ms(50);
-        #endif
         charIndex++;
     }
 
@@ -51,7 +64,7 @@ void LCD::displayProgramAndScale(uint8_t program, uint8_t scale)
     strcpy_P(stringBuffer, program_string);
     size = progmemCharArraySize(program_string);
     addNumberToCharArray(program, size);
-    addSpaceToCharArray(size, 1);
+    addSpaceToCharArray(1, size);
 
     if ((scale >= 0) && (scale < PREDEFINED_SCALES))
     {
@@ -64,7 +77,7 @@ void LCD::displayProgramAndScale(uint8_t program, uint8_t scale)
         strcpy_P(tempBuffer, (char*)pgm_read_word(&(presetNameArray[PREDEFINED_SCALES])));
         size += pgm_read_byte(&presetNameArray_sizes[PREDEFINED_SCALES]);
         strcat(stringBuffer, tempBuffer);
-        addSpaceToCharArray(size, 1);
+        addSpaceToCharArray(1, size);
         addNumberToCharArray((scale - PREDEFINED_SCALES + 1), size);
     }
 
@@ -90,9 +103,9 @@ void LCD::displayVelocity(uint8_t velocity)
     addNumberToCharArray(velocity, size);
 
     if (velocity < 10)
-        addSpaceToCharArray(size, 2);
+        addSpaceToCharArray(2, size);
     else if (velocity < 100)
-        addSpaceToCharArray(size, 1);
+        addSpaceToCharArray(1, size);
 
     updateDisplay(lcdElements.velocity.row, text, lcdElements.velocity.startIndex, false, size);
 }
@@ -105,9 +118,9 @@ void LCD::displayAftertouch(uint8_t afterTouch)
     addNumberToCharArray(afterTouch, size);
 
     if (afterTouch < 10)
-        addSpaceToCharArray(size, 2);
+        addSpaceToCharArray(2, size);
     else if (afterTouch < 100)
-        addSpaceToCharArray(size, 1);
+        addSpaceToCharArray(1, size);
 
     updateDisplay(lcdElements.aftertouch.row, text, lcdElements.aftertouch.startIndex, false, size);
 }
@@ -139,9 +152,9 @@ void LCD::displayXYposition(uint8_t position, padCoordinate_t type)
     addNumberToCharArray(position, size);
 
     if (position < 10)
-        addSpaceToCharArray(size, 2);
+        addSpaceToCharArray(2, size);
     else if (position < 100)
-        addSpaceToCharArray(size, 1);
+        addSpaceToCharArray(1, size);
 
     updateDisplay(lcdRow, text, lcdCoordinate, false, size);
 }
@@ -173,9 +186,9 @@ void LCD::displayXYcc(uint8_t ccXY, padCoordinate_t type)
     addNumberToCharArray(ccXY, size);
 
     if (ccXY < 10)
-        addSpaceToCharArray(size, 2);
+        addSpaceToCharArray(2, size);
     else if (ccXY < 100)
-        addSpaceToCharArray(size, 1);
+        addSpaceToCharArray(1, size);
 
     updateDisplay(lcdRow, text, lcdCoordinate, false, size);
 }
@@ -231,7 +244,7 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
             addNumberToCharArray(octaves[i], size);
             //don't add space on last note
             if (i != numberOfNotes-1)
-                addSpaceToCharArray(size, 1);
+                addSpaceToCharArray(1, size);
         }
 
         if (pads.getEditModeState())
@@ -265,7 +278,7 @@ void LCD::displayPadEditMode(uint8_t padNumber)
 
     strcpy_P(stringBuffer, editingPad_string);
     size = progmemCharArraySize(editingPad_string);
-    addSpaceToCharArray(size, 1);
+    addSpaceToCharArray(1, size);
     addNumberToCharArray(padNumber, size);
     updateDisplay(0, text, 0, true, size);
 
@@ -291,7 +304,8 @@ void LCD::displayMIDIchannel(uint8_t channel)
     addNumberToCharArray(channel, size);
 
     if (channel < 10)
-        addSpaceToCharArray(size, 1);
+        addSpaceToCharArray(1, size);
+
     updateDisplay(lcdElements.midiChannel.row, text, lcdElements.midiChannel.startIndex, false, size);
 }
 
@@ -387,16 +401,26 @@ void LCD::clearLine(uint8_t row)
     updateDisplay(row, text, 0, true, size);
 }
 
+void LCD::displayNoteShiftLevel(int8_t level)
+{
+    uint8_t size = 0;
+    strcpy_P(stringBuffer, noteShift_string);
+    size += progmemCharArraySize(noteShift_string);
+    addNumberToCharArray(level, size);
+    updateDisplay(lcdElements.noteShiftLevel.row, text, lcdElements.noteShiftLevel.startIndex, false, size);
+}
+
+//menu
 void LCD::displayDeviceInfo()
 {
     uint8_t size = 0;
     strcpy_P(stringBuffer, deviceInfo_swVersion_string);
     size += progmemCharArraySize(deviceInfo_swVersion_string);
-    addNumberToCharArray(getSWversion(version_major), size);
+    addNumberToCharArray(getSWversion(swVersion_major), size);
     appendText(".", size);
-    addNumberToCharArray(getSWversion(version_minor), size);
+    addNumberToCharArray(getSWversion(swVersion_minor), size);
     appendText(".", size);
-    addNumberToCharArray(getSWversion(version_revision), size);
+    addNumberToCharArray(getSWversion(swVersion_revision), size);
 
     updateDisplay(1, text, 0, true, size);
 
@@ -409,45 +433,64 @@ void LCD::displayDeviceInfo()
     appendText(".", size);
     addNumberToCharArray(HARDWARE_VERSION_REVISION, size);
     updateDisplay(2, text, 0, true, size);
-
-    strcpy_P(stringBuffer, emptyLine_string);
-    size = progmemCharArraySize(emptyLine_string);
-    updateDisplay(3, text, 0, true, size);
 }
 
-void LCD::displayFactoryResetWarning()
-{
-    //write directly to screen
-    //lcd_clrscr();
-    //lcd_gotoxy(0, 0);
-//
-    //strcpy_P(stringBuffer, menuOption_factoryReset_caps_string);
-    //lcd_puts(stringBuffer);
-    //strcpy(lastLCDLine[0], stringBuffer);
-//
-    //lcd_gotoxy(0, 1);
-    //strcpy_P(stringBuffer, factory_reset_warning_1_string);
-    //lcd_puts(stringBuffer);
-    //strcpy(lastLCDLine[1], stringBuffer);
-//
-    //lcd_gotoxy(0, 2);
-    //strcpy_P(stringBuffer, factory_reset_warning_2_string);
-    //lcd_puts(stringBuffer);
-    //strcpy(lastLCDLine[2], stringBuffer);
-//
-    //lcd_gotoxy(0, 3);
-    //strcpy_P(stringBuffer, factory_reset_warning_3_string);
-    //lcd_puts(stringBuffer);
-    //strcpy(lastLCDLine[3], stringBuffer);
-}
-
-void LCD::displayNoteShiftLevel(int8_t level)
+void LCD::displayFactoryResetConfirm()
 {
     uint8_t size = 0;
-    strcpy_P(stringBuffer, noteShift_string);
-    size += progmemCharArraySize(noteShift_string);
-    addNumberToCharArray(level, size);
-    updateDisplay(lcdElements.noteShiftLevel.row, text, lcdElements.noteShiftLevel.startIndex, false, size);
+    uint8_t location;
+
+    strcpy_P(stringBuffer, menuOption_factoryReset_caps_string);
+    size = progmemCharArraySize(menuOption_factoryReset_caps_string);
+    location = getTextCenter(size);
+    updateDisplay(2, text, location, true, size);
+
+    strcpy_P(stringBuffer, factory_reset_warning_1_string);
+    size = progmemCharArraySize(factory_reset_warning_1_string);
+    location = getTextCenter(size);
+    updateDisplay(3, text, location, true, size);
+
+    strcpy_P(stringBuffer, factory_reset_warning_2_string);
+    size = progmemCharArraySize(factory_reset_warning_2_string);
+    location = getTextCenter(size);
+    updateDisplay(4, text, location, true, size);
+
+    strcpy_P(stringBuffer, factory_reset_warning_3_string);
+    size = progmemCharArraySize(factory_reset_warning_3_string);
+    location = getTextCenter(size);
+    updateDisplay(5, text, location, true, size);
+}
+
+void LCD::displayFactoryResetStart()
+{
+    uint8_t size = 0;
+    uint8_t location;
+
+    strcpy_P(stringBuffer, factory_reset_start_1_string);
+    size = progmemCharArraySize(factory_reset_start_1_string);
+    location = getTextCenter(size);
+    updateDisplay(3, text, location, true, size);
+
+    strcpy_P(stringBuffer, factory_reset_start_2_string);
+    size = progmemCharArraySize(factory_reset_start_2_string);
+    location = getTextCenter(size);
+    updateDisplay(4, text, location, true, size);
+}
+
+void LCD::displayFactoryResetEnd()
+{
+    uint8_t size = 0;
+    uint8_t location;
+
+    strcpy_P(stringBuffer, factory_reset_end_1_string);
+    size = progmemCharArraySize(factory_reset_end_1_string);
+    location = getTextCenter(size);
+    updateDisplay(3, text, location, true, size);
+
+    strcpy_P(stringBuffer, factory_reset_end_2_string);
+    size = progmemCharArraySize(factory_reset_end_2_string);
+    location = getTextCenter(size);
+    updateDisplay(4, text, location, true, size);
 }
 
 //lcd update
@@ -459,11 +502,17 @@ void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool 
     switch(type)
     {
         case text:
-        display.displayText(row, stringBuffer, startIndex, overwrite, endOfLine);
+        if (directWrite)
+            u8x8.drawString(startIndex, row, stringBuffer);
+        else
+            display.displayText(row, stringBuffer, startIndex, overwrite, endOfLine);
         break;
 
         case message:
-        display.displayMessage(row, stringBuffer);
+        if (directWrite)
+            u8x8.drawString(startIndex, row, stringBuffer);
+        else
+            display.displayMessage(row, stringBuffer);
         break;
 
         default:

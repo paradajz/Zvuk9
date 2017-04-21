@@ -1,32 +1,23 @@
 #include "LCD.h"
 
-#ifdef BOARD_R2
 U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
-#endif
 
 LCD::LCD()
 {
     displayMessage_var = false;
     messageDisplayTime = 0;
     _delay_ms(250);
-    #ifdef BOARD_R1
-    lcd_init(LCD_DISP_ON);
-    #endif
     setupLCDlayout();
 }
 
 void LCD::init()
 {
-    #ifdef BOARD_R1
-    lcd_clrscr();
-    #elif defined (BOARD_R2)
     u8x8.begin();
     u8x8.setPowerSave(0);
     u8x8.setFlipMode(1);
 
     u8x8.setFont(u8x8_font_pressstart2p_r);
     u8x8.clear();
-    #endif
 
     for (int i=0; i<LCD_HEIGHT; i++)
     {
@@ -55,17 +46,12 @@ void LCD::init()
    displayMessage_var = false;
 
    _delay_ms(100);
-   #ifdef BOARD_R1
-   lcd_gotoxy(0,0);
-   #endif
 }
 
-void LCD::update()
+bool LCD::update()
 {
-    #ifdef BOARD_R1
     if ((rTimeMs() - lastLCDupdateTime) < LCD_REFRESH_TIME)
-        return; //we don't need to update lcd in real time
-    #endif
+        return false; //we don't need to update lcd in real time
 
     //get message status to determine what to print
     messageStatus_t messageStatus = getMessageStatus();
@@ -75,10 +61,7 @@ void LCD::update()
 
     for (int i=0; i<LCD_HEIGHT; i++)
     {
-        //display on r2 is larger - no scrolling required
-        #ifdef BOARD_R1
         checkScroll(i);
-        #endif
 
         if (!lineChange[i])
             continue;
@@ -93,11 +76,13 @@ void LCD::update()
             if (messageTime != INFINITE_MESSAGE_TIME)
             {
                 //line change + message shown = wait
-                return;
+                return false;
             }
             else
             {
                 removeMessage();
+                //it's possible that we're changing midi channel with preset encoder - clear the modifier
+                buttons.setModifierState(false);
                 if (scrollEnabled[i])
                     charPointer = lcdLineScroll[i];
                 else
@@ -119,11 +104,8 @@ void LCD::update()
         uint8_t characters = strlen(charPointer);
         uint8_t last_characters = strlen(lastLCDLine[i]);
 
-        #ifdef BOARD_R1
-        //lcd on board 2 is wider, don't check
         if (characters >= LCD_WIDTH)
             characters = LCD_WIDTH;
-        #endif
 
         for (int j=0; j<characters; j++)
         {
@@ -131,35 +113,20 @@ void LCD::update()
             {
                 if (charPointer[j] != lastLCDLine[i][j])
                 {
-                    #ifdef BOARD_R1
-                    lcd_gotoxy(j, i);
-                    lcd_putc(charPointer[j]);
-                    #elif defined (BOARD_R2)
                     u8x8.drawGlyph(j, i, charPointer[j]);
-                    #endif
                 }
             }
             else
             {
                 //this index is longer then previous line, just print
-                #ifdef BOARD_R1
-                lcd_gotoxy(j, i);
-                lcd_putc(charPointer[j]);
-                #elif defined (BOARD_R2)
                 u8x8.drawGlyph(j, i, charPointer[j]);
-                #endif
             }
         }
 
         //now fill remaining columns with spaces
         for (int j=characters; j<LCD_WIDTH; j++)
         {
-            #ifdef BOARD_R1
-            lcd_gotoxy(j, i);
-            lcd_putc(SPACE_CHAR);
-            #elif defined (BOARD_R2)
             u8x8.drawGlyph(j, i, SPACE_CHAR);
-            #endif
         }
 
         //lastLCDLine doesn't need to be null-terminated
@@ -170,9 +137,9 @@ void LCD::update()
     for (int i=0; i<LCD_HEIGHT; i++)
         lineChange[i] = false;
 
-    #ifdef BOARD_R1
     lastLCDupdateTime = rTimeMs();
-    #endif
+
+    return true;
 }
 
 messageStatus_t LCD::getMessageStatus()
@@ -272,7 +239,27 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
     if (overwrite)
     {
         //overwrite current text on selected line
-        strcpy(lcdLine[row], text);
+
+        //append spaces to beginning
+        if (startIndex)
+        {
+            //first, start new line with startIndex spaces
+            //use tempBuffer since it's highly likely that text actually points to stringBuffer
+            uint8_t size_sb = 0;
+            startLine(true);
+            addSpaceToCharArray(startIndex, size_sb, true);
+            endLine(size_sb, true);
+
+            //join tempbuffer with text
+            strcat(tempBuffer, text);
+
+            //finally, copy new line to lcdLine[row]
+            strcpy(lcdLine[row], tempBuffer);
+        }
+        else
+        {
+            strcpy(lcdLine[row], text);
+        }
     }
     else
     {
@@ -336,6 +323,11 @@ void LCD::setScrollStart(uint8_t row, uint8_t index)
 void LCD::setMessageTime(int32_t msgTime)
 {
     messageTime = -1;
+}
+
+void LCD::setDirectWriteState(bool state)
+{
+    directWrite = state;
 }
 
 LCD display;

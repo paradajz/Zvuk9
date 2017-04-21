@@ -75,10 +75,21 @@ const char yes_string[] PROGMEM = "Yes";
 const char no_string[] PROGMEM = "No";
 
 //hardcoding...
-#define FACTORY_RESET_STRING_PAD_1_LOCATION 4
-#define FACTORY_RESET_STRING_PAD_7_LOCATION 9
-#define FACTORY_RESET_STRING_PAD_9_LOCATION 14
+#define FACTORY_RESET_CONFIRM_TEXT_START    6
+#define FACTORY_RESET_STRING_PAD_1_LOCATION (4+FACTORY_RESET_CONFIRM_TEXT_START)
+#define FACTORY_RESET_STRING_PAD_7_LOCATION (9+FACTORY_RESET_CONFIRM_TEXT_START)
+#define FACTORY_RESET_STRING_PAD_9_LOCATION (14+FACTORY_RESET_CONFIRM_TEXT_START)
+
+#define FACTORY_RESET_PADS_ROW              4
 
 const char factory_reset_warning_1_string[] PROGMEM = " Confirm with pads:";
 const char factory_reset_warning_2_string[] PROGMEM = "  1[ ] 7[ ] 9[ ]   ";
 const char factory_reset_warning_3_string[] PROGMEM = " Cancel: any other";
+
+#define FACTORY_RESET_START_1_TEXT_START    2
+#define FACTORY_RESET_START_2_TEXT_START    7
+
+const char factory_reset_start_1_string[] PROGMEM = "Performing factory reset.";
+const char factory_reset_start_2_string[] PROGMEM = "Please wait.";
+const char factory_reset_end_1_string[] PROGMEM = "Factory reset finished.";
+const char factory_reset_end_2_string[] PROGMEM = "Initiating reboot.";

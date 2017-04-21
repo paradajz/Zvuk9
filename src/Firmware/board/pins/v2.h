@@ -1,6 +1,5 @@
 #pragma once
 
-#ifdef BOARD_R2
 //mux
 //common
 #define MUX_COMMON_PIN_0_PORT       PORTF
@@ -125,5 +124,3 @@ const uint8_t decoderInOrderArray[] =
 //bootloader button
 #define BTLDR_BUTTON_PORT           PORTE
 #define BTLDR_BUTTON_PIN            2
-
-#endif

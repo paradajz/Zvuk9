@@ -20,3 +20,10 @@ typedef enum
     text,
     message
 } lcdTextType;
+
+typedef enum
+{
+    resetCheck,
+    resetStart,
+    resetEnd
+} resetState_t;

@@ -1,8 +1,7 @@
 #include "../Menu.h"
 #include "../items/ServiceMenu.h"
 
-#include "../../../../version/Firmware.h"
-#include "../../../../version/Hardware.h"
+#include "../../../../version/Version.h"
 #include "../../../../database/Database.h"
 
 #include "../functions/MenuFunctions.h"
@@ -40,5 +39,5 @@ void Menu::createServiceMenuLayout()
     menuItem[serviceMenuItem_factoryReset].stringPointer = menuOption_factoryReset_string;
     menuItem[serviceMenuItem_factoryReset].level = 3;
     menuItem[serviceMenuItem_factoryReset].function = factoryReset;
-    menuItem[serviceMenuItem_factoryReset].argument.argument1 = (uint8_t)factoryReset_restore;
+    menuItem[serviceMenuItem_factoryReset].argument.argument1 = (uint8_t)initWipe;
 }

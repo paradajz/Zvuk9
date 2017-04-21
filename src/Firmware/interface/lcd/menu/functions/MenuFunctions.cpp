@@ -5,7 +5,11 @@
 
 bool factoryReset(functionArgument argument)
 {
-    display.displayFactoryResetWarning();
+    //clear title
+    display.clearLine(0);
+    display.displayFactoryResetConfirm();
+
+    while (!display.update());
 
     uint16_t padsPressed = 0;
 
@@ -13,7 +17,7 @@ bool factoryReset(functionArgument argument)
     {
         pads.update();
 
-        for (int i=0; i<MAX_PADS; i++)
+        for (int i=0; i<NUMBER_OF_PADS; i++)
         {
             if (pads.isPadPressed(i))
             {
@@ -31,20 +35,17 @@ bool factoryReset(functionArgument argument)
 
                     switch(i)
                     {
-                        //case 0:
-                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
-                        //lcd_putc('x');
-                        //break;
-//
-                        //case 6:
-                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_7_LOCATION, 2);
-                        //lcd_putc('x');
-                        //break;
-//
-                        //case 8:
-                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_9_LOCATION, 2);
-                        //lcd_putc('x');
-                        //break;
+                        case 0:
+                        u8x8.drawGlyph(FACTORY_RESET_STRING_PAD_1_LOCATION, FACTORY_RESET_PADS_ROW, 'x');
+                        break;
+
+                        case 6:
+                        u8x8.drawGlyph(FACTORY_RESET_STRING_PAD_7_LOCATION, FACTORY_RESET_PADS_ROW, 'x');
+                        break;
+
+                        case 8:
+                        u8x8.drawGlyph(FACTORY_RESET_STRING_PAD_9_LOCATION, FACTORY_RESET_PADS_ROW, 'x');
+                        break;
 
                         default:
                         break;
@@ -59,20 +60,17 @@ bool factoryReset(functionArgument argument)
 
                     switch(i)
                     {
-                        //case 0:
-                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_1_LOCATION, 2);
-                        //lcd_putc(' ');
-                        //break;
-//
-                        //case 6:
-                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_7_LOCATION, 2);
-                        //lcd_putc(' ');
-                        //break;
-//
-                        //case 8:
-                        //lcd_gotoxy(FACTORY_RESET_STRING_PAD_9_LOCATION, 2);
-                        //lcd_putc(' ');
-                        //break;
+                        case 0:
+                        u8x8.drawGlyph(FACTORY_RESET_STRING_PAD_1_LOCATION, FACTORY_RESET_PADS_ROW, ' ');
+                        break;
+
+                        case 6:
+                        u8x8.drawGlyph(FACTORY_RESET_STRING_PAD_7_LOCATION, FACTORY_RESET_PADS_ROW, ' ');
+                        break;
+
+                        case 8:
+                        u8x8.drawGlyph(FACTORY_RESET_STRING_PAD_9_LOCATION, FACTORY_RESET_PADS_ROW, ' ');
+                        break;
 
                         default:
                         break;
@@ -83,19 +81,19 @@ bool factoryReset(functionArgument argument)
 
         if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))
         {
-            leds.setFadeSpeed(1);
-            //first, set all full leds to dim state
-            for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
-            {
-                if (leds.getLEDstate(i) == ledStateFull)
-                    leds.setLEDstate(i, ledStateDim);
-            }
-            wait_ms(1500);
+            wait_ms(1000);
+            display.setDirectWriteState(true);
+            u8x8.clear();
+            leds.setFadeSpeed(2);
+            display.displayFactoryResetStart();
             //now, turn all leds off
             leds.setAllOff();
-            wait_ms(1000);
-            db.factoryReset((factoryResetType_t)argument.argument1);
-            reboot();
+            wait_ms(2000);
+            database.factoryReset((initType_t)argument.argument1);
+            u8x8.clear();
+            display.displayFactoryResetEnd();
+            wait_ms(2000);
+            board.reboot(rebootApp);
         }
     }
 
@@ -184,7 +182,7 @@ bool checkRunningStatus(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         (bool)argument.argument1 ? midi.enableRunningStatus() : midi.disableRunningStatus();
-        db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument.argument1);
+        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument.argument1);
         #endif
         return true;
 
@@ -219,7 +217,7 @@ bool checkNoteOffStatus(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         midi.setNoteOffMode((noteOffType_t)argument.argument1);
-        db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
+        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
         #endif
         return true;
 
@@ -255,7 +253,7 @@ bool checkTransportCC(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         buttons.setTransportControlType((transportControlType_t)argument.argument1);
-        db.update(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID, argument.argument1);
+        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID, argument.argument1);
         #endif
         return true;
 

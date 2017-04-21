@@ -18,8 +18,7 @@
 #include "interface/lcd/menu/Menu.h"
 #include "interface/leds/LEDs.h"
 #include "interface/pads/Pads.h"
-#include "version/Firmware.h"
-#include "version/Hardware.h"
+#include "version/Version.h"
 #include "database/Database.h"
 
 bool onCustom(uint8_t value)
@@ -27,9 +26,9 @@ bool onCustom(uint8_t value)
     switch(value)
     {
         case FIRMWARE_VERSION_STRING:
-        sysEx.addToResponse(getSWversion(version_major));
-        sysEx.addToResponse(getSWversion(version_minor));
-        sysEx.addToResponse(getSWversion(version_revision));
+        sysEx.addToResponse(getSWversion(swVersion_major));
+        sysEx.addToResponse(getSWversion(swVersion_minor));
+        sysEx.addToResponse(getSWversion(swVersion_revision));
         return true;
 
         case HARDWARE_VERSION_STRING:
@@ -42,15 +41,15 @@ bool onCustom(uint8_t value)
         leds.setFadeSpeed(1);
         leds.setAllOff();
         wait_ms(1500);
-        reboot();
+        board.reboot(rebootApp);
         return true;
 
         case FACTORY_RESET_STRING:
         leds.setFadeSpeed(1);
         leds.setAllOff();
         wait_ms(1500);
-        db.factoryReset(factoryReset_partial);
-        reboot();
+        database.factoryReset(initPartial);
+        board.reboot(rebootApp);
         return true;
     }
 
@@ -59,12 +58,12 @@ bool onCustom(uint8_t value)
 
 sysExParameter_t onGet(uint8_t block, uint8_t section, uint16_t index)
 {
-    return db.read(block, section, index);
+    return database.read(block, section, index);
 }
 
 bool onSet(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue)
 {
-    return db.update(block, section, index, newValue);
+    return database.update(block, section, index, newValue);
 }
 
 void startUpAnimation()
@@ -112,39 +111,14 @@ int main()
     #endif
 
     //do not change order of initialization!
-    db.init();
-    if (!db.checkSignature())
-    {
-        #ifdef BOARD_R1
-        char tempBuffer[20];
-
-        strcpy_P(tempBuffer, restoringDefaults_string);
-        lcd_clrscr();
-        lcd_gotoxy(0, 0);
-        lcd_puts(tempBuffer);
-        lcd_gotoxy(0, 1);
-        wait_ms(2000);
-        strcpy_P(tempBuffer, pleaseWait_string);
-        lcd_puts(tempBuffer);
-        wait_ms(2000);
-        #endif
-
-        db.factoryReset(factoryReset_restore);
-
-        #ifdef BOARD_R1
-        lcd_gotoxy(0,2);
-        strcpy_P(tempBuffer, complete_string);
-        lcd_puts(tempBuffer);
-        wait_ms(2000);
-        #endif
-    }
+    database.init();
 
     #ifdef NDEBUG
     midi.init(dinInterface);
     midi.init(usbInterface);
     midi.setInputChannel(1);
-    midi.setNoteOffMode((noteOffType_t)db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
-    bool runningStatus = db.read(CONF_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
+    midi.setNoteOffMode((noteOffType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
+    bool runningStatus = database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
     runningStatus ? midi.enableRunningStatus() : midi.disableRunningStatus();
     #endif
 
@@ -196,7 +170,7 @@ int main()
         #ifdef ENABLE_ASYNC_UPDATE
         //write to eeprom when all pads are released
         if (pads.allPadsReleased())
-            db.checkQueue();
+            database.checkQueue();
         #endif
 
         #ifdef NDEBUG

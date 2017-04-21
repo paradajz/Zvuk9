@@ -10,19 +10,8 @@
 
 #define LCD_PAD_DATA_CLEAR_DELAY        300
 
-#ifdef BOARD_R1
-#define LCD_WIDTH                       20
-#define LCD_HEIGHT                      4
-#elif defined (BOARD_R2)
-#define LCD_WIDTH                       35
-#define LCD_HEIGHT                      4
+#define LCD_WIDTH                       30
+#define LCD_HEIGHT                      6
 #define ROW_SPACING                     15
-#endif
-
-#ifdef BOARD_R1
-#define MAX_TEXT_SIZE                   (LCD_WIDTH+10)
-#elif defined (BOARD_R2)
-#define MAX_TEXT_SIZE                   LCD_WIDTH
-#endif
 
 #define INFINITE_MESSAGE_TIME           -1

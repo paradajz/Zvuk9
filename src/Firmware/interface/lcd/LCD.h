@@ -15,19 +15,19 @@
 
 #define SPACE_CHAR          32
 
-#ifdef BOARD_R2
 extern U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
-#endif
 
 class LCD
 {
     public:
     LCD();
     void init();
-    void update();
+    bool update();
+    void setDirectWriteState(bool state);
     void displayWelcomeMessage();
     void displayProgramAndScale(uint8_t program, uint8_t scale);
     void clearLine(uint8_t row);
+    void clearLines(uint8_t startIndex, uint8_t endIndex = 0);
 
     void setScrollStart(uint8_t row, uint8_t index);
 
@@ -65,11 +65,18 @@ class LCD
     void displayPadEditChangeParametersError();
     void displayPad(uint8_t pad);
     void displayMIDIchannel(uint8_t channel);
-    void displayFactoryResetWarning();
+    void displayFactoryResetConfirm();
+    void displayFactoryResetStart();
+    void displayFactoryResetEnd();
     void displayNoteShiftLevel(int8_t level);
     void displayNoteUpDown(bool state, int8_t shiftLevel = 0);
 
     void setMessageTime(int32_t msgTime);
+
+    uint8_t getTextCenter(uint8_t textSize);
+
+    //menu functions
+    void displayDeviceInfo();
 
     inline uint8_t getNumberOfDigits(int32_t number)
     {
@@ -86,39 +93,7 @@ class LCD
         return 10; //max size
     }
 
-    //menu functions
-    void displayDeviceInfo();
-
-    //string manipulation
-    inline void addNumberToCharArray(int32_t number, uint8_t &stringSize)
-    {
-        char intToCharArray[7];
-        itoa(number, intToCharArray, 10);
-        stringSize += getNumberOfDigits(number);
-        if (number < 0) stringSize++;
-        strcat(stringBuffer, intToCharArray);
-        stringBuffer[stringSize] = '\0';
-    }
-
-    inline void appendText(const char *text, uint8_t &stringSize)
-    {
-        stringSize += strlen(text);
-        strcat(stringBuffer, text);
-        stringBuffer[stringSize] = '\0';
-    }
-
-    inline void addSpaceToCharArray(uint8_t &stringSize, uint8_t numberOfSpaces)
-    {
-        for (int i=0; i<numberOfSpaces; i++)
-            stringBuffer[stringSize+i] = SPACE_CHAR;
-
-        stringSize += numberOfSpaces;
-        stringBuffer[stringSize] = '\0';
-    }
-
     protected:
-    char stringBuffer[MAX_TEXT_SIZE+1];
-    char tempBuffer[MAX_TEXT_SIZE+1];
     void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine = false);
 
     private:
@@ -133,6 +108,8 @@ class LCD
     uint32_t messageDisplayTime;
     uint32_t lastScrollTime;
     uint32_t lastLCDupdateTime;
+
+    bool directWrite;
 
     bool displayMessage_var;
     bool lineChange[LCD_HEIGHT];

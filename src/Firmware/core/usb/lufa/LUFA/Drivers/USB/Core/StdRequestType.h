@@ -132,21 +132,21 @@
 			#define REQREC_DEVICE              (0 << 0)
 
 			/** Request recipient mask, indicating that the request is to be issued to an interface in the
-			 *  currently selected db.
+			 *  currently selected database.
 			 *
 			 *  \see \ref CONTROL_REQTYPE_RECIPIENT macro.
 			 */
 			#define REQREC_INTERFACE           (1 << 0)
 
 			/** Request recipient mask, indicating that the request is to be issued to an endpoint in the
-			 *  currently selected db.
+			 *  currently selected database.
 			 *
 			 *  \see \ref CONTROL_REQTYPE_RECIPIENT macro.
 			 */
 			#define REQREC_ENDPOINT            (2 << 0)
 
 			/** Request recipient mask, indicating that the request is to be issued to an unspecified element
-			 *  in the currently selected db.
+			 *  in the currently selected database.
 			 *
 			 *  \see \ref CONTROL_REQTYPE_RECIPIENT macro.
 			 */

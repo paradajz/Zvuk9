@@ -210,7 +210,6 @@ inline void activateOutputColumn()
     _NOP();
 }
 
-#ifdef BOARD_R2
 inline void activateInputColumn(uint8_t column)
 {
     //clear current decoder state
@@ -241,7 +240,6 @@ inline void storeDigitalIn(uint8_t column)
         pulseHightToLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
     }
 }
-#endif
 
 ISR(TIMER3_COMPA_vect)
 {
@@ -263,14 +261,6 @@ ISR(TIMER3_COMPA_vect)
     ms++;
     //update run time
     rTime_ms = ms;
-
-    #ifdef BOARD_R1
-    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
-    {
-        bitWrite(encoderBuffer[i], 1, readPin(*encoderPort1Array[i], encoderPinIndex1Array[i]));
-        bitWrite(encoderBuffer[i], 0, readPin(*encoderPort2Array[i], encoderPinIndex2Array[i]));
-    }
-    #elif defined (BOARD_R2)
 
     for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
     {
@@ -320,5 +310,4 @@ ISR(TIMER3_COMPA_vect)
         encPulses[i] += newDirection ? 1 : -1;
         encPulses_x4[i] = 0;
     }
-    #endif
 }

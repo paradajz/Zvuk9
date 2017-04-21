@@ -5,6 +5,7 @@
 #include "../../leds/LEDs.h"
 #include "../../lcd/LCD.h"
 #include "../../lcd/menu/Menu.h"
+#include "../../../database/blocks/GlobalSettings.h"
 #ifdef NDEBUG
 #include "../../../midi/MIDI.h"
 #endif

@@ -1,7 +1,6 @@
 #include "../LCD.h"
 #include "../../pads/Pads.h"
-#include "../../../version/Firmware.h"
-#include "../../../version/Hardware.h"
+#include "../../../version/Version.h"
 
 void LCD::displayOutOfRange()
 {
@@ -25,9 +24,7 @@ void LCD::displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t pa
     addNumberToCharArray(channel, size);
     updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
     displayPadAmount(_splitState, padNumber);
-    #ifdef BOARD_R2
     display.setMessageTime(INFINITE_MESSAGE_TIME);
-    #endif
 }
 
 void LCD::displayCCchange(padCoordinate_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)
@@ -388,11 +385,11 @@ void LCD::displayFirmwareUpdated()
     size = 0;
     strcpy_P(stringBuffer, deviceInfo_swVersion_string);
     size += progmemCharArraySize(deviceInfo_swVersion_string);
-    addNumberToCharArray(getSWversion(version_major), size);
+    addNumberToCharArray(getSWversion(swVersion_major), size);
     appendText(".", size);
-    addNumberToCharArray(getSWversion(version_minor), size);
+    addNumberToCharArray(getSWversion(swVersion_minor), size);
     appendText(".", size);
-    addNumberToCharArray(getSWversion(version_revision), size);
+    addNumberToCharArray(getSWversion(swVersion_revision), size);
 
     updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
 }

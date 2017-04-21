@@ -1,6 +1,6 @@
 #include "Pads.h"
 #include "../lcd/menu/Menu.h"
-#include "../../database/Defaults.h"
+#include "../../database/blocks/PadCalibration.h"
 
 const uint8_t pressureReductionConstant = 0b11111100;
 
@@ -56,6 +56,7 @@ bool Pads::checkX(uint8_t pad)
     }
 
     int16_t xValue = scaleXY(pad, medianValue, coordinateX);
+
     xValue = curves.getCurveValue(coordinateX, (curve_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
     bool xChanged = false;
@@ -121,7 +122,8 @@ bool Pads::checkY(uint8_t pad)
         if (abs(yValue - lastYMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP)
             yChanged = true;
     }
-    else if ((yValue != lastYMIDIvalue[pad]) && ((rTimeMs() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
+    else
+    if ((yValue != lastYMIDIvalue[pad]) && ((rTimeMs() - ySendTimer[pad]) > XY_SEND_TIMEOUT_IGNORE))
     {
         yChanged = true;
     }
@@ -198,7 +200,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                 break;
 
                 case aftertouchChannel:
-                for (int i=0; i<MAX_PADS; i++)
+                for (int i=0; i<NUMBER_OF_PADS; i++)
                 {
                     if (isPadPressed(i) && aftertouchActivated[i])
                         padsPressed++;
@@ -213,7 +215,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                     //find max pressure
                     uint8_t tempMaxValue = 0;
 
-                    for (int i=0; i<MAX_PADS; i++)
+                    for (int i=0; i<NUMBER_OF_PADS; i++)
                     {
                         if (!isPadPressed(i))
                             continue;
@@ -261,7 +263,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                 return true; //no further checks are needed
 
                 case aftertouchChannel:
-                for (int i=0; i<MAX_PADS; i++)
+                for (int i=0; i<NUMBER_OF_PADS; i++)
                 {
                     //count how many pads are pressed with activated aftertouch
                     if (aftertouchActivated[i] && isPadPressed(i) && aftertouchSendEnabled[i])
@@ -797,7 +799,7 @@ void Pads::updatePressHistory(uint8_t pad)
     //store currently pressed pad in buffer
     uint8_t pressedPads = 0;
 
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
         if (isPadPressed(i)) pressedPads++;
 
     if (pressedPads == 1)
@@ -809,7 +811,7 @@ void Pads::updatePressHistory(uint8_t pad)
     {
         padPressHistory_counter++;
 
-        if (padPressHistory_counter >= MAX_PADS)
+        if (padPressHistory_counter >= NUMBER_OF_PADS)
             padPressHistory_counter = 0; //overwrite
 
         padPressHistory_buffer[padPressHistory_counter] = pad;
@@ -828,12 +830,12 @@ void Pads::clearTouchHistoryPad(uint8_t pad)
 {
     uint8_t padPressedCounter = 0;
 
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
         if (isPadPressed(i)) padPressedCounter++;
 
     if (padPressedCounter < 1)
     {
-        for (int i=0; i<MAX_PADS; i++)
+        for (int i=0; i<NUMBER_OF_PADS; i++)
             padPressHistory_buffer[i] = 0;
 
         padPressHistory_buffer[0] = pad;
@@ -853,7 +855,7 @@ void Pads::clearTouchHistoryPad(uint8_t pad)
     uint8_t index = pad;
     uint8_t newValue = 0;
 
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
     {
         if (padPressHistory_buffer[i] == pad)
         {
@@ -864,13 +866,13 @@ void Pads::clearTouchHistoryPad(uint8_t pad)
     }
 
     //copy history array
-    int8_t tempHistoryArray[MAX_PADS];
+    int8_t tempHistoryArray[NUMBER_OF_PADS];
 
-    for (int i=0; i<MAX_PADS; i++)
+    for (int i=0; i<NUMBER_OF_PADS; i++)
         tempHistoryArray[i] = padPressHistory_buffer[i];
 
     //shift all values so that newValue is at the end of array
-    for (int i=index; i<(MAX_PADS-1); i++)
+    for (int i=index; i<(NUMBER_OF_PADS-1); i++)
         padPressHistory_buffer[i] = tempHistoryArray[i+1];
 
     padPressHistory_counter--;

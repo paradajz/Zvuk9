@@ -250,7 +250,7 @@
 
 			/** Event for USB configuration number changed. This event fires when a the USB host changes the
 			 *  selected configuration number while in device mode. This event should be hooked in device
-			 *  applications to create the endpoints and configure the device for the selected db.
+			 *  applications to create the endpoints and configure the device for the selected database.
 			 *
 			 *  This event is time-critical; exceeding OS-specific delays within this event handler (typically of around
 			 *  one second) will prevent the device from enumerating correctly.
