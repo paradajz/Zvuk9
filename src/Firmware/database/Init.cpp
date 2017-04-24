@@ -35,7 +35,7 @@ void Database::initProgramSettings()
         {
             for (int k=0; k<LOCAL_PROGRAM_SETTINGS; k++)
             {
-                database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, k+(j*NUMBER_OF_PADS)+(LOCAL_PROGRAM_SETTINGS*i), defaultLocalProgramSettingArray[k]);
+                database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*j+k) + (LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*i), defaultLocalProgramSettingArray[k]);
             }
         }
     }
@@ -50,7 +50,7 @@ void Database::initScales()
         {
             for (int k=0; k<PREDEFINED_SCALE_PARAMETERS; k++)
             {
-                database.update(DB_BLOCK_SCALE, scalePredefinedSection, k+(j*PREDEFINED_SCALES)+(PREDEFINED_SCALE_PARAMETERS*i), defaultPredefinedScaleParametersArray[k]);
+                database.update(DB_BLOCK_SCALE, scalePredefinedSection, (PREDEFINED_SCALE_PARAMETERS*j+k) + (PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES*i), defaultPredefinedScaleParametersArray[k]);
             }
         }
     }
@@ -62,7 +62,7 @@ void Database::initScales()
         {
             //all blank notes
             for (int k=0; k<NOTES_PER_PAD; k++)
-                database.update(DB_BLOCK_SCALE, scaleUserSection, k+(j*NUMBER_OF_PADS)+(NOTES_PER_PAD*i), BLANK_NOTE);
+                database.update(DB_BLOCK_SCALE, scaleUserSection, (NOTES_PER_PAD*j+k) + (NOTES_PER_PAD*NUMBER_OF_PADS*i), BLANK_NOTE);
         }
     }
 }
