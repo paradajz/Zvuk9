@@ -49,8 +49,6 @@ void LCD::displayWelcomeMessage()
         charIndex++;
     }
 
-    strcpy_P(stringBuffer, welcome_string);
-    strcpy(lastLCDLine[0], stringBuffer);
     wait_ms(250);
 }
 
