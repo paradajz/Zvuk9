@@ -1,36 +1,39 @@
 #pragma once
 
 //pad is considered released PAD_RELEASE_DEBOUNCE_TIMEms after releasing pad
-#define PAD_RELEASE_DEBOUNCE_TIME           10
+#define PAD_RELEASE_DEBOUNCE_TIME                   10
 
 //send x/y and then notes after this delay to reduce glide effect
-#define PAD_NOTE_SEND_DELAY                 20
+#define PAD_NOTE_SEND_DELAY                         20
 
 //lower aftertouch scale = upper pressure scale + AFTERTOUCH_PRESSURE_RATIO_LOWER%
-#define AFTERTOUCH_PRESSURE_RATIO_LOWER     35
-//upper aftertouch scale = upper pressure scale + AFTERTOUCH_PRESSURE_RATIO_UPPER%
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER     70
+#define AFTERTOUCH_PRESSURE_RATIO_LOWER             35
+//upper aftertouch scale = lower aftertouch scale + AFTERTOUCH_PRESSURE_RATIO_UPPER%
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER_LOW         30
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER_MEDIUM      35
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER_HARD        40
 //change aftertouch step difference after this timeout
-#define AFTERTOUCH_SEND_TIMEOUT             50
+#define AFTERTOUCH_SEND_TIMEOUT                     50
 //ignore aftertouch reading change below this timeout
-#define AFTERTOUCH_SEND_TIMEOUT_IGNORE      15
+#define AFTERTOUCH_SEND_TIMEOUT_IGNORE              15
 //threshold difference between current and last aftertouch value after AFTERTOUCH_SEND_TIMEOUT of no movement
-#define AFTERTOUCH_SEND_TIMEOUT_STEP        3
+#define AFTERTOUCH_SEND_TIMEOUT_STEP                3
 
 //change x/y step difference after this timeout
-#define XY_SEND_TIMEOUT                     20
+#define XY_SEND_TIMEOUT                             20
 //ignore x/y readings change below this timeout
-#define XY_SEND_TIMEOUT_IGNORE              10
+#define XY_SEND_TIMEOUT_IGNORE                      10
 //threshold difference between current and last x/y value after XY_SEND_TIMEOUT of no movement
-#define XY_SEND_TIMEOUT_STEP                3
+#define XY_SEND_TIMEOUT_STEP                        3
 
 //when doing interactive calibration, scrolling from left to right isn't 100% accurate
 //compensate using offset
-#define X_MIN_CALIBRATION_OFFSET            10
-#define X_MAX_CALIBRATION_OFFSET            -10
+#define X_MIN_CALIBRATION_OFFSET                    10
+#define X_MAX_CALIBRATION_OFFSET                    -10
 
 //there are three different pressure levels - low, medium, hard
 //medium pressure increase is low level +30%
 //hard pressure increase is low level +50%
-#define MEDIUM_PRESSURE_INCREASE_PERCENT    30
-#define HARD_PRESSURE_INCREASE_PERCENT      50
+//only for velocity
+#define MEDIUM_VELOCITY_INCREASE_PERCENT            30
+#define HARD_VELOCITY_INCREASE_PERCENT              50

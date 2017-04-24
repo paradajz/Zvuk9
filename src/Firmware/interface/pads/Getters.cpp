@@ -277,11 +277,11 @@ void Pads::getPressureLimits()
         break;
 
         case pressure_medium:
-        percentageIncrease = MEDIUM_PRESSURE_INCREASE_PERCENT;
+        percentageIncrease = MEDIUM_VELOCITY_INCREASE_PERCENT;
         break;
 
         case pressure_hard:
-        percentageIncrease = HARD_PRESSURE_INCREASE_PERCENT;
+        percentageIncrease = HARD_VELOCITY_INCREASE_PERCENT;
         break;
 
         default:
@@ -351,10 +351,34 @@ void Pads::getAftertouchLimits()
     printf_P(PSTR("Printing out aftertouch limits for pads\n"));
     #endif
 
+    uint8_t percentageIncrease = 0;
+
+    switch(pressureSensitivity)
+    {
+        case pressure_soft:
+        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_LOW;
+        break;
+
+        case pressure_medium:
+        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_MEDIUM;
+        break;
+
+        case pressure_hard:
+        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_HARD;
+        break;
+
+        default:
+        return;
+    }
+
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
-        int32_t lowerLimit = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
-        int32_t upperLimit = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_UPPER) / 10000;
+        //use upper pressure limit for velocity on low sensitivity for lower aftertouch limit
+        uint32_t padPressureUpper_ls = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
+
+        int32_t lowerLimit = padPressureUpper_ls + (int32_t)((padPressureUpper_ls * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
+        int32_t upperLimit = lowerLimit + (int32_t)((lowerLimit * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
+
         padAftertouchLimitLower[i] = lowerLimit;
         padAftertouchLimitUpper[i] = upperLimit;
 
