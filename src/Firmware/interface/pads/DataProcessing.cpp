@@ -9,15 +9,15 @@ uint16_t Pads::getAverageValue(padCoordinate_t coordinate)
     switch(coordinate)
     {
         case coordinateX:
-        return xValueSample >> SAMPLE_SHIFT_AMOUNT;
+        return xValueSample >> SAMPLE_SHIFT_AMOUNT_XY;
         break;
 
         case coordinateY:
-        return yValueSample >> SAMPLE_SHIFT_AMOUNT;
+        return yValueSample >> SAMPLE_SHIFT_AMOUNT_XY;
         break;
 
         case coordinateZ:
-        return pressureValueSample >> SAMPLE_SHIFT_AMOUNT;
+        return pressureValueSample >> SAMPLE_SHIFT_AMOUNT_PRESSURE;
         break;
 
         default:
@@ -145,20 +145,6 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
     //pad is pressed
     if (lastMIDInoteState[pad])
     {
-        //initial pad press
-        if (velocityAvailable)
-        {
-            //pad has just been pressed, start the timer and return false
-            aftertouchActivationDelay[pad] = rTimeMs();
-            return false;
-        }
-        else
-        {
-            //when pad is just pressed, wait a bit for pressure to stabilize
-            if ((rTimeMs() - aftertouchActivationDelay[pad]) < AFTERTOUCH_INITIAL_VALUE_DELAY)
-                return false;
-        }
-
         uint8_t calibratedPressureAfterTouch = scalePressure(pad, lastPressureValue[pad], pressureAftertouch);
 
         if (!calibratedPressureAfterTouch)
@@ -473,29 +459,20 @@ bool Pads::xyUpdated(uint8_t pad)
     yValueSample += yValue;
     xySampleCounter++;
 
-    return (xySampleCounter == NUMBER_OF_SAMPLES);
+    return (xySampleCounter == NUMBER_OF_XY_SAMPLES);
 }
 
 bool Pads::pressureStable(uint8_t pad, bool pressDetected)
 {
     if (pressDetected)
     {
-        if (!firstPressureValueDelayTimerStarted[pad])
-        {
-            firstPressureValueDelayTimerStarted[pad] = true;
-            padDebounceTimerStarted[pad] = false;
-            firstPressureValueDelayTimer[pad] = rTimeMs();
-            return false;
-        }
-
-        return (rTimeMs() - firstPressureValueDelayTimer[pad] > PAD_PRESS_DEBOUNCE_TIME);
+        return true;
     }
     else
     {
         if (!padDebounceTimerStarted[pad])
         {
             padDebounceTimerStarted[pad] = true;
-            firstPressureValueDelayTimerStarted[pad] = false;
             padDebounceTimer[pad] = rTimeMs();
             return false;
         }
@@ -512,7 +489,7 @@ void Pads::addPressureSample(int16_t value)
 
 bool Pads::pressureSampled()
 {
-    return (pressureSampleCounter == NUMBER_OF_SAMPLES);
+    return (pressureSampleCounter == NUMBER_OF_PRESSURE_SAMPLES);
 }
 
 bool Pads::pressureUpdated(uint8_t pad)
