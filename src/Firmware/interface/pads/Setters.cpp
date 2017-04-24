@@ -1176,7 +1176,9 @@ void Pads::setPressureSensitivity(pressureSensitivity_t type)
 {
     pressureSensitivity = type;
     database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID, type);
+
     getPressureLimits();
+    getAftertouchLimits();
 }
 
 void Pads::setPressureCurve(curve_t curve)

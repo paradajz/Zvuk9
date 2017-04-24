@@ -264,7 +264,6 @@ void Pads::getPadLimits()
     setPressureSensitivity(pressureSensitivity);
     getXLimits();
     getYLimits();
-    getAftertouchLimits();
 }
 
 void Pads::getPressureLimits()
