@@ -296,7 +296,6 @@ void Pads::update()
             //all needed pressure samples are obtained
             velocityAvailable = checkVelocity(activePad);
             aftertouchAvailable = checkAftertouch(activePad, velocityAvailable);
-
         }
     }
     else
