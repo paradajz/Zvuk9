@@ -1,22 +1,12 @@
 #pragma once
 
 #include "DataTypes.h"
+#include "Hardware.h"
 
 ///
 /// \brief Firmware and hardware versioning.
 /// \addtogroup version
 /// @{
-
-///
-/// \brief Hardcoded board revision.
-/// @{
-///
-#ifdef BOARD_R2
-#define HARDWARE_VERSION_MAJOR      2
-#define HARDWARE_VERSION_MINOR      0
-#define HARDWARE_VERSION_REVISION   0
-#endif
-/// @}
 
 ///
 /// \brief Location at which firmware version is written in compiled binary.
