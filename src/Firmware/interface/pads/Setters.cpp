@@ -766,7 +766,7 @@ changeOutput_t Pads::shiftOctave(bool direction)
     else
     {
         #ifdef DEBUG
-        printf_P(PSTR("Octave %s\n"), direction ? "up" : "down");
+        printf_P(PSTR("Octave %s.\n"), direction ? "up" : "down");
         #endif
 
         if (isPredefinedScale(activeScale))
@@ -858,8 +858,8 @@ changeOutput_t Pads::shiftOctave(bool direction)
             }
 
             #ifdef DEBUG
-            printf_P(PSTR("Octave %s"), direction ? "up" : "down");
-            printf_P(PSTR("active octave: %d\n"), activeOctave);
+            printf_P(PSTR("Octave %s.\n"), direction ? "up" : "down");
+            printf_P(PSTR("Active octave: %d\n"), activeOctave);
             #endif
         }
     }

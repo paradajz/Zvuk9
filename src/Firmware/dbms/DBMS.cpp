@@ -380,3 +380,61 @@ void DBMS::initData(initType_t type)
         }
     }
 }
+
+#ifdef ENABLE_ASYNC_UPDATE
+void DBMS::queueData(uint16_t eepromAddress, uint16_t data, uint8_t parameterType)
+{
+    uint8_t index = eeprom_update_buffer_head + 1;
+
+    if (index >= EEPROM_UPDATE_BUFFER_SIZE)
+        index = 0;
+
+    //if buffer is full, wait until there is some space
+    if (eeprom_update_buffer_tail == index)
+    {
+        #if MODE_SERIAL > 0
+        printf("Oops, buffer full. Waiting...\n");
+        #endif
+
+        while (!checkQueue());
+    }
+
+    eeprom_update_bufer_param_type[index] = parameterType;
+    eeprom_update_bufer_value[index] = data;
+    eeprom_update_bufer_address[index] = eepromAddress;
+    eeprom_update_buffer_head = index;
+}
+
+bool DBMS::checkQueue()
+{
+    //write queued data to eeprom
+
+    if (eeprom_update_buffer_head == eeprom_update_buffer_tail)
+    {
+        //buffer is empty
+        return false;
+    }
+
+    //there is something in buffer
+    uint8_t index = eeprom_update_buffer_tail + 1;
+
+    if (index >= EEPROM_UPDATE_BUFFER_SIZE)
+        index = 0;
+
+    //write
+    switch(eeprom_update_bufer_param_type[index])
+    {
+        case BIT_PARAMETER:
+        case BYTE_PARAMETER:
+        eeprom_update_byte((uint8_t*)eeprom_update_bufer_address[index], eeprom_update_bufer_value[index]);
+        break;
+
+        case WORD_PARAMETER:
+        eeprom_update_word((uint16_t*)eeprom_update_bufer_address[index], eeprom_update_bufer_value[index]);
+        break;
+    }
+
+    eeprom_update_buffer_tail = index;
+    return true;
+}
+#endif

@@ -288,9 +288,6 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Compile Include="board\Init.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\InMatrix.cpp">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="board\ISR.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -577,6 +574,12 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="core\helpers\PinManipulation.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="core\helpers\RingBuffer\Config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="core\helpers\RingBuffer\RingBuffer.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="core\reset\Reset.cpp">
@@ -1260,6 +1263,7 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Folder Include="board\variables\" />
     <Folder Include="core\adc\" />
     <Folder Include="core\helpers" />
+    <Folder Include="core\helpers\RingBuffer\" />
     <Folder Include="core\spi" />
     <Folder Include="core\reset" />
     <Folder Include="core\strings\" />
@@ -1308,6 +1312,11 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Folder Include="sysex" />
     <Folder Include="version" />
     <Folder Include="vserial" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="board\constants\Pads.h">
+      <SubType>compile</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

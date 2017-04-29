@@ -53,13 +53,6 @@ uint8_t Curves::getCurveValue(padCoordinate_t coordinate, curve_t curve, uint8_t
 {
     bool minMax_differ = false;
 
-    if (coordinate == coordinateX)
-    {
-        //#ifdef DEBUG
-        //printf_P("Requested index: %d\n", index);
-        //#endif
-    }
-
     if (curve == curveLinear)
     {
         if (min || (max < 127))
@@ -76,18 +69,12 @@ uint8_t Curves::getCurveValue(padCoordinate_t coordinate, curve_t curve, uint8_t
             //check min/max for these coordinates
             if (min != lastMin[(uint8_t)coordinate])
             {
-                //#ifdef DEBUG
-                //printf_P("Updating last min value for this scale.\n");
-                //#endif
                 lastMin[(uint8_t)coordinate] = min;
                 minMax_differ = true;
             }
 
             if (max != lastMax[(uint8_t)coordinate])
             {
-                //#ifdef DEBUG
-                //printf_P("Updating last max value for this scale.\n");
-                //#endif
                 lastMax[(uint8_t)coordinate] = max;
                 minMax_differ = true;
             }
@@ -106,10 +93,6 @@ uint8_t Curves::getCurveValue(padCoordinate_t coordinate, curve_t curve, uint8_t
 
         if ((uint8_t)curve != lastCurve[(uint8_t)coordinate] || minMax_differ)
         {
-            //#ifdef DEBUG
-            //printf_P("Setting up new x/y scale\n");
-            //#endif
-
             if ((curve == curveLog) || (curve == curveExp))
             {
                 //used only for pressure, no min/max checking
@@ -136,10 +119,6 @@ uint8_t Curves::getCurveValue(padCoordinate_t coordinate, curve_t curve, uint8_t
                     return 0; //error
 
                 double step, stepValue = 0.0;
-
-                //#ifdef DEBUG
-                //printf_P("Total of %d values for this scale.\n", numberOfValues);
-                //#endif
 
                 //scale range
                 step = 1.0/(double)numberOfValues;
@@ -182,29 +161,11 @@ uint8_t Curves::getCurveValue(padCoordinate_t coordinate, curve_t curve, uint8_t
             }
 
             lastCurve[(uint8_t)coordinate] = (uint8_t)curve;
-
-            //#ifdef DEBUG
-            //printf_P("Printing scale values.\n");
-            //for (int i=0; i<numberOfValues; i++)
-                //printf_P("Index: %d, value: %d\n", i, scale[(uint8_t)coordinate][i]);
-            //#endif
         }
-
-        //if (coordinate == coordinateX)
-        //{
-            //#ifdef DEBUG
-            //printf_P("Returning value: %d\n", scale[(uint8_t)coordinate][index]);
-            //#endif
-        //}
 
         //scale index if necessary
         if (min || max < 127)
-        {
             index = map_u8(index, 0, 127, 0, numberOfValues-1);
-            //#ifdef DEBUG
-            //printf_P("Scaled index: %d\n", index);
-            //#endif
-        }
 
         return scale[(uint8_t)coordinate][index];
     }

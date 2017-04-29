@@ -40,10 +40,6 @@ void Pads::displayActivePadNotes(uint8_t pad)
 
     int8_t octaveArray[NOTES_PER_PAD];
 
-    //#ifdef DEBUG
-    //printf_P("Assigned notes:\n");
-    //#endif
-
     for (int i=0; i<NOTES_PER_PAD; i++)
     {
         if (padNote[pad][i] == BLANK_NOTE)
@@ -52,10 +48,6 @@ void Pads::displayActivePadNotes(uint8_t pad)
         tonicArray[noteCounter] = getTonicFromNote(padNote[pad][i]);
         octaveArray[noteCounter] = normalizeOctave(getOctaveFromNote(padNote[pad][i]));
         noteCounter++;
-
-        //#ifdef DEBUG
-        //printf_P("%d\n", padNote[pad][i]);
-        //#endif
     }
 
     display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, true);

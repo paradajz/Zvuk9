@@ -19,7 +19,7 @@ void Pads::getConfiguration()
 void Pads::getProgramParameters()
 {
     #ifdef DEBUG
-    printf_P(PSTR("Printing out program settings\n"));
+    printf_P(PSTR("----------------------\nPrinting out program settings\n----------------------\n"));
     #endif
 
     activeProgram = database.read(DB_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
@@ -48,7 +48,7 @@ void Pads::getPadParameters()
         //split off
         //apply global settings to pads
         #ifdef DEBUG
-        printf_P(PSTR("All pad parameters are global - split is off\n"));
+        printf_P(PSTR("All pad parameters are global - split is off.\n"));
         #endif
 
         for (int i=0; i<NUMBER_OF_PADS; i++)
@@ -68,21 +68,21 @@ void Pads::getPadParameters()
             midiChannel[i]                  = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
         }
 
-        //#ifdef DEBUG
-        //printf_P("X send enabled: %d\n", xSendEnabled[0]);
-        //printf_P("Y send enabled: %d\n", ySendEnabled[0]);
-        //printf_P("Note send enabled: %d\n", noteSendEnabled[0]);
-        //printf_P("Aftertouch send enabled: %d\n", aftertouchSendEnabled[0]);
-        //printf_P("CC X MIDI ID: %d\n", ccXPad[0]);
-        //printf_P("CC Y MIDI ID: %d\n", ccYPad[0]);
-        //printf_P("CC X lower limit: %d\n", ccXminPad[0]);
-        //printf_P("CC X upper limit: %d\n", ccXmaxPad[0]);
-        //printf_P("CC Y lower limit: %d\n", ccYminPad[0]);
-        //printf_P("CC Y upper limit: %d\n", ccYmaxPad[0]);
-        //printf_P("Pad curve for X: %d\n", padCurveX[0]);
-        //printf_P("Pad curve for Y: %d\n", padCurveY[0]);
-        //printf_P("MIDI channel: %d\n", midiChannel[0]);
-        //#endif
+        #ifdef DEBUG
+        printf_P(PSTR("X send enabled: %d\n"), xSendEnabled[0]);
+        printf_P(PSTR("Y send enabled: %d\n"), ySendEnabled[0]);
+        printf_P(PSTR("Note send enabled: %d\n"), noteSendEnabled[0]);
+        printf_P(PSTR("Aftertouch send enabled: %d\n"), aftertouchSendEnabled[0]);
+        printf_P(PSTR("CC X MIDI ID: %d\n"), ccXPad[0]);
+        printf_P(PSTR("CC Y MIDI ID: %d\n"), ccYPad[0]);
+        printf_P(PSTR("CC X lower limit: %d\n"), ccXminPad[0]);
+        printf_P(PSTR("CC X upper limit: %d\n"), ccXmaxPad[0]);
+        printf_P(PSTR("CC Y lower limit: %d\n"), ccYminPad[0]);
+        printf_P(PSTR("CC Y upper limit: %d\n"), ccYmaxPad[0]);
+        printf_P(PSTR("Pad curve for X: %d\n"), padCurveX[0]);
+        printf_P(PSTR("Pad curve for Y: %d\n"), padCurveY[0]);
+        printf_P(PSTR("MIDI channel: %d\n"), midiChannel[0]);
+        #endif
     }
     else
     {
@@ -108,22 +108,22 @@ void Pads::getPadParameters()
             padCurveY[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
             midiChannel[i]              = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
 
-            //#ifdef DEBUG
-            //printf_P("Pad %d", i+1);
-            //printf_P("X send enabled: %d\n", xSendEnabled[i]);
-            //printf_P("Y send enabled: %d\n", ySendEnabled[i]);
-            //printf_P("Note send enabled: %d\n", noteSendEnabled[i]);
-            //printf_P("Aftertouch send enabled: %d\n", aftertouchSendEnabled[i]);
-            //printf_P("CC X MIDI ID: %d\n", ccXPad[i]);
-            //printf_P("CC Y MIDI ID: %d\n", ccYPad[i]);
-            //printf_P("CC X lower limit: %d\n", ccXminPad[i]);
-            //printf_P("CC X upper limit: %d\n", ccXmaxPad[i]);
-            //printf_P("CC Y lower limit: %d\n", ccYminPad[i]);
-            //printf_P("CC Y upper limit: %d\n", ccYmaxPad[i]);
-            //printf_P("Pad curve for X: %d\n", padCurveX[i]);
-            //printf_P("Pad curve for Y: %d\n", padCurveY[i]);
-            //printf_P("MIDI channel: %d\n", midiChannel[i]);
-            //#endif
+            #ifdef DEBUG
+            printf_P(PSTR("----------------------\nPad %d\n----------------------\n"), i+1);
+            printf_P(PSTR("X send enabled: %d\n"), xSendEnabled[i]);
+            printf_P(PSTR("Y send enabled: %d\n"), ySendEnabled[i]);
+            printf_P(PSTR("Note send enabled: %d\n"), noteSendEnabled[i]);
+            printf_P(PSTR("Aftertouch send enabled: %d\n"), aftertouchSendEnabled[i]);
+            printf_P(PSTR("CC X MIDI ID: %d\n"), ccXPad[i]);
+            printf_P(PSTR("CC Y MIDI ID: %d\n"), ccYPad[i]);
+            printf_P(PSTR("CC X lower limit: %d\n"), ccXminPad[i]);
+            printf_P(PSTR("CC X upper limit: %d\n"), ccXmaxPad[i]);
+            printf_P(PSTR("CC Y lower limit: %d\n"), ccYminPad[i]);
+            printf_P(PSTR("CC Y upper limit: %d\n"), ccYmaxPad[i]);
+            printf_P(PSTR("Pad curve for X: %d\n"), padCurveX[i]);
+            printf_P(PSTR("Pad curve for Y: %d\n"), padCurveY[i]);
+            printf_P(PSTR("MIDI channel: %d\n"), midiChannel[i]);
+            #endif
         }
     }
 

@@ -5,4 +5,5 @@ void Board::init()
     initPins();
     initTimers();
     setUpADC();
+    initPads();
 };

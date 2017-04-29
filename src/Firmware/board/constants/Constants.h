@@ -6,3 +6,4 @@
 #include "Hardware.h"
 #include "LEDs.h"
 #include "Reboot.h"
+#include "Pads.h"

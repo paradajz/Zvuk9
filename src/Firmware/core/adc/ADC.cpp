@@ -36,18 +36,6 @@ void setUpADC()
     ADCSRA |= (1<<ADEN);
 }
 
-void setADCchannel(uint8_t adcChannel)
-{
-    //check for valid channel
-    if ((adcChannel < 0) || (adcChannel > 7))
-    return;
-
-    //select ADC channel with safety mask
-    ADMUX = (ADMUX & 0xF0) | (adcChannel & 0x0F);
-
-    _NOP();
-}
-
 uint16_t getADCvalue()
 {
     //single conversion mode

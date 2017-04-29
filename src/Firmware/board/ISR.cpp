@@ -1,15 +1,21 @@
 #include "Board.h"
 
-volatile uint32_t rTime_ms;
+volatile uint32_t   rTime_ms;
 
-const uint8_t ledRowPinArray[] =
+volatile uint8_t    input_buffer_head = 0;
+volatile uint8_t    input_buffer_tail = 0;
+
+volatile uint8_t    inputBuffer[DIGITAL_BUFFER_SIZE][NUMBER_OF_BUTTON_COLUMNS];
+uint8_t             inputBuffer_copy[NUMBER_OF_BUTTON_COLUMNS];
+
+const uint8_t       ledRowPinArray[] =
 {
     LED_ROW_1_PIN,
     LED_ROW_2_PIN,
     LED_ROW_3_PIN
 };
 
-volatile uint8_t *ledRowPortArray[] =
+volatile uint8_t    *ledRowPortArray[] =
 {
     &LED_ROW_1_PORT,
     &LED_ROW_2_PORT,
@@ -35,7 +41,7 @@ void Board::initTimers()
     TCCR3B |= (1 << CS31) | (1 << CS30);
 
     //set compare match register to desired timer count
-    OCR3A = 249; //1ms
+    OCR3A = 62; //0.25ms
 
     //enable CTC interrupt for timer3
     TIMSK3 |= (1<<OCIE3A);
@@ -156,6 +162,9 @@ inline void ledRowOn(uint8_t rowNumber, uint8_t intensity)
         return;
     }
 
+    if (!intensity)
+        return;
+
     #ifdef LED_INVERT
     intensity = 255 - intensity;
     #endif
@@ -206,36 +215,28 @@ inline void activateOutputColumn()
     DECODER_OUT_PORT &= DECODER_OUT_CLEAR_MASK;
     //activate new column
     DECODER_OUT_PORT |= decoderOutOrderArray[activeLEDcolumn];
-
-    _NOP();
 }
 
 inline void activateInputColumn(uint8_t column)
 {
     //clear current decoder state
     DECODER_IN_PORT &= DECODER_IN_CLEAR_MASK;
+
     //activate new column
     DECODER_IN_PORT |= decoderInOrderArray[column];
-
-    _NOP();
 }
 
 inline void storeDigitalIn(uint8_t column)
 {
-    uint8_t buttonNumber;
-    bool state;
+    uint8_t row = NUMBER_OF_BUTTON_ROWS-1;
 
     //pulse latch pin
     pulseLowToHigh(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
 
-    for (int i=0; i<8; i++)
+    while(row--)
     {
-        //invert row, starting from last one
-        buttonNumber = column + ((7-i)*NUMBER_OF_BUTTON_COLUMNS);
-        state = !readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN);
-        buttonDebounceCounter[buttonNumber] = (buttonDebounceCounter[buttonNumber] << 1) | state | BUTTON_DEBOUNCE_COMPARE;
-        inputBuffer[column] <<= 1;
-        inputBuffer[column] |= state;
+        inputBuffer[input_buffer_head][column] <<= 1;
+        inputBuffer[input_buffer_head][column] |= !readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN);
         //pulse clock pin
         pulseHightToLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
     }
@@ -243,71 +244,49 @@ inline void storeDigitalIn(uint8_t column)
 
 ISR(TIMER3_COMPA_vect)
 {
-    ledRowsOff();
+    static uint8_t updateStuff = 0;
 
-    if (activeLEDcolumn == NUMBER_OF_LED_COLUMNS)
-        activeLEDcolumn = 0;
+    updateStuff++;
 
-    activateOutputColumn();
-    checkLEDs();
-    activeLEDcolumn++;
-    blinkTimerCounter++;
-
-    if (blinkTimerCounter >= ledBlinkTime)
-        blinkTimerCounter = 0;
-
-    uint32_t ms;
-    ms = rTime_ms;
-    ms++;
-    //update run time
-    rTime_ms = ms;
-
-    for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
+    if (updateStuff == 4)
     {
-        activateInputColumn(i);
-        storeDigitalIn(i);
+        //1ms
+        ledRowsOff();
+
+        if (activeLEDcolumn == NUMBER_OF_LED_COLUMNS)
+            activeLEDcolumn = 0;
+
+        activateOutputColumn();
+        checkLEDs();
+
+        activeLEDcolumn++;
+        blinkTimerCounter++;
+
+        if (blinkTimerCounter >= ledBlinkTime)
+            blinkTimerCounter = 0;
+
+        //update run time
+        rTime_ms++;
+
+        //read input matrix
+        uint8_t bufferIndex = input_buffer_head + 1;
+
+        if (bufferIndex >= DIGITAL_BUFFER_SIZE)
+            bufferIndex = 0;
+
+        if (input_buffer_tail != bufferIndex)
+        {
+            input_buffer_head = bufferIndex;
+
+            for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
+            {
+                activateInputColumn(i);
+                storeDigitalIn(i);
+            }
+        }
+
+        updateStuff = 0;
     }
 
-    uint8_t column;
-    uint8_t row;
-    uint8_t pairState;
-
-    for (int i=0; i<CONNECTED_ENCODERS; i++)
-    {
-        column = encoderMap[i] % NUMBER_OF_BUTTON_COLUMNS;
-        row = (encoderMap[i] << 1)/NUMBER_OF_BUTTON_COLUMNS;
-        pairState = (inputBuffer[column] >> row) & 0x03;
-
-        //get last encoder direction
-        bool lastDirection = bitRead(encoderState[i], 7);
-
-        //shift in new encoder readings
-        encoderState[i] <<= 2;
-        encoderState[i] |= pairState;
-        encoderState[i] &= 0x8F;
-
-        bitWrite(encoderState[i], 7, lastDirection);
-
-        int8_t newPulse = encoderLookUpTable[encoderState[i] & 0x0F];
-
-        if (!newPulse)
-            continue;
-
-        bool newDirection = encoderLookUpTable[encoderState[i] & 0x0F] > 0;
-
-        //add new pulse count
-        encPulses_x4[i] += newPulse;
-
-        //update new direction
-        bitWrite(encoderState[i], 7, newDirection);
-
-        if (lastDirection != newDirection)
-            continue;
-
-        if (encPulses_x4[i] % pulsesPerStep[i])
-            continue;
-
-        encPulses[i] += newDirection ? 1 : -1;
-        encPulses_x4[i] = 0;
-    }
+    startADCconversion();
 }

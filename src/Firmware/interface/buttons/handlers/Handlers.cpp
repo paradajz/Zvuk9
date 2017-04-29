@@ -271,10 +271,14 @@ void handleUpDown(uint8_t id, bool state)
 
     if (buttons.getButtonState(BUTTON_OCTAVE_DOWN) && buttons.getButtonState(BUTTON_OCTAVE_UP))
     {
+        #ifdef DEBUG
+        printf_P(PSTR("Trying to enter pad edit mode.\n"));
+        #endif
+
         //try to enter pad edit mode
         if (pads.isUserScale(pads.getActiveScale()))
         {
-            if (pads.getEditModeState())
+            if (!pads.getEditModeState())
             {
                 //check if last touched pad is pressed
                 if (pads.isPadPressed(pads.getLastTouchedPad()))

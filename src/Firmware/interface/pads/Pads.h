@@ -106,28 +106,18 @@ class Pads
     void getAftertouchLimits();
     void getPadParameters();
 
-    //hardware control
-    void setNextPad();
-
     //midi scaling
     uint8_t scalePressure(uint8_t pad, int16_t pressure, pressureType_t type);
     uint8_t scaleXY(uint8_t pad, int16_t xyValue, padCoordinate_t type);
 
     //data sampling/debouncing
-    void addPressureSample(int16_t pressure);
-    bool pressureSampled();
     bool pressureStable(uint8_t padNumber, bool pressDetected);
-    uint16_t getAverageValue(padCoordinate_t coordinate);
-
-    //data processing
-    bool pressureUpdated(uint8_t pad);
-    bool xyUpdated(uint8_t pad);
 
     //data availability checks
     bool checkAftertouch(uint8_t pad, bool velocityAvailable);
-    bool checkX(uint8_t pad);
-    bool checkY(uint8_t pad);
-    bool checkVelocity(uint8_t pad);
+    bool checkVelocity(uint8_t pad, uint16_t value);
+    bool checkX(uint8_t pad, int16_t value);
+    bool checkY(uint8_t pad, int16_t value);
 
     //pad press updating/info
     void setPadPressState(uint8_t padNumber, bool padState);
@@ -178,11 +168,6 @@ class Pads
     //needed to get correct aftertouch value
     int16_t                 lastPressureValue[NUMBER_OF_PADS];
 
-    //raw values
-    uint16_t                xValueSample,
-                            yValueSample,
-                            pressureValueSample;
-
     //store press states for all pads inside this variable
     uint16_t                padPressed;
 
@@ -225,8 +210,7 @@ class Pads
                             activeProgram;
 
     //debouncing
-    bool                    padDebounceTimerStarted[NUMBER_OF_PADS],
-                            aftertouchActivated[NUMBER_OF_PADS];
+    bool                    aftertouchActivated[NUMBER_OF_PADS];
 
     uint32_t                padDebounceTimer[NUMBER_OF_PADS],
                             xSendTimer[NUMBER_OF_PADS],
@@ -234,13 +218,6 @@ class Pads
                             lastAftertouchUpdateTime[NUMBER_OF_PADS];
 
     uint8_t                 pressureReduction[NUMBER_OF_PADS];
-    uint8_t                 pressureSampleCounter,
-                            xySampleCounter;
-
-    //pad read control
-    uint8_t                 activePad;
-    bool                    switchToNextPad,
-                            switchToXYread;
 
     //used to shift octave once all pads are released
     int8_t                  octaveShiftAmount[NUMBER_OF_PADS];
