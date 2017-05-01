@@ -292,11 +292,6 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
     return false;
 }
 
-/*
-* This function is responsible for updating pad states. Function only updates one reading at the time
-* to avoid blocking other parts of code. Three samples are needed to update pressure, three to update
-* X, and three more to update Y. X/Y are read only if pressure is detected.
-*/
 void Pads::update()
 {
     bool restoreLCD = false;
@@ -486,7 +481,8 @@ bool Pads::checkNoteBuffer()
         return false;
 
     //send
-    if (noteSendEnabled[pad_buffer[index]])
+    //make sure to check if pad is still pressed!
+    if (noteSendEnabled[pad_buffer[index]] && isPadPressed(pad_buffer[index]))
         sendNotes(pad_buffer[index], velocity_buffer[index], true);
 
     note_buffer_tail = index;
