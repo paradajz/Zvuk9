@@ -1,12 +1,7 @@
 #include "Board.h"
 
 volatile uint32_t   rTime_ms;
-
-volatile uint8_t    input_buffer_head = 0;
-volatile uint8_t    input_buffer_tail = 0;
-
-volatile uint8_t    inputBuffer[DIGITAL_BUFFER_SIZE][NUMBER_OF_BUTTON_COLUMNS];
-uint8_t             inputBuffer_copy[NUMBER_OF_BUTTON_COLUMNS];
+volatile uint8_t    inputBuffer;
 
 const uint8_t       ledRowPinArray[] =
 {
@@ -228,17 +223,73 @@ inline void activateInputColumn(uint8_t column)
 
 inline void storeDigitalIn(uint8_t column)
 {
-    uint8_t row = NUMBER_OF_BUTTON_ROWS-1;
+    uint8_t buttonNumber;
+    uint8_t encoderNumber;
+    bool state;
+    uint8_t row = NUMBER_OF_BUTTON_ROWS;
+    bool even = true;
 
     //pulse latch pin
     pulseLowToHigh(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
 
     while(row--)
     {
-        inputBuffer[input_buffer_head][column] <<= 1;
-        inputBuffer[input_buffer_head][column] |= !readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN);
+        //invert row, starting from last one
+        buttonNumber = column + row*NUMBER_OF_BUTTON_COLUMNS;
+        state = !readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN);
+        inputBuffer <<= 1;
+        inputBuffer |= state;
+        inputBuffer &= 0x03;
+        //button readout
+        buttonDebounceCounter[buttonNumber] = (buttonDebounceCounter[buttonNumber] << 1) | state | BUTTON_DEBOUNCE_COMPARE;
+        //encoder readout - check even rows only
+        even = !even;
+
         //pulse clock pin
         pulseHightToLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
+
+        if (even)
+        {
+            //check only every second row
+            //get last encoder direction
+            //hardcoded! formula for getting encoder number is ACTIVE_ROW * (NUMBER_OF_COLUMNS/2) + COLUMN
+            //since we know there are 8 columns, half of that is 4
+            //instead of multiplying row by four, simply right shift row by two places
+            encoderNumber = (row << 2) + column;
+            //get last encoder direction
+            bool lastDirection = bitRead(encoderState[encoderNumber], 7);
+
+            //shift in new encoder readings
+            encoderState[encoderNumber] <<= 2;
+            encoderState[encoderNumber] |= inputBuffer;
+            //make sure not to reset last direction
+            encoderState[encoderNumber] &= 0x8F;
+
+            //update new encoder direction
+            bitWrite(encoderState[encoderNumber], 7, lastDirection);
+
+            int8_t newPulse = encoderLookUpTable[encoderState[encoderNumber] & 0x0F];
+
+            if (!newPulse)
+                continue; //no movement
+
+            bool newDirection = newPulse > 0;
+
+            //add new pulse count
+            encPulses_x4[encoderNumber] += newPulse;
+
+            //update new direction
+            bitWrite(encoderState[encoderNumber], 7, newDirection);
+
+            if (lastDirection != newDirection)
+                continue;
+
+            if (abs(encPulses_x4[encoderNumber]) < pulsesPerStep[encoderNumber])
+                continue;
+
+            encPulses[encoderNumber] += newDirection ? 1 : -1;
+            encPulses_x4[encoderNumber] = 0;
+        }
     }
 }
 
@@ -268,21 +319,10 @@ ISR(TIMER3_COMPA_vect)
         //update run time
         rTime_ms++;
 
-        //read input matrix
-        uint8_t bufferIndex = input_buffer_head + 1;
-
-        if (bufferIndex >= DIGITAL_BUFFER_SIZE)
-            bufferIndex = 0;
-
-        if (input_buffer_tail != bufferIndex)
+        for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
         {
-            input_buffer_head = bufferIndex;
-
-            for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
-            {
-                activateInputColumn(i);
-                storeDigitalIn(i);
-            }
+            activateInputColumn(i);
+            storeDigitalIn(i);
         }
 
         updateStuff = 0;

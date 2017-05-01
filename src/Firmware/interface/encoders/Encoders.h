@@ -13,7 +13,7 @@ class Encoders
 
     private:
     void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps);
-    uint32_t lastStepTime[CONNECTED_ENCODERS];
+    uint32_t lastStepTime[MAX_NUMBER_OF_ENCODERS];
 };
 
 extern Encoders encoders;

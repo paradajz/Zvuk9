@@ -1,6 +1,6 @@
 #pragma once
 
-#define PAD_DEBOUNCE_TIME                           20
+#define PAD_DEBOUNCE_TIME                           30
 
 //send x/y and then notes after this delay to reduce glide effect
 #define PAD_NOTE_SEND_DELAY                         20
@@ -17,7 +17,7 @@
 #define AFTERTOUCH_SEND_TIMEOUT_STEP                3
 
 //change x/y step difference after this timeout
-#define XY_SEND_TIMEOUT                             75
+#define XY_SEND_TIMEOUT                             50
 //threshold difference between current and last x/y value after XY_SEND_TIMEOUT of no movement
 #define XY_SEND_TIMEOUT_STEP                        3
 

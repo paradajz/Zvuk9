@@ -10,7 +10,7 @@ extern void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, bool state, u
 Encoders::Encoders()
 {
     //default constructor
-    for (int i=0; i<CONNECTED_ENCODERS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
         lastStepTime[i] = 0;
 }
 
@@ -25,8 +25,11 @@ void Encoders::update(bool process)
 
     uint32_t currentTime = rTimeMs();
 
-    for (int i=0; i<CONNECTED_ENCODERS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
     {
+        if (!board.encoderEnabled(i))
+            continue;
+
         steps = board.getEncoderState(i);
 
         if (steps == 0)
@@ -51,17 +54,17 @@ void Encoders::update(bool process)
         //no message on display? maybe TO-DO
         if (menu.menuDisplayed())
         {
-            if (!((encoderMap[i] == PROGRAM_ENCODER) || (encoderMap[i] == PRESET_ENCODER)))
-                return;
+            if (!((i == PROGRAM_ENCODER) || (i == PRESET_ENCODER)))
+            return;
         }
 
-        if (encoderHandler[encoderMap[i]] != NULL)
+        if (encoderHandler[i] != NULL)
         {
             //cancel preset button modifier with any other encoder
-            if ((encoderMap[i] != PRESET_ENCODER) && buttons.getModifierState())
+            if ((i != PRESET_ENCODER) && buttons.getModifierState())
                 buttons.setModifierState(false);
 
-            (*encoderHandler[encoderMap[i]])(encoderMap[i], direction, abs(steps));
+            (*encoderHandler[i])(i, direction, abs(steps));
         }
     }
 }

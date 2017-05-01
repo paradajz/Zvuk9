@@ -1,17 +1,5 @@
 #include "../Board.h"
 
-uint8_t Board::getEncoderPair(uint8_t buttonIndex)
-{
-    uint8_t row = buttonIndex/NUMBER_OF_BUTTON_COLUMNS;
-
-    if (row%2)
-        row -= 1;   //uneven row, get info from previous (even) row
-
-    uint8_t column = buttonIndex % NUMBER_OF_BUTTON_COLUMNS;
-
-    return (row*NUMBER_OF_BUTTON_COLUMNS)/2 + column;
-}
-
 int8_t Board::getEncoderState(uint8_t encoderNumber)
 {
     int8_t pulses;
@@ -26,4 +14,15 @@ int8_t Board::getEncoderState(uint8_t encoderNumber)
         return pulses*-1;
 
     return pulses;
+}
+
+bool Board::encoderEnabled(uint8_t encoderNumber)
+{
+    for (int i=0; i<sizeof(encoderMap); i++)
+    {
+        if (encoderMap[i] == encoderNumber)
+            return true;
+    }
+
+    return false;
 }

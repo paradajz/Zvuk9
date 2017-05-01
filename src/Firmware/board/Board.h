@@ -23,6 +23,7 @@ class Board
     public:
     Board();
     void init();
+    bool encoderEnabled(uint8_t encoderNumber);
     int8_t getEncoderState(uint8_t encoderID);
     bool buttonDataAvailable();
     bool encoderDataAvailable();
