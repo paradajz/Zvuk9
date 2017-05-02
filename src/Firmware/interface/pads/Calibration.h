@@ -6,11 +6,11 @@
 #define PAD_NOTE_SEND_DELAY                         5
 
 //lower aftertouch scale = upper pressure scale + AFTERTOUCH_PRESSURE_RATIO_LOWER%
-#define AFTERTOUCH_PRESSURE_RATIO_LOWER             35
+#define AFTERTOUCH_PRESSURE_RATIO_LOWER             15
 //upper aftertouch scale = lower aftertouch scale + AFTERTOUCH_PRESSURE_RATIO_UPPER%
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER_LOW         30
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER_MEDIUM      35
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER_HARD        40
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER_LOW         25
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER_MEDIUM      20
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER_HARD        10
 //change aftertouch step difference after this timeout
 #define AFTERTOUCH_SEND_TIMEOUT                     100
 //threshold difference between current and last aftertouch value after AFTERTOUCH_SEND_TIMEOUT of no movement

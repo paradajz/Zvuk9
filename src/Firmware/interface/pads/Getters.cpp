@@ -374,9 +374,8 @@ void Pads::getAftertouchLimits()
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
         //use upper pressure limit for velocity on low sensitivity for lower aftertouch limit
-        uint32_t padPressureUpper_ls = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
 
-        int32_t lowerLimit = padPressureUpper_ls + (int32_t)((padPressureUpper_ls * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
+        int32_t lowerLimit = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
         int32_t upperLimit = lowerLimit + (int32_t)((lowerLimit * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
 
         padAftertouchLimitLower[i] = lowerLimit;
