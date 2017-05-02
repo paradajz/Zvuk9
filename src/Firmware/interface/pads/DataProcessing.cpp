@@ -321,6 +321,7 @@ void Pads::update()
         velocityAvailable = checkVelocity(i, pressure);
         aftertouchAvailable = checkAftertouch(i, velocityAvailable);
 
+        //only check x/y if pad is pressed
         if (isPadPressed(i))
         {
             xAvailable = checkX(i, x);
