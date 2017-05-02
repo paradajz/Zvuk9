@@ -438,6 +438,9 @@ void handlePresetEncButton(uint8_t id, bool state)
     if (!state)
         return;
 
+    //make sure movement is enabled ion case we just exited menu
+    menu.resetExitTime();
+
     buttons.setModifierState(!buttons.getModifierState());
 
     if (buttons.getModifierState())

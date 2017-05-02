@@ -29,6 +29,7 @@ class Menu : LCD
     void createUserMenuLayout();
     void createQuickMenuLayout();
     void stopFunction();
+    void resetExitTime();
     uint32_t getExitTime();
 
     private:

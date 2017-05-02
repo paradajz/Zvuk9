@@ -370,6 +370,11 @@ void Menu::stopFunction()
     functionRunning = false;
 }
 
+void Menu::resetExitTime()
+{
+    exitTime = 0;
+}
+
 uint32_t Menu::getExitTime()
 {
     return exitTime;
