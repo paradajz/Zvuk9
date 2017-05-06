@@ -102,10 +102,6 @@ void startUpAnimation()
 
 int main()
 {
-    //disable watchdog
-    MCUSR &= ~(1 << WDRF);
-    wdt_disable();
-
     #ifdef DEBUG
     vserial.init();
     #endif

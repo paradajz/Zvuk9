@@ -64,7 +64,7 @@ void mcuReset()
 
 void wdt_init(void)
 {
-    MCUSR = 0;
+    MCUSR &= ~(1 << WDRF);
     wdt_disable();
     return;
 }
