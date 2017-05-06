@@ -61,3 +61,10 @@ void mcuReset()
     wdt_enable(WDTO_120MS);
     while(1);
 }
+
+void wdt_init(void)
+{
+    MCUSR = 0;
+    wdt_disable();
+    return;
+}

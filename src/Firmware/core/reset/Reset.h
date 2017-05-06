@@ -16,4 +16,9 @@ void disablePeripherals();
 ///
 void mcuReset();
 
+///
+/// \brief Used to reset watchdog timer on MCU startup.
+///
+void wdt_init() __attribute__((naked)) __attribute__((section(".init3")));
+
 /// @}
