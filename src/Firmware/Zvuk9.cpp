@@ -156,6 +156,9 @@ int main()
     sysEx.addCustomRequest(FACTORY_RESET_STRING);
     #endif
 
+    //flush all data from encoders
+    encoders.flush();
+
     while(1)
     {
         pads.update();

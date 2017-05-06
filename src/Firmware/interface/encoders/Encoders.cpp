@@ -9,9 +9,7 @@ extern void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, bool state, u
 
 Encoders::Encoders()
 {
-    //default constructor
-    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
-        lastStepTime[i] = 0;
+    
 }
 
 void Encoders::init()
@@ -31,6 +29,9 @@ void Encoders::update(bool process)
             continue;
 
         steps = board.getEncoderState(i);
+
+        if (!process)
+            continue;
 
         if (steps == 0)
             continue;
