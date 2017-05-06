@@ -25,8 +25,6 @@ class Board
     void init();
     bool encoderEnabled(uint8_t encoderNumber);
     int8_t getEncoderState(uint8_t encoderID);
-    bool buttonDataAvailable();
-    bool encoderDataAvailable();
     bool padDataAvailable();
     uint8_t getButtonState(uint8_t buttonID);
     uint8_t getEncoderPair(uint8_t buttonID);

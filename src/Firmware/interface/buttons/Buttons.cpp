@@ -102,9 +102,6 @@ void Buttons::processButton(uint8_t buttonID, uint8_t state)
 
 void Buttons::update()
 {
-    if (!board.buttonDataAvailable())
-        return;
-
     uint8_t buttonState;
 
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
