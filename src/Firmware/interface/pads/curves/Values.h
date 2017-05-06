@@ -522,7 +522,6 @@ const uint8_t PROGMEM scale_gamma[] PROGMEM =
     255,
     255,
     255
-
 };
 
 const uint8_t* const scaleArray[] PROGMEM =
