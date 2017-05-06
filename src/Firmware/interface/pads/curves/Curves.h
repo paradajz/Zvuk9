@@ -16,9 +16,7 @@ typedef enum
 #define LOG_05  (double)log((double)0.5)
 
 double bias(double b, double x);
-
 double gain(double g, double x);
-
 double gamma(double g, double x);
 
 class Curves
