@@ -21,8 +21,8 @@
 #define LED_ON_OFF_SPLIT            6
 
 #define LED_TRANSPORT_PLAY          15
-#define LED_TRANSPORT_STOP          13
-#define LED_TRANSPORT_RECORD        14
+#define LED_TRANSPORT_STOP          14
+#define LED_TRANSPORT_RECORD        13
 
 #define LED_OCTAVE_DOWN             1
 #define LED_OCTAVE_UP               0
