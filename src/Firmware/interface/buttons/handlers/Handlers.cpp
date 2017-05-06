@@ -438,6 +438,10 @@ void handlePresetEncButton(uint8_t id, bool state)
     if (!state)
         return;
 
+    //disable this button in menu
+    if (menu.menuDisplayed())
+        return;
+
     //make sure movement is enabled ion case we just exited menu
     menu.resetExitTime();
 
