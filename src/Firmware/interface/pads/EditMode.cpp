@@ -3,7 +3,7 @@
 #include "../lcd/LCD.h"
 #include "../../database/Database.h"
 
-bool editModeActivated = false;
+bool editModeActivated;
 
 void Pads::setEditModeState(bool state, uint8_t pad)
 {
