@@ -41,11 +41,11 @@ uint16_t            extractedSamples[PAD_READINGS][NUMBER_OF_PADS];
 
 bool                dataReady[PAD_SAMPLE_BUFFER_SIZE];
 
-volatile uint8_t    pad_sample_buffer_head = 0;
-volatile uint8_t    pad_sample_buffer_tail = 0;
+volatile uint8_t    pad_sample_buffer_head;
+volatile uint8_t    pad_sample_buffer_tail;
 
-uint8_t             activePad = 0;
-uint8_t             readIndex = 0;
+uint8_t             activePad;
+uint8_t             readIndex;
 
 void                (*valueSetup[PAD_READINGS]) (void);
 
