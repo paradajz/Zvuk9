@@ -252,9 +252,6 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Compile Include="board\buttons\R2.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="board\constants\Buffer.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="board\constants\Buttons.h">
       <SubType>compile</SubType>
     </Compile>
@@ -1312,11 +1309,6 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Folder Include="sysex" />
     <Folder Include="version" />
     <Folder Include="vserial" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="board\constants\Pads.h">
-      <SubType>compile</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
