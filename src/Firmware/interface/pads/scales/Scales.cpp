@@ -20,7 +20,6 @@ uint8_t getNotesPerScale(scale_t scale)
     }
 }
 
-
 note_t getScaleNote(scale_t scale, uint8_t note)
 {
     //no error checking, be careful
