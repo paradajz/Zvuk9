@@ -2,8 +2,6 @@
 #include "../lcd/menu/Menu.h"
 #include "../../database/blocks/PadCalibration.h"
 
-const uint8_t pressureReductionConstant = 0b11111100;
-
 bool Pads::checkVelocity(uint8_t pad, uint16_t value)
 {
     //calibrate pressure based on median value (0-1023 -> 0-127)
