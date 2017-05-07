@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2015.
+     Copyright (C) Dean Camera, 2017.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2015  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2017  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -227,7 +227,7 @@
 		/** \brief CDC class-specific Functional Header Descriptor (LUFA naming conventions).
 		 *
 		 *  Type define for a CDC class-specific functional header descriptor. This indicates to the host that the device
-		 *  contains one or more CDC functional data descriptors, which give the CDC interface's capabilities and database.
+		 *  contains one or more CDC functional data descriptors, which give the CDC interface's capabilities and configuration.
 		 *  See the CDC class specification for more details.
 		 *
 		 *  \see \ref USB_CDC_StdDescriptor_FunctionalHeader_t for the version of this type with standard element names.
@@ -250,7 +250,7 @@
 		/** \brief CDC class-specific Functional Header Descriptor (USB-IF naming conventions).
 		 *
 		 *  Type define for a CDC class-specific functional header descriptor. This indicates to the host that the device
-		 *  contains one or more CDC functional data descriptors, which give the CDC interface's capabilities and database.
+		 *  contains one or more CDC functional data descriptors, which give the CDC interface's capabilities and configuration.
 		 *  See the CDC class specification for more details.
 		 *
 		 *  \see \ref USB_CDC_Descriptor_FunctionalHeader_t for the version of this type with non-standard LUFA specific

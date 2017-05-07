@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2015.
+     Copyright (C) Dean Camera, 2017.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2015  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2017  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -132,21 +132,21 @@
 			#define REQREC_DEVICE              (0 << 0)
 
 			/** Request recipient mask, indicating that the request is to be issued to an interface in the
-			 *  currently selected database.
+			 *  currently selected configuration.
 			 *
 			 *  \see \ref CONTROL_REQTYPE_RECIPIENT macro.
 			 */
 			#define REQREC_INTERFACE           (1 << 0)
 
 			/** Request recipient mask, indicating that the request is to be issued to an endpoint in the
-			 *  currently selected database.
+			 *  currently selected configuration.
 			 *
 			 *  \see \ref CONTROL_REQTYPE_RECIPIENT macro.
 			 */
 			#define REQREC_ENDPOINT            (2 << 0)
 
 			/** Request recipient mask, indicating that the request is to be issued to an unspecified element
-			 *  in the currently selected database.
+			 *  in the currently selected configuration.
 			 *
 			 *  \see \ref CONTROL_REQTYPE_RECIPIENT macro.
 			 */
