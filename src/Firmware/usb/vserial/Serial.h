@@ -1,9 +1,9 @@
 #ifdef DEBUG
 #pragma once
-#include "../core/usb/vserial/Descriptors.h"
+#include "Descriptors.h"
 
-#include "../core/usb/lufa/LUFA/Drivers/USB/USB.h"
-#include "../core/usb/lufa/LUFA/Platform/Platform.h"
+#include "../../lufa/LUFA/Drivers/USB/USB.h"
+#include "../../lufa/LUFA/Platform/Platform.h"
 
 /* Function Prototypes: */
 void SetupHardware(void);

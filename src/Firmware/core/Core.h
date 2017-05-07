@@ -19,6 +19,3 @@
 #include "reset/Reset.h"
 #include "strings/Strings.h"
 #include "spi/SPI.h"
-#ifdef NDEBUG
-#include "usb/midi/Descriptors.h"
-#endif

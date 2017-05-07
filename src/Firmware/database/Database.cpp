@@ -1,9 +1,5 @@
 #include "Database.h"
 
-#ifdef DEBUG
-#include "../vserial/Serial.h"
-#endif
-
 ///
 /// \brief Default constructor.
 ///

@@ -21,6 +21,10 @@
 #include "version/Version.h"
 #include "database/Database.h"
 
+#ifdef DEBUG
+#include "usb/vserial/Serial.h"
+#endif
+
 bool onCustom(uint8_t value)
 {
     switch(value)

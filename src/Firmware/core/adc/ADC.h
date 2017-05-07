@@ -22,12 +22,6 @@
 void setUpADC();
 
 ///
-/// \brief Sets active ADC channel
-/// @param[in] channel ADC Channel.
-///
-void setADCchannel(uint8_t channel);
-
-///
 /// \brief Get ADC value from last set ADC channel.
 /// \return Value from ADC registers (ADCH and ADCL).
 ///
@@ -39,6 +33,10 @@ uint16_t getADCvalue();
 ///
 void disconnectDigitalInADC(uint8_t channel);
 
+///
+/// \brief Sets active ADC channel
+/// @param[in] channel ADC Channel.
+///
 inline void setADCchannel(uint8_t adcChannel)
 {
     //check for valid channel

@@ -6,10 +6,6 @@
 #include "Config.h"
 #include "DataTypes.h"
 
-#ifdef DEBUG
-#include "../../vserial/Serial.h"
-#endif
-
 #include "Macros.h"
 #include "strings/Strings.h"
 

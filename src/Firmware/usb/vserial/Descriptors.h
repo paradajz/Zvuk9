@@ -41,7 +41,7 @@
 	/* Includes: */
 		#include <avr/pgmspace.h>
 
-		#include "../lufa/LUFA/Drivers/USB/USB.h"
+		#include "../../lufa/LUFA/Drivers/USB/USB.h"
 
 	/* Macros: */
 		/** Endpoint address of the CDC device-to-host notification IN endpoint. */

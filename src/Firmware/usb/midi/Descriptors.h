@@ -39,7 +39,7 @@
 #define _DESCRIPTORS_MIDI_H_
 
 	/* Includes: */
-        #include "../lufa/LUFA/Drivers/USB/USB.h"
+        #include "../../lufa/LUFA/Drivers/USB/USB.h"
 
 		#include <avr/pgmspace.h>
 

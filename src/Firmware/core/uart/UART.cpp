@@ -1,4 +1,5 @@
 #include "UART.h"
+#include "RingBuffer/RingBuffer.h"
 #include <avr/interrupt.h>
 
 RingBuff_t  txBuffer, rxBuffer;
