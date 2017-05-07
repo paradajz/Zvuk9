@@ -27,7 +27,7 @@
 #ifdef NDEBUG
 #pragma once
 
-#include "../usb/midi/Descriptors.h"
+#include "Descriptors.h"
 
 //usb
 void EVENT_USB_Device_ConfigurationChanged(void);

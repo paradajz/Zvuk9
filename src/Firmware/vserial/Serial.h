@@ -2,8 +2,8 @@
 #pragma once
 #include "Descriptors.h"
 
-#include "../../lufa/LUFA/Drivers/USB/USB.h"
-#include "../../lufa/LUFA/Platform/Platform.h"
+#include "../lufa/LUFA/Drivers/USB/USB.h"
+#include "../lufa/LUFA/Platform/Platform.h"
 
 /* Function Prototypes: */
 void SetupHardware(void);

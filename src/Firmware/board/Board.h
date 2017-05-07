@@ -1,10 +1,9 @@
 #pragma once
 
-#include "lcd/lcd.h"
+#include "Variables.h"
 #include "map/Map.h"
+#include "lcd/lcd.h"
 #include "pins/Pins.h"
-#include "variables/Variables.h"
-#include "constants/Constants.h"
 #include "Import.h"
 #include "DataTypes.h"
 

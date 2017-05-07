@@ -1,4 +1,4 @@
-#include "../Board.h"
+#include "Board.h"
 
 volatile uint8_t    buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
 

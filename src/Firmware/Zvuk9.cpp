@@ -22,7 +22,7 @@
 #include "database/Database.h"
 
 #ifdef DEBUG
-#include "usb/vserial/Serial.h"
+#include "vserial/Serial.h"
 #endif
 
 bool onCustom(uint8_t value)

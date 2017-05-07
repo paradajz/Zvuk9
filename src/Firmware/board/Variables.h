@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../constants/Constants.h"
+#include "constants/Constants.h"
 
 extern volatile int8_t      activeLEDcolumn;
 extern uint8_t              encoderState[MAX_NUMBER_OF_ENCODERS];

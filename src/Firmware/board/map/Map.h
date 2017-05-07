@@ -1,6 +1,6 @@
 #pragma once
 
-#include "buttons/Buttons.h"
-#include "encoders/Encoders.h"
-#include "pads/Pads.h"
-#include "leds/LEDs.h"
+#include "Buttons.h"
+#include "Encoders.h"
+#include "Pads.h"
+#include "LEDs.h"
