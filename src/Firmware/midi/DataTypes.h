@@ -1,9 +1,25 @@
+/*
+    OpenDeck MIDI platform firmware
+    Copyright (C) 2015-2017 Igor Petrovic
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #pragma once
 
-#define normalizeChannel(channel)   (((channel - 1) & MAX_MIDI_CHANNEL_MASK))
-#define normalizeData(data)         (data & MAX_MIDI_VALUE_MASK)
-#define lowByte_7bit(value)         ((value) & 0x7F)
-#define highByte_7bit(value)        ((value >> 7) & 0x7f)
+#include "Helpers.h"
+#include "Config.h"
 
 enum midiInterfaceType_t
 {
@@ -38,7 +54,6 @@ enum midiMessageType_t
     midiMessageActiveSensing        = 0xFE, //System Real Time - Active Sensing
     midiMessageSystemReset          = 0xFF, //System Real Time - System Reset
     midiMessageInvalidType          = 0x00  //For notifying errors
-
 };
 
 enum usbMIDIsystemCin_t
@@ -67,6 +82,28 @@ typedef enum
     noteOffType_noteOnZeroVel,
     noteOffType_standardNoteOff
 } noteOffType_t;
+
+//decoded data of a MIDI message
+struct Message
+{
+    //MIDI channel on which the message was received (1-16)
+    uint8_t channel;
+
+    //the type of the message
+    midiMessageType_t type;
+
+    //first data byte (0-127)
+    uint8_t data1;
+
+    //second data byte (0-127, 0 if message length is 2 bytes)
+    uint8_t data2;
+
+    //sysex array length is stocked on 16 bits, in data1 (LSB) and data2 (MSB)
+    uint8_t sysexArray[MIDI_SYSEX_ARRAY_SIZE];
+
+    //message valid/invalid (no channel consideration here, validity means the message respects the MIDI norm)
+    bool valid;
+};
 
 typedef struct
 {

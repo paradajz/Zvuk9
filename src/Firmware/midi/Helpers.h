@@ -18,18 +18,7 @@
 
 #pragma once
 
-#include "../core/uart/UART.h"
-
-#define USE_SERIAL_PORT         uart
-
-#define MIDI_CHANNEL_OMNI       0
-#define MIDI_CHANNEL_OFF        17 // and over
-
-#define MIDI_PITCHBEND_MIN      -8192
-#define MIDI_PITCHBEND_MAX      8191
-
-//maximum sysex length we can receive
-#define MIDI_SYSEX_ARRAY_SIZE   45
-
-#define USE_SERIAL_RX           1
-#define USE_SERIAL_TX           0
+#define normalizeChannel(channel)   (((channel - 1) & MAX_MIDI_CHANNEL_MASK))
+#define normalizeData(data)         (data & MAX_MIDI_VALUE_MASK)
+#define lowByte_7bit(value)         ((value) & 0x7F)
+#define highByte_7bit(value)        ((value >> 7) & 0x7f)

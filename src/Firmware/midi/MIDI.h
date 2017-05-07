@@ -1,3 +1,21 @@
+/*
+    OpenDeck MIDI platform firmware
+    Copyright (C) 2015-2017 Igor Petrovic
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /*!
  *  @file       MIDI.h
  *  Project     Arduino MIDI Library
@@ -23,18 +41,23 @@
 
 //library modifed by Igor Petrovic
 
-
-#ifdef NDEBUG
 #pragma once
 
+#ifdef NDEBUG
+
+#include "Config.h"
 #include "Descriptors.h"
+#include "DataTypes.h"
+#include "Helpers.h"
 
 //usb
 void EVENT_USB_Device_ConfigurationChanged(void);
 
-#include "Config.h"
-#include "DataTypes.h"
-
+///
+/// \brief UART and USB MIDI communication.
+/// \ingroup midi
+/// @{
+///
 class MIDI
 {
     public:
@@ -58,7 +81,6 @@ class MIDI
     void sendTuneRequest();
     void sendRealTime(midiMessageType_t inType);
     void setNoteOffMode(noteOffType_t type);
-    noteOffType_t getNoteOffMode();
     void enableRunningStatus();
     void disableRunningStatus();
     bool runningStatusEnabled();
@@ -71,6 +93,8 @@ class MIDI
     void setNoteChannel(uint8_t channel);
     void setCCchannel(uint8_t channel);
     void setProgramChangeChannel(uint8_t channel);
+
+    noteOffType_t getNoteOffMode();
 
     private:
     void send(midiMessageType_t inType, uint8_t inData1, uint8_t inData2, uint8_t inChannel);
@@ -110,30 +134,9 @@ class MIDI
     bool inputFilter(uint8_t inChannel, midiInterfaceType_t type);
     void resetInput();
     uint8_t getStatus(midiMessageType_t inType, uint8_t inChannel) const;
-    bool    usbEnabled,
-            dinEnabled;
 
-    //decoded data of a MIDI message
-    struct Message
-    {
-        //MIDI channel on which the message was received (1-16)
-        uint8_t channel;
-
-        //the type of the message
-        midiMessageType_t type;
-
-        //first data byte (0-127)
-        uint8_t data1;
-
-        //second data byte (0-127, 0 if message length is 2 bytes)
-        uint8_t data2;
-
-        //sysex array length is stocked on 16 bits, in data1 (LSB) and data2 (MSB)
-        uint8_t sysexArray[MIDI_SYSEX_ARRAY_SIZE];
-
-        //message valid/invalid (no channel consideration here, validity means the message respects the MIDI norm)
-        bool valid;
-    };
+    bool                usbEnabled,
+                        dinEnabled;
 
     bool                mThruActivated;
     midiFilterMode_t    mThruFilterMode;
@@ -157,5 +160,8 @@ class MIDI
 };
 
 extern MIDI midi;
+extern volatile bool MIDIevent_in;
+extern volatile bool MIDIevent_out;
 
 #endif
+/// @}

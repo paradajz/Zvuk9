@@ -1171,6 +1171,9 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Compile Include="midi\Descriptors.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="midi\Helpers.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="midi\MIDI.cpp">
       <SubType>compile</SubType>
     </Compile>
