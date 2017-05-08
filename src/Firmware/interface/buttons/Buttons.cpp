@@ -19,7 +19,7 @@ Buttons::Buttons()
     lastCheckTime               = 0;
     processingEnabled           = true;
 
-    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
+    for (int i=0; i<MAX_NUMBER_OF_BUTTONS/8+1; i++)
     {
         buttonEnabled[i] = true;
     }
@@ -122,17 +122,39 @@ bool Buttons::buttonDebounced(uint8_t buttonID, uint8_t state)
 void Buttons::enable(int8_t buttonID)
 {
     if (buttonID == -1)
+    {
         processingEnabled = true;
+    }
     else
-        buttonEnabled[buttonID] = true;
+    {
+        uint8_t arrayIndex = buttonID/8;
+        uint8_t buttonIndex = buttonID - 8*arrayIndex;
+
+        bitWrite(buttonEnabled[arrayIndex], buttonIndex, true);
+    }
 }
 
 void Buttons::disable(int8_t buttonID)
 {
     if (buttonID == -1)
+    {
         processingEnabled = false;
+    }
     else
-        buttonEnabled[buttonID] = false;
+    {
+        uint8_t arrayIndex = buttonID/8;
+        uint8_t buttonIndex = buttonID - 8*arrayIndex;
+
+        bitWrite(buttonEnabled[arrayIndex], buttonIndex, false);
+    }
+}
+
+bool Buttons::getButtonEnableState(uint8_t buttonID)
+{
+    uint8_t arrayIndex = buttonID/8;
+    uint8_t buttonIndex = buttonID - 8*arrayIndex;
+
+    return bitRead(buttonEnabled[arrayIndex], buttonIndex);
 }
 
 note_t Buttons::getTonicFromButton(uint8_t buttonNumber)
@@ -148,11 +170,6 @@ void Buttons::setTransportControlType(transportControlType_t type)
 transportControlType_t Buttons::getTransportControlType()
 {
     return transportControlType;
-}
-
-bool Buttons::getButtonEnableState(uint8_t buttonID)
-{
-    return buttonEnabled[buttonID];
 }
 
 uint8_t Buttons::getLastPressedButton()

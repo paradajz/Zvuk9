@@ -53,7 +53,7 @@ bool Pads::checkVelocity(uint8_t pad, uint16_t value)
 
 bool Pads::checkX(uint8_t pad, int16_t value)
 {
-    if (pressureReduction[pad])
+    if (bitRead(pressureReduction, pad))
         return false;
 
     if (calibrationEnabled && (activeCalibration == coordinateX))
@@ -106,7 +106,7 @@ bool Pads::checkX(uint8_t pad, int16_t value)
 
 bool Pads::checkY(uint8_t pad, int16_t value)
 {
-    if (pressureReduction[pad])
+    if (bitRead(pressureReduction, pad))
         return false;
 
     if (calibrationEnabled && (activeCalibration == coordinateY))
@@ -189,8 +189,8 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
             lastAftertouchValue[pad] = calibratedPressureAfterTouch;
             lastAftertouchUpdateTime[pad] = rTimeMs();
 
-            if (!aftertouchActivated[pad])
-                aftertouchActivated[pad] = true;
+            if (!bitRead(aftertouchActivated, pad))
+                bitWrite(aftertouchActivated, pad, true);
 
             uint8_t padsPressed = 0;
 
@@ -204,7 +204,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                 case aftertouchChannel:
                 for (int i=0; i<NUMBER_OF_PADS; i++)
                 {
-                    if (isPadPressed(i) && aftertouchActivated[i])
+                    if (isPadPressed(i) && bitRead(aftertouchActivated, i))
                         padsPressed++;
                 }
 
@@ -222,9 +222,10 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                         if (!isPadPressed(i))
                             continue;
 
-                        if (!aftertouchActivated[i])
+                        if (!bitRead(aftertouchActivated, i))
                             continue;
-                        if (!aftertouchSendEnabled[i])
+
+                        if (!bitRead(aftertouchSendEnabled, i))
                             continue;
 
                         if (lastAftertouchValue[i] > tempMaxValue)
@@ -254,7 +255,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
     {
         //pad is released
         //make sure to send aftertouch with pressure 0 on note off under certain conditions
-        if (velocityAvailable && aftertouchActivated[pad])
+        if (velocityAvailable && bitRead(aftertouchActivated, pad))
         {
             uint8_t pressedPadCounter = 0;
 
@@ -268,7 +269,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                 for (int i=0; i<NUMBER_OF_PADS; i++)
                 {
                     //count how many pads are pressed with activated aftertouch
-                    if (aftertouchActivated[i] && isPadPressed(i) && aftertouchSendEnabled[i])
+                    if (bitRead(aftertouchActivated, i) && isPadPressed(i) && bitRead(aftertouchSendEnabled, i))
                         pressedPadCounter++;
                 }
 
@@ -311,9 +312,9 @@ void Pads::update()
 
         //detect if pressure is increasing or decreasing, but only if pad is pressed
         if (isPadPressed(i))
-            pressureReduction[i] = pressure < (uint16_t)lastPressureValue[i];
+            bitWrite(pressureReduction, i, pressure < (uint16_t)lastPressureValue[i]);
         else
-            pressureReduction[i] = 0;
+            bitWrite(pressureReduction, i, 0);
 
         //all needed pressure samples are obtained
         velocityAvailable = checkVelocity(i, pressure);
@@ -425,17 +426,17 @@ bool Pads::pressureStable(uint8_t pad, bool pressDetected)
 void Pads::checkMIDIdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
 {
     //send X/Y immediately
-    if (xAvailable && xSendEnabled[pad])
+    if (xAvailable && bitRead(xSendEnabled, pad))
         sendX(pad);
 
-    if (yAvailable && ySendEnabled[pad])
+    if (yAvailable && bitRead(ySendEnabled, pad))
         sendY(pad);
 
     //send aftertouch immediately
-    if (aftertouchAvailable && aftertouchSendEnabled[pad])
+    if (aftertouchAvailable && bitRead(aftertouchSendEnabled, pad))
         sendAftertouch(pad);
 
-    if (velocityAvailable && noteSendEnabled[pad])
+    if (velocityAvailable && bitRead(noteSendEnabled, pad))
     {
         switch(lastMIDInoteState[pad])
         {
@@ -481,7 +482,7 @@ bool Pads::checkNoteBuffer()
 
     //send
     //make sure to check if pad is still pressed!
-    if (noteSendEnabled[pad_buffer[index]] && isPadPressed(pad_buffer[index]))
+    if (bitRead(noteSendEnabled, pad_buffer[index]) && isPadPressed(pad_buffer[index]))
         sendNotes(pad_buffer[index], velocity_buffer[index], true);
 
     note_buffer_tail = index;
@@ -499,7 +500,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
         if (xAvailable)
         {
-            if (xSendEnabled[pad])
+            if (bitRead(xSendEnabled, pad))
             {
                 display.displayXYposition(lastXMIDIvalue[pad], coordinateX);
                 display.displayXYcc(ccXPad[pad], coordinateX);
@@ -513,7 +514,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
         if (yAvailable)
         {
-            if (ySendEnabled[pad])
+            if (bitRead(ySendEnabled, pad))
             {
                 display.displayXYposition(lastYMIDIvalue[pad], coordinateY);
                 display.displayXYcc(ccYPad[pad], coordinateY);
@@ -527,7 +528,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
         if (aftertouchAvailable)
         {
-            if (aftertouchSendEnabled[pad] && aftertouchActivated[pad])
+            if (bitRead(aftertouchSendEnabled, pad) && bitRead(aftertouchActivated, pad))
             {
                 switch(aftertouchType)
                 {
@@ -545,7 +546,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
                 display.clearAftertouch();
             }
         }
-        else if (velocityAvailable && !aftertouchActivated[pad])
+        else if (velocityAvailable && !bitRead(aftertouchActivated, pad))
         {
             display.clearAftertouch();
         }

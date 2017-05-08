@@ -12,7 +12,6 @@ class Buttons
     void update();
     void enable(int8_t buttonID = -1);
     void disable(int8_t buttonID = -1);
-
     bool getButtonEnableState(uint8_t buttonID);
 
     void setTransportControlType(transportControlType_t type);
@@ -42,7 +41,7 @@ class Buttons
     void processButton(uint8_t button, uint8_t state);
 
     uint32_t                lastCheckTime;
-    bool                    buttonEnabled[MAX_NUMBER_OF_BUTTONS];
+    bool                    buttonEnabled[MAX_NUMBER_OF_BUTTONS/8+1];
     bool                    processingEnabled;
     uint32_t                userMenuTimeout;
     transportControlType_t  transportControlType;

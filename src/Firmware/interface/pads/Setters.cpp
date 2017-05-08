@@ -5,28 +5,28 @@
 
 void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)
 {
-    bool *variablePointer;
+    uint16_t *variablePointer;
     uint16_t configurationID;
 
     switch(type)
     {
         case onOff_notes:
-        variablePointer = noteSendEnabled;
+        variablePointer = &noteSendEnabled;
         configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID;
         break;
 
         case onOff_aftertouch:
-        variablePointer = aftertouchSendEnabled;
+        variablePointer = &aftertouchSendEnabled;
         configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID;
         break;
 
         case onOff_x:
-        variablePointer = xSendEnabled;
+        variablePointer = &xSendEnabled;
         configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_X_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_X_ENABLE_ID;
         break;
 
         case onOff_y:
-        variablePointer = ySendEnabled;
+        variablePointer = &ySendEnabled;
         configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_Y_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID;
         break;
 
@@ -40,13 +40,13 @@ void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)
         //global
         database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
         for (int i=0; i<NUMBER_OF_PADS; i++)
-            variablePointer[i] = state;
+            bitWrite(*variablePointer, i, state);
         break;
 
         case true:
         //local
         database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
-            variablePointer[padNumber] = state;
+            bitWrite(*variablePointer, padNumber, state);
         break;
     }
 }
@@ -1064,7 +1064,7 @@ void Pads::checkRemainingNoteShift()
 
 void Pads::setMIDISendState(onOff_t type, bool state)
 {
-    bool *variablePointer;
+    uint16_t *variablePointer;
 
     switch(type)
     {
@@ -1072,28 +1072,28 @@ void Pads::setMIDISendState(onOff_t type, bool state)
         #ifdef DEBUG
         printf_P(PSTR("Notes "));
         #endif
-        variablePointer = noteSendEnabled;
+        variablePointer = &noteSendEnabled;
         break;
 
         case onOff_x:
         #ifdef DEBUG
         printf_P(PSTR("X "));
         #endif
-        variablePointer = xSendEnabled;
+        variablePointer = &xSendEnabled;
         break;
 
         case onOff_y:
         #ifdef DEBUG
         printf_P(PSTR("Y "));
         #endif
-        variablePointer = ySendEnabled;
+        variablePointer = &ySendEnabled;
         break;
 
         case onOff_aftertouch:
         #ifdef DEBUG
         printf_P(PSTR("Aftertouch "));
         #endif
-        variablePointer = aftertouchSendEnabled;
+        variablePointer = &aftertouchSendEnabled;
         break;
 
         default:

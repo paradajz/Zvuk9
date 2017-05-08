@@ -179,10 +179,11 @@ class Pads
                             ccYminPad[NUMBER_OF_PADS],
                             ccYmaxPad[NUMBER_OF_PADS];
 
-    bool                    xSendEnabled[NUMBER_OF_PADS],
-                            ySendEnabled[NUMBER_OF_PADS],
-                            noteSendEnabled[NUMBER_OF_PADS],
-                            aftertouchSendEnabled[NUMBER_OF_PADS];
+    //store info for all pads in single uint16_t - we know there are only 9 pads
+    uint16_t                xSendEnabled,
+                            ySendEnabled,
+                            noteSendEnabled,
+                            aftertouchSendEnabled;
 
     int8_t                  padCurveX[NUMBER_OF_PADS],
                             padCurveY[NUMBER_OF_PADS];
@@ -210,14 +211,14 @@ class Pads
                             activeProgram;
 
     //debouncing
-    bool                    aftertouchActivated[NUMBER_OF_PADS];
+    uint16_t                aftertouchActivated;
 
     uint32_t                padDebounceTimer[NUMBER_OF_PADS],
                             xSendTimer[NUMBER_OF_PADS],
                             ySendTimer[NUMBER_OF_PADS],
                             lastAftertouchUpdateTime[NUMBER_OF_PADS];
 
-    uint8_t                 pressureReduction[NUMBER_OF_PADS];
+    uint16_t                pressureReduction;
 
     //used to shift octave once all pads are released
     int8_t                  octaveShiftAmount[NUMBER_OF_PADS];

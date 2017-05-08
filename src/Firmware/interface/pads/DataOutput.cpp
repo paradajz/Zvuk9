@@ -81,7 +81,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)
                     continue;
 
                 //don't check pad if noteSend is disabled
-                if (!noteSendEnabled[j])
+                if (!bitRead(noteSendEnabled, j))
                     continue;
 
                 //only send note off if the same note isn't active on some other pad already
@@ -142,7 +142,7 @@ void Pads::sendAftertouch(uint8_t pad)
     }
 
     if (!lastMIDInoteState[pad])
-        aftertouchActivated[pad] = false;
+        bitWrite(aftertouchActivated, pad, false);
 }
 
 void Pads::handleNoteLEDs(uint8_t pad, bool state)
@@ -221,7 +221,7 @@ void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)
     switch(state)
     {
         case true:
-        if (!noteCounter || !noteSendEnabled[pad])
+        if (!noteCounter || !bitRead(noteSendEnabled, pad))
         {
             display.displayActivePadNotes(0, 0, 0, getEditModeState());
             return;
