@@ -23,7 +23,7 @@ bool Pads::checkVelocity(uint8_t pad, uint16_t value)
                 //sensor is really pressed
                 bitWrite(padPressed, pad, true);  //set pad pressed
                 lastVelocityValue[pad] = calibratedPressure;
-                lastMIDInoteState[pad] = true;
+                bitWrite(lastMIDInoteState, pad, true);
                 //always do this when pad is pressed
                 resetCalibration();
                 returnValue = true;
@@ -38,7 +38,7 @@ bool Pads::checkVelocity(uint8_t pad, uint16_t value)
             {
                 //pad is already pressed
                 lastVelocityValue[pad] = calibratedPressure;
-                lastMIDInoteState[pad] = false;
+                bitWrite(lastMIDInoteState, pad, false);
                 returnValue = true;
                 lastXMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
                 lastYMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
@@ -159,7 +159,7 @@ bool Pads::checkY(uint8_t pad, int16_t value)
 bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
 {
     //pad is pressed
-    if (lastMIDInoteState[pad])
+    if (bitRead(lastMIDInoteState, pad))
     {
         uint8_t calibratedPressureAfterTouch = scalePressure(pad, lastPressureValue[pad], pressureAftertouch);
 
@@ -333,9 +333,9 @@ void Pads::update()
 
             //if pad is pressed, update last pressed pad
             //if it's released clear it from history
-            updateLastPressedPad(i, lastMIDInoteState[i]);
+            updateLastPressedPad(i, bitRead(lastMIDInoteState, i));
 
-            if (!lastMIDInoteState[i])
+            if (!bitRead(lastMIDInoteState, i))
             {
                 //lcd restore detection
                 //display data from last touched pad if current pad is released
@@ -345,7 +345,7 @@ void Pads::update()
 
             if (!getEditModeState())
             {
-                if (lastMIDInoteState[i] && splitEnabled)
+                if (bitRead(lastMIDInoteState, i) && splitEnabled)
                 {
                     //update function leds only once, on press
                     //don't update if split is disabled (no need)
@@ -355,7 +355,7 @@ void Pads::update()
             else
             {
                 //setup pad edit mode on press for current pad
-                if (lastMIDInoteState[i])
+                if (bitRead(lastMIDInoteState, i))
                     setEditModeState(true, i);
             }
         }
@@ -438,7 +438,7 @@ void Pads::checkMIDIdata(uint8_t pad, bool velocityAvailable, bool aftertouchAva
 
     if (velocityAvailable && bitRead(noteSendEnabled, pad))
     {
-        switch(lastMIDInoteState[pad])
+        switch(bitRead(lastMIDInoteState, pad))
         {
             case true:
             //if note on event happened, store notes in buffer first
@@ -552,7 +552,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
         }
 
         if (velocityAvailable)
-            handleNoteLCD(pad, lastVelocityValue[pad], lastMIDInoteState[pad]);
+            handleNoteLCD(pad, lastVelocityValue[pad], bitRead(lastMIDInoteState, pad));
 
         if (velocityAvailable)
             display.displayMIDIchannel(midiChannel[pad]);

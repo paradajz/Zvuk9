@@ -115,7 +115,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)
 void Pads::sendAftertouch(uint8_t pad)
 {
     #ifdef NDEBUG
-    uint8_t aftertouchValue = lastMIDInoteState[pad] ? lastAftertouchValue[pad] : 0;
+    uint8_t aftertouchValue = bitRead(lastMIDInoteState, pad) ? lastAftertouchValue[pad] : 0;
     #endif
 
     switch(aftertouchType)
@@ -141,7 +141,7 @@ void Pads::sendAftertouch(uint8_t pad)
         break;
     }
 
-    if (!lastMIDInoteState[pad])
+    if (!bitRead(lastMIDInoteState, pad))
         bitWrite(aftertouchActivated, pad, false);
 }
 

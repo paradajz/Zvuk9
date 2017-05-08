@@ -161,8 +161,9 @@ class Pads
                             lastYMIDIvalue[NUMBER_OF_PADS];
 
     uint8_t                 lastVelocityValue[NUMBER_OF_PADS],
-                            lastAftertouchValue[NUMBER_OF_PADS],
-                            lastMIDInoteState[NUMBER_OF_PADS];
+                            lastAftertouchValue[NUMBER_OF_PADS];
+
+    uint16_t                lastMIDInoteState;
 
     //last raw pressure value
     //needed to get correct aftertouch value
