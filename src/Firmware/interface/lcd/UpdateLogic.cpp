@@ -24,8 +24,8 @@ void LCD::init()
         lineChange[i] = false;
         scrollEnabled[i] = false;
         scrollDirection[i] = true;
-        scrollStartIndex[i] = 0;
-        scrollIndex[i] = 0;
+        //scrollStartIndex[i] = 0;
+        //scrollIndex[i] = 0;
     }
 
     //init char arrays
@@ -34,7 +34,7 @@ void LCD::init()
         lcdLine[i][0] = '\0';
         lcdLineMessage[i][0] = '\0';
         lastLCDLine[i][0] = '\0';
-        lcdLineScroll[i][0] = '\0';
+        //lcdLineScroll[i][0] = '\0';
     }
 
     //empty init, hacky
@@ -61,7 +61,7 @@ bool LCD::update()
 
     for (int i=0; i<LCD_HEIGHT; i++)
     {
-        checkScroll(i);
+        //checkScroll(i);
 
         if (!lineChange[i])
             continue;
@@ -83,18 +83,18 @@ bool LCD::update()
                 removeMessage();
                 //it's possible that we're changing midi channel with preset encoder - clear the modifier
                 buttons.setModifierState(false);
-                if (scrollEnabled[i])
-                    charPointer = lcdLineScroll[i];
-                else
+                //if (scrollEnabled[i])
+                    //charPointer = lcdLineScroll[i];
+                //else
                     charPointer = lcdLine[i];
                 break;
             }
             break;
 
             default:
-            if (scrollEnabled[i])
-                charPointer = lcdLineScroll[i];
-            else
+            //if (scrollEnabled[i])
+                //charPointer = lcdLineScroll[i];
+            //else
                 charPointer = lcdLine[i];
             break;
         }
@@ -183,43 +183,43 @@ void LCD::removeMessage()
     messageTime = 0;
 }
 
-void LCD::checkScroll(uint8_t row)
-{
-    if (!scrollEnabled[row])
-        return;
-
-    if ((rTimeMs() - lastScrollTime) < LCD_SCROLL_TIME)
-        return;
-
-    //copy string up to scrollStartIndex
-    for (int i=0; i<scrollStartIndex[row]; i++)
-        lcdLineScroll[row][i] = lcdLine[row][i];
-
-    //scrollIndex is validated below
-    for (int i=scrollStartIndex[row]; i<LCD_WIDTH; i++)
-        lcdLineScroll[row][i] = lcdLine[row][i+scrollIndex[row]];
-
-    if (scrollDirection[row])
-    {
-        if (((int8_t)strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (LCD_WIDTH - scrollStartIndex[row] - 1))
-            scrollIndex[row]++;
-        else
-            scrollDirection[row] = false;
-    }
-    else
-    {
-        scrollIndex[row]--;
-
-        if (scrollIndex[row] < 0)
-        {
-            scrollDirection[row] = true;
-            scrollIndex[row] = 0;
-        }
-    }
-
-    lineChange[row] = true;
-    lastScrollTime = rTimeMs();
-}
+//void LCD::checkScroll(uint8_t row)
+//{
+    //if (!scrollEnabled[row])
+        //return;
+//
+    //if ((rTimeMs() - lastScrollTime) < LCD_SCROLL_TIME)
+        //return;
+//
+    ////copy string up to scrollStartIndex
+    //for (int i=0; i<scrollStartIndex[row]; i++)
+        //lcdLineScroll[row][i] = lcdLine[row][i];
+//
+    ////scrollIndex is validated below
+    //for (int i=scrollStartIndex[row]; i<LCD_WIDTH; i++)
+        //lcdLineScroll[row][i] = lcdLine[row][i+scrollIndex[row]];
+//
+    //if (scrollDirection[row])
+    //{
+        //if (((int8_t)strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (LCD_WIDTH - scrollStartIndex[row] - 1))
+            //scrollIndex[row]++;
+        //else
+            //scrollDirection[row] = false;
+    //}
+    //else
+    //{
+        //scrollIndex[row]--;
+//
+        //if (scrollIndex[row] < 0)
+        //{
+            //scrollDirection[row] = true;
+            //scrollIndex[row] = 0;
+        //}
+    //}
+//
+    //lineChange[row] = true;
+    //lastScrollTime = rTimeMs();
+//}
 
 void LCD::displayMessage(uint8_t row, const char *message)
 {
@@ -306,18 +306,18 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
     {
         scrollEnabled[row] = true;
         scrollDirection[row] = true;
-        scrollIndex[row] = 0;
+        //scrollIndex[row] = 0;
     }
     else
     {
-        scrollEnabled[row] = false;
-        scrollIndex[row] = 0;
+        //scrollEnabled[row] = false;
+        //scrollIndex[row] = 0;
     }
 }
 
 void LCD::setScrollStart(uint8_t row, uint8_t index)
 {
-    scrollStartIndex[row] = index;
+    //scrollStartIndex[row] = index;
 }
 
 void LCD::setMessageTime(int32_t msgTime)

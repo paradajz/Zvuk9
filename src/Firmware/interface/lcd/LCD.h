@@ -113,14 +113,13 @@ class LCD
     bool scrollDirection[LCD_HEIGHT];
     bool messageActivated;
 
-    int8_t scrollIndex[LCD_HEIGHT];
-
-    uint8_t scrollStartIndex[LCD_HEIGHT];
+    //int8_t scrollIndex[LCD_HEIGHT];
+    //uint8_t scrollStartIndex[LCD_HEIGHT];
 
     char lcdLine[LCD_HEIGHT][MAX_TEXT_SIZE+1];
     char lcdLineMessage[LCD_HEIGHT][MAX_TEXT_SIZE+1];
     char lastLCDLine[LCD_HEIGHT][MAX_TEXT_SIZE+1];
-    char lcdLineScroll[LCD_HEIGHT][MAX_TEXT_SIZE+1];
+    //char lcdLineScroll[LCD_HEIGHT][MAX_TEXT_SIZE+1];
 
     int32_t messageTime;
 
