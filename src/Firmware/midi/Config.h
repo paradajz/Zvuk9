@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "../core/uart/UART.h"
+#include "../core/src/uart/UART.h"
 
 #define USE_SERIAL_PORT         uart
 
