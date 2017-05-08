@@ -1,7 +1,7 @@
 #include "MenuFunctions.h"
 #include "../../../leds/LEDs.h"
 #include "../../../../database/Database.h"
-#include "../../../../midi/DataTypes.h"
+#include "../../../../midi/src/DataTypes.h"
 
 bool factoryReset(functionArgument argument)
 {

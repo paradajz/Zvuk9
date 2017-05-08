@@ -11,7 +11,6 @@
 #define REBOOT_STRING               0x7F
 #define FACTORY_RESET_STRING        0x44
 
-#include "sysex/SysEx.h"
 #include "interface/buttons/Buttons.h"
 #include "interface/encoders/Encoders.h"
 #include "interface/lcd/LCD.h"
@@ -20,55 +19,56 @@
 #include "interface/pads/Pads.h"
 #include "version/Version.h"
 #include "database/Database.h"
+#include "midi/src/MIDI.h"
 
 #ifdef DEBUG
 #include "vserial/Serial.h"
 #endif
 
-bool onCustom(uint8_t value)
-{
-    switch(value)
-    {
-        case FIRMWARE_VERSION_STRING:
-        sysEx.addToResponse(getSWversion(swVersion_major));
-        sysEx.addToResponse(getSWversion(swVersion_minor));
-        sysEx.addToResponse(getSWversion(swVersion_revision));
-        return true;
-
-        case HARDWARE_VERSION_STRING:
-        sysEx.addToResponse(HARDWARE_VERSION_MAJOR);
-        sysEx.addToResponse(HARDWARE_VERSION_MINOR);
-        sysEx.addToResponse(HARDWARE_VERSION_REVISION);
-        return true;
-
-        case REBOOT_STRING:
-        leds.setFadeSpeed(1);
-        leds.setAllOff();
-        wait_ms(1500);
-        board.reboot(rebootApp);
-        return true;
-
-        case FACTORY_RESET_STRING:
-        leds.setFadeSpeed(1);
-        leds.setAllOff();
-        wait_ms(1500);
-        database.factoryReset(initPartial);
-        board.reboot(rebootApp);
-        return true;
-    }
-
-    return false;
-}
-
-sysExParameter_t onGet(uint8_t block, uint8_t section, uint16_t index)
-{
-    return database.read(block, section, index);
-}
-
-bool onSet(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue)
-{
-    return database.update(block, section, index, newValue);
-}
+//bool onCustom(uint8_t value)
+//{
+    //switch(value)
+    //{
+        //case FIRMWARE_VERSION_STRING:
+        //sysEx.addToResponse(getSWversion(swVersion_major));
+        //sysEx.addToResponse(getSWversion(swVersion_minor));
+        //sysEx.addToResponse(getSWversion(swVersion_revision));
+        //return true;
+//
+        //case HARDWARE_VERSION_STRING:
+        //sysEx.addToResponse(HARDWARE_VERSION_MAJOR);
+        //sysEx.addToResponse(HARDWARE_VERSION_MINOR);
+        //sysEx.addToResponse(HARDWARE_VERSION_REVISION);
+        //return true;
+//
+        //case REBOOT_STRING:
+        //leds.setFadeSpeed(1);
+        //leds.setAllOff();
+        //wait_ms(1500);
+        //board.reboot(rebootApp);
+        //return true;
+//
+        //case FACTORY_RESET_STRING:
+        //leds.setFadeSpeed(1);
+        //leds.setAllOff();
+        //wait_ms(1500);
+        //database.factoryReset(initPartial);
+        //board.reboot(rebootApp);
+        //return true;
+    //}
+//
+    //return false;
+//}
+//
+//sysExParameter_t onGet(uint8_t block, uint8_t section, uint16_t index)
+//{
+    //return database.read(block, section, index);
+//}
+//
+//bool onSet(uint8_t block, uint8_t section, uint16_t index, sysExParameter_t newValue)
+//{
+    //return database.update(block, section, index, newValue);
+//}
 
 void startUpAnimation()
 {
@@ -146,14 +146,14 @@ int main()
         display.displayFirmwareUpdated();
 
     #ifdef NDEBUG
-    sysEx.setHandleGet(onGet);
-    sysEx.setHandleSet(onSet);
-    sysEx.setHandleCustomRequest(onCustom);
-
-    sysEx.addCustomRequest(FIRMWARE_VERSION_STRING);
-    sysEx.addCustomRequest(HARDWARE_VERSION_STRING);
-    sysEx.addCustomRequest(REBOOT_STRING);
-    sysEx.addCustomRequest(FACTORY_RESET_STRING);
+    //sysEx.setHandleGet(onGet);
+    //sysEx.setHandleSet(onSet);
+    //sysEx.setHandleCustomRequest(onCustom);
+//
+    //sysEx.addCustomRequest(FIRMWARE_VERSION_STRING);
+    //sysEx.addCustomRequest(HARDWARE_VERSION_STRING);
+    //sysEx.addCustomRequest(REBOOT_STRING);
+    //sysEx.addCustomRequest(FACTORY_RESET_STRING);
     #endif
 
     //flush all data from encoders
@@ -177,21 +177,21 @@ int main()
         #endif
 
         #ifdef NDEBUG
-        if (midi.read(usbInterface))
-        {
-            //new message on usb
-            midiMessageType_t messageType = midi.getType(usbInterface);
-
-            switch(messageType)
-            {
-                case midiMessageSystemExclusive:
-                sysEx.handleSysEx(midi.getSysExArray(usbInterface), midi.getSysExArrayLength(usbInterface));
-                break;
-
-                default:
-                break;
-            }
-        }
+        //if (midi.read(usbInterface))
+        //{
+            ////new message on usb
+            //midiMessageType_t messageType = midi.getType(usbInterface);
+//
+            //switch(messageType)
+            //{
+                //case midiMessageSystemExclusive:
+                //sysEx.handleMessage(midi.getSysExArray(usbInterface), midi.getSysExArrayLength(usbInterface));
+                //break;
+//
+                //default:
+                //break;
+            //}
+        //}
         #endif
     }
 

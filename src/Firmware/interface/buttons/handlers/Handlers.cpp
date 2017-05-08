@@ -7,7 +7,7 @@
 #include "../../lcd/menu/Menu.h"
 #include "../../../database/blocks/GlobalSettings.h"
 #ifdef NDEBUG
-#include "../../../midi/MIDI.h"
+#include "../../../midi/src/MIDI.h"
 #endif
 
 void handleOnOff(uint8_t id, bool state)

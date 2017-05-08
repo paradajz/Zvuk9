@@ -3,7 +3,7 @@
 #include "../lcd/LCD.h"
 #include "../../database/Database.h"
 #ifdef NDEBUG
-#include "../../midi/MIDI.h"
+#include "../../midi/src/MIDI.h"
 #endif
 
 void Pads::sendX(uint8_t pad)

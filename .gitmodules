@@ -1,3 +1,12 @@
 [submodule "src/Firmware/core"]
 	path = src/Firmware/core
 	url = git@github.com:paradajz/avr-core.git
+[submodule "src/Firmware/lufa"]
+	path = src/Firmware/lufa
+	url = git@github.com:abcminiuser/lufa.git
+[submodule "src/Firmware/midi"]
+	path = src/Firmware/midi
+	url = git@github.com:paradajz/midi-lib.git
+[submodule "src/Firmware/dbms"]
+	path = src/Firmware/dbms
+	url = git@github.com:paradajz/AVR-DB.git

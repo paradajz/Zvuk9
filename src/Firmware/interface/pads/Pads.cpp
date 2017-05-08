@@ -1,6 +1,5 @@
 #include "Pads.h"
 #include "../../database/Database.h"
-#include "../../sysex/SysEx.h"
 
 Pads::Pads()
 {

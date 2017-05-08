@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../interface/pads/curves/Curves.h"
-#include "../../midi/DataTypes.h"
+#include "../../midi/src/DataTypes.h"
 
 typedef enum
 {

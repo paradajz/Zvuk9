@@ -3,7 +3,7 @@
 
 #include "../../../../version/Version.h"
 #include "../../../../database/Database.h"
-#include "../../../../midi/DataTypes.h"
+#include "../../../../midi/src/DataTypes.h"
 #include "../functions/MenuFunctions.h"
 
 void Menu::createUserMenuLayout()
