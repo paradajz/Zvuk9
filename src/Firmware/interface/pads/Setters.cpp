@@ -447,13 +447,14 @@ changeOutput_t Pads::setCCcurve(bool direction, padCoordinate_t coordinate, int8
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
     uint8_t startPad = !splitEnabled ? 0 : lastPressedPad;
-    uint8_t compareValue = NUMBER_OF_CC_CURVES-1; //no exp and log
+    uint8_t compareValue = NUMBER_OF_CURVES-1;
     bool compareResult;
     uint8_t changedValue = 0;
     bool changeAllowed = true;
-    int8_t *variablePointer;
+    uint8_t *variablePointer;
     uint16_t configurationID;
 
+    //in this case subtract steps
     if (!direction)
     {
         steps *= -1;
@@ -463,12 +464,12 @@ changeOutput_t Pads::setCCcurve(bool direction, padCoordinate_t coordinate, int8
     switch(coordinate)
     {
         case coordinateX:
-        variablePointer = padCurveX;
+        variablePointer = (uint8_t*)padCurveX;
         configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID;
         break;
 
         case coordinateY:
-        variablePointer = padCurveY;
+        variablePointer = (uint8_t*)padCurveY;
         configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID;
         break;
 
@@ -492,7 +493,9 @@ changeOutput_t Pads::setCCcurve(bool direction, padCoordinate_t coordinate, int8
         if (variablePointer[startPad] != compareValue)
             changedValue = compareValue;
         else
-            changeAllowed = false; result = noChange;
+            changeAllowed = false;
+
+        result = noChange;
     }
 
     if (changeAllowed)

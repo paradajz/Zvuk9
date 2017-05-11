@@ -41,7 +41,7 @@ class Buttons
     void processButton(uint8_t button, uint8_t state);
 
     uint32_t                lastCheckTime;
-    bool                    buttonEnabled[MAX_NUMBER_OF_BUTTONS/8+1];
+    uint8_t                 buttonEnabled[MAX_NUMBER_OF_BUTTONS/8+1];
     bool                    processingEnabled;
     uint32_t                userMenuTimeout;
     transportControlType_t  transportControlType;

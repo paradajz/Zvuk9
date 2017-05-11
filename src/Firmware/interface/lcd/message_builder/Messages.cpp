@@ -15,66 +15,52 @@ void LCD::displayOutOfRange()
     updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
 }
 
-void LCD::displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t padNumber)
+void LCD::displayMIDIchannelChange()
 {
     uint8_t size = 0;
+    uint8_t pad = pads.getLastTouchedPad();
+    uint8_t channel = pads.getMIDIchannel(pad);
     strcpy_P(stringBuffer, midiChannelChange_string);
     size = progmemCharArraySize(midiChannelChange_string);
 
     addNumberToCharArray(channel, size);
     updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
-    displayPadAmount(_splitState, padNumber);
+    displayPadAmount(pad+1);
     display.setMessageTime(INFINITE_MESSAGE_TIME);
 }
 
-void LCD::displayCCchange(padCoordinate_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)
+void LCD::displayCCchange(padCoordinate_t type, uint8_t ccValue)
 {
     uint8_t size = 0;
+    uint8_t pad = pads.getLastTouchedPad()+1;
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(ccArray[(uint8_t)type])));
     size = pgm_read_byte(&ccArray_sizes[type]);
     addNumberToCharArray(ccValue, size);
     updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
-    displayPadAmount(_splitState, padNumber);
+    displayPadAmount(pad);
 }
 
-void LCD::displayCurveChange(padCoordinate_t coordinate, bool _splitState, int8_t curveValue, uint8_t padNumber)
+void LCD::displayCurveChange(padCoordinate_t coordinate)
 {
     uint8_t size = 0;
+    uint8_t padNumber = pads.getLastTouchedPad();
+
+    curve_t curve = pads.getCCcurve(coordinate, padNumber);
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
     size = pgm_read_byte(&curveCoordinateArray_sizes[(uint8_t)coordinate]);
 
-    switch(curveValue)
-    {
-        case curveLinear:
-        strcpy_P(tempBuffer, curveTypeLinear_string);
-        strcat(stringBuffer, tempBuffer);
-        size += progmemCharArraySize(curveTypeLinear_string);
-        break;
-
-        case curveWideEnds:
-        strcpy_P(tempBuffer, curveTypeWideEnds_string);
-        strcat(stringBuffer, tempBuffer);
-        size += progmemCharArraySize(curveTypeWideEnds_string);
-        break;
-
-        case curveWideMiddle:
-        strcpy_P(tempBuffer, curveTypeWideMiddle_string);
-        strcat(stringBuffer, tempBuffer);
-        size += progmemCharArraySize(curveTypeWideMiddle_string);
-        break;
-
-        default:
-        break;
-
-    }
+    strcpy_P(tempBuffer, (char*)pgm_read_word(&(curveNameArray[(uint8_t)curve])));
+    strcat(stringBuffer, tempBuffer);
+    size += pgm_read_byte(&curveNameArray_sizes[(uint8_t)curve]);
 
     updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
-    displayPadAmount(_splitState, padNumber);
+    displayPadAmount(padNumber+1);
 }
 
-void LCD::displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber)
+void LCD::displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, uint8_t ccValue)
 {
     uint8_t size = 0;
+    uint8_t padNumber = pads.getLastTouchedPad()+1;
 
     switch(coordinate)
     {
@@ -114,12 +100,13 @@ void LCD::displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, b
 
     addNumberToCharArray(ccValue, size);
     updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
-    displayPadAmount(_splitState, padNumber);
+    displayPadAmount(padNumber);
 }
 
-void LCD::displayOnOff(onOff_t type, bool _splitState, uint8_t functionState, uint8_t padNumber)
+void LCD::displayOnOffChange(onOff_t type, uint8_t functionState)
 {
     uint8_t size = 0;
+    uint8_t padNumber = pads.getLastTouchedPad()+1;
 
     switch(type)
     {
@@ -142,7 +129,7 @@ void LCD::displayOnOff(onOff_t type, bool _splitState, uint8_t functionState, ui
         updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
 
         if (type != onOff_split)
-        displayPadAmount(_splitState, padNumber);
+            displayPadAmount(padNumber);
         break;
 
         default:

@@ -44,23 +44,23 @@ class LCD
     void displayFirmwareUpdated();
 
     void displayTransportControl(transportControl_t type);
-    void displayOnOff(onOff_t type, bool _splitState, uint8_t functionState, uint8_t padNumber);
-    void displayCurveChange(padCoordinate_t coordinate, bool _splitState, int8_t curveValue, uint8_t padNumber);
-    void displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
-    void displayCCchange(padCoordinate_t type, bool _splitState, uint8_t ccValue, uint8_t padNumber);
-    void displayMIDIchannelChange(uint8_t channel, bool _splitState, uint8_t padNumber);
-    void displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numberOfNotes, bool padEditMode);
-    void displayActiveOctave(int8_t octave);
+    void displayOnOffChange(onOff_t type, uint8_t functionState);
+    void displayCurveChange(padCoordinate_t coordinate);
+    void displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, uint8_t ccValue);
+    void displayCCchange(padCoordinate_t type, uint8_t ccValue);
+    void displayMIDIchannelChange();
+    void displayActivePadNotes();
+    void displayActiveOctave();
     void displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value);
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayNoNotesError();
-    void displayPadEditMode(uint8_t padNumber);
+    void displayPadEditMode();
     void displayOutOfRange();
     void displayMaxNotesSet();
     void displayPadReleaseError(padReleaseError_t error);
     void displayPadEditChangeParametersError();
-    void displayPad(uint8_t pad);
-    void displayMIDIchannel(uint8_t channel);
+    void displayPad();
+    void displayMIDIchannel();
     void displayFactoryResetConfirm();
     void displayFactoryResetStart();
     void displayFactoryResetEnd();
@@ -97,7 +97,7 @@ class LCD
     void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite, bool endOfLine = false);
     void displayMessage(uint8_t row, const char *message);
     void checkScroll(uint8_t row);
-    void displayPadAmount(bool singlePad, uint8_t padNumber);
+    void displayPadAmount(uint8_t padNumber);
     void setupLCDlayout();
     void removeMessage();
 

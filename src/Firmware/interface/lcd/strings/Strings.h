@@ -11,5 +11,6 @@
 #include "Misc.h"
 #include "Reset.h"
 #include "Calibration.h"
+#include "Curves.h"
 
 //note: in _sizes arrays, we need to subtract 1 because of EOL char

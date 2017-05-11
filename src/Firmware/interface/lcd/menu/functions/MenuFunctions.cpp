@@ -300,18 +300,18 @@ bool checkPressureSensitivity(functionArgument argument)
 
 bool checkPressureCurve(functionArgument argument)
 {
-    switch((curve_t)argument.argument1)
-    {
-        case curveLinear:
-        case curveLog:
-        case curveExp:
-        //ok
-        break;
-
-        default:
-        //invalid argument
-        return false;
-    }
+    //switch((curve_t)argument.argument1)
+    //{
+        //case curveLinear:
+        //case curveLog:
+        //case curveExp:
+        ////ok
+        //break;
+//
+        //default:
+        ////invalid argument
+        //return false;
+    //}
 
     switch(argument.argument2)
     {

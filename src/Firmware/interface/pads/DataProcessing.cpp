@@ -2,8 +2,117 @@
 #include "../lcd/menu/Menu.h"
 #include "../../database/blocks/PadCalibration.h"
 
-bool Pads::checkVelocity(uint8_t pad, uint16_t value)
+void Pads::update()
 {
+    bool restoreLCD = false;
+
+    if (!board.padDataAvailable())
+        return;
+
+    for (int i=0; i<NUMBER_OF_PADS; i++)
+    {
+        bool velocityAvailable = false;
+        bool aftertouchAvailable = false;
+
+        bool xAvailable = false;
+        bool yAvailable = false;
+
+        //all needed pressure samples are obtained
+        velocityAvailable = checkVelocity(i);
+        aftertouchAvailable = checkAftertouch(i, velocityAvailable);
+
+        //only check x/y if pad is pressed
+        if (isPadPressed(i))
+        {
+            xAvailable = checkX(i);
+            yAvailable = checkY(i);
+        }
+
+        if (velocityAvailable)
+        {
+            uint8_t index = getLastTouchedPad();
+
+            //if pad is pressed, update last pressed pad
+            //if it's released clear it from history
+            updateLastPressedPad(i, bitRead(lastMIDInoteState, i));
+
+            if (!bitRead(lastMIDInoteState, i))
+            {
+                //lcd restore detection
+                //display data from last touched pad if current pad is released
+                if ((index != getLastTouchedPad()) && !allPadsReleased())
+                restoreLCD = true;
+            }
+
+            if (!getEditModeState())
+            {
+                if (bitRead(lastMIDInoteState, i) && splitEnabled)
+                {
+                    //update function leds only once, on press
+                    //don't update if split is disabled (no need)
+                    setFunctionLEDs(i);
+                }
+            }
+            else
+            {
+                //setup pad edit mode on press for current pad
+                if (bitRead(lastMIDInoteState, i))
+                setEditModeState(true, i);
+            }
+        }
+
+        //check data to be sent
+        //don't send or show midi data while in pad edit mode
+        if (!getEditModeState())
+        {
+            //don't send midi data while in menu
+            if (!menu.menuDisplayed())
+            checkMIDIdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+
+            if (restoreLCD)
+            {
+                uint8_t padIndex = getLastTouchedPad();
+
+                if (!menu.menuDisplayed())
+                checkLCDdata(padIndex, true, true, true, true);
+
+                if (splitEnabled)
+                setFunctionLEDs(padIndex);
+            }
+            else
+            {
+                //if two pads are pressed, update data only from last pressed pad
+                //i hate this function
+                if (i == getLastTouchedPad())
+                {
+                    if (menu.menuDisplayed())
+                    {
+                        if (calibrationEnabled)
+                        checkLCDdata(i, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
+                    }
+                    else
+                    {
+                        checkLCDdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                    }
+                }
+            }
+        }
+    }
+
+    checkRemainingOctaveShift();
+    checkRemainingNoteShift();
+}
+
+bool Pads::checkVelocity(uint8_t pad)
+{
+    uint16_t value = board.getPadPressure(pad);
+
+    //detect if pressure is increasing or decreasing, but only if pad is pressed
+    if (isPadPressed(pad))
+        bitWrite(pressureReduction, pad, value < (uint16_t)lastPressureValue[pad]);
+    else
+        bitWrite(pressureReduction, pad, 0);
+
     //calibrate pressure based on median value (0-1023 -> 0-127)
     uint8_t calibratedPressure = scalePressure(pad, value, pressureVelocity);
     calibratedPressure = curves.getCurveValue(coordinateZ, pressureCurve, calibratedPressure, 0, 127);
@@ -51,10 +160,12 @@ bool Pads::checkVelocity(uint8_t pad, uint16_t value)
     return returnValue;
 }
 
-bool Pads::checkX(uint8_t pad, int16_t value)
+bool Pads::checkX(uint8_t pad)
 {
     if (bitRead(pressureReduction, pad))
         return false;
+
+    int16_t value = board.getPadX(pad);
 
     if (calibrationEnabled && (activeCalibration == coordinateX))
     {
@@ -104,10 +215,12 @@ bool Pads::checkX(uint8_t pad, int16_t value)
     return false;
 }
 
-bool Pads::checkY(uint8_t pad, int16_t value)
+bool Pads::checkY(uint8_t pad)
 {
     if (bitRead(pressureReduction, pad))
         return false;
+
+    int16_t value = board.getPadY(pad);
 
     if (calibrationEnabled && (activeCalibration == coordinateY))
     {
@@ -291,117 +404,6 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
     return false;
 }
 
-void Pads::update()
-{
-    bool restoreLCD = false;
-
-    if (!board.padDataAvailable())
-        return;
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-    {
-        uint16_t pressure = board.getPadPressure(i);
-        uint16_t x = board.getPadX(i);
-        uint16_t y = board.getPadY(i);
-
-        bool velocityAvailable = false;
-        bool aftertouchAvailable = false;
-
-        bool xAvailable = false;
-        bool yAvailable = false;
-
-        //detect if pressure is increasing or decreasing, but only if pad is pressed
-        if (isPadPressed(i))
-            bitWrite(pressureReduction, i, pressure < (uint16_t)lastPressureValue[i]);
-        else
-            bitWrite(pressureReduction, i, 0);
-
-        //all needed pressure samples are obtained
-        velocityAvailable = checkVelocity(i, pressure);
-        aftertouchAvailable = checkAftertouch(i, velocityAvailable);
-
-        //only check x/y if pad is pressed
-        if (isPadPressed(i))
-        {
-            xAvailable = checkX(i, x);
-            yAvailable = checkY(i, y);
-        }
-
-        if (velocityAvailable)
-        {
-            uint8_t index = getLastTouchedPad();
-
-            //if pad is pressed, update last pressed pad
-            //if it's released clear it from history
-            updateLastPressedPad(i, bitRead(lastMIDInoteState, i));
-
-            if (!bitRead(lastMIDInoteState, i))
-            {
-                //lcd restore detection
-                //display data from last touched pad if current pad is released
-                if ((index != getLastTouchedPad()) && !allPadsReleased())
-                    restoreLCD = true;
-            }
-
-            if (!getEditModeState())
-            {
-                if (bitRead(lastMIDInoteState, i) && splitEnabled)
-                {
-                    //update function leds only once, on press
-                    //don't update if split is disabled (no need)
-                    setFunctionLEDs(i);
-                }
-            }
-            else
-            {
-                //setup pad edit mode on press for current pad
-                if (bitRead(lastMIDInoteState, i))
-                    setEditModeState(true, i);
-            }
-        }
-
-        //check data to be sent
-        //don't send or show midi data while in pad edit mode
-        if (!getEditModeState())
-        {
-            //don't send midi data while in menu
-            if (!menu.menuDisplayed())
-                checkMIDIdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
-
-            if (restoreLCD)
-            {
-                uint8_t padIndex = getLastTouchedPad();
-
-                if (!menu.menuDisplayed())
-                    checkLCDdata(padIndex, true, true, true, true);
-
-                if (splitEnabled)
-                    setFunctionLEDs(padIndex);
-            }
-            else
-            {
-                //if two pads are pressed, update data only from last pressed pad
-                //i hate this function
-                if (i == getLastTouchedPad())
-                {
-                    if (menu.menuDisplayed())
-                    {
-                        if (calibrationEnabled)
-                        checkLCDdata(i, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
-                    }
-                    else
-                    {
-                        checkLCDdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
-                    }
-                }
-            }
-        }
-    }
-
-    checkRemainingOctaveShift();
-    checkRemainingNoteShift();
-}
-
 bool Pads::pressureStable(uint8_t pad, bool pressDetected)
 {
     if (pressDetected)
@@ -552,15 +554,15 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
         }
 
         if (velocityAvailable)
-            handleNoteLCD(pad, lastVelocityValue[pad], bitRead(lastMIDInoteState, pad));
+            handleNoteLCD();
 
         if (velocityAvailable)
-            display.displayMIDIchannel(midiChannel[pad]);
+            display.displayMIDIchannel();
 
         if (lastShownPad != pad)
         {
             lastShownPad = pad;
-            display.displayPad(pad+1);
+            display.displayPad();
         }
     }
     else if (allPadsReleased() && !lcdCleared)

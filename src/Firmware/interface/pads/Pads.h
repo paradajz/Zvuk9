@@ -26,7 +26,6 @@ class Pads
     //pad edit mode
     bool getEditModeState();
     void setEditModeState(bool state, uint8_t pad = 0);
-    void displayActivePadNotes(uint8_t pad);
     changeOutput_t assignPadNote(uint8_t pad, note_t note);
     void changeActiveOctave(bool direction);
 
@@ -58,7 +57,7 @@ class Pads
     //getters
     uint8_t getCCvalue(padCoordinate_t type, uint8_t padNumber);
     uint8_t getCClimitValue(padCoordinate_t type, ccLimitType_t limitType, uint8_t padNumber);
-    uint8_t getCCcurve(padCoordinate_t curve, uint8_t padNumber);
+    curve_t getCCcurve(padCoordinate_t curve, uint8_t padNumber);
     //setters
     changeOutput_t changeCCvalue(bool direction, padCoordinate_t type, int8_t steps);
     changeOutput_t changeCClimitValue(bool direction, padCoordinate_t coordinate, ccLimitType_t limitType, int8_t steps);
@@ -82,8 +81,6 @@ class Pads
     void setPressureSensitivity(pressureSensitivity_t type);
     curve_t getPressureCurve();
     void setPressureCurve(curve_t curve);
-
-    uint16_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
 
     //calibration
     bool calibrate(padCoordinate_t type, calibrationDirection direction, uint8_t pad, uint16_t limit);
@@ -115,9 +112,9 @@ class Pads
 
     //data availability checks
     bool checkAftertouch(uint8_t pad, bool velocityAvailable);
-    bool checkVelocity(uint8_t pad, uint16_t value);
-    bool checkX(uint8_t pad, int16_t value);
-    bool checkY(uint8_t pad, int16_t value);
+    bool checkVelocity(uint8_t pad);
+    bool checkX(uint8_t pad);
+    bool checkY(uint8_t pad);
 
     //pad press updating/info
     void setPadPressState(uint8_t padNumber, bool padState);
@@ -125,8 +122,7 @@ class Pads
 
     //lcd/led handling on midi event
     void handleNoteLEDs(uint8_t pad, bool state);
-    void handleNoteLCD(uint8_t pad, uint8_t velocity, bool state);
-    void handleXYlcd(uint8_t pad, uint8_t xPosition, uint8_t yPosition, bool xEnabled, bool yEnabled);
+    void handleNoteLCD();
 
     //scale
     scaleType_t getScaleType(int8_t scale);
@@ -186,7 +182,7 @@ class Pads
                             noteSendEnabled,
                             aftertouchSendEnabled;
 
-    int8_t                  padCurveX[NUMBER_OF_PADS],
+    curve_t                 padCurveX[NUMBER_OF_PADS],
                             padCurveY[NUMBER_OF_PADS];
 
     int16_t                 padPressureLimitUpper[NUMBER_OF_PADS],

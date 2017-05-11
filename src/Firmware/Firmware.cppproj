@@ -76,6 +76,7 @@
       <Value>BOARD=BOARD_NONE</Value>
       <Value>USE_LUFA_CONFIG_HEADER</Value>
       <Value>__AT_AT90USB1286__</Value>
+      <Value>USBMIDI</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -101,6 +102,7 @@
       <Value>F_USB=16000000UL</Value>
       <Value>USE_LUFA_CONFIG_HEADER</Value>
       <Value>__AT_AT90USB1286__</Value>
+      <Value>USBMIDI</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
@@ -740,6 +742,9 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Compile Include="interface\lcd\strings\Errors.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\lcd\strings\Curves.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\lcd\strings\FunctionsOnOff.h">
       <SubType>compile</SubType>
     </Compile>
@@ -794,7 +799,16 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Compile Include="interface\pads\curves\Curves.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\pads\curves\Values.h">
+    <Compile Include="interface\pads\curves\DataTypes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\pads\curves\functions\Functions.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\pads\curves\functions\Functions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\pads\curves\functions\Init.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\pads\DataOutput.cpp">
@@ -1246,6 +1260,7 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Folder Include="interface\leds\" />
     <Folder Include="interface\pads\" />
     <Folder Include="interface\pads\curves" />
+    <Folder Include="interface\pads\curves\functions" />
     <Folder Include="interface\pads\scales\" />
     <Folder Include="lufa\" />
     <Folder Include="lufa\LUFA\" />

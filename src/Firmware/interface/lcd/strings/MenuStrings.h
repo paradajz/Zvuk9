@@ -1,7 +1,5 @@
 #pragma once
 
-#include <avr/pgmspace.h>
-
 const char menuOption_exit_string[] PROGMEM = "Exit";
 
 //menu

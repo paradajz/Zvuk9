@@ -1,33 +1,59 @@
 #include "Curves.h"
 #include "../Pads.h"
-#include "Values.h"
-#include <avr/pgmspace.h>
+#include "functions/Functions.h"
 
-#define WIDE_MIDDLE_GAIN    8
-#define WIDE_ENDS_GAIN      2
+extern double (*curveFunc[NUMBER_OF_CURVES]) (double value);
 
-#define LOG_CURVE_INDEX     0
-#define EXP_CURVE_INDEX     1
-
-double bias(double b, double x)
+///
+/// \brief Default constructor.
+///
+Curves::Curves()
 {
-    return pow(x, log(b)/LOG_05);
+    
 }
 
-double gain(double g, double x)
+///
+/// \brief Initialize default values and function handlers.
+///
+void Curves::init()
 {
-    if (x < 0.5)
-        return bias(1-g, 2*x)/2;
-    else
-        return 1 - bias(1-g,2 - 2*x)/2;
+    for (int i=0; i<PAD_COORDINATES; i++)
+    {
+        lastCurve[i] = curve_linear_up_1;
+        lastMin[i] = 0;
+        lastMax[i] = 127;
+
+        for (int j=0; j<128; j++)
+            scale[i][j] = j;
+    }
+
+    initHandlers_functions();
 }
 
-double gamma(double g, double x)
+///
+/// \brief Maps value from one range to another.
+/// @param [in] x Input value.
+/// @param [in] in_min  Lowest possible input value.
+/// @param [in] in_max  Largest possible input value.
+/// @param [in] out_min Lowest possible output value.
+/// @param [in] out_max Largest possible output value.
+/// \return Mapped value (uint16_t).
+///
+uint16_t Curves::map_uint16(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)
 {
-    return pow(x, (1.0/g));
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-uint8_t map_u8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max)
+///
+/// \brief Maps value from one range to another.
+/// @param [in] x Input value.
+/// @param [in] in_min  Lowest possible input value.
+/// @param [in] in_max  Largest possible input value.
+/// @param [in] out_min Lowest possible output value.
+/// @param [in] out_max Largest possible output value.
+/// \return Mapped value (uint8_t).
+///
+uint8_t Curves::map_uint8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max)
 {
     if ((in_min == out_min) && (in_max == out_max))
         return x;
@@ -35,140 +61,103 @@ uint8_t map_u8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 };
 
-Curves::Curves()
+///
+/// \brief Calculates inverted value based on input range.
+/// @param [in] value   Input value.
+/// @param [in] min     Lowest possible input value.
+/// @param [in] max     Largest possible input value.
+/// \return Inverted value.
+///
+uint8_t Curves::invertRange(uint8_t value, uint8_t min, uint8_t max)
 {
-    //def const
-    for (int i=0; i<PAD_COORDINATES; i++)
-    {
-        lastCurve[i] = curveLinear;
-        lastMin[i] = 0;
-        lastMax[i] = 127;
-
-        for (int j=0; j<128; j++)
-            scale[i][j] = j;
-    }
+    return (max + min) - value;
 }
 
-uint8_t Curves::getCurveValue(padCoordinate_t coordinate, curve_t curve, uint8_t index, uint8_t min, uint8_t max)
+uint8_t Curves::getCurveValue(padCoordinate_t coordinate, curve_t curve, uint8_t value, uint8_t min, uint8_t max)
 {
     bool minMax_differ = false;
 
-    if (curve == curveLinear)
+    //simplest
+    switch(coordinate)
     {
-        if (min || (max < 127))
-            return map_u8(index, 0, 127, min, max);
-        else
-            return index;
-    }
-    else
-    {
-        switch(coordinate)
+        case coordinateX:
+        case coordinateY:
+        //check min/max for these coordinates
+        if (min != lastMin[(uint8_t)coordinate])
         {
-            case coordinateX:
-            case coordinateY:
-            //check min/max for these coordinates
-            if (min != lastMin[(uint8_t)coordinate])
-            {
-                lastMin[(uint8_t)coordinate] = min;
-                minMax_differ = true;
-            }
-
-            if (max != lastMax[(uint8_t)coordinate])
-            {
-                lastMax[(uint8_t)coordinate] = max;
-                minMax_differ = true;
-            }
-            break;
-
-            case coordinateZ:
-            //no min/max checking
-            minMax_differ = false;
-            break;
-
-            default:
-            return 0;
+            lastMin[(uint8_t)coordinate] = min;
+            minMax_differ = true;
         }
 
-        uint8_t numberOfValues = max-min+1;
-
-        if ((uint8_t)curve != lastCurve[(uint8_t)coordinate] || minMax_differ)
+        if (max != lastMax[(uint8_t)coordinate])
         {
-            if ((curve == curveLog) || (curve == curveExp))
+            lastMax[(uint8_t)coordinate] = max;
+            minMax_differ = true;
+        }
+        break;
+
+        case coordinateZ:
+        //no min/max checking
+        minMax_differ = false;
+        break;
+
+        default:
+        return 0;
+    }
+
+    uint8_t numberOfValues = max-min+1;
+
+    if ((uint8_t)curve != lastCurve[(uint8_t)coordinate] || minMax_differ)
+    {
+        double step, stepValue = 0.0;
+
+        //scale range
+        step = 1.0/(double)numberOfValues;
+
+        //#ifdef DEBUG
+        //printf_P("Printing scale values.\n");
+        //#endif
+
+        //for (int i=0; i<numberOfValues; i++)
+        //{
+            ////make sure that curve extremes are correct
+            //if (!i)
+                //scale[(uint8_t)coordinate][i] = 0;
+            //else if (i == numberOfValues-1)
+                //scale[(uint8_t)coordinate][i] = numberOfValues-1;
+            //else
+                //scale[(uint8_t)coordinate][i] = round(gain(curveGain_double, stepValue) * (numberOfValues-1)); //round up
+//
+            //stepValue += step;
+        //}
+
+        if (min > 0)
+        {
+            //if min value is zero, curve is already scaled
+            uint8_t tempArray[numberOfValues];
+
+            for (int i=0; i<numberOfValues; i++)
+                tempArray[i] = scale[(uint8_t)coordinate][i];
+
+            for (int i=0; i<numberOfValues; i++)
             {
-                //used only for pressure, no min/max checking
-                uint8_t curveIndex = 0;
-
-                if (curve == curveLog)
-                    curveIndex = LOG_CURVE_INDEX;
-                else if (curve == curveExp)
-                    curveIndex = EXP_CURVE_INDEX;
+                if (!i)
+                    scale[(uint8_t)coordinate][i] = min;
+                else if (i == max)
+                    scale[(uint8_t)coordinate][i] = max;
                 else
-                return 0; //error
-
-                memcpy_P(scale, (uint8_t*)pgm_read_word(&(scaleArray[curveIndex])), 128);
+                    scale[(uint8_t)coordinate][i] = map_uint8(tempArray[i], 0, numberOfValues-1, min, max);
             }
-            else
-            {
-                double curveGain_double;
-                //scale gain value to values 0.0-1.0
-                if (curve == curveWideEnds)
-                    curveGain_double = (uint8_t)WIDE_MIDDLE_GAIN/10.0;
-                else if (curve == curveWideMiddle)
-                    curveGain_double = (uint8_t)WIDE_ENDS_GAIN/10.0;
-                else
-                    return 0; //error
-
-                double step, stepValue = 0.0;
-
-                //scale range
-                step = 1.0/(double)numberOfValues;
-
-                //#ifdef DEBUG
-                //printf_P("Printing scale values.\n");
-                //#endif
-
-                for (int i=0; i<numberOfValues; i++)
-                {
-                    //make sure that curve extremes are correct
-                    if (!i)
-                        scale[(uint8_t)coordinate][i] = 0;
-                    else if (i == numberOfValues-1)
-                        scale[(uint8_t)coordinate][i] = numberOfValues-1;
-                    else
-                        scale[(uint8_t)coordinate][i] = round(gain(curveGain_double, stepValue) * (numberOfValues-1)); //round up
-
-                    stepValue += step;
-                }
-
-                if (min > 0)
-                {
-                    //if min value is zero, curve is already scaled
-                    uint8_t tempArray[numberOfValues];
-
-                    for (int i=0; i<numberOfValues; i++)
-                        tempArray[i] = scale[(uint8_t)coordinate][i];
-
-                    for (int i=0; i<numberOfValues; i++)
-                    {
-                        if (!i)
-                            scale[(uint8_t)coordinate][i] = min;
-                        else if (i == max)
-                            scale[(uint8_t)coordinate][i] = max;
-                        else
-                            scale[(uint8_t)coordinate][i] = map_u8(tempArray[i], 0, numberOfValues-1, min, max);
-                    }
-                }
-            }
-
-            lastCurve[(uint8_t)coordinate] = (uint8_t)curve;
         }
 
-        //scale index if necessary
-        if (min || max < 127)
-            index = map_u8(index, 0, 127, 0, numberOfValues-1);
-
-        return scale[(uint8_t)coordinate][index];
+        lastCurve[(uint8_t)coordinate] = (uint8_t)curve;
     }
+
+    //scale index if necessary
+    if (min || max < 127)
+        value = map_uint8(value, 0, 127, 0, numberOfValues-1);
+
+    return scale[(uint8_t)coordinate][value];
 }
 
 Curves curves;

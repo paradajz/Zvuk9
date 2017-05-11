@@ -1,14 +1,5 @@
 #pragma once
 
-#include <avr/pgmspace.h>
-
-const char curveCoordinateX_string[] PROGMEM = "X curve=";
-const char curveCoordinateY_string[] PROGMEM = "Y curve=";
-
-const char curveTypeLinear_string[] PROGMEM = "linear";
-const char curveTypeWideMiddle_string[] PROGMEM = "wide middle";
-const char curveTypeWideEnds_string[] PROGMEM = "wide ends";
-
 const char xMax_string[] PROGMEM = "X max=";
 const char xMin_string[] PROGMEM = "X min=";
 const char yMax_string[] PROGMEM = "Y max=";
@@ -25,20 +16,6 @@ const char yPosition_string[] PROGMEM = "y";
 
 const char xyPositionClear_string[] PROGMEM = "    ";
 const char xyCCclear_string[] PROGMEM = "      ";
-
-PGM_P const curveCoordinateArray[] PROGMEM =
-{
-    //match order with coordinateType_t enum
-    curveCoordinateX_string,
-    curveCoordinateY_string
-};
-
-const uint8_t curveCoordinateArray_sizes[] PROGMEM =
-{
-    //match order with coordinateType_t enum
-    sizeof(curveCoordinateX_string) - 1,
-    sizeof(curveCoordinateY_string) - 1
-};
 
 PGM_P const ccArray[] PROGMEM =
 {

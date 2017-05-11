@@ -1,6 +1,7 @@
 #include "../LCD.h"
 #include "../../pads/Pads.h"
 #include "../../../version/Version.h"
+#include "../../../database/blocks/Scales.h"
 
 char stringBuffer[MAX_TEXT_SIZE+1];
 char tempBuffer[MAX_TEXT_SIZE+1];
@@ -21,11 +22,15 @@ uint8_t LCD::getTextCenter(uint8_t textSize)
     return LCD_WIDTH/2 - (textSize/2);
 }
 
-void LCD::displayPadAmount(bool singlePad, uint8_t padNumber)
+void LCD::displayPadAmount(uint8_t padNumber)
 {
     uint8_t size = 0;
+
+    bool singlePad = pads.getSplitState();
+
     strcpy_P(stringBuffer, singlePad ? padAmountSingle_string : padAmountAll_string);
     size = singlePad ? progmemCharArraySize(padAmountSingle_string) : progmemCharArraySize(padAmountAll_string);
+
     if (singlePad)
     {
         addSpaceToCharArray(1, size);
@@ -191,14 +196,16 @@ void LCD::displayXYcc(uint8_t ccXY, padCoordinate_t type)
     updateDisplay(lcdRow, text, lcdCoordinate, false, size);
 }
 
-void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numberOfNotes, bool padEditMode)
+void LCD::displayActivePadNotes()
 {
     uint8_t size = 0;
+    uint8_t pad = pads.getLastTouchedPad();
+    uint8_t note;
+    uint8_t tonic;
+    uint8_t octave;
+    uint8_t noteCounter = 0;
 
-    //always clear notes first since they can have large size
-    //issues are raised if we don't do this
-    //a bit hacky...
-    //if (pads.isUserScale(pads.getActiveScale()))   {
+    bool padEditMode = pads.getEditModeState();
 
     if (padEditMode)
     {
@@ -213,71 +220,65 @@ void LCD::displayActivePadNotes(uint8_t notes[], int8_t octaves[], uint8_t numbe
         updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, false);
     }
 
-    //}
-
-    //pad edit mode and regular mode differ in start index of notes
-    //change scroll start index depending on whether pad edit mode is active
-    if (!pads.getEditModeState())
-        display.setScrollStart(lcdElements.notes.row, lcdElements.notes.startIndex);
-    else
-        display.setScrollStart(lcdElements.notes.row, 0);
-
-    if (numberOfNotes)
+    for (int i=0; i<NOTES_PER_PAD; i++)
     {
-        for (int i=0; i<numberOfNotes; i++)
+        note = pads.getPadNote(pad, i);
+
+        if (note == BLANK_NOTE)
+            continue;
+
+        tonic = pads.getTonicFromNote(note);
+        octave = normalizeOctave(pads.getOctaveFromNote(note));
+
+        strcpy_P(tempBuffer, (char*)pgm_read_word(&(noteNameArray[tonic])));
+        //start appending after first note (don't clear string)
+        if (noteCounter)
         {
-            strcpy_P(tempBuffer, (char*)pgm_read_word(&(noteNameArray[notes[i]])));
-            //start appending after first note (don't clear string)
-            if (i)
-            {
-                strcat(stringBuffer, tempBuffer);
-                size += pgm_read_byte(&noteNameArray_sizes[notes[i]]);
-            }
-            else
-            {
-                strcpy(stringBuffer, tempBuffer);
-                size = pgm_read_byte(&noteNameArray_sizes[notes[i]]);
-            }
-
-            addNumberToCharArray(octaves[i], size);
-            //don't add space on last note
-            if (i != numberOfNotes-1)
-                addSpaceToCharArray(1, size);
+            strcat(stringBuffer, tempBuffer);
+            size += pgm_read_byte(&noteNameArray_sizes[tonic]);
         }
-
-        if (pads.getEditModeState())
-            updateDisplay(lcdElements.notes.row, text, 0, true, size);
         else
-            updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size);
-    }
-    else
-    {
-        if (padEditMode)
         {
-            strcpy_P(stringBuffer, noNotes_string);
-            size = strlen_P(noNotes_string);
-            updateDisplay(lcdElements.notes.row, text, 0, true, size);
+            strcpy(stringBuffer, tempBuffer);
+            size = pgm_read_byte(&noteNameArray_sizes[tonic]);
         }
+
+        addNumberToCharArray(octave, size);
+        addSpaceToCharArray(1, size);
+        noteCounter++;
     }
+
+    if (!noteCounter)
+    {
+        strcpy_P(stringBuffer, noNotes_string);
+        size = strlen_P(noNotes_string);
+    }
+
+    if (padEditMode)
+        updateDisplay(lcdElements.notes.row, text, 0, true, size);
+    else
+        updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size);
 }
 
-void LCD::displayActiveOctave(int8_t octave)
+void LCD::displayActiveOctave()
 {
     //used only in pad edit mode
+    uint8_t octave = normalizeOctave(pads.getActiveOctave());
     strcpy_P(stringBuffer, activeOctave_string);
     uint8_t size = progmemCharArraySize(activeOctave_string);
     addNumberToCharArray(octave, size);
     updateDisplay(lcdElements.activeOctave.row, text, lcdElements.activeOctave.startIndex, true, size);
 }
 
-void LCD::displayPadEditMode(uint8_t padNumber)
+void LCD::displayPadEditMode()
 {
     uint8_t size = 0;
+    uint8_t pad = pads.getLastTouchedPad()+1;
 
     strcpy_P(stringBuffer, editingPad_string);
     size = progmemCharArraySize(editingPad_string);
     addSpaceToCharArray(1, size);
-    addNumberToCharArray(padNumber, size);
+    addNumberToCharArray(pad, size);
     updateDisplay(0, text, 0, true, size);
 
     strcpy_P(stringBuffer, emptyLine_string);
@@ -287,16 +288,19 @@ void LCD::displayPadEditMode(uint8_t padNumber)
     updateDisplay(3, text, 0, true, size);
 }
 
-void LCD::displayPad(uint8_t pad)
+void LCD::displayPad()
 {
     strcpy_P(stringBuffer, padAmountSingle_string);
     uint8_t size = progmemCharArraySize(padAmountSingle_string);
+    uint8_t pad = pads.getLastTouchedPad()+1;
     addNumberToCharArray(pad, size);
     updateDisplay(lcdElements.padNumber.row, text, lcdElements.padNumber.startIndex, false, size);
 }
 
-void LCD::displayMIDIchannel(uint8_t channel)
+void LCD::displayMIDIchannel()
 {
+    uint8_t channel = pads.getMIDIchannel(pads.getLastTouchedPad());
+
     strcpy_P(stringBuffer, midiChannel_string);
     uint8_t size = progmemCharArraySize(midiChannel_string);
     addNumberToCharArray(channel, size);

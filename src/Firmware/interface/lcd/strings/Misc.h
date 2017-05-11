@@ -1,7 +1,5 @@
 #pragma once
 
-#include <avr/pgmspace.h>
-
 const char emptyLine_string[] PROGMEM = "                    ";
 const char program_string[] PROGMEM = "P";
 const char aftertouch_string[] PROGMEM = "at";

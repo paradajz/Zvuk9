@@ -1,7 +1,5 @@
 #pragma once
 
-#include <avr/pgmspace.h>
-
 const char presetNaturalMinor_string[] PROGMEM = "Natural Minor";
 const char presetMelodicMinor_string[] PROGMEM = "Melodic Minor";
 const char presetHarmonicMinor_string[] PROGMEM = "Harmonic Minor";

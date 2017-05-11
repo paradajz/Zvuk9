@@ -204,52 +204,18 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)
     }
 }
 
-void Pads::handleNoteLCD(uint8_t pad, uint8_t velocity, bool state)
+void Pads::handleNoteLCD()
 {
-    uint8_t noteArray[NOTES_PER_PAD],
-            noteCounter = 0;
+    display.displayActivePadNotes();
 
-    for (int i=0; i<NOTES_PER_PAD; i++)
+    if (isPadPressed(getLastTouchedPad()))
     {
-        if (padNote[pad][i] != BLANK_NOTE)
-        {
-            noteArray[noteCounter] = padNote[pad][i];
-            noteCounter++;
-        }
-    }
-
-    switch(state)
-    {
-        case true:
-        if (!noteCounter || !bitRead(noteSendEnabled, pad))
-        {
-            display.displayActivePadNotes(0, 0, 0, getEditModeState());
-            return;
-        }
-
-        //note on
-        uint8_t tonicArray[NOTES_PER_PAD];
-        int8_t octaveArray[NOTES_PER_PAD];
-
-        for (int i=0; i<noteCounter; i++)
-        {
-            tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
-            octaveArray[i] = normalizeOctave(getOctaveFromNote(noteArray[i]));
-        }
-
-        display.displayActivePadNotes(tonicArray, octaveArray, noteCounter, getEditModeState());
-        display.displayVelocity(velocity);
+        display.displayVelocity(lastVelocityValue[getLastTouchedPad()]);
 
         if (isPredefinedScale(activeScale))
         {
             if (noteShiftLevel != 0)
-                display.displayNoteShiftLevel(noteShiftLevel);
+            display.displayNoteShiftLevel(noteShiftLevel);
         }
-        break;
-
-        case false:
-        //note off
-        display.displayActivePadNotes(0, 0, 0, getEditModeState());
-        break;
     }
 }

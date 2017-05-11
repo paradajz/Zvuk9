@@ -42,7 +42,7 @@ const uint8_t defaultMIDIsettingArray[MIDI_SETTINGS] =
 };
 
 #define PRESSURE_SETTING_SENSITIVITY                0
-#define PRESSURE_SETTING_CURVE                      curveLinear
+#define PRESSURE_SETTING_CURVE                      curve_linear_up_1
 
 typedef enum
 {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <avr/pgmspace.h>
-
 const char transportControlPlay_string[] PROGMEM = "Play";
 const char transportControlStop_string[] PROGMEM = "Stop";
 const char transportControlRecordOn_string[] PROGMEM = "Record on";

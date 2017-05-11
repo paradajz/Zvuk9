@@ -39,6 +39,7 @@ void Pads::init()
 {
     getConfiguration();
     setupSysEx();
+    curves.init();
 }
 
 void Pads::setupSysEx()

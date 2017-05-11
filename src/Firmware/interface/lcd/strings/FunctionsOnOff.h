@@ -1,7 +1,5 @@
 #pragma once
 
-#include <avr/pgmspace.h>
-
 const char offNotes_string[] PROGMEM = "Notes off";
 const char offAftertouch_string[] PROGMEM = "Aftertouch off";
 const char offX_string[] PROGMEM = "X off";

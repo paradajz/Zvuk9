@@ -1,7 +1,5 @@
 #pragma once
 
-#include <avr/pgmspace.h>
-
 const char outOfRange_string[] PROGMEM = "Out of range";
 
 const char editModeEnterError0_string[] PROGMEM = "Select user scale";

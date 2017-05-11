@@ -82,7 +82,7 @@ void handleScale(uint8_t id, bool direction, uint8_t steps)
             midiChannel = 1;
 
         pads.setMIDIchannel(lastTouchedPad, midiChannel);
-        display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
+        display.displayMIDIchannelChange();
     }
     else
     {
@@ -116,7 +116,6 @@ void handleCC(uint8_t id, bool direction, uint8_t steps)
     }
 
     padCoordinate_t coordinate = coordinateX;
-    bool splitState = pads.getSplitState();
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     switch(id)
@@ -131,7 +130,7 @@ void handleCC(uint8_t id, bool direction, uint8_t steps)
     }
 
     pads.changeCCvalue(direction, coordinate, steps);
-    display.displayCCchange(coordinate,  splitState, pads.getCCvalue(coordinate, lastTouchedPad), lastTouchedPad+1);
+    display.displayCCchange(coordinate, pads.getCCvalue(coordinate, lastTouchedPad));
 }
 
 void handleLimit(uint8_t id, bool direction, uint8_t steps)
@@ -145,7 +144,6 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
     padCoordinate_t coordinate = coordinateX;
     ccLimitType_t limit = ccLimitTypeMin;
-    bool splitState = pads.getSplitState();
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     switch(id)
@@ -173,7 +171,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
     pads.changeCClimitValue(direction, coordinate, limit, steps);
     uint8_t value = pads.getCClimitValue(coordinate, limit, lastTouchedPad);
-    display.displayCClimitChange(coordinate, limit, splitState, value, lastTouchedPad+1);
+    display.displayCClimitChange(coordinate, limit, value);
 }
 
 void handleCurve(uint8_t id, bool direction, uint8_t steps)
@@ -186,8 +184,6 @@ void handleCurve(uint8_t id, bool direction, uint8_t steps)
     }
 
     padCoordinate_t coordinate = coordinateX;
-    uint8_t lastTouchedPad = pads.getLastTouchedPad();
-    bool splitState = pads.getSplitState();
 
     switch(id)
     {
@@ -201,6 +197,5 @@ void handleCurve(uint8_t id, bool direction, uint8_t steps)
     }
 
     pads.setCCcurve(direction, coordinate);
-    uint8_t activeCurve = pads.getCCcurve(coordinate, lastTouchedPad);
-    display.displayCurveChange(coordinate, splitState, activeCurve, lastTouchedPad+1);
+    display.displayCurveChange(coordinate);
 }

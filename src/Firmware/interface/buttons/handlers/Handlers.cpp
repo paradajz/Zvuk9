@@ -132,7 +132,7 @@ void handleOnOff(uint8_t id, bool state)
     }
 
     leds.setLEDstate(ledNumber, ledState);
-    display.displayOnOff(lcdMessageType, pads.getSplitState(), (uint8_t)ledState, lastTouchedPad+1);
+    display.displayOnOffChange(lcdMessageType, (uint8_t)ledState);
 }
 
 void handleTransportControl(uint8_t id, bool state)
@@ -327,7 +327,7 @@ void handleUpDown(uint8_t id, bool state)
             {
                 case false:
                 pads.changeActiveOctave(direction);
-                display.displayActiveOctave(normalizeOctave(pads.getActiveOctave()));
+                display.displayActiveOctave();
                 leds.displayActiveNoteLEDs(true, lastTouchedPad);
                 direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
                 break;
@@ -417,7 +417,7 @@ void handleTonic(uint8_t id, bool state)
         //add note to pad
         uint8_t pad = pads.getLastTouchedPad();
         pads.assignPadNote(pad, note);
-        pads.displayActivePadNotes(pad);
+        display.displayActivePadNotes();
         leds.displayActiveNoteLEDs(true, pad);
     }
 }
@@ -450,8 +450,7 @@ void handlePresetEncButton(uint8_t id, bool state)
     if (buttons.getModifierState())
     {
         //midi channel change mode, display on lcd
-        uint8_t lastTouchedPad = pads.getLastTouchedPad();
-        display.displayMIDIchannelChange(pads.getMIDIchannel(lastTouchedPad), pads.getSplitState(), lastTouchedPad+1);
+        display.displayMIDIchannelChange();
     }
     else
     {

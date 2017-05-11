@@ -63,16 +63,16 @@ void Pads::getPadParameters()
             ccXmaxPad[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccYminPad[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccYmaxPad[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_MAX_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            padCurveX[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-            padCurveY[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            padCurveX[i]                    = (curve_t)database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
+            padCurveY[i]                    = (curve_t)database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             midiChannel[i]                  = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
         }
 
         #ifdef DEBUG
-        printf_P(PSTR("X send enabled: %d\n"), xSendEnabled[0]);
-        printf_P(PSTR("Y send enabled: %d\n"), ySendEnabled[0]);
-        printf_P(PSTR("Note send enabled: %d\n"), noteSendEnabled[0]);
-        printf_P(PSTR("Aftertouch send enabled: %d\n"), aftertouchSendEnabled[0]);
+        printf_P(PSTR("X send enabled: %d\n"), bitRead(xSendEnabled, 0));
+        printf_P(PSTR("Y send enabled: %d\n"), bitRead(ySendEnabled, 0));
+        printf_P(PSTR("Note send enabled: %d\n"), bitRead(noteSendEnabled, 0));
+        printf_P(PSTR("Aftertouch send enabled: %d\n"), bitRead(aftertouchSendEnabled, 0));
         printf_P(PSTR("CC X MIDI ID: %d\n"), ccXPad[0]);
         printf_P(PSTR("CC Y MIDI ID: %d\n"), ccYPad[0]);
         printf_P(PSTR("CC X lower limit: %d\n"), ccXminPad[0]);
@@ -104,16 +104,16 @@ void Pads::getPadParameters()
             ccXmaxPad[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
             ccYminPad[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
             ccYmaxPad[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_MAX_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
-            padCurveX[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
-            padCurveY[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            padCurveX[i]                = (curve_t)database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
+            padCurveY[i]                = (curve_t)database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
             midiChannel[i]              = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_MIDI_CHANNEL_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
 
             #ifdef DEBUG
             printf_P(PSTR("----------------------\nPad %d\n----------------------\n"), i+1);
-            printf_P(PSTR("X send enabled: %d\n"), xSendEnabled[i]);
-            printf_P(PSTR("Y send enabled: %d\n"), ySendEnabled[i]);
-            printf_P(PSTR("Note send enabled: %d\n"), noteSendEnabled[i]);
-            printf_P(PSTR("Aftertouch send enabled: %d\n"), aftertouchSendEnabled[i]);
+            printf_P(PSTR("X send enabled: %d\n"), bitRead(xSendEnabled, i));
+            printf_P(PSTR("Y send enabled: %d\n"), bitRead(ySendEnabled, i));
+            printf_P(PSTR("Note send enabled: %d\n"), bitRead(noteSendEnabled, i));
+            printf_P(PSTR("Aftertouch send enabled: %d\n"), bitRead(aftertouchSendEnabled, i));
             printf_P(PSTR("CC X MIDI ID: %d\n"), ccXPad[i]);
             printf_P(PSTR("CC Y MIDI ID: %d\n"), ccYPad[i]);
             printf_P(PSTR("CC X lower limit: %d\n"), ccXminPad[i]);
@@ -429,7 +429,7 @@ uint8_t Pads::getActiveScale()
     return activeScale;
 }
 
-uint8_t Pads::getCCcurve(padCoordinate_t coordinate, uint8_t padNumber)
+curve_t Pads::getCCcurve(padCoordinate_t coordinate, uint8_t padNumber)
 {
     switch(coordinate)
     {
@@ -440,7 +440,7 @@ uint8_t Pads::getCCcurve(padCoordinate_t coordinate, uint8_t padNumber)
         return padCurveY[padNumber];
 
         default:
-        return 0;
+        return NUMBER_OF_CURVES;
     }
 }
 

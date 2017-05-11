@@ -19,10 +19,9 @@ Buttons::Buttons()
     lastCheckTime               = 0;
     processingEnabled           = true;
 
+    //enable all buttons
     for (int i=0; i<MAX_NUMBER_OF_BUTTONS/8+1; i++)
-    {
-        buttonEnabled[i] = true;
-    }
+        buttonEnabled[i] = 0xFF;
 }
 
 void Buttons::init()
@@ -90,7 +89,6 @@ void Buttons::processButton(uint8_t buttonID, uint8_t state)
         if (processingEnabled)
         {
             (*buttonHandler[buttonID])(buttonID, state);
-
             //resume button processing
             if (!buttonEnabled[buttonID] && !getButtonState(buttonID))
             {
