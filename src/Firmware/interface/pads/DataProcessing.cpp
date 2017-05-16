@@ -115,7 +115,7 @@ bool Pads::checkVelocity(uint8_t pad)
 
     //calibrate pressure based on median value (0-1023 -> 0-127)
     uint8_t calibratedPressure = scalePressure(pad, value, pressureVelocity);
-    calibratedPressure = curves.getCurveValue(coordinateZ, pressureCurve, calibratedPressure, 0, 127);
+    calibratedPressure = curves.getCurveValue(pressureCurve, calibratedPressure, 0, 127);
 
     bool pressDetected = (calibratedPressure > 0);
     bool returnValue = false;
@@ -191,7 +191,7 @@ bool Pads::checkX(uint8_t pad)
 
     int16_t xValue = scaleXY(pad, value, coordinateX);
 
-    xValue = curves.getCurveValue(coordinateX, (curve_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
+    xValue = curves.getCurveValue((curve_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
     bool xChanged = false;
 
@@ -245,7 +245,7 @@ bool Pads::checkY(uint8_t pad)
     }
 
     int16_t yValue = scaleXY(pad, value, coordinateY);
-    yValue = curves.getCurveValue(coordinateY, (curve_t)padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
+    yValue = curves.getCurveValue((curve_t)padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
 
     bool yChanged = false;
 

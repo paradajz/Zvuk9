@@ -4,7 +4,7 @@
 ///
 /// \brief Array holding pointers to functions for easier access.
 ///
-double (*curveFunc[NUMBER_OF_CURVES]) (double value);
+uint8_t (*curveFunc[NUMBER_OF_CURVES]) (uint8_t value, uint8_t min, uint8_t max);
 
 void initHandlers_functions()
 {
