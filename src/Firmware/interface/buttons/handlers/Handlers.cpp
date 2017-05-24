@@ -272,7 +272,7 @@ void handleUpDown(uint8_t id, bool state)
     if (buttons.getButtonState(BUTTON_OCTAVE_DOWN) && buttons.getButtonState(BUTTON_OCTAVE_UP))
     {
         #ifdef DEBUG
-        printf_P(PSTR("Trying to enter pad edit mode.\n"));
+        printf_P(PSTR("Trying to enter pad edit mode...\n"));
         #endif
 
         //try to enter pad edit mode
@@ -290,7 +290,7 @@ void handleUpDown(uint8_t id, bool state)
                     //normally, this is called in automatically in Pads.cpp
                     //but on first occasion call it manually
                     #ifdef DEBUG
-                    printf_P(PSTR("Pad edit mode\n"));
+                    printf_P(PSTR("Pad edit mode entered.\n"));
                     #endif
                     pads.setEditModeState(true, pads.getLastTouchedPad());
 
