@@ -129,7 +129,6 @@ class Pads
     void generateScale(scale_t scale);
 
     //features on/off
-    void setMIDISendState(onOff_t type, uint8_t padNumber, bool state);
     void setFunctionLEDs(uint8_t padNumber);
 
     //MIDI send

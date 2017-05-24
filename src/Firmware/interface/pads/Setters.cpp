@@ -3,29 +3,42 @@
 #include "../lcd/LCD.h"
 #include "../../database/Database.h"
 
-void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)
+void Pads::setMIDISendState(onOff_t type, bool state)
 {
     uint16_t *variablePointer;
     uint16_t configurationID;
+    uint8_t lastTouchedPad = getLastTouchedPad();
 
     switch(type)
     {
         case onOff_notes:
+        #ifdef DEBUG
+        printf_P(PSTR("Notes "));
+        #endif
         variablePointer = &noteSendEnabled;
         configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID;
         break;
 
         case onOff_aftertouch:
+        #ifdef DEBUG
+        printf_P(PSTR("Aftertouch "));
+        #endif
         variablePointer = &aftertouchSendEnabled;
         configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID;
         break;
 
         case onOff_x:
+        #ifdef DEBUG
+        printf_P(PSTR("X "));
+        #endif
         variablePointer = &xSendEnabled;
         configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_X_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_X_ENABLE_ID;
         break;
 
         case onOff_y:
+        #ifdef DEBUG
+        printf_P(PSTR("Y "));
+        #endif
         variablePointer = &ySendEnabled;
         configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_Y_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID;
         break;
@@ -41,13 +54,35 @@ void Pads::setMIDISendState(onOff_t type, uint8_t padNumber, bool state)
         database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
         for (int i=0; i<NUMBER_OF_PADS; i++)
             bitWrite(*variablePointer, i, state);
+        #ifdef DEBUG
+        printf_P(PSTR("%s for all pads\n"), state ? "on" : "off");
+        #endif
         break;
 
         case true:
         //local
-        database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)padNumber+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
-            bitWrite(*variablePointer, padNumber, state);
+        database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)lastTouchedPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
+        bitWrite(*variablePointer, lastTouchedPad, state);
+        #ifdef DEBUG
+        printf_P(PSTR("%s for pad %d\n"), state ? "on" : "off", lastTouchedPad);
+        #endif
         break;
+    }
+
+    //extra checks
+    if (!state && (type == onOff_notes))
+    {
+        //if there are pressed pads, send notes off
+        uint8_t startPad = splitEnabled ? lastTouchedPad : 0;
+        uint8_t numberOfPads = splitEnabled ? 1 : NUMBER_OF_PADS;
+
+        for (int i=startPad; i<numberOfPads; i++)
+        {
+            if (!isPadPressed(i))
+                continue; //only send note off for released pads
+
+            sendNotes(i, 0, false);
+        }
     }
 }
 
@@ -1063,92 +1098,6 @@ void Pads::checkRemainingNoteShift()
         }
     }
 
-}
-
-void Pads::setMIDISendState(onOff_t type, bool state)
-{
-    uint16_t *variablePointer;
-
-    switch(type)
-    {
-        case onOff_notes:
-        #ifdef DEBUG
-        printf_P(PSTR("Notes "));
-        #endif
-        variablePointer = &noteSendEnabled;
-        break;
-
-        case onOff_x:
-        #ifdef DEBUG
-        printf_P(PSTR("X "));
-        #endif
-        variablePointer = &xSendEnabled;
-        break;
-
-        case onOff_y:
-        #ifdef DEBUG
-        printf_P(PSTR("Y "));
-        #endif
-        variablePointer = &ySendEnabled;
-        break;
-
-        case onOff_aftertouch:
-        #ifdef DEBUG
-        printf_P(PSTR("Aftertouch "));
-        #endif
-        variablePointer = &aftertouchSendEnabled;
-        break;
-
-        default:
-        return;
-    }
-
-    if (!splitEnabled)
-    {
-        variablePointer[0] = state;
-
-        for (int i=0; i<NUMBER_OF_PADS; i++)
-            setMIDISendState(type, i, state);
-
-        #ifdef DEBUG
-        printf_P(PSTR("%s for all pads\n"), state ? "on" : "off");
-        #endif
-
-        if (!state && (type == onOff_notes))
-        {
-            //we have turned notes off for all pads
-            //if there are pressed pads, send notes off
-            for (int i=0; i<NUMBER_OF_PADS; i++)
-            {
-                if (!isPadPressed(i))
-                    continue; //only send note off for released pads
-
-                sendNotes(i, 0, false);
-            }
-        }
-    }
-    else
-    {
-        //feature splitting is on
-        uint8_t lastPressedPad = getLastTouchedPad();
-        variablePointer[lastPressedPad] = state;
-
-        setMIDISendState(type, lastPressedPad, state);
-
-        #ifdef DEBUG
-        printf_P(PSTR("%s for pad %d\n"), state ? "on" : "off");
-        #endif
-
-        if (!state && (type == onOff_notes))
-        {
-            uint8_t pressedPads = 0;
-
-            for (int i=0; i<NUMBER_OF_PADS; i++)
-                if (isPadPressed(i)) pressedPads++;
-
-            sendNotes(lastPressedPad, 0, false);
-        }
-    }
 }
 
 void Pads::setPadPressState(uint8_t padNumber, bool padState)

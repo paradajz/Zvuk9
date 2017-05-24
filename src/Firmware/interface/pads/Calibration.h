@@ -1,6 +1,6 @@
 #pragma once
 
-#define PAD_DEBOUNCE_TIME                           15
+#define PAD_DEBOUNCE_TIME                           20
 
 //send x/y and then notes after this delay to reduce glide effect
 #define PAD_NOTE_SEND_DELAY                         5
