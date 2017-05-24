@@ -217,12 +217,6 @@ bool Board::padDataAvailable()
     if (!returnValue)
         return false;
 
-    //printf_P(PSTR("Head: %d\n"), pad_sample_buffer_head);
-    //printf_P(PSTR("Tail: %d\n"), pad_sample_buffer_tail);
-    //printf_P(PSTR("Sample counter: %d\n"), sampleCounter);
-    //printf_P(PSTR("Active pad: %d\n"), activePad);
-    //printf_P(PSTR("Read index: %d\n\n"), readIndex);
-
     uint8_t index;
 
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
