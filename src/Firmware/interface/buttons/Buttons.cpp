@@ -90,9 +90,9 @@ void Buttons::processButton(uint8_t buttonID, uint8_t state)
         {
             (*buttonHandler[buttonID])(buttonID, state);
             //resume button processing
-            if (!buttonEnabled[buttonID] && !getButtonState(buttonID))
+            if (!getButtonEnableState(buttonID) && !getButtonState(buttonID))
             {
-                buttonEnabled[buttonID] = true;
+                enable(buttonID);
             }
         }
     }
