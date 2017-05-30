@@ -23,6 +23,7 @@ const char padEditMode_string[] PROGMEM = "Pad edit mode";
 
 const char notesShifted_string[] PROGMEM = "Notes shifted";
 const char notesShiftLevel_string[] PROGMEM = "Current level: ";
+const char notesShiftNoLevel_string[] PROGMEM = "No shift";
 
 const char velocity_string[] PROGMEM = "v";
 const char velocityClear_string[] PROGMEM = "    ";

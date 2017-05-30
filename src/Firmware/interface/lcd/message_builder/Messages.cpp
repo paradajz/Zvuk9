@@ -197,7 +197,23 @@ void LCD::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t
 
             strcpy_P(stringBuffer, notesShiftLevel_string);
             size = progmemCharArraySize(notesShiftLevel_string);
-            addNumberToCharArray(value, size);
+
+            if (value > 0)
+            {
+                appendText("+", size);
+                addNumberToCharArray(value, size);
+            }
+            else if (value == 0)
+            {
+                strcpy_P(tempBuffer, notesShiftNoLevel_string);
+                strcat(stringBuffer, tempBuffer);
+                size += progmemCharArraySize(notesShiftNoLevel_string);
+            }
+            else
+            {
+                addNumberToCharArray(value, size);
+            }
+
             updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
             break;
 

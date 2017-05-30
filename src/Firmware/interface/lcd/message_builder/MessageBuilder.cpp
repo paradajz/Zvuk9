@@ -408,6 +408,10 @@ void LCD::displayNoteShiftLevel(int8_t level)
     uint8_t size = 0;
     strcpy_P(stringBuffer, noteShift_string);
     size += progmemCharArraySize(noteShift_string);
+
+    if (level > 0)
+        appendText("+", size);
+
     addNumberToCharArray(level, size);
     updateDisplay(lcdElements.noteShiftLevel.row, text, lcdElements.noteShiftLevel.startIndex, false, size);
 }
