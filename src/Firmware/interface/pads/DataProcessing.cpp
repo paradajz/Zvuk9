@@ -27,6 +27,42 @@ void Pads::update()
             xAvailable = checkX(i);
             yAvailable = checkY(i);
         }
+        if (isPadPressed(i))
+        {
+            //send only midi event matching with pressed on/off button (if pressed)
+            if (buttons.getButtonState(BUTTON_ON_OFF_X))
+            {
+                velocityAvailable = false;
+                yAvailable = false;
+                aftertouchAvailable = false;
+                //disable x button temporarily on release
+                buttons.disable(BUTTON_ON_OFF_X);
+            }
+            else if (buttons.getButtonState(BUTTON_ON_OFF_Y))
+            {
+                velocityAvailable = false;
+                xAvailable = false;
+                aftertouchAvailable = false;
+                //disable x button temporarily on release
+                buttons.disable(BUTTON_ON_OFF_Y);
+            }
+            else if (buttons.getButtonState(BUTTON_ON_OFF_NOTES))
+            {
+                xAvailable = false;
+                yAvailable = false;
+                aftertouchAvailable = false;
+                //disable x button temporarily on release
+                buttons.disable(BUTTON_ON_OFF_NOTES);
+            }
+            else if (buttons.getButtonState(BUTTON_ON_OFF_AFTERTOUCH))
+            {
+                velocityAvailable = false;
+                xAvailable = false;
+                yAvailable = false;
+                //disable x button temporarily on release
+                buttons.disable(BUTTON_ON_OFF_AFTERTOUCH);
+            }
+        }
 
         if (velocityAvailable)
         {
@@ -41,7 +77,7 @@ void Pads::update()
                 //lcd restore detection
                 //display data from last touched pad if current pad is released
                 if ((index != getLastTouchedPad()) && !allPadsReleased())
-                restoreLCD = true;
+                    restoreLCD = true;
             }
 
             if (!getEditModeState())
@@ -57,7 +93,7 @@ void Pads::update()
             {
                 //setup pad edit mode on press for current pad
                 if (bitRead(lastMIDInoteState, i))
-                setEditModeState(true, i);
+                    setEditModeState(true, i);
             }
         }
 
@@ -67,17 +103,17 @@ void Pads::update()
         {
             //don't send midi data while in menu
             if (!menu.menuDisplayed())
-            checkMIDIdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                checkMIDIdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
             if (restoreLCD)
             {
                 uint8_t padIndex = getLastTouchedPad();
 
                 if (!menu.menuDisplayed())
-                checkLCDdata(padIndex, true, true, true, true);
+                    checkLCDdata(padIndex, true, true, true, true);
 
                 if (splitEnabled)
-                setFunctionLEDs(padIndex);
+                    setFunctionLEDs(padIndex);
             }
             else
             {
@@ -88,7 +124,7 @@ void Pads::update()
                     if (menu.menuDisplayed())
                     {
                         if (calibrationEnabled)
-                        checkLCDdata(i, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
+                            checkLCDdata(i, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
                     }
                     else
                     {
