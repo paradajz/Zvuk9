@@ -15,7 +15,7 @@ const char changeCClimit_string[] PROGMEM = "change CC limit";
 const char enterPadEditMode_string[] PROGMEM = "enter pad edit mode";
 const char calibrationMode_string[] PROGMEM = "enter calibration";
 
-const char exitPadMode_string[] PROGMEM = "Exit pad mode to";
+const char exitPadMode_string[] PROGMEM = "Exit pad edit mode to";
 
 const char maxNotesSet0_string[] PROGMEM = "Maximum number of";
 const char maxNotesSet1_string[] PROGMEM = "notes set";
