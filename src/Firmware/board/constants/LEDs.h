@@ -12,7 +12,7 @@
 
 #define LED_NO_INTENSITY                    0
 #define LED_FULL_INTENSITY                  NUMBER_OF_LED_TRANSITIONS-1
-#define LED_HALF_INTENSITY                  95
+#define LED_HALF_INTENSITY                  110
 
 const uint8_t ledTransitionScale[NUMBER_OF_LED_TRANSITIONS] =
 {
