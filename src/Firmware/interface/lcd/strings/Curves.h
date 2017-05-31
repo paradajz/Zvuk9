@@ -18,53 +18,55 @@ const uint8_t curveCoordinateArray_sizes[] PROGMEM =
 };
 
 const char curve_linear_up_1_string[] PROGMEM = "Linear up 1";
-const char curve_linear_down_1_string[] PROGMEM = "Linear down 1";
 const char curve_linear_up_2_string[] PROGMEM = "Linear up 2";
+const char curve_linear_down_string[] PROGMEM = "Linear down";
 const char curve_linear_up_broken_1_string[] PROGMEM = "Linear up broken 1";
-const char curve_linear_up_broken_4_string[] PROGMEM = "Linear up broken 4";
-const char curve_flat_center_up_1_string[] PROGMEM = "Flat center up 1";
+const char curve_linear_up_broken_2_string[] PROGMEM = "Linear up broken 2";
+const char curve_linear_up_down_broken_string[] PROGMEM = "Linear up down broken";
+const char curve_linear_down_broken_string[] PROGMEM = "Linear down broken";
+const char curve_flat_center_up_string[] PROGMEM = "Flat center up";
 const char curve_log_up_1_string[] PROGMEM = "Log up 1";
-const char curve_log_up_3_string[] PROGMEM = "Log up 3";
-const char curve_exp_up_2_string[] PROGMEM = "Log exp up 2";
-const char curve_switch_1_string[] PROGMEM = "Switch 1";
-const char curve_linear_down_broken_2_string[] PROGMEM = "Linear down broken 2";
+const char curve_log_up_2_string[] PROGMEM = "Log up 2";
+const char curve_exp_up_string[] PROGMEM = "Log exp up";
+const char curve_switch_string[] PROGMEM = "Switch";
 const char curve_five_steps_up_string[] PROGMEM = "Five steps up";
-const char curve_linear_up_down_broken_1_string[] PROGMEM = "Linear up down broken 1";
 const char curve_eight_waves_up_down_string[] PROGMEM = "Eight waves up down";
 
+//match with curve_t
 PGM_P const curveNameArray[] PROGMEM =
 {
     curve_linear_up_1_string,
-    curve_linear_down_1_string,
     curve_linear_up_2_string,
+    curve_linear_down_string,
     curve_linear_up_broken_1_string,
-    curve_linear_up_broken_4_string,
-    curve_flat_center_up_1_string,
+    curve_linear_up_broken_2_string,
+    curve_linear_up_down_broken_string,
+    curve_linear_down_broken_string,
+    curve_flat_center_up_string,
     curve_log_up_1_string,
-    curve_log_up_3_string,
-    curve_exp_up_2_string,
-    curve_switch_1_string,
-    curve_linear_down_broken_2_string,
+    curve_log_up_2_string,
+    curve_exp_up_string,
+    curve_switch_string,
     curve_five_steps_up_string,
-    curve_linear_up_down_broken_1_string,
     curve_eight_waves_up_down_string
 };
 
+//match with curve_t
 const uint8_t curveNameArray_sizes[] PROGMEM =
 {
     //match order with coordinateType_t enum
     sizeof(curve_linear_up_1_string) - 1,
-    sizeof(curve_linear_down_1_string) - 1,
     sizeof(curve_linear_up_2_string) - 1,
+    sizeof(curve_linear_down_string) - 1,
     sizeof(curve_linear_up_broken_1_string) - 1,
-    sizeof(curve_linear_up_broken_4_string) - 1,
-    sizeof(curve_flat_center_up_1_string) - 1,
+    sizeof(curve_linear_up_broken_2_string) - 1,
+    sizeof(curve_linear_up_down_broken_string) - 1,
+    sizeof(curve_linear_down_broken_string) - 1,
+    sizeof(curve_flat_center_up_string) - 1,
     sizeof(curve_log_up_1_string) - 1,
-    sizeof(curve_log_up_3_string) - 1,
-    sizeof(curve_exp_up_2_string) - 1,
-    sizeof(curve_switch_1_string) - 1,
-    sizeof(curve_linear_down_broken_2_string) - 1,
+    sizeof(curve_log_up_2_string) - 1,
+    sizeof(curve_exp_up_string) - 1,
+    sizeof(curve_switch_string) - 1,
     sizeof(curve_five_steps_up_string) - 1,
-    sizeof(curve_linear_up_down_broken_1_string) - 1,
     sizeof(curve_eight_waves_up_down_string) - 1
 };
