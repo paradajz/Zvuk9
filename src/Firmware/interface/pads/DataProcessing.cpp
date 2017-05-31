@@ -27,9 +27,46 @@ void Pads::update()
             xAvailable = checkX(i);
             yAvailable = checkY(i);
         }
+
         if (isPadPressed(i))
         {
             //send only midi event matching with pressed on/off button (if pressed)
+            if (buttons.getButtonState(BUTTON_ON_OFF_X))
+            {
+                velocityAvailable = false;
+                yAvailable = false;
+                aftertouchAvailable = false;
+                //disable x button temporarily on release
+                buttons.disable(BUTTON_ON_OFF_X);
+            }
+            else if (buttons.getButtonState(BUTTON_ON_OFF_Y))
+            {
+                velocityAvailable = false;
+                xAvailable = false;
+                aftertouchAvailable = false;
+                //disable x button temporarily on release
+                buttons.disable(BUTTON_ON_OFF_Y);
+            }
+            else if (buttons.getButtonState(BUTTON_ON_OFF_NOTES))
+            {
+                xAvailable = false;
+                yAvailable = false;
+                aftertouchAvailable = false;
+                //disable x button temporarily on release
+                buttons.disable(BUTTON_ON_OFF_NOTES);
+            }
+            else if (buttons.getButtonState(BUTTON_ON_OFF_AFTERTOUCH))
+            {
+                velocityAvailable = false;
+                xAvailable = false;
+                yAvailable = false;
+                //disable x button temporarily on release
+                buttons.disable(BUTTON_ON_OFF_AFTERTOUCH);
+            }
+        }
+        else if (!isPadPressed(i) && velocityAvailable)
+        {
+            //make sure not to send note off if not necessary
             if (buttons.getButtonState(BUTTON_ON_OFF_X))
             {
                 velocityAvailable = false;
