@@ -73,7 +73,7 @@ uint8_t Curves::invertRange(uint8_t value, uint8_t min, uint8_t max)
 ///
 uint8_t Curves::getCurveValue(curve_t curve, uint8_t value, uint8_t min, uint8_t max)
 {
-    uint8_t out_min = min > curveMin[curve] ? curveMin[curve] : min;
+    uint8_t out_min = min < curveMin[curve] ? curveMin[curve] : min;
     uint8_t out_max = max > curveMax[curve] ? curveMax[curve] : max;
 
     if (out_min || (out_max != 127))
