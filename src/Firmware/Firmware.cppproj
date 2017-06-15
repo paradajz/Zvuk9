@@ -548,9 +548,6 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Compile Include="core\src\adc\ADC.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="core\src\adc\Config.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="core\src\Core.h">
       <SubType>compile</SubType>
     </Compile>
