@@ -70,16 +70,29 @@
   <avrgcc.compiler.symbols.DefSymbols>
     <ListValues>
       <Value>NDEBUG</Value>
-      <Value>ARCH=ARCH_AVR8</Value>
-      <Value>F_USB=16000000UL</Value>
-      <Value>F_CPU=16000000UL</Value>
-      <Value>BOARD=BOARD_NONE</Value>
-      <Value>USE_LUFA_CONFIG_HEADER</Value>
       <Value>__AT_AT90USB1286__</Value>
-      <Value>USBMIDI</Value>
+      <Value>ARCH=ARCH_AVR8</Value>
+      <Value>F_CPU=16000000UL</Value>
+      <Value>F_USB=16000000UL</Value>
+      <Value>BOARD=BOARD_NONE</Value>
+      <Value>EEPROM_SIZE=4096</Value>
+      <Value>FLASH_SIZE=122880</Value>
       <Value>MIDI_VENDOR_ID=0x1209</Value>
       <Value>MIDI_PRODUCT_ID=0x0909</Value>
-      <Value>MIDI_MANUFACTURER_STRING=paradajz</Value>
+      <Value>USE_STATIC_OPTIONS=0</Value>
+      <Value>USB_DEVICE_ONLY</Value>
+      <Value>USE_FLASH_DESCRIPTORS</Value>
+      <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
+      <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
+      <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
+      <Value>START_UP_ANIMATION</Value>
+      <Value>MAX_TEXT_SIZE=50</Value>
+      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+      <Value>UART_BUFFER_SIZE=30</Value>
+      <Value>USE_TX</Value>
+      <Value>ADC_PRESCALER=128</Value>
+      <Value>VREF_AVCC</Value>
+      <Value>USBMIDI</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -97,26 +110,29 @@
   <avrgcccpp.compiler.symbols.DefSymbols>
     <ListValues>
       <Value>NDEBUG</Value>
+      <Value>__AT_AT90USB1286__</Value>
       <Value>ARCH=ARCH_AVR8</Value>
-      <Value>EEPROM_SIZE=4096</Value>
-      <Value>FLASH_SIZE=122880</Value>
-      <Value>BOARD=BOARD_NONE</Value>
       <Value>F_CPU=16000000UL</Value>
       <Value>F_USB=16000000UL</Value>
-      <Value>USE_LUFA_CONFIG_HEADER</Value>
-      <Value>__AT_AT90USB1286__</Value>
-      <Value>USBMIDI</Value>
-      <Value>START_UP_ANIMATION</Value>
-      <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>USE_TX</Value>
-      <Value>UART_BUFFER_SIZE=30</Value>
-      <Value>ADC_PRESCALER=128</Value>
-      <Value>VREF_AVCC</Value>
-      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
-      <Value>MIDI_SERIAL_OBJECT=uart</Value>
+      <Value>BOARD=BOARD_NONE</Value>
+      <Value>EEPROM_SIZE=4096</Value>
+      <Value>FLASH_SIZE=122880</Value>
       <Value>MIDI_VENDOR_ID=0x1209</Value>
       <Value>MIDI_PRODUCT_ID=0x0909</Value>
-      <Value>MIDI_MANUFACTURER_STRING=paradajz</Value>
+      <Value>USE_STATIC_OPTIONS=0</Value>
+      <Value>USB_DEVICE_ONLY</Value>
+      <Value>USE_FLASH_DESCRIPTORS</Value>
+      <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
+      <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
+      <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
+      <Value>START_UP_ANIMATION</Value>
+      <Value>MAX_TEXT_SIZE=50</Value>
+      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+      <Value>UART_BUFFER_SIZE=30</Value>
+      <Value>USE_TX</Value>
+      <Value>ADC_PRESCALER=128</Value>
+      <Value>VREF_AVCC</Value>
+      <Value>USBMIDI</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
@@ -176,13 +192,29 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
   <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
   <avrgcc.compiler.symbols.DefSymbols>
     <ListValues>
-      <Value>ARCH=ARCH_AVR8</Value>
-      <Value>BOARD=BOARD_NONE</Value>
-      <Value>F_CPU=16000000UL</Value>
-      <Value>USE_LUFA_CONFIG_HEADER</Value>
-      <Value>F_USB=16000000UL</Value>
       <Value>DEBUG</Value>
       <Value>__AT_AT90USB1286__</Value>
+      <Value>ARCH=ARCH_AVR8</Value>
+      <Value>F_CPU=16000000UL</Value>
+      <Value>F_USB=16000000UL</Value>
+      <Value>BOARD=BOARD_NONE</Value>
+      <Value>EEPROM_SIZE=4096</Value>
+      <Value>FLASH_SIZE=122880</Value>
+      <Value>MIDI_VENDOR_ID=0x1209</Value>
+      <Value>MIDI_PRODUCT_ID=0x0909</Value>
+      <Value>USE_STATIC_OPTIONS=0</Value>
+      <Value>USB_DEVICE_ONLY</Value>
+      <Value>USE_FLASH_DESCRIPTORS</Value>
+      <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
+      <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
+      <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
+      <Value>START_UP_ANIMATION</Value>
+      <Value>MAX_TEXT_SIZE=50</Value>
+      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+      <Value>UART_BUFFER_SIZE=30</Value>
+      <Value>USE_TX</Value>
+      <Value>ADC_PRESCALER=128</Value>
+      <Value>VREF_AVCC</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -202,20 +234,27 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
   <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
   <avrgcccpp.compiler.symbols.DefSymbols>
     <ListValues>
-      <Value>ARCH=ARCH_AVR8</Value>
-      <Value>BOARD=BOARD_NONE</Value>
-      <Value>F_CPU=16000000UL</Value>
-      <Value>USE_LUFA_CONFIG_HEADER</Value>
-      <Value>F_USB=16000000UL</Value>
-      <Value>FLASH_SIZE=122880</Value>
-      <Value>EEPROM_SIZE=4096</Value>
       <Value>DEBUG</Value>
-      <Value>START_UP_ANIMATION</Value>
-      <Value>BOARD_R2</Value>
       <Value>__AT_AT90USB1286__</Value>
+      <Value>ARCH=ARCH_AVR8</Value>
+      <Value>F_CPU=16000000UL</Value>
+      <Value>F_USB=16000000UL</Value>
+      <Value>BOARD=BOARD_NONE</Value>
+      <Value>EEPROM_SIZE=4096</Value>
+      <Value>FLASH_SIZE=122880</Value>
+      <Value>MIDI_VENDOR_ID=0x1209</Value>
+      <Value>MIDI_PRODUCT_ID=0x0909</Value>
+      <Value>USE_STATIC_OPTIONS=0</Value>
+      <Value>USB_DEVICE_ONLY</Value>
+      <Value>USE_FLASH_DESCRIPTORS</Value>
+      <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
+      <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
+      <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
+      <Value>START_UP_ANIMATION</Value>
       <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>USE_TX</Value>
+      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
       <Value>UART_BUFFER_SIZE=30</Value>
+      <Value>USE_TX</Value>
       <Value>ADC_PRESCALER=128</Value>
       <Value>VREF_AVCC</Value>
     </ListValues>
@@ -849,9 +888,6 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\pads\Setters.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="lufa\LUFAConfig.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="lufa\LUFA\Common\Architectures.h">
