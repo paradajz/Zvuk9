@@ -1,8 +1,6 @@
 #include "Curves.h"
 #include "../Pads.h"
-#include "functions/Functions.h"
-
-extern uint8_t (*curveFunc[NUMBER_OF_CURVES]) (uint8_t value, uint8_t min, uint8_t max);
+#include "Functions.h"
 
 ///
 /// \brief Default constructor.
@@ -17,17 +15,26 @@ Curves::Curves()
 ///
 void Curves::init()
 {
-    //for (int i=0; i<PAD_COORDINATES; i++)
-    //{
-        //lastCurve[i] = curve_linear_up_1;
-        //lastMin[i] = 0;
-        //lastMax[i] = 127;
-//
-        //for (int j=0; j<128; j++)
-            //scale[i][j] = j;
-    //}
+    //get min/max for each curve
+    for (int i=0; i<NUMBER_OF_CURVES; i++)
+    {
+        uint8_t min_val = 255;
+        uint8_t max_val = 0;
 
-    initHandlers_functions();
+        for (int j=0; j<128; j++)
+        {
+            uint8_t value = pgm_read_byte(&(curveArray[i][j]));
+
+            if (value < min_val)
+                min_val = value;
+
+            if (value > max_val)
+                max_val = value;
+        }
+
+        curveMin[i] = min_val;
+        curveMax[i] = max_val;
+    }
 }
 
 ///
@@ -37,29 +44,12 @@ void Curves::init()
 /// @param [in] in_max  Largest possible input value.
 /// @param [in] out_min Lowest possible output value.
 /// @param [in] out_max Largest possible output value.
-/// \return Mapped value (uint16_t).
+/// \return Mapped value (uint32_t).
 ///
-uint16_t Curves::map_uint16(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)
+uint32_t Curves::map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)
 {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
-
-///
-/// \brief Maps value from one range to another.
-/// @param [in] x Input value.
-/// @param [in] in_min  Lowest possible input value.
-/// @param [in] in_max  Largest possible input value.
-/// @param [in] out_min Lowest possible output value.
-/// @param [in] out_max Largest possible output value.
-/// \return Mapped value (uint8_t).
-///
-uint8_t Curves::map_uint8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max)
-{
-    if ((in_min == out_min) && (in_max == out_max))
-        return x;
-
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-};
 
 ///
 /// \brief Calculates inverted value based on input range.
@@ -73,9 +63,23 @@ uint8_t Curves::invertRange(uint8_t value, uint8_t min, uint8_t max)
     return (max + min) - value;
 }
 
+///
+/// \brief Returns value for wanted curve and curve index.
+/// @param [in] curve   Wanted curve.
+/// @param [in] value   Wanted curve index.
+/// @param [in] min     Lowest possible output value.
+/// @param [in] max     Largest possible output value.
+/// \return Curve value.
+///
 uint8_t Curves::getCurveValue(curve_t curve, uint8_t value, uint8_t min, uint8_t max)
 {
-    return (*curveFunc[curve])(value, min, max);
+    uint8_t out_min = min > curveMin[curve] ? curveMin[curve] : min;
+    uint8_t out_max = max > curveMax[curve] ? curveMax[curve] : max;
+
+    if (out_min || (out_max != 127))
+         return map(pgm_read_byte(&(curveArray[curve][value])), curveMin[curve], curveMax[curve], out_min, out_max);
+    else
+        return pgm_read_byte(&(curveArray[curve][value]));
 }
 
 Curves curves;

@@ -5,8 +5,7 @@
 ///
 typedef enum
 {
-    curve_linear_up_1,
-    curve_linear_up_2,
+    curve_linear_up,
     curve_linear_down,
     curve_linear_up_broken_1,
     curve_linear_up_broken_2,

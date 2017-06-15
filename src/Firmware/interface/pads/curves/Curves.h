@@ -14,11 +14,12 @@ class Curves
     Curves();
     void init();
     uint8_t getCurveValue(curve_t type, uint8_t value, uint8_t min, uint8_t max);
-    uint16_t map_uint16(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
-    uint8_t map_uint8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max);
+    uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
     uint8_t invertRange(uint8_t value, uint8_t min, uint8_t max);
 
     private:
+    uint8_t curveMin[NUMBER_OF_CURVES];
+    uint8_t curveMax[NUMBER_OF_CURVES];
 };
 
 extern Curves curves;
