@@ -174,9 +174,9 @@ void Menu::updateMenuScreen()
         updateDisplay(i+1, text, 0, true, size);
     }
 
-    #ifdef DEBUG
-    printf_P(PSTR("menuHierarchyPosition: %d\n"), menuHierarchyPosition);
-    #endif
+    //#ifdef DEBUG
+    //printf_P(PSTR("menuHierarchyPosition: %d\n"), menuHierarchyPosition);
+    //#endif
 }
 
 void Menu::changeOption(bool direction)
