@@ -26,6 +26,10 @@ void Pads::update()
         {
             xAvailable = checkX(i);
             yAvailable = checkY(i);
+
+            #ifdef DEBUG
+            printf_P(PSTR("Raw pressure value: %d\n"), lastPressureValue[i]);
+            #endif
         }
 
         if (isPadPressed(i))
@@ -233,6 +237,141 @@ bool Pads::checkVelocity(uint8_t pad)
     return returnValue;
 }
 
+bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
+{
+    //pad is pressed
+    if (bitRead(lastMIDInoteState, pad))
+    {
+        uint8_t calibratedPressureAfterTouch = scalePressure(pad, lastPressureValue[pad], pressureAftertouch);
+
+        if (!calibratedPressureAfterTouch)
+        return false; //don't allow aftertouch 0
+
+        uint32_t timeDifference = rTimeMs() - lastAftertouchUpdateTime[pad];
+        bool updateAftertouch = false;
+
+        //if it's been more than AFTERTOUCH_SEND_TIMEOUT since last time aftertouch was sent, aftertouch value
+        //must exceed AFTERTOUCH_SEND_TIMEOUT_STEP
+        //else the value must differ from last one and time difference must be more than AFTERTOUCH_SEND_TIMEOUT_IGNORE
+        //so that we don't send fluctuating values
+        if (timeDifference > AFTERTOUCH_SEND_TIMEOUT)
+        {
+            if (abs(calibratedPressureAfterTouch - lastAftertouchValue[pad]) > AFTERTOUCH_SEND_TIMEOUT_STEP)
+            updateAftertouch = true;
+        }
+        else if (calibratedPressureAfterTouch != lastAftertouchValue[pad])
+        {
+            updateAftertouch = true;
+        }
+
+        //so far, it seems new aftertouch value passed all conditions
+        if (updateAftertouch)
+        {
+            lastAftertouchValue[pad] = calibratedPressureAfterTouch;
+            lastAftertouchUpdateTime[pad] = rTimeMs();
+
+            if (!bitRead(aftertouchActivated, pad))
+            bitWrite(aftertouchActivated, pad, true);
+
+            uint8_t padsPressed = 0;
+
+            switch(aftertouchType)
+            {
+                case aftertouchPoly:
+                //no further checks needed
+                return true;
+                break;
+
+                case aftertouchChannel:
+                for (int i=0; i<NUMBER_OF_PADS; i++)
+                {
+                    if (isPadPressed(i) && bitRead(aftertouchActivated, i))
+                    padsPressed++;
+                }
+
+                if (padsPressed == 1)
+                {
+                    maxAftertouchValue = calibratedPressureAfterTouch;
+                    return true;
+                } else if (padsPressed > 1)
+                {
+                    //find max pressure
+                    uint8_t tempMaxValue = 0;
+
+                    for (int i=0; i<NUMBER_OF_PADS; i++)
+                    {
+                        if (!isPadPressed(i))
+                        continue;
+
+                        if (!bitRead(aftertouchActivated, i))
+                        continue;
+
+                        if (!bitRead(aftertouchSendEnabled, i))
+                        continue;
+
+                        if (lastAftertouchValue[i] > tempMaxValue)
+                        tempMaxValue = lastAftertouchValue[i];
+                    }
+
+                    if (tempMaxValue != maxAftertouchValue)
+                    {
+                        maxAftertouchValue = calibratedPressureAfterTouch;
+
+                        #ifdef DEBUG
+                        printf_P(PSTR("Maximum channel aftertouch updated: %d"), maxAftertouchValue);
+                        #endif
+
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                break;
+            }
+        }
+    }
+    else
+    {
+        //pad is released
+        //make sure to send aftertouch with pressure 0 on note off under certain conditions
+        if (velocityAvailable && bitRead(aftertouchActivated, pad))
+        {
+            uint8_t pressedPadCounter = 0;
+
+            lastAftertouchValue[pad] = 0;
+            switch(aftertouchType)
+            {
+                case aftertouchPoly:
+                return true; //no further checks are needed
+
+                case aftertouchChannel:
+                for (int i=0; i<NUMBER_OF_PADS; i++)
+                {
+                    //count how many pads are pressed with activated aftertouch
+                    if (bitRead(aftertouchActivated, i) && isPadPressed(i) && bitRead(aftertouchSendEnabled, i))
+                    pressedPadCounter++;
+                }
+
+                if (!pressedPadCounter)
+                {
+                    maxAftertouchValue = 0;
+                    return true;
+                }
+                break;
+            }
+        }
+        else
+        {
+            //pad is released and 0 aftertouch has been sent
+            return false;
+        }
+    }
+
+    return false;
+}
+
 bool Pads::checkX(uint8_t pad)
 {
     if (bitRead(pressureReduction, pad))
@@ -337,141 +476,6 @@ bool Pads::checkY(uint8_t pad)
         lastYMIDIvalue[pad] = yValue;
         ySendTimer[pad] = rTimeMs();
         return true;
-    }
-
-    return false;
-}
-
-bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
-{
-    //pad is pressed
-    if (bitRead(lastMIDInoteState, pad))
-    {
-        uint8_t calibratedPressureAfterTouch = scalePressure(pad, lastPressureValue[pad], pressureAftertouch);
-
-        if (!calibratedPressureAfterTouch)
-            return false; //don't allow aftertouch 0
-
-        uint32_t timeDifference = rTimeMs() - lastAftertouchUpdateTime[pad];
-        bool updateAftertouch = false;
-
-        //if it's been more than AFTERTOUCH_SEND_TIMEOUT since last time aftertouch was sent, aftertouch value
-        //must exceed AFTERTOUCH_SEND_TIMEOUT_STEP
-        //else the value must differ from last one and time difference must be more than AFTERTOUCH_SEND_TIMEOUT_IGNORE
-        //so that we don't send fluctuating values
-        if (timeDifference > AFTERTOUCH_SEND_TIMEOUT)
-        {
-            if (abs(calibratedPressureAfterTouch - lastAftertouchValue[pad]) > AFTERTOUCH_SEND_TIMEOUT_STEP)
-                updateAftertouch = true;
-        }
-        else if (calibratedPressureAfterTouch != lastAftertouchValue[pad])
-        {
-            updateAftertouch = true;
-        }
-
-        //so far, it seems new aftertouch value passed all conditions
-        if (updateAftertouch)
-        {
-            lastAftertouchValue[pad] = calibratedPressureAfterTouch;
-            lastAftertouchUpdateTime[pad] = rTimeMs();
-
-            if (!bitRead(aftertouchActivated, pad))
-                bitWrite(aftertouchActivated, pad, true);
-
-            uint8_t padsPressed = 0;
-
-            switch(aftertouchType)
-            {
-                case aftertouchPoly:
-                //no further checks needed
-                return true;
-                break;
-
-                case aftertouchChannel:
-                for (int i=0; i<NUMBER_OF_PADS; i++)
-                {
-                    if (isPadPressed(i) && bitRead(aftertouchActivated, i))
-                        padsPressed++;
-                }
-
-                if (padsPressed == 1)
-                {
-                    maxAftertouchValue = calibratedPressureAfterTouch;
-                    return true;
-                } else if (padsPressed > 1)
-                {
-                    //find max pressure
-                    uint8_t tempMaxValue = 0;
-
-                    for (int i=0; i<NUMBER_OF_PADS; i++)
-                    {
-                        if (!isPadPressed(i))
-                            continue;
-
-                        if (!bitRead(aftertouchActivated, i))
-                            continue;
-
-                        if (!bitRead(aftertouchSendEnabled, i))
-                            continue;
-
-                        if (lastAftertouchValue[i] > tempMaxValue)
-                            tempMaxValue = lastAftertouchValue[i];
-                    }
-
-                    if (tempMaxValue != maxAftertouchValue)
-                    {
-                        maxAftertouchValue = calibratedPressureAfterTouch;
-
-                        #ifdef DEBUG
-                        printf_P(PSTR("Maximum channel aftertouch updated: %d"), maxAftertouchValue);
-                        #endif
-
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                break;
-            }
-        }
-    }
-    else
-    {
-        //pad is released
-        //make sure to send aftertouch with pressure 0 on note off under certain conditions
-        if (velocityAvailable && bitRead(aftertouchActivated, pad))
-        {
-            uint8_t pressedPadCounter = 0;
-
-            lastAftertouchValue[pad] = 0;
-            switch(aftertouchType)
-            {
-                case aftertouchPoly:
-                return true; //no further checks are needed
-
-                case aftertouchChannel:
-                for (int i=0; i<NUMBER_OF_PADS; i++)
-                {
-                    //count how many pads are pressed with activated aftertouch
-                    if (bitRead(aftertouchActivated, i) && isPadPressed(i) && bitRead(aftertouchSendEnabled, i))
-                        pressedPadCounter++;
-                }
-
-                if (!pressedPadCounter)
-                {
-                    maxAftertouchValue = 0;
-                    return true;
-                }
-                break;
-            }
-        }
-        else
-        {
-            //pad is released and 0 aftertouch has been sent
-            return false;
-        }
     }
 
     return false;

@@ -46,7 +46,7 @@ void Menu::createUserMenuLayout()
             menuItem[userMenuItem_pressureCurve_linear].level = 121;
             menuItem[userMenuItem_pressureCurve_linear].checkable = true;
             menuItem[userMenuItem_pressureCurve_linear].function = checkPressureCurve;
-            menuItem[userMenuItem_pressureCurve_linear].argument.argument1 = (uint8_t)curve_linear_up_1;
+            menuItem[userMenuItem_pressureCurve_linear].argument.argument1 = (uint8_t)curve_linear_up;
 
             menuItem[userMenuItem_pressureCurve_log].stringPointer = pressure_curve_log_string;
             menuItem[userMenuItem_pressureCurve_log].level = 122;

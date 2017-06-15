@@ -17,8 +17,7 @@ const uint8_t curveCoordinateArray_sizes[] PROGMEM =
     sizeof(curveCoordinateY_string) - 1
 };
 
-const char curve_linear_up_1_string[] PROGMEM = "Linear up 1";
-const char curve_linear_up_2_string[] PROGMEM = "Linear up 2";
+const char curve_linear_up_string[] PROGMEM = "Linear up";
 const char curve_linear_down_string[] PROGMEM = "Linear down";
 const char curve_linear_up_broken_1_string[] PROGMEM = "Linear up broken 1";
 const char curve_linear_up_broken_2_string[] PROGMEM = "Linear up broken 2";
@@ -35,8 +34,7 @@ const char curve_eight_waves_up_down_string[] PROGMEM = "Eight waves up down";
 //match with curve_t
 PGM_P const curveNameArray[] PROGMEM =
 {
-    curve_linear_up_1_string,
-    curve_linear_up_2_string,
+    curve_linear_up_string,
     curve_linear_down_string,
     curve_linear_up_broken_1_string,
     curve_linear_up_broken_2_string,
@@ -55,8 +53,7 @@ PGM_P const curveNameArray[] PROGMEM =
 const uint8_t curveNameArray_sizes[] PROGMEM =
 {
     //match order with coordinateType_t enum
-    sizeof(curve_linear_up_1_string) - 1,
-    sizeof(curve_linear_up_2_string) - 1,
+    sizeof(curve_linear_up_string) - 1,
     sizeof(curve_linear_down_string) - 1,
     sizeof(curve_linear_up_broken_1_string) - 1,
     sizeof(curve_linear_up_broken_2_string) - 1,

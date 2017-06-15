@@ -111,8 +111,8 @@ class Pads
     bool pressureStable(uint8_t padNumber, bool pressDetected);
 
     //data availability checks
-    bool checkAftertouch(uint8_t pad, bool velocityAvailable);
     bool checkVelocity(uint8_t pad);
+    bool checkAftertouch(uint8_t pad, bool velocityAvailable);
     bool checkX(uint8_t pad);
     bool checkY(uint8_t pad);
 

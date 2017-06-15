@@ -28,8 +28,8 @@ typedef enum
 #define GLOBAL_PROGRAM_SETTING_X_MAX                127
 #define GLOBAL_PROGRAM_SETTING_Y_MIN                0
 #define GLOBAL_PROGRAM_SETTING_Y_MAX                127
-#define GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN         curve_linear_up_1
-#define GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN         curve_linear_up_1
+#define GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN         curve_linear_up
+#define GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN         curve_linear_up
 
 typedef enum
 {
@@ -81,8 +81,8 @@ const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] =
 #define LOCAL_PROGRAM_SETTING_X_MAX                 127
 #define LOCAL_PROGRAM_SETTING_Y_MIN                 0
 #define LOCAL_PROGRAM_SETTING_Y_MAX                 127
-#define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN          curve_linear_up_1
-#define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN          curve_linear_up_1
+#define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN          curve_linear_up
+#define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN          curve_linear_up
 
 typedef enum
 {
