@@ -27,9 +27,9 @@ void Pads::update()
             xAvailable = checkX(i);
             yAvailable = checkY(i);
 
-            #ifdef DEBUG
-            printf_P(PSTR("Raw pressure value: %d\n"), lastPressureValue[i]);
-            #endif
+            //#ifdef DEBUG
+            //printf_P(PSTR("Raw pressure value: %d\n"), lastPressureValue[i]);
+            //#endif
         }
 
         if (isPadPressed(i))
