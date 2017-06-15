@@ -107,6 +107,8 @@
       <Value>MAX_TEXT_SIZE=50</Value>
       <Value>USE_TX</Value>
       <Value>UART_BUFFER_SIZE=30</Value>
+      <Value>ADC_PRESCALER=128</Value>
+      <Value>VREF_AVCC</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
@@ -206,6 +208,8 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
       <Value>MAX_TEXT_SIZE=50</Value>
       <Value>USE_TX</Value>
       <Value>UART_BUFFER_SIZE=30</Value>
+      <Value>ADC_PRESCALER=128</Value>
+      <Value>VREF_AVCC</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
