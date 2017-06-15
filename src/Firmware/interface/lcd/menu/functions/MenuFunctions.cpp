@@ -199,10 +199,10 @@ bool checkRunningStatus(functionArgument argument)
 
 bool checkNoteOffStatus(functionArgument argument)
 {
-    switch((noteOffType_t)argument.argument1)
+    switch(argument.argument1)
     {
-        case noteOffType_noteOnZeroVel:
-        case noteOffType_standardNoteOff:
+        case 0: //noteOffType_noteOnZeroVel:
+        case 1: //noteOffType_standardNoteOff:
         //nothing
         break;
 

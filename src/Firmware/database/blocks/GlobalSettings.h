@@ -12,7 +12,7 @@ typedef enum
 
 #define MIDI_SETTING_AFTERTOUCH_TYPE                aftertouchChannel
 #define MIDI_SETTING_RUNNING_STATUS                 0
-#define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_standardNoteOff
+#define MIDI_SETTING_NOTE_OFF_TYPE                  1 //noteOffType_standardNoteOff
 #define MIDI_SETTING_TRANSPORT_CC                   0x00
 #define MIDI_SETTING_TRANSPORT_CC_PLAY              125
 #define MIDI_SETTING_TRANSPORT_CC_STOP              126

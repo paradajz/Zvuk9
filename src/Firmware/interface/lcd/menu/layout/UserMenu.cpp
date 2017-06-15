@@ -112,13 +112,13 @@ void Menu::createUserMenuLayout()
                 menuItem[userMenuItem_midiSettings_noteOff_channel].level = 231;
                 menuItem[userMenuItem_midiSettings_noteOff_channel].checkable = true;
                 menuItem[userMenuItem_midiSettings_noteOff_channel].function = checkNoteOffStatus;
-                menuItem[userMenuItem_midiSettings_noteOff_channel].argument.argument1 = (uint8_t)noteOffType_standardNoteOff;
+                menuItem[userMenuItem_midiSettings_noteOff_channel].argument.argument1 = 1; //(uint8_t)noteOffType_standardNoteOff;
 
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].stringPointer = noteOff_zeroVel_string;
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].level = 232;
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].checkable = true;
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].function = checkNoteOffStatus;
-                menuItem[userMenuItem_midiSettings_noteOff_zero_vel].argument.argument1 = (uint8_t)noteOffType_noteOnZeroVel;
+                menuItem[userMenuItem_midiSettings_noteOff_zero_vel].argument.argument1 = 0; //(uint8_t)noteOffType_noteOnZeroVel;
             }
 
             menuItem[userMenuItem_midiSettings_transport].stringPointer = midiSettings_transport_string;
