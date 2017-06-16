@@ -1,7 +1,0 @@
-# depslib dependency file v1.0
-1470089322 source:d:\dropbox\documents\atmel studio\projects\zvuk9\tools\gaingen\main.c
-	<stdio.h>
-	<stdlib.h>
-	<inttypes.h>
-	<math.h>
-

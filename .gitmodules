@@ -10,3 +10,6 @@
 [submodule "src/Firmware/dbms"]
 	path = src/Firmware/dbms
 	url = git@github.com:paradajz/AVR-DB.git
+[submodule "src/Firmware/versioning"]
+	path = src/Firmware/versioning
+	url = https://github.com/paradajz/AVR-versioning.git

@@ -58,106 +58,106 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGccCpp>
-  <avrgcc.common.Device>-mmcu=at90usb1286 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\gcc\dev\at90usb1286"</avrgcc.common.Device>
-  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>NDEBUG</Value>
-      <Value>__AT_AT90USB1286__</Value>
-      <Value>ARCH=ARCH_AVR8</Value>
-      <Value>F_CPU=16000000UL</Value>
-      <Value>F_USB=16000000UL</Value>
-      <Value>BOARD=BOARD_NONE</Value>
-      <Value>EEPROM_SIZE=4096</Value>
-      <Value>FLASH_SIZE=122880</Value>
-      <Value>MIDI_VENDOR_ID=0x1209</Value>
-      <Value>MIDI_PRODUCT_ID=0x0909</Value>
-      <Value>USE_STATIC_OPTIONS=0</Value>
-      <Value>USB_DEVICE_ONLY</Value>
-      <Value>USE_FLASH_DESCRIPTORS</Value>
-      <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
-      <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
-      <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
-      <Value>START_UP_ANIMATION</Value>
-      <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
-      <Value>UART_BUFFER_SIZE=30</Value>
-      <Value>USE_TX</Value>
-      <Value>ADC_PRESCALER=128</Value>
-      <Value>VREF_AVCC</Value>
-      <Value>USBMIDI</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
-      <Value>../lufa</Value>
-    </ListValues>
-  </avrgcc.compiler.directories.IncludePaths>
-  <avrgcc.compiler.optimization.level>Optimize more (-O2)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcccpp.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>NDEBUG</Value>
-      <Value>__AT_AT90USB1286__</Value>
-      <Value>ARCH=ARCH_AVR8</Value>
-      <Value>F_CPU=16000000UL</Value>
-      <Value>F_USB=16000000UL</Value>
-      <Value>BOARD=BOARD_NONE</Value>
-      <Value>EEPROM_SIZE=4096</Value>
-      <Value>FLASH_SIZE=122880</Value>
-      <Value>MIDI_VENDOR_ID=0x1209</Value>
-      <Value>MIDI_PRODUCT_ID=0x0909</Value>
-      <Value>USE_STATIC_OPTIONS=0</Value>
-      <Value>USB_DEVICE_ONLY</Value>
-      <Value>USE_FLASH_DESCRIPTORS</Value>
-      <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
-      <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
-      <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
-      <Value>START_UP_ANIMATION</Value>
-      <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
-      <Value>UART_BUFFER_SIZE=30</Value>
-      <Value>USE_TX</Value>
-      <Value>ADC_PRESCALER=128</Value>
-      <Value>VREF_AVCC</Value>
-      <Value>USBMIDI</Value>
-    </ListValues>
-  </avrgcccpp.compiler.symbols.DefSymbols>
-  <avrgcccpp.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
-      <Value>../lufa</Value>
-    </ListValues>
-  </avrgcccpp.compiler.directories.IncludePaths>
-  <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
-  <avrgcccpp.compiler.optimization.OtherFlags>-ffunction-sections</avrgcccpp.compiler.optimization.OtherFlags>
-  <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
-  <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
-  <avrgcccpp.compiler.miscellaneous.OtherFlags>-Wl,-print-gc-sections -include "%24(MSBuildProjectDirectory)/core/src/Core.h"</avrgcccpp.compiler.miscellaneous.OtherFlags>
-  <avrgcccpp.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </avrgcccpp.linker.libraries.Libraries>
-  <avrgcccpp.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
-    </ListValues>
-  </avrgcccpp.assembler.general.IncludePaths>
-</AvrGccCpp>
+        <avrgcc.common.Device>-mmcu=at90usb1286 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\gcc\dev\at90usb1286"</avrgcc.common.Device>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+            <Value>__AT_AT90USB1286__</Value>
+            <Value>ARCH=ARCH_AVR8</Value>
+            <Value>F_CPU=16000000UL</Value>
+            <Value>F_USB=16000000UL</Value>
+            <Value>BOARD=BOARD_NONE</Value>
+            <Value>EEPROM_SIZE=4096</Value>
+            <Value>FLASH_SIZE=122880</Value>
+            <Value>MIDI_VENDOR_ID=0x1209</Value>
+            <Value>MIDI_PRODUCT_ID=0x0909</Value>
+            <Value>USE_STATIC_OPTIONS=0</Value>
+            <Value>USB_DEVICE_ONLY</Value>
+            <Value>USE_FLASH_DESCRIPTORS</Value>
+            <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
+            <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
+            <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
+            <Value>START_UP_ANIMATION</Value>
+            <Value>MAX_TEXT_SIZE=50</Value>
+            <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+            <Value>UART_BUFFER_SIZE=30</Value>
+            <Value>USE_TX</Value>
+            <Value>ADC_PRESCALER=128</Value>
+            <Value>VREF_AVCC</Value>
+            <Value>USBMIDI</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
+            <Value>../lufa</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize more (-O2)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcccpp.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+            <Value>__AT_AT90USB1286__</Value>
+            <Value>ARCH=ARCH_AVR8</Value>
+            <Value>F_CPU=16000000UL</Value>
+            <Value>F_USB=16000000UL</Value>
+            <Value>BOARD=BOARD_NONE</Value>
+            <Value>EEPROM_SIZE=4096</Value>
+            <Value>FLASH_SIZE=122880</Value>
+            <Value>MIDI_VENDOR_ID=0x1209</Value>
+            <Value>MIDI_PRODUCT_ID=0x0909</Value>
+            <Value>USE_STATIC_OPTIONS=0</Value>
+            <Value>USB_DEVICE_ONLY</Value>
+            <Value>USE_FLASH_DESCRIPTORS</Value>
+            <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
+            <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
+            <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
+            <Value>START_UP_ANIMATION</Value>
+            <Value>MAX_TEXT_SIZE=50</Value>
+            <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+            <Value>UART_BUFFER_SIZE=30</Value>
+            <Value>USE_TX</Value>
+            <Value>ADC_PRESCALER=128</Value>
+            <Value>VREF_AVCC</Value>
+            <Value>USBMIDI</Value>
+          </ListValues>
+        </avrgcccpp.compiler.symbols.DefSymbols>
+        <avrgcccpp.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
+            <Value>../lufa</Value>
+          </ListValues>
+        </avrgcccpp.compiler.directories.IncludePaths>
+        <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
+        <avrgcccpp.compiler.optimization.OtherFlags>-ffunction-sections</avrgcccpp.compiler.optimization.OtherFlags>
+        <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+        <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+        <avrgcccpp.compiler.miscellaneous.OtherFlags>-Wl,-print-gc-sections -include "%24(MSBuildProjectDirectory)/core/src/Core.h"</avrgcccpp.compiler.miscellaneous.OtherFlags>
+        <avrgcccpp.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcccpp.linker.libraries.Libraries>
+        <avrgcccpp.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
+          </ListValues>
+        </avrgcccpp.assembler.general.IncludePaths>
+      </AvrGccCpp>
     </ToolchainSettings>
     <PostBuildEvent>REM cd to tools dir
 call cd $(SolutionDir)
@@ -166,124 +166,139 @@ call cd ..\tools\
 REM copy compiled hex to current dir
 call cp "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" FLASH.hex
 
-REM get software version and append crc
+REM convert hex to bin and remove hex
 call C:\Windows\Sysnative\bash.exe -c "./version_script.sh"
 
-REM append version to bin file
-call version_append.exe
+REM copy bin file, MAJOR, MINOR, REVISION and HASH to versioning/bin directory
+call cp FLASH.bin "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin"
+call cp "$(MSBuildProjectDirectory)\version\MAJOR" "$(MSBuildProjectDirectory)\versioning\bin\MAJOR"
+call cp "$(MSBuildProjectDirectory)\version\MINOR" "$(MSBuildProjectDirectory)\versioning\bin\MINOR"
+call cp "$(MSBuildProjectDirectory)\version\REVISION" "$(MSBuildProjectDirectory)\versioning\bin\REVISION"
+call cp "$(MSBuildProjectDirectory)\version\HASH" "$(MSBuildProjectDirectory)\versioning\bin\HASH"
 
-REM remove version
-del version
+REM remove FLASH.bin from current dir
+call del FLASH.bin
 
-REM move FLASH.bin to bin dir
-call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
+REM change to av2b dir
+call cd "$(MSBuildProjectDirectory)\versioning\bin"
+call av2b.exe
+
+REM remove leftovers
+call del MAJOR
+call del MINOR
+call del REVISION
+call del HASH
+
+REM move binary to root/bin
+call cd $(SolutionDir)
+call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bin"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGccCpp>
-  <avrgcc.common.Device>-mmcu=at90usb1286 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\gcc\dev\at90usb1286"</avrgcc.common.Device>
-  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>DEBUG</Value>
-      <Value>__AT_AT90USB1286__</Value>
-      <Value>ARCH=ARCH_AVR8</Value>
-      <Value>F_CPU=16000000UL</Value>
-      <Value>F_USB=16000000UL</Value>
-      <Value>BOARD=BOARD_NONE</Value>
-      <Value>EEPROM_SIZE=4096</Value>
-      <Value>FLASH_SIZE=122880</Value>
-      <Value>MIDI_VENDOR_ID=0x1209</Value>
-      <Value>MIDI_PRODUCT_ID=0x0909</Value>
-      <Value>USE_STATIC_OPTIONS=0</Value>
-      <Value>USB_DEVICE_ONLY</Value>
-      <Value>USE_FLASH_DESCRIPTORS</Value>
-      <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
-      <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
-      <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
-      <Value>START_UP_ANIMATION</Value>
-      <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
-      <Value>UART_BUFFER_SIZE=30</Value>
-      <Value>USE_TX</Value>
-      <Value>ADC_PRESCALER=128</Value>
-      <Value>VREF_AVCC</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
-      <Value>../lufa</Value>
-    </ListValues>
-  </avrgcc.compiler.directories.IncludePaths>
-  <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcc.compiler.miscellaneous.OtherFlags>-std=gnu99 -Wl,-print-gc-sections</avrgcc.compiler.miscellaneous.OtherFlags>
-  <avrgcc.compiler.miscellaneous.Verbose>True</avrgcc.compiler.miscellaneous.Verbose>
-  <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcccpp.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>DEBUG</Value>
-      <Value>__AT_AT90USB1286__</Value>
-      <Value>ARCH=ARCH_AVR8</Value>
-      <Value>F_CPU=16000000UL</Value>
-      <Value>F_USB=16000000UL</Value>
-      <Value>BOARD=BOARD_NONE</Value>
-      <Value>EEPROM_SIZE=4096</Value>
-      <Value>FLASH_SIZE=122880</Value>
-      <Value>MIDI_VENDOR_ID=0x1209</Value>
-      <Value>MIDI_PRODUCT_ID=0x0909</Value>
-      <Value>USE_STATIC_OPTIONS=0</Value>
-      <Value>USB_DEVICE_ONLY</Value>
-      <Value>USE_FLASH_DESCRIPTORS</Value>
-      <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
-      <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
-      <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
-      <Value>START_UP_ANIMATION</Value>
-      <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
-      <Value>UART_BUFFER_SIZE=30</Value>
-      <Value>USE_TX</Value>
-      <Value>ADC_PRESCALER=128</Value>
-      <Value>VREF_AVCC</Value>
-    </ListValues>
-  </avrgcccpp.compiler.symbols.DefSymbols>
-  <avrgcccpp.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
-      <Value>../lufa</Value>
-    </ListValues>
-  </avrgcccpp.compiler.directories.IncludePaths>
-  <avrgcccpp.compiler.optimization.level>Optimize more (-O2)</avrgcccpp.compiler.optimization.level>
-  <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
-  <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcccpp.compiler.optimization.DebugLevel>Default (-g2)</avrgcccpp.compiler.optimization.DebugLevel>
-  <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
-  <avrgcccpp.compiler.miscellaneous.OtherFlags>-Wl,-print-gc-sections -include "%24(MSBuildProjectDirectory)/core/src/Core.h"</avrgcccpp.compiler.miscellaneous.OtherFlags>
-  <avrgcccpp.compiler.miscellaneous.Verbose>True</avrgcccpp.compiler.miscellaneous.Verbose>
-  <avrgcccpp.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </avrgcccpp.linker.libraries.Libraries>
-  <avrgcccpp.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
-    </ListValues>
-  </avrgcccpp.assembler.general.IncludePaths>
-  <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
-</AvrGccCpp>
+        <avrgcc.common.Device>-mmcu=at90usb1286 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\gcc\dev\at90usb1286"</avrgcc.common.Device>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+            <Value>__AT_AT90USB1286__</Value>
+            <Value>ARCH=ARCH_AVR8</Value>
+            <Value>F_CPU=16000000UL</Value>
+            <Value>F_USB=16000000UL</Value>
+            <Value>BOARD=BOARD_NONE</Value>
+            <Value>EEPROM_SIZE=4096</Value>
+            <Value>FLASH_SIZE=122880</Value>
+            <Value>MIDI_VENDOR_ID=0x1209</Value>
+            <Value>MIDI_PRODUCT_ID=0x0909</Value>
+            <Value>USE_STATIC_OPTIONS=0</Value>
+            <Value>USB_DEVICE_ONLY</Value>
+            <Value>USE_FLASH_DESCRIPTORS</Value>
+            <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
+            <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
+            <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
+            <Value>START_UP_ANIMATION</Value>
+            <Value>MAX_TEXT_SIZE=50</Value>
+            <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+            <Value>UART_BUFFER_SIZE=30</Value>
+            <Value>USE_TX</Value>
+            <Value>ADC_PRESCALER=128</Value>
+            <Value>VREF_AVCC</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
+            <Value>../lufa</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.compiler.miscellaneous.OtherFlags>-std=gnu99 -Wl,-print-gc-sections</avrgcc.compiler.miscellaneous.OtherFlags>
+        <avrgcc.compiler.miscellaneous.Verbose>True</avrgcc.compiler.miscellaneous.Verbose>
+        <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcccpp.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>DEBUG</Value>
+            <Value>__AT_AT90USB1286__</Value>
+            <Value>ARCH=ARCH_AVR8</Value>
+            <Value>F_CPU=16000000UL</Value>
+            <Value>F_USB=16000000UL</Value>
+            <Value>BOARD=BOARD_NONE</Value>
+            <Value>EEPROM_SIZE=4096</Value>
+            <Value>FLASH_SIZE=122880</Value>
+            <Value>MIDI_VENDOR_ID=0x1209</Value>
+            <Value>MIDI_PRODUCT_ID=0x0909</Value>
+            <Value>USE_STATIC_OPTIONS=0</Value>
+            <Value>USB_DEVICE_ONLY</Value>
+            <Value>USE_FLASH_DESCRIPTORS</Value>
+            <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
+            <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
+            <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
+            <Value>START_UP_ANIMATION</Value>
+            <Value>MAX_TEXT_SIZE=50</Value>
+            <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+            <Value>UART_BUFFER_SIZE=30</Value>
+            <Value>USE_TX</Value>
+            <Value>ADC_PRESCALER=128</Value>
+            <Value>VREF_AVCC</Value>
+          </ListValues>
+        </avrgcccpp.compiler.symbols.DefSymbols>
+        <avrgcccpp.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
+            <Value>../lufa</Value>
+          </ListValues>
+        </avrgcccpp.compiler.directories.IncludePaths>
+        <avrgcccpp.compiler.optimization.level>Optimize more (-O2)</avrgcccpp.compiler.optimization.level>
+        <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+        <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcccpp.compiler.optimization.DebugLevel>Default (-g2)</avrgcccpp.compiler.optimization.DebugLevel>
+        <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+        <avrgcccpp.compiler.miscellaneous.OtherFlags>-Wl,-print-gc-sections -include "%24(MSBuildProjectDirectory)/core/src/Core.h"</avrgcccpp.compiler.miscellaneous.OtherFlags>
+        <avrgcccpp.compiler.miscellaneous.Verbose>True</avrgcccpp.compiler.miscellaneous.Verbose>
+        <avrgcccpp.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcccpp.linker.libraries.Libraries>
+        <avrgcccpp.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.98\include</Value>
+          </ListValues>
+        </avrgcccpp.assembler.general.IncludePaths>
+        <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
+      </AvrGccCpp>
     </ToolchainSettings>
     <PostBuildEvent>REM cd to tools dir
 call cd $(SolutionDir)
@@ -292,17 +307,32 @@ call cd ..\tools\
 REM copy compiled hex to current dir
 call cp "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" FLASH.hex
 
-REM get software version and append crc
+REM convert hex to bin and remove hex
 call C:\Windows\Sysnative\bash.exe -c "./version_script.sh"
 
-REM append version to bin file
-call version_append.exe
+REM copy bin file, MAJOR, MINOR, REVISION and HASH to versioning/bin directory
+call cp FLASH.bin "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin"
+call cp "$(MSBuildProjectDirectory)\version\MAJOR" "$(MSBuildProjectDirectory)\versioning\bin\MAJOR"
+call cp "$(MSBuildProjectDirectory)\version\MINOR" "$(MSBuildProjectDirectory)\versioning\bin\MINOR"
+call cp "$(MSBuildProjectDirectory)\version\REVISION" "$(MSBuildProjectDirectory)\versioning\bin\REVISION"
+call cp "$(MSBuildProjectDirectory)\version\HASH" "$(MSBuildProjectDirectory)\versioning\bin\HASH"
 
-REM remove version
-del version
+REM remove FLASH.bin from current dir
+call del FLASH.bin
 
-REM move FLASH.bin to bin dir
-call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
+REM change to av2b dir
+call cd "$(MSBuildProjectDirectory)\versioning\bin"
+call av2b.exe
+
+REM remove leftovers
+call del MAJOR
+call del MINOR
+call del REVISION
+call del HASH
+
+REM move binary to root/bin
+call cd $(SolutionDir)
+call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bin"</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="board\Board.cpp">
@@ -1238,16 +1268,13 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Compile Include="midi\src\MIDI.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="version\Hardware.h">
+    <Compile Include="versioning\src\avr\DataTypes.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="version\Version.h">
+    <Compile Include="versioning\src\avr\Version.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="version\DataTypes.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="version\Version.cpp">
+    <Compile Include="versioning\src\avr\Version.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="vserial\Descriptors.c">
@@ -1321,7 +1348,9 @@ call move FLASH.bin ../bin/FLASH.bin</PostBuildEvent>
     <Folder Include="midi\" />
     <Folder Include="board" />
     <Folder Include="midi\src\" />
-    <Folder Include="version" />
+    <Folder Include="versioning\" />
+    <Folder Include="versioning\src\" />
+    <Folder Include="versioning\src\avr\" />
     <Folder Include="vserial\" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />

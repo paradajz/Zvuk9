@@ -7,6 +7,15 @@
 #include "Import.h"
 #include "DataTypes.h"
 
+///
+/// \brief Hardcoded board revision.
+/// @{
+///
+#define HARDWARE_VERSION_MAJOR      2
+#define HARDWARE_VERSION_MINOR      0
+#define HARDWARE_VERSION_REVISION   0
+/// @}
+
 //function prototypes
 inline void setAnalogPin(uint8_t muxNumber) __attribute__((always_inline));
 inline void nextMuxInput() __attribute__((always_inline));

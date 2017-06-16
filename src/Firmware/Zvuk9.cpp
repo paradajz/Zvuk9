@@ -17,7 +17,7 @@
 #include "interface/lcd/menu/Menu.h"
 #include "interface/leds/LEDs.h"
 #include "interface/pads/Pads.h"
-#include "version/Version.h"
+#include "versioning/src/avr/Version.h"
 #include "database/Database.h"
 #include "midi/src/MIDI.h"
 

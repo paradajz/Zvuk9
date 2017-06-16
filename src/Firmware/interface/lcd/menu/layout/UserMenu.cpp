@@ -1,7 +1,5 @@
 #include "../Menu.h"
 #include "../items/UserMenu.h"
-
-#include "../../../../version/Version.h"
 #include "../../../../database/Database.h"
 #include "../../../../midi/src/DataTypes.h"
 #include "../functions/MenuFunctions.h"

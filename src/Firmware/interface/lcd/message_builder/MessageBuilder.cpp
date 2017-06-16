@@ -1,6 +1,6 @@
 #include "../LCD.h"
 #include "../../pads/Pads.h"
-#include "../../../version/Version.h"
+#include "../../../versioning/src/avr/Version.h"
 #include "../../../database/blocks/Scales.h"
 
 char stringBuffer[MAX_TEXT_SIZE+1];
