@@ -104,19 +104,19 @@ bool Pads::calibrate(padCoordinate_t type, calibrationDirection direction, uint8
 
     switch(type)
     {
-        case coordinateZ:
-        //pressure
-        switch(direction)
-        {
-            case upper:
-            variablePointer = padPressureLimitUpper;
-            configurationSection = padCalibrationPressureUpperSection;
-            break;
-
-            default:
-            return false;
-        }
-        break;
+        //case coordinateZ:
+        ////pressure
+        //switch(direction)
+        //{
+            //case upper:
+            //variablePointer = padPressureLimitUpper;
+            //configurationSection = padCalibrationPressureUpperSection;
+            //break;
+//
+            //default:
+            //return false;
+        //}
+        //break;
 
         case coordinateX:
         switch(direction)
@@ -162,10 +162,6 @@ bool Pads::calibrate(padCoordinate_t type, calibrationDirection direction, uint8
     {
         variablePointer[pad] = limit;
         database.update(DB_BLOCK_PAD_CALIBRATION, configurationSection, (uint16_t)pad, limit);
-        #ifdef DEBUG
-        getXLimits();
-        getYLimits();
-        #endif
         return true;
     }
 
