@@ -290,14 +290,70 @@ void Pads::getPressureLimits()
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
-        padPressureLimitUpper[i] = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
+        for (int j=0; j<PRESSURE_CALIBRATION_ZONES; j++)
+        {
+            padPressureLimitUpper[i][j] = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+j, i);
 
-        if (percentageIncrease)
-            padPressureLimitUpper[i] = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
+            if (percentageIncrease)
+                padPressureLimitUpper[i][j] = padPressureLimitUpper[i][j] + (int32_t)((padPressureLimitUpper[i][j] * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
 
+            #ifdef DEBUG
+            printf_P(PSTR("Upper pressure limit for pad %d, pressure zone %d: %d\n"), i, j, padPressureLimitUpper[i][j]);
+            #endif
+        }
+    }
+}
+
+void Pads::getAftertouchLimits()
+{
+    #ifdef DEBUG
+    printf_P(PSTR("Printing out aftertouch limits for pads on "));
+    #endif
+
+    uint8_t percentageIncrease = 0;
+
+    switch(pressureSensitivity)
+    {
+        case pressure_soft:
         #ifdef DEBUG
-        printf_P(PSTR("Upper pressure limit for pad %d: %d\n"), i, padPressureLimitUpper[i]);
+        printf_P(PSTR("soft sensitivity setting.\n"));
         #endif
+        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_LOW;
+        break;
+
+        case pressure_medium:
+        #ifdef DEBUG
+        printf_P(PSTR("medium sensitivity setting.\n"));
+        #endif
+        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_MEDIUM;
+        break;
+
+        case pressure_hard:
+        #ifdef DEBUG
+        printf_P(PSTR("hard sensitivity setting.\n"));
+        #endif
+        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_HARD;
+        break;
+
+        default:
+        return;
+    }
+
+    for (int i=0; i<NUMBER_OF_PADS; i++)
+    {
+        for (int j=0; j<PRESSURE_CALIBRATION_ZONES; j++)
+        {
+            int32_t lowerLimit = padPressureLimitUpper[i][j] + (int32_t)((padPressureLimitUpper[i][j] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
+            int32_t upperLimit = lowerLimit + (int32_t)((lowerLimit * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
+
+            padAftertouchLimitLower[i][j] = lowerLimit;
+            padAftertouchLimitUpper[i][j] = upperLimit;
+
+            #ifdef DEBUG
+            printf_P(PSTR("Lower aftertouch limit for pad %d, pressure zone %d: %d\n"), i, j, padAftertouchLimitLower[i][j]);
+            printf_P(PSTR("Upper aftertouch limit for pad %d, pressure zone %d: %d\n"), i, j, padAftertouchLimitUpper[i][j]);
+            #endif
+        }
     }
 }
 
@@ -343,56 +399,6 @@ void Pads::getYLimits()
     #ifdef DEBUG
     printf_P(PSTR("\n"));
     #endif
-}
-
-void Pads::getAftertouchLimits()
-{
-    #ifdef DEBUG
-    printf_P(PSTR("Printing out aftertouch limits for pads on "));
-    #endif
-
-    uint8_t percentageIncrease = 0;
-
-    switch(pressureSensitivity)
-    {
-        case pressure_soft:
-        #ifdef DEBUG
-        printf_P(PSTR("soft sensitivity setting.\n"));
-        #endif
-        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_LOW;
-        break;
-
-        case pressure_medium:
-        #ifdef DEBUG
-        printf_P(PSTR("medium sensitivity setting.\n"));
-        #endif
-        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_MEDIUM;
-        break;
-
-        case pressure_hard:
-        #ifdef DEBUG
-        printf_P(PSTR("hard sensitivity setting.\n"));
-        #endif
-        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_HARD;
-        break;
-
-        default:
-        return;
-    }
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-    {
-        int32_t lowerLimit = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
-        int32_t upperLimit = lowerLimit + (int32_t)((lowerLimit * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
-
-        padAftertouchLimitLower[i] = lowerLimit;
-        padAftertouchLimitUpper[i] = upperLimit;
-
-        #ifdef DEBUG
-        printf_P(PSTR("Lower aftertouch limit for pad %d: %d\n"), i, padAftertouchLimitLower[i]);
-        printf_P(PSTR("Upper aftertouch limit for pad %d: %d\n"), i, padAftertouchLimitUpper[i]);
-        #endif
-    }
 }
 
 bool Pads::getMIDISendState(onOff_t type, uint8_t padNumber)
@@ -628,4 +634,14 @@ curve_t Pads::getPressureCurve()
 int8_t Pads::getNoteShiftLevel()
 {
     return noteShiftLevel;
+}
+
+padCalibrationSection Pads::getPressureZone(uint8_t pad)
+{
+    //find out pressure zone
+    uint8_t row = board.getPadY(pad) / PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE;
+    //invert
+    uint8_t column = PRESSURE_CALIBRATION_X_ZONES - 1 - ((board.getPadX(pad) / PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE));
+
+    return (padCalibrationSection)(column + row*PRESSURE_CALIBRATION_X_ZONES);
 }

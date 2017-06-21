@@ -69,13 +69,14 @@ void Database::initScales()
 
 void Database::initPadCalibration()
 {
-    //init lower pressure limits
+    //init pressure limits
     for (int i=0; i<NUMBER_OF_PADS; i++)
-        database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureLowerSection, i, DEFAULT_PAD_PRESSURE_LIMIT_LOWER);
-
-    //init upper pressure limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+    {
+        for (int j=0; j<PRESSURE_CALIBRATION_ZONES; j++)
+        {
+            database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+j, i, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+        }
+    }
 
     //init lower x limits
     for (int i=0; i<NUMBER_OF_PADS; i++)

@@ -5,6 +5,7 @@
 #include "Calibration.h"
 #include "../../board/Board.h"
 #include "Config.h"
+#include "../../database/Database.h"
 
 #define constrain(input, low, high) ((input)<(low)?(low):((input)>(high)?(high):(input)))
 
@@ -104,7 +105,7 @@ class Pads
     void getPadParameters();
 
     //midi scaling
-    uint8_t scalePressure(uint8_t pad, int16_t pressure, pressureType_t type);
+    uint8_t scalePressure(uint8_t pad, int16_t pressure, padCalibrationSection pressureZone, pressureType_t type);
     uint8_t scaleXY(uint8_t pad, int16_t xyValue, padCoordinate_t type);
 
     //data sampling/debouncing
@@ -151,6 +152,8 @@ class Pads
     void checkRemainingOctaveShift();
     void checkRemainingNoteShift();
 
+    padCalibrationSection getPressureZone(uint8_t pad);
+
     //last midi values
     uint8_t                 lastXMIDIvalue[NUMBER_OF_PADS],
                             lastYMIDIvalue[NUMBER_OF_PADS];
@@ -184,13 +187,13 @@ class Pads
     curve_t                 padCurveX[NUMBER_OF_PADS],
                             padCurveY[NUMBER_OF_PADS];
 
-    int16_t                 padPressureLimitUpper[NUMBER_OF_PADS],
+    int16_t                 padPressureLimitUpper[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES],
                             padXLimitLower[NUMBER_OF_PADS],
                             padXLimitUpper[NUMBER_OF_PADS],
                             padYLimitLower[NUMBER_OF_PADS],
                             padYLimitUpper[NUMBER_OF_PADS],
-                            padAftertouchLimitLower[NUMBER_OF_PADS],
-                            padAftertouchLimitUpper[NUMBER_OF_PADS];
+                            padAftertouchLimitLower[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES],
+                            padAftertouchLimitUpper[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES];
 
     uint8_t                 padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
 

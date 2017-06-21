@@ -75,3 +75,44 @@
 #define X_MIN_CALIBRATION_OFFSET                    10
 #define X_MAX_CALIBRATION_OFFSET                    -10
 /// @}
+
+///
+/// \brief Number of zones per pad on X-axis for which calibration data is stored.
+///
+#define PRESSURE_CALIBRATION_X_ZONES                3
+
+///
+/// \brief Range of values in single pressure zone on X axis.
+///
+#define PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE       (1023/PRESSURE_CALIBRATION_X_ZONES)
+
+///
+/// \brief Number of zones per pad on Y-axis for which calibration data is stored.
+///
+#define PRESSURE_CALIBRATION_Y_ZONES                3
+
+///
+/// \brief Range of values in single pressure zone on Y axis.
+///
+#define PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE       (1023/PRESSURE_CALIBRATION_Y_ZONES)
+
+///
+/// \brief Total number of zones per pad for which calibration data is stored.
+///
+#define PRESSURE_CALIBRATION_ZONES                  (PRESSURE_CALIBRATION_X_ZONES*PRESSURE_CALIBRATION_Y_ZONES)
+
+///
+/// \brief Percentage used to determine hysteresis values when switching from one pressure calibration zone to another.
+///
+#define PRESSURE_CALIBRATION_HYSTERESIS_PERCENT     3
+
+///
+/// \brief Hardcoded lower pressure limit for all pads/zones.
+/// Only upper pressure limit is being calibrated.
+///
+#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER            40
+
+///
+/// \brief Time in milliseconds after which last read pressure value on certain pressure zone is considered calibrated value in calibration mode.
+///
+#define PRESSURE_ZONE_CALIBRATION_TIMEOUT           2500

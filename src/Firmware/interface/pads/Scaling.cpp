@@ -1,16 +1,16 @@
 #include "Pads.h"
 #include "../../database/blocks/PadCalibration.h"
 
-uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, pressureType_t type)
+uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, padCalibrationSection pressureZone, pressureType_t type)
 {
     switch(type)
     {
         case pressureAftertouch:
-        return curves.map(constrain(pressure, padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad]), padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad], 0, 127);
+        return curves.map(constrain(pressure, padAftertouchLimitLower[pad][pressureZone], padAftertouchLimitUpper[pad][pressureZone]), padAftertouchLimitLower[pad][pressureZone], padAftertouchLimitUpper[pad][pressureZone], 0, 127);
         break;
 
         case pressureVelocity:
-        return curves.map(constrain(pressure, DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad]), DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad], 0, 127);
+        return curves.map(constrain(pressure, DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad][pressureZone]), DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad][pressureZone], 0, 127);
         break;
     }
 

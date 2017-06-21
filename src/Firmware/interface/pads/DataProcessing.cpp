@@ -190,8 +190,7 @@ bool Pads::checkVelocity(uint8_t pad)
     else
         bitWrite(pressureReduction, pad, 0);
 
-    //calibrate pressure based on median value (0-1023 -> 0-127)
-    uint8_t calibratedPressure = scalePressure(pad, value, pressureVelocity);
+    uint8_t calibratedPressure = scalePressure(pad, value, getPressureZone(pad), pressureVelocity);
     calibratedPressure = curves.getCurveValue(pressureCurve, calibratedPressure, 0, 127);
 
     bool pressDetected = (calibratedPressure > 0);
@@ -242,10 +241,10 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
     //pad is pressed
     if (bitRead(lastMIDInoteState, pad))
     {
-        uint8_t calibratedPressureAfterTouch = scalePressure(pad, lastPressureValue[pad], pressureAftertouch);
+        uint8_t calibratedPressureAfterTouch = scalePressure(pad, lastPressureValue[pad], getPressureZone(pad), pressureAftertouch);
 
         if (!calibratedPressureAfterTouch)
-        return false; //don't allow aftertouch 0
+            return false; //don't allow aftertouch 0
 
         uint32_t timeDifference = rTimeMs() - lastAftertouchUpdateTime[pad];
         bool updateAftertouch = false;

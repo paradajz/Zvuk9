@@ -1,6 +1,5 @@
 #pragma once
 
-#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER            40
 #define DEFAULT_PAD_PRESSURE_LIMIT_UPPER            380
 
 #define DEFAULT_PAD_X_LIMIT_LOWER                   150
@@ -11,8 +10,15 @@
 
 typedef enum
 {
-    padCalibrationPressureLowerSection,
-    padCalibrationPressureUpperSection,
+    padCalibrationPressureUpperSection0,
+    padCalibrationPressureUpperSection1,
+    padCalibrationPressureUpperSection2,
+    padCalibrationPressureUpperSection3,
+    padCalibrationPressureUpperSection4,
+    padCalibrationPressureUpperSection5,
+    padCalibrationPressureUpperSection6,
+    padCalibrationPressureUpperSection7,
+    padCalibrationPressureUpperSection8,
     padCalibrationXlowerSection,
     padCalibrationXupperSection,
     padCalibrationYlowerSection,
