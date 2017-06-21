@@ -159,7 +159,7 @@ int main()
     //flush all data from encoders
     encoders.flush();
 
-    while(1)
+    while (1)
     {
         pads.update();
         buttons.update();
@@ -170,7 +170,7 @@ int main()
         vserial.update();
         #endif
 
-        #ifdef ENABLE_ASYNC_UPDATE
+        #ifdef DBMS_ENABLE_ASYNC_UPDATE
         //write to eeprom when all pads are released
         if (pads.allPadsReleased())
             database.checkQueue();
