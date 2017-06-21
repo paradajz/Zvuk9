@@ -123,7 +123,7 @@ inline void checkLEDs()
 
             if (transitionCounter[ledNumber] != ledStateSingle)
             {
-                if(transitionCounter[ledNumber] < ledStateSingle)
+                if (transitionCounter[ledNumber] < ledStateSingle)
                 {
                     //fade up
                     transitionCounter[ledNumber] += pwmSteps;
@@ -232,7 +232,7 @@ inline void storeDigitalIn(uint8_t column)
     //pulse latch pin
     pulseLowToHigh(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
 
-    while(row--)
+    while (row--)
     {
         //invert row, starting from last one
         buttonNumber = column + row*NUMBER_OF_BUTTON_COLUMNS;
