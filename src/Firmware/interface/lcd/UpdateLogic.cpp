@@ -148,10 +148,6 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool ov
 {
     uint8_t size = strlen(text);
 
-    #ifdef DEBUG
-    printf_P(PSTR("Current text: >%s<\nReceived text: >%s<\n"), lcdLine[row], text);
-    #endif
-
     if (overwrite)
     {
         //overwrite current text on selected line

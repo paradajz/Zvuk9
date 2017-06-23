@@ -40,7 +40,7 @@ void Pads::update()
                     else
                     {
                         display.displayPressureCalibrationTime(0, getPressureZone(i)+1, true);
-                        calibratePressure(i, board.getPadPressure(i), board.getPadPressure(i));
+                        calibratePressure(i, getPressureZone(i), board.getPadPressure(i));
                     }
 
                     pressureCalibrationLastChange = rTimeMs();
@@ -215,8 +215,6 @@ bool Pads::checkVelocity(uint8_t pad)
 
     if (pressureStable(pad, pressDetected))
     {
-        lastVelocityValue = calibratedPressure;
-
         //pad reading is stable
         switch (pressDetected)
         {
@@ -225,6 +223,7 @@ bool Pads::checkVelocity(uint8_t pad)
             {
                 //pad isn't already pressed
                 //sensor is really pressed
+                lastVelocityValue[pad] = calibratedPressure;
                 bitWrite(padPressed, pad, true);  //set pad pressed
                 bitWrite(lastMIDInoteState, pad, true);
                 returnValue = true;
@@ -238,6 +237,7 @@ bool Pads::checkVelocity(uint8_t pad)
             if (bitRead(padPressed, pad))
             {
                 //pad is already pressed
+                lastVelocityValue[pad] = calibratedPressure;
                 bitWrite(lastMIDInoteState, pad, false);
                 returnValue = true;
                 lastXMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
@@ -665,7 +665,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
         if (velocityAvailable)
         {
-            display.displayVelocity(lastVelocityValue);
+            display.displayVelocity(lastVelocityValue[getLastTouchedPad()]);
 
             if (!isCalibrationEnabled())
             {
@@ -808,7 +808,7 @@ void Pads::storeNotes(uint8_t pad)
     }
 
     pad_buffer[i] = pad;
-    velocity_buffer[i] = lastVelocityValue;
+    velocity_buffer[i] = lastVelocityValue[pad];
     pad_note_timer_buffer[i] = rTimeMs();
     note_buffer_head = i;
 }

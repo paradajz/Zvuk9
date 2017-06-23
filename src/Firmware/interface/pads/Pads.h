@@ -167,7 +167,7 @@ class Pads
     uint8_t                 lastXMIDIvalue[NUMBER_OF_PADS],
                             lastYMIDIvalue[NUMBER_OF_PADS];
 
-    uint8_t                 lastVelocityValue,
+    uint8_t                 lastVelocityValue[NUMBER_OF_PADS],
                             lastAftertouchValue[NUMBER_OF_PADS];
 
     uint16_t                lastMIDInoteState;
