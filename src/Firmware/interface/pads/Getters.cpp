@@ -401,6 +401,23 @@ void Pads::getYLimits()
     #endif
 }
 
+uint16_t Pads::getLimit(uint8_t pad, padCoordinate_t coordinate, calibrationDirection direction)
+{
+    switch(coordinate)
+    {
+        case coordinateX:
+        return (direction == lower) ? padXLimitLower[pad] : padXLimitUpper[pad];
+        break;
+
+        case coordinateY:
+        return (direction == lower) ? padYLimitLower[pad] : padYLimitUpper[pad];
+        break;
+
+        default:
+        return 0;
+    }
+}
+
 bool Pads::getMIDISendState(onOff_t type, uint8_t padNumber)
 {
     switch(type)
@@ -447,10 +464,10 @@ curve_t Pads::getCCcurve(padCoordinate_t coordinate, uint8_t padNumber)
     switch(coordinate)
     {
         case coordinateX:
-        return padCurveX[padNumber];
+        return (curve_t)padCurveX[padNumber];
 
         case coordinateY:
-        return padCurveY[padNumber];
+        return (curve_t)padCurveY[padNumber];
 
         default:
         return NUMBER_OF_CURVES;
@@ -639,9 +656,19 @@ int8_t Pads::getNoteShiftLevel()
 padCalibrationSection Pads::getPressureZone(uint8_t pad)
 {
     //find out pressure zone
-    uint8_t row = board.getPadY(pad) / PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE;
+    uint8_t row = PRESSURE_CALIBRATION_Y_ZONES - 1 - (scaleXY(pad, board.getPadY(pad), coordinateY, false) / PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE);
     //invert
-    uint8_t column = PRESSURE_CALIBRATION_X_ZONES - 1 - ((board.getPadX(pad) / PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE));
+    uint8_t column = scaleXY(pad, board.getPadX(pad), coordinateX, false) / PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE;
 
     return (padCalibrationSection)(column + row*PRESSURE_CALIBRATION_X_ZONES);
+}
+
+bool Pads::isCalibrationEnabled()
+{
+    return calibrationEnabled;
+}
+
+padCoordinate_t Pads::getCalibrationMode()
+{
+    return activeCalibration;
 }

@@ -97,27 +97,16 @@ void Pads::setSplitState(bool state)
     #endif
 }
 
-bool Pads::calibrate(padCoordinate_t type, calibrationDirection direction, uint8_t pad, uint16_t limit)
+bool Pads::calibrateXY(padCoordinate_t type, calibrationDirection direction, uint8_t pad, uint16_t limit)
 {
-    int16_t *variablePointer;
+    if (limit > 1023)
+        return false;
+
+    uint16_t *variablePointer;
     uint8_t configurationSection;
 
     switch(type)
     {
-        //case coordinateZ:
-        ////pressure
-        //switch(direction)
-        //{
-            //case upper:
-            //variablePointer = padPressureLimitUpper;
-            //configurationSection = padCalibrationPressureUpperSection;
-            //break;
-//
-            //default:
-            //return false;
-        //}
-        //break;
-
         case coordinateX:
         switch(direction)
         {
@@ -158,7 +147,7 @@ bool Pads::calibrate(padCoordinate_t type, calibrationDirection direction, uint8
         return false;
     }
 
-    if ((int)limit != variablePointer[pad])
+    if (limit != variablePointer[pad])
     {
         variablePointer[pad] = limit;
         database.update(DB_BLOCK_PAD_CALIBRATION, configurationSection, (uint16_t)pad, limit);
@@ -168,17 +157,18 @@ bool Pads::calibrate(padCoordinate_t type, calibrationDirection direction, uint8
     return false;
 }
 
+void Pads::calibratePressure(uint8_t pad, uint8_t pressureZone, uint16_t limit)
+{
+    database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+pressureZone, pad, limit);
+
+    getPressureLimits();
+    getAftertouchLimits();
+}
+
 void Pads::setCalibrationMode(bool state, padCoordinate_t type)
 {
     calibrationEnabled = state;
     activeCalibration = type;
-    resetCalibration();
-}
-
-void Pads::resetCalibration()
-{
-    minCalibrationValue = 9999;
-    maxCalibrationValue = -9999;
 }
 
 bool Pads::setActiveProgram(int8_t program)
@@ -473,24 +463,11 @@ changeOutput_t Pads::changeCClimitValue(bool direction, padCoordinate_t coordina
     return result;
 }
 
-changeOutput_t Pads::setCCcurve(bool direction, padCoordinate_t coordinate, int8_t steps)
+bool Pads::setCCcurve(padCoordinate_t coordinate, uint8_t curve)
 {
-    changeOutput_t result = outputChanged;
-    uint8_t lastPressedPad = getLastTouchedPad();
-    uint8_t startPad = !splitEnabled ? 0 : lastPressedPad;
-    uint8_t compareValue = NUMBER_OF_CURVES-1;
-    bool compareResult;
-    uint8_t changedValue = 0;
-    bool changeAllowed = true;
+    uint8_t startPad = !splitEnabled ? 0 : getLastTouchedPad();
     uint8_t *variablePointer;
     uint16_t configurationID;
-
-    //in this case subtract steps
-    if (!direction)
-    {
-        steps *= -1;
-        compareValue = 0;
-    }
 
     switch(coordinate)
     {
@@ -505,64 +482,42 @@ changeOutput_t Pads::setCCcurve(bool direction, padCoordinate_t coordinate, int8
         break;
 
         default:
-        return notAllowed;
+        return false;
     }
 
-    if (direction)
-        compareResult = variablePointer[startPad] + steps > compareValue;
-    else
-        compareResult = variablePointer[startPad] + steps < compareValue;
+    if (curve == variablePointer[startPad])
+        return false; //no change
 
-    if (!compareResult)
-    {
-        changedValue = variablePointer[startPad]+steps;
-    }
-    else
-    {
-        //result out of range
-        //just assign compareValue if it's not already assigned
-        if (variablePointer[startPad] != compareValue)
-            changedValue = compareValue;
-        else
-            changeAllowed = false;
+    #ifdef DEBUG
+    if (coordinate == coordinateX)
+        printf_P(PSTR("X curve for "));
+    else if (coordinate == coordinateY)
+        printf_P(PSTR("Y curve for "));
+    #endif
 
-        result = noChange;
-    }
-
-    if (changeAllowed)
+    switch(splitEnabled)
     {
+        case true:
+        //local
+        database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), curve);
+        variablePointer[startPad] = curve;
         #ifdef DEBUG
-        if (coordinate == coordinateX)
-            printf_P(PSTR("X curve for "));
-        else if (coordinate == coordinateY)
-            printf_P(PSTR("Y curve for "));
+        printf_P(PSTR("pad %d: %d\n"), startPad, curve);
         #endif
+        break;
 
-        switch(splitEnabled)
-        {
-            case true:
-            //local
-            database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)startPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), changedValue);
-            variablePointer[startPad] = changedValue;
-            #ifdef DEBUG
-            printf_P(PSTR("pad %d: %d\n"), startPad, changedValue);
-            #endif
-            break;
-
-            case false:
-            //global
-            database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), changedValue);
-            for (int i=0; i<NUMBER_OF_PADS; i++)
-                variablePointer[i] = changedValue;
-            #ifdef DEBUG
-            printf_P(PSTR("all pads: %d\n"), changedValue);
-            #endif
-            break;
-
-        }
+        case false:
+        //global
+        database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), curve);
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+            variablePointer[i] = curve;
+        #ifdef DEBUG
+        printf_P(PSTR("all pads: %d\n"), curve);
+        #endif
+        break;
     }
 
-    return result;
+    return true;
 }
 
 bool Pads::setMIDIchannel(uint8_t pad, uint8_t channel)

@@ -48,7 +48,7 @@ void Curves::init()
 ///
 uint32_t Curves::map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)
 {
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    return constrain((x - in_min) * (out_max + 1 - out_min) / (in_max + 1 - in_min) + out_min, out_min, out_max);
 }
 
 ///
@@ -58,7 +58,7 @@ uint32_t Curves::map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_
 /// @param [in] max     Largest possible input value.
 /// \return Inverted value.
 ///
-uint8_t Curves::invertRange(uint8_t value, uint8_t min, uint8_t max)
+uint32_t Curves::invertRange(uint32_t value, uint32_t min, uint32_t max)
 {
     return (max + min) - value;
 }

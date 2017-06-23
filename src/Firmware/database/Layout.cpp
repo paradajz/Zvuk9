@@ -14,6 +14,7 @@ void Database::createLayout()
         //programLastActiveProgramSection
         section.numberOfParameters = 1;
         section.defaultValue = 0;
+        section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;
         section.preserveOnPartialReset = false;
 
@@ -22,6 +23,7 @@ void Database::createLayout()
         //programLastActiveScaleSection
         section.numberOfParameters = NUMBER_OF_PROGRAMS;
         section.defaultValue = 0;
+        section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;
         section.preserveOnPartialReset = false;
 
@@ -30,6 +32,7 @@ void Database::createLayout()
         //programGlobalSettingsSection
         section.numberOfParameters = GLOBAL_PROGRAM_SETTINGS*NUMBER_OF_PROGRAMS;
         section.defaultValue = 0;
+        section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;
         section.preserveOnPartialReset = false;
 
@@ -38,6 +41,7 @@ void Database::createLayout()
         //programLocalSettingsSection
         section.numberOfParameters = LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*NUMBER_OF_PROGRAMS;
         section.defaultValue = 0;
+        section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;
         section.preserveOnPartialReset = false;
 
@@ -50,6 +54,7 @@ void Database::createLayout()
         //scalePredefinedSection
         section.numberOfParameters = PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES*NUMBER_OF_PROGRAMS;
         section.defaultValue = 0;
+        section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;
         section.preserveOnPartialReset = false;
 
@@ -58,6 +63,7 @@ void Database::createLayout()
         //scaleUserSection
         section.numberOfParameters = NUMBER_OF_PADS*NOTES_PER_PAD*NUMBER_OF_USER_SCALES;
         section.defaultValue = 0;
+        section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;
         section.preserveOnPartialReset = false;
 
@@ -67,73 +73,145 @@ void Database::createLayout()
     {
         //pad calibration block
 
-        //padCalibrationPressureUpperX0Y0Section
+        //padCalibrationPressureUpperSection0
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
         DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
 
-        //padCalibrationPressureUpperX0Y1Section
+        //padCalibrationPressureUpperSection1
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
         DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
 
-        //padCalibrationPressureUpperX0Y2Section
+        //padCalibrationPressureUpperSection2
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
         DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
 
-        //padCalibrationPressureUpperX1Y0Section
+        //padCalibrationPressureUpperSection3
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
         DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
 
-        //padCalibrationPressureUpperX1Y1Section
+        //padCalibrationPressureUpperSection4
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
         DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
 
-        //padCalibrationPressureUpperX1Y2Section
+        //padCalibrationPressureUpperSection5
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
         DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
 
-        //padCalibrationPressureUpperX2Y0Section
+        //padCalibrationPressureUpperSection6
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
         DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
 
-        //padCalibrationPressureUpperX2Y1Section
+        //padCalibrationPressureUpperSection7
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
         DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
 
-        //padCalibrationPressureUpperX2Y2Section
+        //padCalibrationPressureUpperSection8
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
+        section.parameterType = WORD_PARAMETER;
+        section.preserveOnPartialReset = true;
+
+        DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
+
+        //padCalibrationPressureUpperSection9
+        section.numberOfParameters = NUMBER_OF_PADS;
+        section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
+        section.parameterType = WORD_PARAMETER;
+        section.preserveOnPartialReset = true;
+
+        DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
+
+        //padCalibrationPressureUpperSection10
+        section.numberOfParameters = NUMBER_OF_PADS;
+        section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
+        section.parameterType = WORD_PARAMETER;
+        section.preserveOnPartialReset = true;
+
+        DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
+
+        //padCalibrationPressureUpperSection11
+        section.numberOfParameters = NUMBER_OF_PADS;
+        section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
+        section.parameterType = WORD_PARAMETER;
+        section.preserveOnPartialReset = true;
+
+        DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
+
+        //padCalibrationPressureUpperSection12
+        section.numberOfParameters = NUMBER_OF_PADS;
+        section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
+        section.parameterType = WORD_PARAMETER;
+        section.preserveOnPartialReset = true;
+
+        DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
+
+        //padCalibrationPressureUpperSection13
+        section.numberOfParameters = NUMBER_OF_PADS;
+        section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
+        section.parameterType = WORD_PARAMETER;
+        section.preserveOnPartialReset = true;
+
+        DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
+
+        //padCalibrationPressureUpperSection14
+        section.numberOfParameters = NUMBER_OF_PADS;
+        section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
+        section.parameterType = WORD_PARAMETER;
+        section.preserveOnPartialReset = true;
+
+        DBMS::addSection(DB_BLOCK_PAD_CALIBRATION, section);
+
+        //padCalibrationPressureUpperSection15
+        section.numberOfParameters = NUMBER_OF_PADS;
+        section.defaultValue = DEFAULT_PAD_PRESSURE_LIMIT_UPPER;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
@@ -141,7 +219,8 @@ void Database::createLayout()
 
         //padCalibrationXlowerSection
         section.numberOfParameters = NUMBER_OF_PADS;
-        section.defaultValue = 0;
+        section.defaultValue = 1023;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
@@ -150,6 +229,7 @@ void Database::createLayout()
         //padCalibrationXupperSection
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = 0;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
@@ -157,7 +237,8 @@ void Database::createLayout()
 
         //padCalibrationYlowerSection
         section.numberOfParameters = NUMBER_OF_PADS;
-        section.defaultValue = 0;
+        section.defaultValue = 1023;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
@@ -166,6 +247,7 @@ void Database::createLayout()
         //padCalibrationYupperSection
         section.numberOfParameters = NUMBER_OF_PADS;
         section.defaultValue = 0;
+        section.autoIncrement = false;
         section.parameterType = WORD_PARAMETER;
         section.preserveOnPartialReset = true;
 
@@ -178,6 +260,7 @@ void Database::createLayout()
         //globalSettingsMIDI
         section.numberOfParameters = MIDI_SETTINGS;
         section.defaultValue = 1;
+        section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;
         section.preserveOnPartialReset = false;
 
@@ -186,6 +269,7 @@ void Database::createLayout()
         //globalSettingsPressure
         section.numberOfParameters = PRESSURE_SETTINGS;
         section.defaultValue = 0;
+        section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;
         section.preserveOnPartialReset = false;
 
@@ -196,6 +280,7 @@ void Database::createLayout()
         //id block
         section.numberOfParameters = ID_OFFSET;
         section.defaultValue = UNIQUE_ID;
+        section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;
         section.preserveOnPartialReset = false;
 

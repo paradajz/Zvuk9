@@ -1,9 +1,10 @@
 #pragma once
 
 ///
-/// \brief Time in milliseconds after which pad press is considered stable once pad press has been detected.
+/// \brief Counts after which pad press is considered stable once pad press has been detected.
+/// Debouncing time is 20 milliseconds. Divide time with PAD_READOUT_TIME to get counts instead of milliseconds to save RAM.
 ///
-#define PAD_DEBOUNCE_TIME                           20
+#define PAD_DEBOUNCE_TIME                           ((20/PAD_READOUT_TIME)+1)
 
 ///
 /// \brief Time in milliseconds after which notes from pad are sent once X and Y MIDI messages have been sent.
@@ -50,7 +51,7 @@
 /// \brief Time in milliseconds after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.
 /// Used to debounce rapidly changing aftertouch values.
 ///
-#define AFTERTOUCH_SEND_TIMEOUT                     100
+#define AFTERTOUCH_SEND_TIMEOUT                     (100/PAD_READOUT_TIME)+1
 
 ///
 /// \brief Difference between current and previous aftertouch reading after AFTERTOUCH_SEND_TIMEOUTms used to detect value change.
@@ -61,7 +62,7 @@
 /// \brief Time in milliseconds after which X/Y value needs to change by XY_SEND_TIMEOUT_STEP in order to send new value.
 /// Used to debounce rapidly changing X/Y values.
 ///
-#define XY_SEND_TIMEOUT                             35
+#define XY_SEND_TIMEOUT                             (35/PAD_READOUT_TIME)
 
 ///
 /// \brief Difference between current and previous aftertouch reading after XY_SEND_TIMEOUT used to detect value change.
@@ -79,32 +80,27 @@
 ///
 /// \brief Number of zones per pad on X-axis for which calibration data is stored.
 ///
-#define PRESSURE_CALIBRATION_X_ZONES                3
+#define PRESSURE_CALIBRATION_X_ZONES                4
 
 ///
 /// \brief Range of values in single pressure zone on X axis.
 ///
-#define PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE       (1023/PRESSURE_CALIBRATION_X_ZONES)
+#define PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE       ((1023/PRESSURE_CALIBRATION_X_ZONES)+1)
 
 ///
 /// \brief Number of zones per pad on Y-axis for which calibration data is stored.
 ///
-#define PRESSURE_CALIBRATION_Y_ZONES                3
+#define PRESSURE_CALIBRATION_Y_ZONES                4
 
 ///
 /// \brief Range of values in single pressure zone on Y axis.
 ///
-#define PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE       (1023/PRESSURE_CALIBRATION_Y_ZONES)
+#define PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE       ((1023/PRESSURE_CALIBRATION_Y_ZONES)+1)
 
 ///
 /// \brief Total number of zones per pad for which calibration data is stored.
 ///
 #define PRESSURE_CALIBRATION_ZONES                  (PRESSURE_CALIBRATION_X_ZONES*PRESSURE_CALIBRATION_Y_ZONES)
-
-///
-/// \brief Percentage used to determine hysteresis values when switching from one pressure calibration zone to another.
-///
-#define PRESSURE_CALIBRATION_HYSTERESIS_PERCENT     3
 
 ///
 /// \brief Hardcoded lower pressure limit for all pads/zones.
@@ -113,6 +109,6 @@
 #define DEFAULT_PAD_PRESSURE_LIMIT_LOWER            40
 
 ///
-/// \brief Time in milliseconds after which last read pressure value on certain pressure zone is considered calibrated value in calibration mode.
+/// \brief Time in seconds after which last read pressure value on certain pressure zone is considered calibrated value in calibration mode.
 ///
-#define PRESSURE_ZONE_CALIBRATION_TIMEOUT           2500
+#define PRESSURE_ZONE_CALIBRATION_TIMEOUT           3

@@ -39,7 +39,7 @@ volatile uint16_t   samples[PAD_SAMPLE_BUFFER_SIZE][PAD_READINGS][NUMBER_OF_PADS
 //three coordinates
 uint16_t            extractedSamples[PAD_READINGS][NUMBER_OF_PADS];
 
-bool                dataReady[PAD_SAMPLE_BUFFER_SIZE];
+uint8_t             dataReady;
 
 volatile uint8_t    pad_sample_buffer_head;
 volatile uint8_t    pad_sample_buffer_tail;
@@ -184,7 +184,7 @@ ISR(ADC_vect)
         {
             readIndex = 0;
             insert = true;
-            dataReady[pad_sample_buffer_head] = true;
+            bitWrite(dataReady, pad_sample_buffer_head, 1);
         }
 
         (*valueSetup[readIndex])();
@@ -207,7 +207,7 @@ bool Board::padDataAvailable()
 
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        if ((pad_sample_buffer_head == pad_sample_buffer_tail) || !dataReady[pad_sample_buffer_head])
+        if ((pad_sample_buffer_head == pad_sample_buffer_tail) || !bitRead(dataReady, pad_sample_buffer_head))
         {
             //buffer is empty
             returnValue = false;
@@ -237,7 +237,7 @@ bool Board::padDataAvailable()
             }
         }
 
-        dataReady[pad_sample_buffer_head] = false;
+        bitWrite(dataReady, pad_sample_buffer_head, 0);
     }
 
     return returnValue;

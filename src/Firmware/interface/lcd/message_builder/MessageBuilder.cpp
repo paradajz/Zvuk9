@@ -211,13 +211,13 @@ void LCD::displayActivePadNotes()
     {
         strcpy_P(stringBuffer, notesClear_editMode_string);
         size = progmemCharArraySize(notesClear_editMode_string);
-        updateDisplay(lcdElements.notes.row, text, 0, false, size, true);
+        updateDisplay(lcdElements.notes.row, text, 0, false, size);
     }
     else
     {
         strcpy_P(stringBuffer, notesClear_string);
         size = progmemCharArraySize(notesClear_string);
-        updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size, false);
+        updateDisplay(lcdElements.notes.row, text, lcdElements.notes.startIndex, false, size);
     }
 
     for (int i=0; i<NOTES_PER_PAD; i++)
@@ -386,7 +386,9 @@ void LCD::clearPadData()
 {
     strcpy_P(stringBuffer, emptyLine_string);
 
-    for (int i=1; i<LCD_HEIGHT; i++)
+    uint8_t rows = pads.isCalibrationEnabled() ? LCD_HEIGHT-1 : LCD_HEIGHT;
+
+    for (int i=1; i<rows; i++)
         updateDisplay(i, text, 0, true, progmemCharArraySize(emptyLine_string));
 }
 
@@ -499,9 +501,84 @@ void LCD::displayFactoryResetEnd()
     updateDisplay(4, text, location, true, size);
 }
 
+void LCD::displayScrollCalibrationStatus(bool status)
+{
+    uint8_t size = 0;
+
+    switch(status)
+    {
+        case true:
+        strcpy_P(stringBuffer, scrollCalibrationOn_string);
+        size = progmemCharArraySize(scrollCalibrationOn_string);
+        break;
+
+        case false:
+        strcpy_P(stringBuffer, scrollCalibrationOff_string);
+        size = progmemCharArraySize(scrollCalibrationOff_string);
+        break;
+    }
+
+    uint8_t location = getTextCenter(size);
+
+    updateDisplay(LCD_HEIGHT-1, text, location, true, size);
+}
+
+void LCD::displayPressureCalibrationTime(uint8_t seconds, uint8_t pressureZone, bool done)
+{
+    uint8_t size;
+
+    if (!done)
+    {
+        size = progmemCharArraySize(pressureCalibrationInitiated_string);
+        strcpy_P(stringBuffer, pressureCalibrationInitiated_string);
+        addSpaceToCharArray(1, size);
+        addNumberToCharArray(pressureZone, size);
+        appendText(" in ", size);
+        addNumberToCharArray(seconds, size);
+    }
+    else
+    {
+        size = progmemCharArraySize(pressureCalibrationDone1_string);
+        strcpy_P(stringBuffer, pressureCalibrationDone1_string);
+        addSpaceToCharArray(1, size);
+        addNumberToCharArray(pressureZone, size);
+        addSpaceToCharArray(1, size);
+        size += progmemCharArraySize(pressureCalibrationDone2_string);
+        strcpy_P(tempBuffer, pressureCalibrationDone2_string);
+        strcat(stringBuffer, tempBuffer);
+    }
+
+    uint8_t location = getTextCenter(size);
+
+    updateDisplay(LCD_HEIGHT-1, text, location, true, size);
+}
+
+void LCD::displayPressureCalibrationStatus(bool status)
+{
+    uint8_t size = 0;
+
+    if (!status)
+    {
+        size = progmemCharArraySize(pressureCalibrationOff_string);
+        strcpy_P(stringBuffer, pressureCalibrationOff_string);
+    }
+    else
+    {
+        size = progmemCharArraySize(pressureCalibrationHold_string);
+        strcpy_P(stringBuffer, pressureCalibrationHold_string);
+        addSpaceToCharArray(1, size);
+        addNumberToCharArray(PRESSURE_ZONE_CALIBRATION_TIMEOUT, size);
+        appendText(" seconds", size);
+    }
+
+    uint8_t location = getTextCenter(size);
+
+    updateDisplay(LCD_HEIGHT-1, text, location, true, size);
+}
+
 //lcd update
 
-void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine)
+void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size)
 {
     stringBuffer[size] = '\0'; //just a precaution
 
@@ -511,7 +588,7 @@ void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool 
         if (directWrite)
             u8x8.drawString(startIndex, row, stringBuffer);
         else
-            display.displayText(row, stringBuffer, startIndex, overwrite, endOfLine);
+            display.displayText(row, stringBuffer, startIndex, overwrite);
         break;
 
         case message:

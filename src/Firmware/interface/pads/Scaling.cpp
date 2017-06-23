@@ -1,7 +1,7 @@
 #include "Pads.h"
 #include "../../database/blocks/PadCalibration.h"
 
-uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, padCalibrationSection pressureZone, pressureType_t type)
+uint8_t Pads::scalePressure(uint8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type)
 {
     switch(type)
     {
@@ -17,15 +17,15 @@ uint8_t Pads::scalePressure(uint8_t pad, int16_t pressure, padCalibrationSection
     return 0;
 }
 
-uint8_t Pads::scaleXY(uint8_t pad, int16_t xyValue, padCoordinate_t type)
+uint16_t Pads::scaleXY(uint8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale)
 {
     switch (type)
     {
         case coordinateX:
-        return curves.map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, 127);
+        return curves.map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, midiScale ? 127 : 1023);
 
         case coordinateY:
-        return curves.invertRange(curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, 127), 0, 127);
+        return curves.invertRange(curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, midiScale ? 127 : 1023), 0, midiScale ? 127 : 1023);
 
         default:
         return 0;

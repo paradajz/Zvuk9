@@ -45,7 +45,7 @@ class Buttons
     bool                    processingEnabled;
     uint32_t                userMenuTimeout;
     transportControlType_t  transportControlType;
-    note_t                  buttonToNoteArray[MAX_NUMBER_OF_BUTTONS];
+    uint8_t                 buttonToNoteArray[MAX_NUMBER_OF_BUTTONS];
     uint8_t                 lastPressedButton;
     uint8_t                 buttonPressed[MAX_NUMBER_OF_BUTTONS/8+1];
     bool                    modifierActive;

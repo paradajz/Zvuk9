@@ -87,16 +87,16 @@
       <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
       <Value>START_UP_ANIMATION</Value>
       <Value>USE_STRINGS</Value>
-      <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+      <Value>MAX_TEXT_SIZE=32</Value>
+      <Value>MIDI_SYSEX_ARRAY_SIZE=20</Value>
       <Value>UART_BUFFER_SIZE=30</Value>
       <Value>USE_TX</Value>
       <Value>ADC_PRESCALER=128</Value>
       <Value>VREF_AVCC</Value>
       <Value>DBMS_ENABLE_ASYNC_UPDATE</Value>
       <Value>DBMS_UPDATE_BUFFER_SIZE=20</Value>
-      <Value>DBMS_MAX_SECTIONS=7</Value>
-      <Value>DBMS_MAX_BLOCKS=7</Value>
+      <Value>DBMS_MAX_SECTIONS=21</Value>
+      <Value>DBMS_MAX_BLOCKS=6</Value>
       <Value>USBMIDI</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
@@ -132,16 +132,16 @@
       <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
       <Value>START_UP_ANIMATION</Value>
       <Value>USE_STRINGS</Value>
-      <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+      <Value>MAX_TEXT_SIZE=32</Value>
+      <Value>MIDI_SYSEX_ARRAY_SIZE=20</Value>
       <Value>UART_BUFFER_SIZE=30</Value>
       <Value>USE_TX</Value>
       <Value>ADC_PRESCALER=128</Value>
       <Value>VREF_AVCC</Value>
       <Value>DBMS_ENABLE_ASYNC_UPDATE</Value>
       <Value>DBMS_UPDATE_BUFFER_SIZE=20</Value>
-      <Value>DBMS_MAX_SECTIONS=7</Value>
-      <Value>DBMS_MAX_BLOCKS=7</Value>
+      <Value>DBMS_MAX_SECTIONS=21</Value>
+      <Value>DBMS_MAX_BLOCKS=6</Value>
       <Value>USBMIDI</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
@@ -233,18 +233,17 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
       <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
       <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
       <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
-      <Value>START_UP_ANIMATION</Value>
       <Value>USE_STRINGS</Value>
-      <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+      <Value>MAX_TEXT_SIZE=32</Value>
+      <Value>MIDI_SYSEX_ARRAY_SIZE=20</Value>
       <Value>UART_BUFFER_SIZE=30</Value>
       <Value>USE_TX</Value>
       <Value>ADC_PRESCALER=128</Value>
       <Value>VREF_AVCC</Value>
       <Value>DBMS_ENABLE_ASYNC_UPDATE</Value>
       <Value>DBMS_UPDATE_BUFFER_SIZE=20</Value>
-      <Value>DBMS_MAX_SECTIONS=7</Value>
-      <Value>DBMS_MAX_BLOCKS=7</Value>
+      <Value>DBMS_MAX_SECTIONS=21</Value>
+      <Value>DBMS_MAX_BLOCKS=6</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -280,18 +279,17 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
       <Value>FIXED_CONTROL_ENDPOINT_SIZE=8</Value>
       <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
       <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
-      <Value>START_UP_ANIMATION</Value>
       <Value>USE_STRINGS</Value>
-      <Value>MAX_TEXT_SIZE=50</Value>
-      <Value>MIDI_SYSEX_ARRAY_SIZE=45</Value>
+      <Value>MAX_TEXT_SIZE=32</Value>
+      <Value>MIDI_SYSEX_ARRAY_SIZE=20</Value>
       <Value>UART_BUFFER_SIZE=30</Value>
       <Value>USE_TX</Value>
       <Value>ADC_PRESCALER=128</Value>
       <Value>VREF_AVCC</Value>
       <Value>DBMS_ENABLE_ASYNC_UPDATE</Value>
       <Value>DBMS_UPDATE_BUFFER_SIZE=20</Value>
-      <Value>DBMS_MAX_SECTIONS=7</Value>
-      <Value>DBMS_MAX_BLOCKS=7</Value>
+      <Value>DBMS_MAX_SECTIONS=21</Value>
+      <Value>DBMS_MAX_BLOCKS=6</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
@@ -379,7 +377,13 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
     <Compile Include="board\constants\LEDs.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="board\constants\Pads.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="board\constants\Reboot.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="board\constants\Timer.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="board\DataTypes.h">

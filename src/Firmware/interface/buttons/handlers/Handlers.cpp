@@ -200,49 +200,85 @@ void handleTransportControl(uint8_t id, bool state)
         break;
 
         case BUTTON_TRANSPORT_RECORD:
-        if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
+        if (pads.isCalibrationEnabled())
         {
-            leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
-            type = transportRecordOff;
-            #ifdef NDEBUG
-            switch(buttons.getTransportControlType())
+            if ((pads.getCalibrationMode() == coordinateX) || (pads.getCalibrationMode() == coordinateY))
             {
-                case transportCC:
-                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
-                break;
-
-                case transportMMC:
-                sysExArray[4] = 0x07;
-                break;
-
-                case transportMMC_CC:
-                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
-                sysExArray[4] = 0x07;
-                break;
+                if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
+                {
+                    leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
+                    display.displayScrollCalibrationStatus(false);
+                    return;
+                }
+                else
+                {
+                    leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
+                    display.displayScrollCalibrationStatus(true);
+                    return;
+                }
             }
-            #endif
+            else
+            {
+                if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
+                {
+                    leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
+                    display.displayPressureCalibrationStatus(false);
+                    return;
+                }
+                else
+                {
+                    leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
+                    display.displayPressureCalibrationStatus(true);
+                    return;
+                }
+            }
         }
         else
         {
-            leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
-            type = transportRecordOn;
-            #ifdef NDEBUG
-            switch(buttons.getTransportControlType())
+            if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
             {
-                case transportCC:
-                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 127, 1);
-                break;
+                leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
+                type = transportRecordOff;
+                #ifdef NDEBUG
+                switch(buttons.getTransportControlType())
+                {
+                    case transportCC:
+                    midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
+                    break;
 
-                case transportMMC:
-                sysExArray[4] = 0x06;
-                break;
+                    case transportMMC:
+                    sysExArray[4] = 0x07;
+                    break;
 
-                case transportMMC_CC:
-                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 127, 1);
-                sysExArray[4] = 0x06;
-                break;
+                    case transportMMC_CC:
+                    midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
+                    sysExArray[4] = 0x07;
+                    break;
+                }
+                #endif
             }
-            #endif
+            else
+            {
+                leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
+                type = transportRecordOn;
+                #ifdef NDEBUG
+                switch(buttons.getTransportControlType())
+                {
+                    case transportCC:
+                    midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 127, 1);
+                    break;
+
+                    case transportMMC:
+                    sysExArray[4] = 0x06;
+                    break;
+
+                    case transportMMC_CC:
+                    midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 127, 1);
+                    sysExArray[4] = 0x06;
+                    break;
+                }
+                #endif
+            }
         }
         break;
 

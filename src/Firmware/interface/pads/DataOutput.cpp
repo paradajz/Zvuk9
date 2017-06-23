@@ -203,19 +203,3 @@ void Pads::handleNoteLEDs(uint8_t pad, bool state)
         break;
     }
 }
-
-void Pads::handleNoteLCD()
-{
-    display.displayActivePadNotes();
-
-    if (isPadPressed(getLastTouchedPad()))
-    {
-        display.displayVelocity(lastVelocityValue[getLastTouchedPad()]);
-
-        if (isPredefinedScale(activeScale))
-        {
-            if (noteShiftLevel != 0)
-            display.displayNoteShiftLevel(noteShiftLevel);
-        }
-    }
-}

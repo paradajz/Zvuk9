@@ -70,29 +70,15 @@ void Database::initScales()
 void Database::initPadCalibration()
 {
     //init pressure limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)
+    for (int i=0; i<PRESSURE_CALIBRATION_ZONES; i++)
     {
-        for (int j=0; j<PRESSURE_CALIBRATION_ZONES; j++)
+        for (int j=0; j<NUMBER_OF_PADS; j++)
         {
-            database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+j, i, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
+            database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+i, j, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
         }
     }
 
-    //init lower x limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationXlowerSection, i, DEFAULT_PAD_X_LIMIT_LOWER);
-
-    //init upper x limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationXupperSection, i, DEFAULT_PAD_X_LIMIT_UPPER);
-
-    //init lower y limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationYlowerSection, i, DEFAULT_PAD_Y_LIMIT_LOWER);
-
-    //init upper y limits
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationYupperSection, i, DEFAULT_PAD_Y_LIMIT_UPPER);
+    //x/y limits are already init (specified in db layout)
 }
 
 void Database::initGlobalSettings()

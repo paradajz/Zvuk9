@@ -21,10 +21,11 @@ void Encoders::update(bool process)
 {
     int8_t steps;
 
-    uint32_t currentTime = rTimeMs();
-
     for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
     {
+        if (lastStepTime[i] < 255)
+            lastStepTime[i]++;
+
         if (!board.encoderEnabled(i))
             continue;
 
@@ -34,29 +35,27 @@ void Encoders::update(bool process)
             continue;
 
         if (steps == 0)
-            continue;
+            continue;;
 
         bool direction = steps > 0;
 
-        uint32_t timeDifference = currentTime - lastStepTime[i];
-
-        if (timeDifference < SPEED_TIMEOUT)
+        if (lastStepTime[i] < SPEED_TIMEOUT)
             steps = ENCODER_SPEED_2;
 
-        lastStepTime[i] = currentTime;
+        lastStepTime[i] = 0;
 
         if (pads.getEditModeState())
         {
             display.displayPadEditChangeParametersError();
-            return;
+            continue;
         }
 
         //allow only program and scale encoder while in menu
         //no message on display? maybe TO-DO
         if (menu.menuDisplayed())
         {
-            if (!((i == PROGRAM_ENCODER) || (i == PRESET_ENCODER)))
-            return;
+            if (!((i == PROGRAM_ENCODER) || (i == PRESET_ENCODER) || (i == X_MAX_ENCODER) || (i == X_MIN_ENCODER) || (i == Y_MAX_ENCODER) || (i == Y_MIN_ENCODER)))
+                continue;;
         }
 
         if (encoderHandler[i] != NULL)

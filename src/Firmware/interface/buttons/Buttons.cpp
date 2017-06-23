@@ -157,7 +157,7 @@ bool Buttons::getButtonEnableState(uint8_t buttonID)
 
 note_t Buttons::getTonicFromButton(uint8_t buttonNumber)
 {
-    return buttonToNoteArray[buttonNumber];
+    return (note_t)buttonToNoteArray[buttonNumber];
 }
 
 void Buttons::setTransportControlType(transportControlType_t type)

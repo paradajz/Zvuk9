@@ -2,7 +2,7 @@
 
 #include "../../interface/pads/curves/Curves.h"
 
-#define NUMBER_OF_PROGRAMS                          20
+#define NUMBER_OF_PROGRAMS                          15
 #define DEFAULT_ACTIVE_PROGRAM                      0
 #define DEFAULT_ACTIVE_SCALE                        0
 

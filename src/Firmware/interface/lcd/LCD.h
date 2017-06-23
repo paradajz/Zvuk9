@@ -25,8 +25,6 @@ class LCD
     void clearLine(uint8_t row);
     void clearLines(uint8_t startIndex, uint8_t endIndex = 0);
 
-    void setScrollStart(uint8_t row, uint8_t index);
-
     void displayVelocity(uint8_t velocity);
     void displayAftertouch(uint8_t afterTouch);
     void displayXYposition(uint8_t position, padCoordinate_t type);
@@ -67,6 +65,10 @@ class LCD
     void displayNoteShiftLevel(int8_t level);
     void displayNoteUpDown(bool state, int8_t shiftLevel = 0);
 
+    void displayScrollCalibrationStatus(bool status);
+    void displayPressureCalibrationTime(uint8_t seconds, uint8_t pressureZone, bool done);
+    void displayPressureCalibrationStatus(bool status);
+
     void setMessageTime(int32_t msgTime);
 
     uint8_t getTextCenter(uint8_t textSize);
@@ -90,36 +92,28 @@ class LCD
     }
 
     protected:
-    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size, bool endOfLine = false);
+    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, bool overwrite, uint8_t size);
 
     private:
     messageStatus_t getMessageStatus();
-    void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite, bool endOfLine = false);
+    void displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite);
     void displayMessage(uint8_t row, const char *message);
-    void checkScroll(uint8_t row);
     void displayPadAmount(uint8_t padNumber);
     void setupLCDlayout();
     void removeMessage();
 
     uint32_t messageDisplayTime;
-    uint32_t lastScrollTime;
     uint32_t lastLCDupdateTime;
 
     bool directWrite;
 
     bool displayMessage_var;
-    bool lineChange[LCD_HEIGHT];
-    bool scrollEnabled[LCD_HEIGHT];
-    bool scrollDirection[LCD_HEIGHT];
     bool messageActivated;
-
-    //int8_t scrollIndex[LCD_HEIGHT];
-    //uint8_t scrollStartIndex[LCD_HEIGHT];
 
     char lcdLine[LCD_HEIGHT][MAX_TEXT_SIZE+1];
     char lcdLineMessage[LCD_HEIGHT][MAX_TEXT_SIZE+1];
-    char lastLCDLine[LCD_HEIGHT][MAX_TEXT_SIZE+1];
-    //char lcdLineScroll[LCD_HEIGHT][MAX_TEXT_SIZE+1];
+    //warning! this assumes that max text length is max 32 characters
+    uint32_t charChange[LCD_HEIGHT];
 
     int32_t messageTime;
 
