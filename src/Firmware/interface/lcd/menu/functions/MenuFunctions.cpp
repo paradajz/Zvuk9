@@ -193,11 +193,6 @@ bool checkCalibration(functionArgument argument)
     return true;
 }
 
-bool checkPressureLevel(functionArgument argument)
-{
-    return true;
-}
-
 bool checkAftertouchType(functionArgument argument)
 {
     switch((aftertouchType_t)argument.argument1)
@@ -353,18 +348,18 @@ bool checkPressureSensitivity(functionArgument argument)
 
 bool checkPressureCurve(functionArgument argument)
 {
-    //switch((curve_t)argument.argument1)
-    //{
-        //case curveLinear:
-        //case curveLog:
-        //case curveExp:
-        ////ok
-        //break;
-//
-        //default:
-        ////invalid argument
-        //return false;
-    //}
+    switch((curve_t)argument.argument1)
+    {
+        case curve_linear_up:
+        case curve_log_up_1:
+        case curve_exp_up:
+        //ok
+        break;
+
+        default:
+        //invalid argument
+        return false;
+    }
 
     switch(argument.argument2)
     {
