@@ -183,7 +183,7 @@ bool enableCalibration(functionArgument argument)
 
 bool checkCalibration(functionArgument argument)
 {
-    if (!pads.allPadsReleased())
+    if (pads.getNumberOfPressedPads())
     {
         display.displayPadReleaseError(calibrationMode);
         menu.stopFunction();

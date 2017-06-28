@@ -104,7 +104,7 @@ bool Pads::setSplitState(bool state)
     return false;
 }
 
-bool Pads::calibrateXY(padCoordinate_t type, calibrationDirection direction, uint8_t pad, uint16_t limit)
+bool Pads::calibrateXY(padCoordinate_t type, limitType_t limitType, uint8_t pad, uint16_t limit)
 {
     if (limit > 1023)
         return false;
@@ -115,14 +115,14 @@ bool Pads::calibrateXY(padCoordinate_t type, calibrationDirection direction, uin
     switch(type)
     {
         case coordinateX:
-        switch(direction)
+        switch(limitType)
         {
-            case lower:
+            case limitTypeMin:
             variablePointer = padXLimitLower;
             configurationSection = padCalibrationXlowerSection;
             break;
 
-            case upper:
+            case limitTypeMax:
             variablePointer = padXLimitUpper;
             configurationSection = padCalibrationXupperSection;
             break;
@@ -133,14 +133,14 @@ bool Pads::calibrateXY(padCoordinate_t type, calibrationDirection direction, uin
         break;
 
         case coordinateY:
-        switch(direction)
+        switch(limitType)
         {
-            case lower:
+            case limitTypeMin:
             variablePointer = padYLimitLower;
             configurationSection = padCalibrationYlowerSection;
             break;
 
-            case upper:
+            case limitTypeMax:
             variablePointer = padYLimitUpper;
             configurationSection = padCalibrationYupperSection;
             break;
@@ -337,7 +337,7 @@ changeOutput_t Pads::changeCCvalue(bool direction, padCoordinate_t type, int8_t 
     return result;
 }
 
-changeOutput_t Pads::changeCClimitValue(bool direction, padCoordinate_t coordinate, ccLimitType_t limitType, int8_t steps)
+changeOutput_t Pads::changeCClimitValue(bool direction, padCoordinate_t coordinate, limitType_t limitType, int8_t steps)
 {
     changeOutput_t result = outputChanged;
     uint8_t lastPressedPad = getLastTouchedPad();
@@ -364,7 +364,7 @@ changeOutput_t Pads::changeCClimitValue(bool direction, padCoordinate_t coordina
 
         switch(limitType)
         {
-            case ccLimitTypeMax:
+            case limitTypeMax:
             #ifdef DEBUG
             printf_P(PSTR("max for "));
             #endif
@@ -372,7 +372,7 @@ changeOutput_t Pads::changeCClimitValue(bool direction, padCoordinate_t coordina
             configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_MAX_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_MAX_ID;
             break;
 
-            case ccLimitTypeMin:
+            case limitTypeMin:
             #ifdef DEBUG
             printf_P(PSTR("min for "));
             #endif
@@ -391,7 +391,7 @@ changeOutput_t Pads::changeCClimitValue(bool direction, padCoordinate_t coordina
         #endif
         switch(limitType)
         {
-            case ccLimitTypeMax:
+            case limitTypeMax:
             #ifdef DEBUG
             printf_P(PSTR("max for "));
             #endif
@@ -399,7 +399,7 @@ changeOutput_t Pads::changeCClimitValue(bool direction, padCoordinate_t coordina
             configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_MAX_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_MAX_ID;
             break;
 
-            case ccLimitTypeMin:
+            case limitTypeMin:
             #ifdef DEBUG
             printf_P(PSTR("min for "));
             #endif

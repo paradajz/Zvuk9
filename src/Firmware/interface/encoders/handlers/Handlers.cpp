@@ -14,7 +14,7 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
         return;
     }
 
-    if (!pads.allPadsReleased())
+    if (pads.getNumberOfPressedPads())
     {
         //disable encoders while pads are pressed
         display.displayPadReleaseError(changeProgram);
@@ -46,7 +46,7 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
 
 void handleScale(uint8_t id, bool direction, uint8_t steps)
 {
-    if (!pads.allPadsReleased())
+    if (pads.getNumberOfPressedPads())
     {
         //disable encoders while pads are pressed
         display.displayPadReleaseError(changePreset);
@@ -102,7 +102,7 @@ void handleScale(uint8_t id, bool direction, uint8_t steps)
 
 void handleCC(uint8_t id, bool direction, uint8_t steps)
 {
-    if (!pads.allPadsReleased())
+    if (pads.getNumberOfPressedPads())
     {
         //disable encoders while pads are pressed
         display.displayPadReleaseError(changeCCnumber);
@@ -129,33 +129,33 @@ void handleCC(uint8_t id, bool direction, uint8_t steps)
 
 void handleLimit(uint8_t id, bool direction, uint8_t steps)
 {
-    if (!pads.allPadsReleased() && !pads.isCalibrationEnabled())
+    if (pads.getNumberOfPressedPads() && !pads.isCalibrationEnabled())
     {
         //disable encoders while pads are pressed
         display.displayPadReleaseError(changeCClimit);
         return;
     }
 
-    if (menu.menuDisplayed() && pads.allPadsReleased())
+    if (menu.menuDisplayed() && !pads.getNumberOfPressedPads())
         return;
 
     if (!pads.isCalibrationEnabled() && menu.menuDisplayed())
         return;
 
     padCoordinate_t coordinate = coordinateX;
-    ccLimitType_t limit = ccLimitTypeMin;
+    limitType_t limit = limitTypeMin;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     switch(id)
     {
         case X_MIN_ENCODER:
         coordinate = coordinateX;
-        limit = ccLimitTypeMin;
+        limit = limitTypeMin;
 
         if (pads.isCalibrationEnabled())
         {
             int8_t step = direction ? -1 : 1;
-            pads.calibrateXY(coordinateX, lower, lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinateX, lower) + step);
+            pads.calibrateXY(coordinateX, limitTypeMin, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMin) + step);
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
@@ -165,12 +165,12 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
         case X_MAX_ENCODER:
         coordinate = coordinateX;
-        limit = ccLimitTypeMax;
+        limit = limitTypeMax;
 
         if (pads.isCalibrationEnabled())
         {
             int8_t step = direction ? -1 : 1;
-            pads.calibrateXY(coordinateX, upper, lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinateX, upper) + step);
+            pads.calibrateXY(coordinateX, limitTypeMax, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMax) + step);
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
@@ -180,13 +180,13 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
         case Y_MIN_ENCODER:
         coordinate = coordinateY;
-        limit = ccLimitTypeMin;
+        limit = limitTypeMin;
 
         if (pads.isCalibrationEnabled())
         {
             int8_t step = direction ? 1 : -1;
             //invert lower/upper logic here
-            pads.calibrateXY(coordinateY, upper, lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinateY, upper) + step);
+            pads.calibrateXY(coordinateY, limitTypeMax, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + step);
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
@@ -196,13 +196,13 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
         case Y_MAX_ENCODER:
         coordinate = coordinateY;
-        limit = ccLimitTypeMax;
+        limit = limitTypeMax;
 
         if (pads.isCalibrationEnabled())
         {
             int8_t step = direction ? 1 : -1;
             //invert lower/upper logic here
-            pads.calibrateXY(coordinateY, lower, lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinateY, lower) + step);
+            pads.calibrateXY(coordinateY, limitTypeMin, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + step);
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
@@ -220,14 +220,14 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
     #ifdef DEBUG
     else
     {
-        printf_P(PSTR("Pad %d\nLower limit: %d\nUpper limit: %d\n\n"), lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinate, lower), pads.getCoordinateLimit(lastTouchedPad, coordinate, upper));
+        printf_P(PSTR("Pad %d\nLower limit: %d\nUpper limit: %d\n\n"), lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinate, lower), pads.getCalibrationLimit(lastTouchedPad, coordinate, upper));
     }
     #endif
 }
 
 void handleCurve(uint8_t id, bool direction, uint8_t steps)
 {
-    if (!pads.allPadsReleased())
+    if (pads.getNumberOfPressedPads())
     {
         //disable encoders while pads are pressed
         display.displayPadReleaseError(changeCurve);

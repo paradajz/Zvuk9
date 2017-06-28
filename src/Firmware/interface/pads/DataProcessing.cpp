@@ -134,7 +134,7 @@ void Pads::update()
             {
                 //lcd restore detection
                 //display data from last touched pad if current pad is released
-                if ((index != getLastTouchedPad()) && !allPadsReleased())
+                if ((index != getLastTouchedPad()) && getNumberOfPressedPads())
                     restoreLCD = true;
             }
 
@@ -413,14 +413,14 @@ bool Pads::checkX(uint8_t pad)
             #ifdef DEBUG
             printf_P(PSTR("Calibrating lowest value for X, pad %d: %d\n"), pad, value);
             #endif
-            calibrateXY(coordinateX, lower, pad, value);
+            calibrateXY(coordinateX, limitTypeMin, pad, value);
         }
         else if (value > padXLimitUpper[pad])
         {
             #ifdef DEBUG
             printf_P(PSTR("Calibrating max value for X, pad %d: %d\n"), pad, value);
             #endif
-            calibrateXY(coordinateX, upper, pad, value);
+            calibrateXY(coordinateX, limitTypeMax, pad, value);
         }
     }
 
@@ -466,14 +466,14 @@ bool Pads::checkY(uint8_t pad)
             #ifdef DEBUG
             printf_P(PSTR("Calibrating lowest value for Y, pad %d: %d\n"), pad, value);
             #endif
-            calibrateXY(coordinateY, lower, pad, value);
+            calibrateXY(coordinateY, limitTypeMin, pad, value);
         }
         else if (value > padYLimitUpper[pad])
         {
             #ifdef DEBUG
             printf_P(PSTR("Calibrating max value for Y, pad %d: %d\n"), pad, value);
             #endif
-            calibrateXY(coordinateY, upper, pad, value);
+            calibrateXY(coordinateY, limitTypeMax, pad, value);
         }
     }
 
@@ -693,7 +693,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
             display.displayPad();
         }
     }
-    else if (allPadsReleased() && !lcdCleared)
+    else if (!getNumberOfPressedPads() && !lcdCleared)
     {
         display.clearPadData();
         lcdCleared = true;

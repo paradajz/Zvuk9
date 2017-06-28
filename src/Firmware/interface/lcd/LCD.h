@@ -44,7 +44,7 @@ class LCD
     void displayTransportControl(transportControl_t type);
     void displayOnOffChange(onOff_t type, uint8_t functionState);
     void displayCurveChange(padCoordinate_t coordinate);
-    void displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, uint8_t ccValue);
+    void displayCClimitChange(padCoordinate_t coordinate, limitType_t type, uint8_t ccValue);
     void displayCCchange(padCoordinate_t type, uint8_t ccValue);
     void displayMIDIchannelChange();
     void displayActivePadNotes();

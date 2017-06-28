@@ -57,7 +57,7 @@ void LCD::displayCurveChange(padCoordinate_t coordinate)
     displayPadAmount(padNumber+1);
 }
 
-void LCD::displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, uint8_t ccValue)
+void LCD::displayCClimitChange(padCoordinate_t coordinate, limitType_t type, uint8_t ccValue)
 {
     uint8_t size = 0;
     uint8_t padNumber = pads.getLastTouchedPad()+1;
@@ -67,12 +67,12 @@ void LCD::displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, u
         case coordinateX:
         switch(type)
         {
-            case ccLimitTypeMin:
+            case limitTypeMin:
             strcpy_P(stringBuffer, xMin_string);
             size = progmemCharArraySize(xMin_string);
             break;
 
-            case ccLimitTypeMax:
+            case limitTypeMax:
             strcpy_P(stringBuffer, xMax_string);
             size = progmemCharArraySize(xMax_string);
             break;
@@ -82,12 +82,12 @@ void LCD::displayCClimitChange(padCoordinate_t coordinate, ccLimitType_t type, u
         case coordinateY:
         switch(type)
         {
-            case ccLimitTypeMin:
+            case limitTypeMin:
             strcpy_P(stringBuffer, yMin_string);
             size = progmemCharArraySize(yMin_string);
             break;
 
-            case ccLimitTypeMax:
+            case limitTypeMax:
             strcpy_P(stringBuffer, yMax_string);
             size = progmemCharArraySize(yMax_string);
             break;

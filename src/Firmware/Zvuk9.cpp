@@ -172,7 +172,7 @@ int main()
 
         #ifdef DBMS_ENABLE_ASYNC_UPDATE
         //write to eeprom when all pads are released
-        if (pads.allPadsReleased())
+        if (!pads.getNumberOfPressedPads())
             database.checkQueue();
         #endif
 

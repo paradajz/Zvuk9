@@ -2,9 +2,9 @@
 
 typedef enum
 {
-    ccLimitTypeMin,
-    ccLimitTypeMax
-} ccLimitType_t;
+    limitTypeMin,
+    limitTypeMax
+} limitType_t;
 
 typedef enum
 {
@@ -107,12 +107,6 @@ typedef enum
     calibrationMode,
     enterPadEditMode
 } padReleaseError_t;
-
-typedef enum
-{
-    lower,
-    upper
-} calibrationDirection;
 
 typedef enum
 {

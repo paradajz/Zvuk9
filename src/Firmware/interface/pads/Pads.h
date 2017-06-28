@@ -14,13 +14,18 @@ class Pads
 {
     public:
     Pads();
+
     void init();
     void update();
 
     //getters
     uint8_t getLastTouchedPad();
+    bool isPadPressed(int8_t pad);
+    uint8_t getNumberOfPressedPads();
     uint8_t getActiveProgram();
     uint8_t getActiveScale();
+    bool isUserScale(int8_t scale);
+    bool isPredefinedScale(int8_t scale);
     bool getEditModeState();
     note_t getActiveTonic();
     uint8_t getActiveOctave();
@@ -28,31 +33,28 @@ class Pads
     bool getMIDISendState(int8_t pad, onOff_t type);
     aftertouchType_t getAftertouchType();
     uint8_t getPadNote(int8_t pad, int8_t noteIndex);
+    bool isNoteAssigned(note_t note);
     note_t getTonicFromNote(int8_t note);
     uint8_t getOctaveFromNote(int8_t note);
     int8_t getScaleShiftLevel();
     uint8_t getCC(int8_t pad, padCoordinate_t type);
-    uint8_t getCClimit(int8_t pad, padCoordinate_t type, ccLimitType_t limitType);
+    uint8_t getCClimit(int8_t pad, padCoordinate_t type, limitType_t limitType);
     curve_t getCCcurve(int8_t pad, padCoordinate_t curve);
-    uint8_t getMIDIchannel(uint8_t pad);
-    padCoordinate_t getCalibrationMode();
-    uint16_t getCoordinateLimit(uint8_t pad, padCoordinate_t coordinate, calibrationDirection direction);
-
-    //checkers
-    bool isUserScale(uint8_t scale);
-    bool isPredefinedScale(uint8_t scale);
-    bool isNoteAssigned(note_t note);
+    pressureSensitivity_t getPressureSensitivity();
+    curve_t getPressureCurve();
+    uint8_t getMIDIchannel(int8_t pad);
     bool isCalibrationEnabled();
+    padCoordinate_t getCalibrationMode();
+    uint16_t getCalibrationLimit(int8_t pad, padCoordinate_t coordinate, limitType_t limitType);
 
     //setters
     bool setActiveProgram(int8_t program);
     bool setActiveScale(int8_t scale);
-    bool setEditModeState(bool state, int8_t pad = 0);
     changeOutput_t setActiveTonic(note_t note, bool internalChange = false);
     bool setActiveOctave(int8_t octave);
+    bool setEditModeState(bool state, int8_t pad = 0);
     bool setSplitState(bool state);
     void setMIDISendState(onOff_t type, bool state);
-
 
     //pad edit mode
     changeOutput_t addNote(uint8_t pad, note_t note);
@@ -77,7 +79,7 @@ class Pads
 
     //setters
     changeOutput_t changeCCvalue(bool direction, padCoordinate_t type, int8_t steps);
-    changeOutput_t changeCClimitValue(bool direction, padCoordinate_t coordinate, ccLimitType_t limitType, int8_t steps);
+    changeOutput_t changeCClimitValue(bool direction, padCoordinate_t coordinate, limitType_t limitType, int8_t steps);
 
 
     bool setCCcurve(padCoordinate_t coordinate, uint8_t curve);
@@ -86,42 +88,30 @@ class Pads
     bool setMIDIchannel(uint8_t pad, uint8_t channel);
 
     //pad info
-    bool isPadPressed(uint8_t padNumber);
-    bool allPadsReleased();
+    
 
-    //scale info
-
-
-    //pressure info
-    pressureSensitivity_t getPressureSensitivity();
     void setPressureSensitivity(pressureSensitivity_t type);
-    curve_t getPressureCurve();
     void setPressureCurve(curve_t curve);
 
     //calibration
-    bool calibrateXY(padCoordinate_t type, calibrationDirection direction, uint8_t pad, uint16_t limit);
+    bool calibrateXY(padCoordinate_t type, limitType_t limitType, uint8_t pad, uint16_t limit);
     void calibratePressure(uint8_t pad, uint8_t pressureZone, uint16_t limit);
     void setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
 
-    void getXLimits();
-    void getYLimits();
+   
 
     uint16_t scaleXY(uint8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale);
 
 
     private:
-
-    //init
-    void setupSysEx();
-
     //EEPROM config read
     void getConfiguration();
     void getProgramParameters();
     void getScaleParameters();
     void getPadLimits();
     void getPressureLimits();
-    //void getXLimits();
-    //void getYLimits();
+    void getXLimits();
+    void getYLimits();
     void getAftertouchLimits();
     void getPadParameters();
 

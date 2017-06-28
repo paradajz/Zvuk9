@@ -4,7 +4,7 @@
 
 ///
 /// \brief Checks last pad which has been pressed.
-/// \returns Last pressed pad.
+/// \returns Last pressed pad (0 - NUMBER_OF_PADS-1)
 ///
 uint8_t Pads::getLastTouchedPad()
 {
@@ -12,8 +12,35 @@ uint8_t Pads::getLastTouchedPad()
 }
 
 ///
+/// \brief Checks if requested pad is currently pressed.
+/// @param [in] pad Pad which is being checked.
+/// \returns True if requested pad is pressed, false otherwise,
+///
+bool Pads::isPadPressed(int8_t pad)
+{
+    assert(SCALE_CHECK(pad));
+
+    return bitRead(padPressed, pad);
+}
+
+///
+/// \brief Checks how many pads are pressed.
+/// \returns Number of pressed pads.
+///
+uint8_t Pads::getNumberOfPressedPads()
+{
+    uint8_t pressedPads = 0;
+
+    for (int i=0; i<NUMBER_OF_PADS; i++)
+        if (isPadPressed(i))
+            pressedPads++;
+
+    return pressedPads;
+}
+
+///
 /// \brief Checks for currently active program.
-/// \returns Currently active program.
+/// \returns Currently active program (0 - NUMBER_OF_PROGRAMS-1)
 ///
 uint8_t Pads::getActiveProgram()
 {
@@ -22,11 +49,35 @@ uint8_t Pads::getActiveProgram()
 
 ///
 /// \brief Checks for currently active scale.
-/// \returns Currently active scale (integer), range 0-PREDEFINED_SCALES+NUMBER_OF_USER_SCALES.
+/// \returns Currently active scale (0 - PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1).
 ///
 uint8_t Pads::getActiveScale()
 {
     return activeScale;
+}
+
+///
+/// \brief Checks if requested scale is user scale.
+/// @param [in] scale Scale which is being checked.
+/// \returns True if requested scale is user scale, false otherwise (predefined scale).
+///
+bool Pads::isUserScale(int8_t scale)
+{
+    assert(SCALE_CHECK(scale));
+
+    return (scale >= PREDEFINED_SCALES);
+}
+
+///
+/// \brief Checks if requested scale is predefined scale.
+/// @param [in] scale Scale which is being checked.
+/// \returns True if requested scale is predefined scale, false otherwise (user scale).
+///
+bool Pads::isPredefinedScale(int8_t scale)
+{
+    assert(SCALE_CHECK(scale));
+
+    return (scale < PREDEFINED_SCALES);
 }
 
 ///
@@ -67,7 +118,7 @@ note_t Pads::getActiveTonic()
 
 ///
 /// \brief Checks for currently active octave.
-/// \returns Currently active octave.
+/// \returns Currently active octave (0 - MIDI_NOTES-1).
 ///
 uint8_t Pads::getActiveOctave()
 {
@@ -125,7 +176,7 @@ aftertouchType_t Pads::getAftertouchType()
 /// \brief Gets note from pad.
 /// @param [in] pad         Pad from which note is returned.
 /// @param [in] noteIndex   Index of pad note.
-/// \returns Note from requested index on requested pad.
+/// \returns Note from requested index on requested pad (0 - 127).
 ///
 uint8_t Pads::getPadNote(int8_t pad, int8_t noteIndex)
 {
@@ -133,6 +184,28 @@ uint8_t Pads::getPadNote(int8_t pad, int8_t noteIndex)
     assert(NOTE_ASSIGN_CHECK(noteIndex));
 
     return padNote[pad][noteIndex];
+}
+
+///
+/// \brief Checks if requested note is assigned to any pad.
+/// @param [in] note Note which is being checked.
+/// \returns True if note is assigned to any pad, false otherwise.
+///
+bool Pads::isNoteAssigned(note_t note)
+{
+    for (int i=0; i<NUMBER_OF_PADS; i++)
+    {
+        for (int j=0; j<NOTES_PER_PAD; j++)
+        {
+            if (padNote[i][j] != BLANK_NOTE)
+            {
+                if (getTonicFromNote(padNote[i][j]) == note)
+                    return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 ///
@@ -151,7 +224,7 @@ note_t Pads::getTonicFromNote(int8_t note)
 ///
 /// \brief Calculates octave from received MIDI note.
 /// @param [in] note    MIDI note.
-/// \returns Calculated octave.
+/// \returns Calculated octave (0 - MIDI_NOTES-1).
 ///
 uint8_t Pads::getOctaveFromNote(int8_t note)
 {
@@ -193,27 +266,132 @@ uint8_t Pads::getCC(int8_t pad, padCoordinate_t type)
     }
 }
 
-uint8_t Pads::getCClimit(int8_t pad, padCoordinate_t type, ccLimitType_t limitType)
+///
+/// \brief Checks for minimum or maximum CC value on requested coordinate and pad.
+/// @param [in] pad         Pad which is being checked.
+/// @param [in] type        Coordinate on which CC limit is being checked (enumerated type) - only X or Y
+///                         coordinates are allowed. See padCoordinate_t enumeration.
+/// @param [in] limitType   Limit which is being checked (minimum or maximum - enumerated type). See limitType_t enumeration.
+/// \returns CC limit (0-127).
+///
+uint8_t Pads::getCClimit(int8_t pad, padCoordinate_t type, limitType_t limitType)
 {
     assert(PAD_CHECK(pad));
 
     switch(type)
     {
         case coordinateX:
-        if (limitType == ccLimitTypeMax)
-        return ccXmaxPad[pad];
-        else if (limitType == ccLimitTypeMin)
-        return ccXminPad[pad];
+        if (limitType == limitTypeMax)
+            return ccXmaxPad[pad];
+        else if (limitType == limitTypeMin)
+            return ccXminPad[pad];
         else
-        return 0;
+            return 0;
 
         case coordinateY:
-        if (limitType == ccLimitTypeMax)
-        return ccYmaxPad[pad];
-        else if (limitType == ccLimitTypeMin)
-        return ccYminPad[pad];
+        if (limitType == limitTypeMax)
+            return ccYmaxPad[pad];
+        else if (limitType == limitTypeMin)
+            return ccYminPad[pad];
         else
+            return 0;
+
+        default:
         return 0;
+    }
+}
+
+///
+/// \brief Checks for CC curve on requested coordinate and pad.
+/// @param [in] pad         Pad which is being checked.
+/// @param [in] type        Coordinate on which CC curve is being checked (enumerated type) - only X or Y
+///                         coordinates are allowed. See padCoordinate_t enumeration.
+///
+curve_t Pads::getCCcurve(int8_t pad, padCoordinate_t coordinate)
+{
+    assert(PAD_CHECK(pad));
+
+    switch(coordinate)
+    {
+        case coordinateX:
+        return (curve_t)padCurveX[pad];
+
+        case coordinateY:
+        return (curve_t)padCurveY[pad];
+
+        default:
+        return curve_linear_up;
+    }
+}
+
+///
+/// \brief Checks for currently active pressure sensitivity setting.
+/// \returns Active pressure sensitivity (enumerated type). See pressureSensitivity_t enumeration.
+///
+pressureSensitivity_t Pads::getPressureSensitivity()
+{
+    return pressureSensitivity;
+}
+
+///
+/// \brief Checks for currently active pressure curve.
+/// Possible pressure curves are curve_linear_up, curve_log_up_1 and curve_exp_up.
+/// \returns Active pressure curve (enumerated type). See curve_t enumeration.
+///
+curve_t Pads::getPressureCurve()
+{
+    return pressureCurve;
+}
+
+///
+/// \brief Checks currently assigned MIDI channel on requested pad.
+/// @param [in] pad Pad which is being checked.
+/// \returns MIDI channel on requested pad (1-16).
+///
+uint8_t Pads::getMIDIchannel(int8_t pad)
+{
+    assert(PAD_CHECK(pad));
+
+    return midiChannel[pad];
+}
+
+///
+/// \brief Checks if calibration mode is active.
+/// \returns True if calibration is active, false otherwise.
+///
+bool Pads::isCalibrationEnabled()
+{
+    return calibrationEnabled;
+}
+
+///
+/// \brief Checks for currently active calibration mode.
+/// \returns Currently active calibration mode (enumerated type). See padCoordinate_t enumeration.
+///
+padCoordinate_t Pads::getCalibrationMode()
+{
+    return activeCalibration;
+}
+
+///
+/// \brief Checks for minimum or maximum raw (calibration) limit on requested pad and coordinate.
+/// @param [in] pad         Pad which is being checked.
+/// @param [in] coordinate  Coordinate which is being checked (enumerated type). See padCoordinate_t enumeration.
+/// @param [in] limitType   Limit which is being checked (minimum or maximum - enumerated type). See limitType_t enumeration.
+///
+uint16_t Pads::getCalibrationLimit(int8_t pad, padCoordinate_t coordinate, limitType_t limitType)
+{
+    assert(PAD_CHECK(pad));
+
+    switch(coordinate)
+    {
+        case coordinateX:
+        return (limitType == limitTypeMin) ? padXLimitLower[pad] : padXLimitUpper[pad];
+        break;
+
+        case coordinateY:
+        return (limitType == limitTypeMin) ? padYLimitLower[pad] : padYLimitUpper[pad];
+        break;
 
         default:
         return 0;
@@ -617,43 +795,6 @@ void Pads::getYLimits()
     #endif
 }
 
-uint16_t Pads::getCoordinateLimit(uint8_t pad, padCoordinate_t coordinate, calibrationDirection direction)
-{
-    switch(coordinate)
-    {
-        case coordinateX:
-        return (direction == lower) ? padXLimitLower[pad] : padXLimitUpper[pad];
-        break;
-
-        case coordinateY:
-        return (direction == lower) ? padYLimitLower[pad] : padYLimitUpper[pad];
-        break;
-
-        default:
-        return 0;
-    }
-}
-
-curve_t Pads::getCCcurve(int8_t pad, padCoordinate_t coordinate)
-{
-    switch(coordinate)
-    {
-        case coordinateX:
-        return (curve_t)padCurveX[pad];
-
-        case coordinateY:
-        return (curve_t)padCurveY[pad];
-
-        default:
-        return NUMBER_OF_CURVES;
-    }
-}
-
-uint8_t Pads::getMIDIchannel(uint8_t pad)
-{
-    return midiChannel[pad];
-}
-
 scaleType_t Pads::getScaleType(int8_t scale)
 {
     switch(scale)
@@ -674,59 +815,6 @@ scaleType_t Pads::getScaleType(int8_t scale)
     }
 }
 
-bool Pads::isUserScale(uint8_t scale)
-{
-    return (scale >= PREDEFINED_SCALES);
-}
-
-bool Pads::isPredefinedScale(uint8_t scale)
-{
-    return (scale < PREDEFINED_SCALES);
-}
-
-bool Pads::isNoteAssigned(note_t note)
-{
-    //return true if received note is among active notes on some pad
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-    {
-        for (int j=0; j<NOTES_PER_PAD; j++)
-        {
-            if (padNote[i][j] != BLANK_NOTE)
-            {
-                if (getTonicFromNote(padNote[i][j]) == note)
-                    return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-bool Pads::isPadPressed(uint8_t padNumber)
-{
-    return bitRead(padPressed, padNumber);
-}
-
-bool Pads::allPadsReleased()
-{
-    //return true if all pads are released
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        if (isPadPressed(i)) return false;
-
-    return true;
-}
-
-pressureSensitivity_t Pads::getPressureSensitivity()
-{
-    return pressureSensitivity;
-}
-
-curve_t Pads::getPressureCurve()
-{
-    return pressureCurve;
-}
-
 padCalibrationSection Pads::getPressureZone(uint8_t pad)
 {
     //find out pressure zone
@@ -735,14 +823,4 @@ padCalibrationSection Pads::getPressureZone(uint8_t pad)
     uint8_t column = scaleXY(pad, board.getPadX(pad), coordinateX, false) / PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE;
 
     return (padCalibrationSection)(column + row*PRESSURE_CALIBRATION_X_ZONES);
-}
-
-bool Pads::isCalibrationEnabled()
-{
-    return calibrationEnabled;
-}
-
-padCoordinate_t Pads::getCalibrationMode()
-{
-    return activeCalibration;
 }
