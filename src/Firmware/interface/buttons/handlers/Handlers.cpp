@@ -460,12 +460,20 @@ void handleTonic(uint8_t id, bool state)
 
 void handleProgramEncButton(uint8_t id, bool state)
 {
-    if (state && !menu.menuDisplayed())
+    if (!state)
+        return;
+
+    if (!menu.menuDisplayed())
     {
         menu.displayMenu(userMenu);
         #ifdef DEBUG
         printf_P(PSTR("Entering user menu\n"));
         #endif
+    }
+    else
+    {
+        //enter
+        menu.confirmOption(true);
     }
 }
 
@@ -474,9 +482,12 @@ void handlePresetEncButton(uint8_t id, bool state)
     if (!state)
         return;
 
-    //disable this button in menu
     if (menu.menuDisplayed())
+    {
+        //return
+        menu.confirmOption(false);
         return;
+    }
 
     //make sure movement is enabled ion case we just exited menu
     menu.resetExitTime();

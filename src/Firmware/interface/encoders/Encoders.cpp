@@ -54,8 +54,8 @@ void Encoders::update(bool process)
         //no message on display? maybe TO-DO
         if (menu.menuDisplayed())
         {
-            if (!((i == PROGRAM_ENCODER) || (i == PRESET_ENCODER) || (i == X_MAX_ENCODER) || (i == X_MIN_ENCODER) || (i == Y_MAX_ENCODER) || (i == Y_MIN_ENCODER)))
-                continue;;
+            if (!((i == PROGRAM_ENCODER) || (i == X_MAX_ENCODER) || (i == X_MIN_ENCODER) || (i == Y_MAX_ENCODER) || (i == Y_MIN_ENCODER)))
+                continue;
         }
 
         if (encoderHandler[i] != NULL)

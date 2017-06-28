@@ -46,12 +46,6 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
 
 void handleScale(uint8_t id, bool direction, uint8_t steps)
 {
-    if (menu.menuDisplayed())
-    {
-        menu.confirmOption(direction);
-        return;
-    }
-
     if (!pads.allPadsReleased())
     {
         //disable encoders while pads are pressed
