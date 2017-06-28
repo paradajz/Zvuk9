@@ -2,7 +2,223 @@
 #include "../leds/LEDs.h"
 #include "../../database/Database.h"
 
-//read from eeprom
+///
+/// \brief Checks last pad which has been pressed.
+/// \returns Last pressed pad.
+///
+uint8_t Pads::getLastTouchedPad()
+{
+    return padPressHistory_buffer[padPressHistory_counter];
+}
+
+///
+/// \brief Checks for currently active program.
+/// \returns Currently active program.
+///
+uint8_t Pads::getActiveProgram()
+{
+    return activeProgram;
+}
+
+///
+/// \brief Checks for currently active scale.
+/// \returns Currently active scale (integer), range 0-PREDEFINED_SCALES+NUMBER_OF_USER_SCALES.
+///
+uint8_t Pads::getActiveScale()
+{
+    return activeScale;
+}
+
+///
+/// \brief Checks if pad editing is in progress.
+/// \returns True if pad edit mode is enabled, false otherwise.
+///
+bool Pads::getEditModeState()
+{
+    return editModeActivated;
+}
+
+///
+/// \brief Finds currently active tonic.
+/// In user scales, tonic is first found note on first pad. If no notes are found, invalid value is returned (MIDI_NOTES).
+/// In predefined scales, tonic is written in EEPROM since it's configurable.
+/// \returns Currently active tonic (enumerated type). See note_t enumeration.
+///
+note_t Pads::getActiveTonic()
+{
+    if (isUserScale(activeScale))
+    {
+        //tonic is first found note on first pad on user scales
+        for (int i=0; i<NOTES_PER_PAD; i++)
+        {
+            if (padNote[0][i] != BLANK_NOTE)
+                return getTonicFromNote(padNote[0][i]+noteShiftAmount[i]);
+        }
+
+        return MIDI_NOTES;
+    }
+    else
+    {
+        //predefined scale tonic is written in eeprom
+        uint16_t tonicIndex = PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
+        return (note_t)database.read(DB_BLOCK_SCALE, scalePredefinedSection, tonicIndex);
+    }
+}
+
+///
+/// \brief Checks for currently active octave.
+/// \returns Currently active octave.
+///
+uint8_t Pads::getActiveOctave()
+{
+    return activeOctave;
+}
+
+///
+/// \brief Checks for whether split function is active or not.
+/// \returns True if split is enabled, false otherwise.
+///
+bool Pads::getSplitState()
+{
+    return splitEnabled;
+}
+
+///
+/// \brief Checks for whether certain MIDI functionality (aftertouch, notes, CC/X and CC/Y) is enabled or disabled on requested pad.
+/// @param [in] pad     Pad on which check is performed.
+/// @param [in] type    MIDI functionality (enumerated type). See onOff_t enumeration.
+/// \returns True if functionality is enabled, false otherwise.
+///
+bool Pads::getMIDISendState(int8_t pad, onOff_t type)
+{
+    assert(PAD_CHECK(pad));
+
+    switch(type)
+    {
+        case onOff_aftertouch:
+        return bitRead(aftertouchSendEnabled, pad);
+
+        case onOff_notes:
+        return bitRead(noteSendEnabled, pad);
+
+        case onOff_x:
+        return bitRead(xSendEnabled, pad);
+
+        case onOff_y:
+        return bitRead(ySendEnabled, pad);
+
+        default:
+        return false;
+    }
+}
+
+///
+/// \brief Checks for currently active aftertouch type (channel or polyphonic).
+/// \returns Currently active aftertouch type (enumerated type). See aftertouchType_t enumeration.
+///
+aftertouchType_t Pads::getAftertouchType()
+{
+    return (aftertouchType_t)aftertouchType;
+}
+
+///
+/// \brief Gets note from pad.
+/// @param [in] pad         Pad from which note is returned.
+/// @param [in] noteIndex   Index of pad note.
+/// \returns Note from requested index on requested pad.
+///
+uint8_t Pads::getPadNote(int8_t pad, int8_t noteIndex)
+{
+    assert(PAD_CHECK(pad));
+    assert(NOTE_ASSIGN_CHECK(noteIndex));
+
+    return padNote[pad][noteIndex];
+}
+
+///
+/// \brief Calculates tonic (root note) from received MIDI note.
+/// @param [in] note    MIDI note.
+/// \returns Calculated tonic/root note (enumerated type). See note_t enumeration.
+///
+note_t Pads::getTonicFromNote(int8_t note)
+{
+    if (note == BLANK_NOTE)
+        return MIDI_NOTES;
+
+    return (note_t)(note % MIDI_NOTES);
+}
+
+///
+/// \brief Calculates octave from received MIDI note.
+/// @param [in] note    MIDI note.
+/// \returns Calculated octave.
+///
+uint8_t Pads::getOctaveFromNote(int8_t note)
+{
+    if (note == BLANK_NOTE)
+        return MIDI_NOTES;
+
+    return note / MIDI_NOTES;
+}
+
+///
+/// \brief Checks for amount of scale shift.
+/// Notes in scale can be shifted in positive or negative direction.
+/// \returns Current amount of scale shift.
+///
+int8_t Pads::getScaleShiftLevel()
+{
+    return noteShiftLevel;
+}
+
+///
+/// \brief Checks for assigned CC number on requested coordinate and pad.
+/// @param [in] pad     Pad on which CC number is checked
+/// @param [in] type    Coordinate from which CC number is requested (X or Y) (enumerated type). See padCoordinate_t enumeration.
+///
+uint8_t Pads::getCC(int8_t pad, padCoordinate_t type)
+{
+    assert(PAD_CHECK(pad));
+
+    switch(type)
+    {
+        case coordinateX:
+        return ccXPad[pad];
+
+        case coordinateY:
+        return ccYPad[pad];
+
+        default:
+        return 0;
+    }
+}
+
+uint8_t Pads::getCClimit(int8_t pad, padCoordinate_t type, ccLimitType_t limitType)
+{
+    assert(PAD_CHECK(pad));
+
+    switch(type)
+    {
+        case coordinateX:
+        if (limitType == ccLimitTypeMax)
+        return ccXmaxPad[pad];
+        else if (limitType == ccLimitTypeMin)
+        return ccXminPad[pad];
+        else
+        return 0;
+
+        case coordinateY:
+        if (limitType == ccLimitTypeMax)
+        return ccYmaxPad[pad];
+        else if (limitType == ccLimitTypeMin)
+        return ccYminPad[pad];
+        else
+        return 0;
+
+        default:
+        return 0;
+    }
+}
 
 void Pads::getConfiguration()
 {
@@ -130,10 +346,10 @@ void Pads::getPadParameters()
     uint8_t lastTouchedPad = getLastTouchedPad();
 
     leds.setLEDstate(LED_ON_OFF_SPLIT, splitEnabled ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(onOff_aftertouch, lastTouchedPad) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_notes, lastTouchedPad) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(onOff_x, lastTouchedPad) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(onOff_y, lastTouchedPad) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(lastTouchedPad, onOff_aftertouch) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(lastTouchedPad, onOff_notes) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(lastTouchedPad, onOff_x) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(lastTouchedPad, onOff_y) ? ledStateFull : ledStateOff);
 }
 
 void Pads::getScaleParameters()
@@ -213,7 +429,7 @@ void Pads::generateScale(scale_t scale)
 
         //now apply saved tonic
         //internal change, do not write anything to eeprom
-        setTonic((note_t)tonic, true);
+        setActiveTonic((note_t)tonic, true);
 
         //finally, apply note shift
         if (noteShiftLevel < 0)
@@ -401,7 +617,7 @@ void Pads::getYLimits()
     #endif
 }
 
-uint16_t Pads::getLimit(uint8_t pad, padCoordinate_t coordinate, calibrationDirection direction)
+uint16_t Pads::getCoordinateLimit(uint8_t pad, padCoordinate_t coordinate, calibrationDirection direction)
 {
     switch(coordinate)
     {
@@ -418,129 +634,24 @@ uint16_t Pads::getLimit(uint8_t pad, padCoordinate_t coordinate, calibrationDire
     }
 }
 
-bool Pads::getMIDISendState(onOff_t type, uint8_t padNumber)
-{
-    switch(type)
-    {
-        case onOff_aftertouch:
-        return bitRead(aftertouchSendEnabled, padNumber);
-
-        case onOff_notes:
-        return bitRead(noteSendEnabled, padNumber);
-
-        case onOff_x:
-        return bitRead(xSendEnabled, padNumber);
-
-        case onOff_y:
-        return bitRead(ySendEnabled, padNumber);
-
-        default:
-        return false;
-    }
-}
-
-aftertouchType_t Pads::getAftertouchType()
-{
-    return (aftertouchType_t)aftertouchType;
-}
-
-bool Pads::getSplitState()
-{
-    return splitEnabled;
-}
-
-uint8_t Pads::getActiveProgram()
-{
-    return activeProgram;
-}
-
-uint8_t Pads::getActiveScale()
-{
-    return activeScale;
-}
-
-curve_t Pads::getCCcurve(padCoordinate_t coordinate, uint8_t padNumber)
+curve_t Pads::getCCcurve(int8_t pad, padCoordinate_t coordinate)
 {
     switch(coordinate)
     {
         case coordinateX:
-        return (curve_t)padCurveX[padNumber];
+        return (curve_t)padCurveX[pad];
 
         case coordinateY:
-        return (curve_t)padCurveY[padNumber];
+        return (curve_t)padCurveY[pad];
 
         default:
         return NUMBER_OF_CURVES;
     }
 }
 
-uint8_t Pads::getCClimitValue(padCoordinate_t type, ccLimitType_t limitType, uint8_t padNumber)
-{
-    switch(type)
-    {
-        case coordinateX:
-        if (limitType == ccLimitTypeMax)
-            return ccXmaxPad[padNumber];
-        else
-            return ccXminPad[padNumber];
-
-        case coordinateY:
-        if (limitType == ccLimitTypeMax)
-            return ccYmaxPad[padNumber];
-        else
-            return ccYminPad[padNumber];
-        break;
-
-        default:
-        return 0;
-    }
-}
-
-uint8_t Pads::getCCvalue(padCoordinate_t type, uint8_t padNumber)
-{
-    switch(type)
-    {
-        case coordinateX:
-        return ccXPad[padNumber];
-
-        case coordinateY:
-        return ccYPad[padNumber];
-
-        default:
-        return 0;
-    }
-}
-
 uint8_t Pads::getMIDIchannel(uint8_t pad)
 {
     return midiChannel[pad];
-}
-
-uint8_t Pads::getActiveOctave()
-{
-    return activeOctave;
-}
-
-note_t Pads::getActiveTonic()
-{
-    if (isUserScale(activeScale))
-    {
-        //currentScaleTonic is first found note on first pad on user scales
-        for (int i=0; i<NOTES_PER_PAD; i++)
-        {
-            if (padNote[0][i] != BLANK_NOTE)
-                return getTonicFromNote(padNote[0][i]+noteShiftAmount[i]);
-        }
-        return MIDI_NOTES;
-    }
-    else
-    {
-        //predefined scale tonic is written in eeprom
-        uint16_t tonicIndex = PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale;
-        return (note_t)database.read(DB_BLOCK_SCALE, scalePredefinedSection, tonicIndex);
-    }
-
-    return MIDI_NOTES;
 }
 
 scaleType_t Pads::getScaleType(int8_t scale)
@@ -573,18 +684,7 @@ bool Pads::isPredefinedScale(uint8_t scale)
     return (scale < PREDEFINED_SCALES);
 }
 
-uint8_t Pads::getPadNote(uint8_t pad, uint8_t noteIndex)
-{
-    if (pad >= NUMBER_OF_PADS)
-        return 0;
-
-    if (noteIndex >= NOTES_PER_PAD)
-        return 0;
-
-    return padNote[pad][noteIndex];
-}
-
-bool Pads::noteActive(note_t note)
+bool Pads::isNoteAssigned(note_t note)
 {
     //return true if received note is among active notes on some pad
 
@@ -601,27 +701,6 @@ bool Pads::noteActive(note_t note)
     }
 
     return false;
-}
-
-uint8_t Pads::getLastTouchedPad()
-{
-    return padPressHistory_buffer[padPressHistory_counter];
-}
-
-note_t Pads::getTonicFromNote(uint8_t note)
-{
-    if (note == BLANK_NOTE)
-        return MIDI_NOTES;
-
-    return (note_t)(note % MIDI_NOTES);
-}
-
-uint8_t Pads::getOctaveFromNote(uint8_t note)
-{
-    if (note == BLANK_NOTE)
-        return MIDI_NOTES;
-
-    return note / MIDI_NOTES;
 }
 
 bool Pads::isPadPressed(uint8_t padNumber)
@@ -646,11 +725,6 @@ pressureSensitivity_t Pads::getPressureSensitivity()
 curve_t Pads::getPressureCurve()
 {
     return pressureCurve;
-}
-
-int8_t Pads::getNoteShiftLevel()
-{
-    return noteShiftLevel;
 }
 
 padCalibrationSection Pads::getPressureZone(uint8_t pad)

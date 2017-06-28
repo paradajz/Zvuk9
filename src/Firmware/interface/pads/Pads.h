@@ -6,6 +6,7 @@
 #include "../../board/Board.h"
 #include "Config.h"
 #include "../../database/Database.h"
+#include "Sanity.h"
 
 #define constrain(input, low, high) ((input)<(low)?(low):((input)>(high)?(high):(input)))
 
@@ -16,52 +17,63 @@ class Pads
     void init();
     void update();
 
-    //program/scale
     //getters
+    uint8_t getLastTouchedPad();
     uint8_t getActiveProgram();
     uint8_t getActiveScale();
+    bool getEditModeState();
+    note_t getActiveTonic();
+    uint8_t getActiveOctave();
+    bool getSplitState();
+    bool getMIDISendState(int8_t pad, onOff_t type);
+    aftertouchType_t getAftertouchType();
+    uint8_t getPadNote(int8_t pad, int8_t noteIndex);
+    note_t getTonicFromNote(int8_t note);
+    uint8_t getOctaveFromNote(int8_t note);
+    int8_t getScaleShiftLevel();
+    uint8_t getCC(int8_t pad, padCoordinate_t type);
+    uint8_t getCClimit(int8_t pad, padCoordinate_t type, ccLimitType_t limitType);
+    curve_t getCCcurve(int8_t pad, padCoordinate_t curve);
+    uint8_t getMIDIchannel(uint8_t pad);
+    padCoordinate_t getCalibrationMode();
+    uint16_t getCoordinateLimit(uint8_t pad, padCoordinate_t coordinate, calibrationDirection direction);
+
+    //checkers
+    bool isUserScale(uint8_t scale);
+    bool isPredefinedScale(uint8_t scale);
+    bool isNoteAssigned(note_t note);
+    bool isCalibrationEnabled();
+
     //setters
     bool setActiveProgram(int8_t program);
     bool setActiveScale(int8_t scale);
+    bool setEditModeState(bool state, int8_t pad = 0);
+    changeOutput_t setActiveTonic(note_t note, bool internalChange = false);
+    bool setActiveOctave(int8_t octave);
+    bool setSplitState(bool state);
+    void setMIDISendState(onOff_t type, bool state);
+
 
     //pad edit mode
-    bool getEditModeState();
-    void setEditModeState(bool state, uint8_t pad = 0);
-    changeOutput_t assignPadNote(uint8_t pad, note_t note);
-    void changeActiveOctave(bool direction);
+    changeOutput_t addNote(uint8_t pad, note_t note);
 
     //functions on/off
     //getters
-    bool getMIDISendState(onOff_t type, uint8_t padNumber);
-    aftertouchType_t getAftertouchType();
-    bool getSplitState();
+    
     //setters
-    void setMIDISendState(onOff_t type, bool state);
     void setAftertouchType(aftertouchType_t type);
-    void setSplitState(bool state);
 
     //notes
     //getters
-    uint8_t getActiveOctave();
-    uint8_t getPadNote(uint8_t pad, uint8_t noteIndex);
-    note_t getActiveTonic();
-    bool noteActive(note_t note);
-    note_t getTonicFromNote(uint8_t note);
-    uint8_t getOctaveFromNote(uint8_t note);
+    
     //setters
     changeOutput_t shiftOctave(bool direction);
     changeOutput_t shiftNote(bool direction, bool internalChange = false);
-    changeOutput_t setTonic(note_t note, bool internalChange = false);
-    int8_t getNoteShiftLevel();
-    bool isCalibrationEnabled();
-    padCoordinate_t getCalibrationMode();
 
     //CC
     //getters
-    uint8_t getCCvalue(padCoordinate_t type, uint8_t padNumber);
-    uint8_t getCClimitValue(padCoordinate_t type, ccLimitType_t limitType, uint8_t padNumber);
+    
 
-    curve_t getCCcurve(padCoordinate_t curve, uint8_t padNumber);
 
     //setters
     changeOutput_t changeCCvalue(bool direction, padCoordinate_t type, int8_t steps);
@@ -71,17 +83,14 @@ class Pads
     bool setCCcurve(padCoordinate_t coordinate, uint8_t curve);
 
     //midi channel
-    uint8_t getMIDIchannel(uint8_t pad);
     bool setMIDIchannel(uint8_t pad, uint8_t channel);
 
     //pad info
-    uint8_t getLastTouchedPad();
     bool isPadPressed(uint8_t padNumber);
     bool allPadsReleased();
 
     //scale info
-    bool isUserScale(uint8_t scale);
-    bool isPredefinedScale(uint8_t scale);
+
 
     //pressure info
     pressureSensitivity_t getPressureSensitivity();
@@ -97,8 +106,9 @@ class Pads
     void getXLimits();
     void getYLimits();
 
-    uint16_t getLimit(uint8_t pad, padCoordinate_t coordinate, calibrationDirection direction);
     uint16_t scaleXY(uint8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale);
+
+
     private:
 
     //init
@@ -256,6 +266,8 @@ class Pads
     //pressure info
     pressureSensitivity_t   pressureSensitivity;
     curve_t                 pressureCurve;
+
+    bool                    editModeActivated;
 };
 
 extern Pads pads;

@@ -251,7 +251,7 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad)
         for (int i=0; i<MIDI_NOTES; i++)
         {
             //turn tonic LED on only if corresponding note is active
-            if (pads.noteActive((note_t)i))
+            if (pads.isNoteAssigned((note_t)i))
                 leds.setNoteLEDstate((note_t)i, ledStateDim);
         }
         break;

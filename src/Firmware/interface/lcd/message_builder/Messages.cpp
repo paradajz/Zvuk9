@@ -45,7 +45,7 @@ void LCD::displayCurveChange(padCoordinate_t coordinate)
     uint8_t size = 0;
     uint8_t padNumber = pads.getLastTouchedPad();
 
-    curve_t curve = pads.getCCcurve(coordinate, padNumber);
+    curve_t curve = pads.getCCcurve(padNumber, coordinate);
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(curveCoordinateArray[(uint8_t)coordinate])));
     size = pgm_read_byte(&curveCoordinateArray_sizes[(uint8_t)coordinate]);
 

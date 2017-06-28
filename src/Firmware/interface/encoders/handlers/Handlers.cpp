@@ -130,7 +130,7 @@ void handleCC(uint8_t id, bool direction, uint8_t steps)
     }
 
     pads.changeCCvalue(direction, coordinate, steps);
-    display.displayCCchange(coordinate, pads.getCCvalue(coordinate, lastTouchedPad));
+    display.displayCCchange(coordinate, pads.getCC(lastTouchedPad, coordinate));
 }
 
 void handleLimit(uint8_t id, bool direction, uint8_t steps)
@@ -161,10 +161,10 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         if (pads.isCalibrationEnabled())
         {
             int8_t step = direction ? -1 : 1;
-            pads.calibrateXY(coordinateX, lower, lastTouchedPad, pads.getLimit(lastTouchedPad, coordinateX, lower) + step);
+            pads.calibrateXY(coordinateX, lower, lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinateX, lower) + step);
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
-            newValue = curves.getCurveValue(pads.getCCcurve(coordinateX, lastTouchedPad), newValue, 0, 127);
+            newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
             display.displayXYposition(newValue, coordinateX);
         }
         break;
@@ -176,10 +176,10 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         if (pads.isCalibrationEnabled())
         {
             int8_t step = direction ? -1 : 1;
-            pads.calibrateXY(coordinateX, upper, lastTouchedPad, pads.getLimit(lastTouchedPad, coordinateX, upper) + step);
+            pads.calibrateXY(coordinateX, upper, lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinateX, upper) + step);
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
-            newValue = curves.getCurveValue(pads.getCCcurve(coordinateX, lastTouchedPad), newValue, 0, 127);
+            newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
             display.displayXYposition(newValue, coordinateX);
         }
         break;
@@ -192,10 +192,10 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         {
             int8_t step = direction ? 1 : -1;
             //invert lower/upper logic here
-            pads.calibrateXY(coordinateY, upper, lastTouchedPad, pads.getLimit(lastTouchedPad, coordinateY, upper) + step);
+            pads.calibrateXY(coordinateY, upper, lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinateY, upper) + step);
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
-            newValue = curves.getCurveValue(pads.getCCcurve(coordinateY, lastTouchedPad), newValue, 0, 127);
+            newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
             display.displayXYposition(newValue, coordinateY);
         }
         break;
@@ -208,10 +208,10 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         {
             int8_t step = direction ? 1 : -1;
             //invert lower/upper logic here
-            pads.calibrateXY(coordinateY, lower, lastTouchedPad, pads.getLimit(lastTouchedPad, coordinateY, lower) + step);
+            pads.calibrateXY(coordinateY, lower, lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinateY, lower) + step);
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
-            newValue = curves.getCurveValue(pads.getCCcurve(coordinateY, lastTouchedPad), newValue, 0, 127);
+            newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
             display.displayXYposition(newValue, coordinateY);
         }
         break;
@@ -220,13 +220,13 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
     if (!pads.isCalibrationEnabled())
     {
         pads.changeCClimitValue(direction, coordinate, limit, steps);
-        uint8_t value = pads.getCClimitValue(coordinate, limit, lastTouchedPad);
+        uint8_t value = pads.getCClimit(lastTouchedPad, coordinate, limit);
         display.displayCClimitChange(coordinate, limit, value);
     }
     #ifdef DEBUG
     else
     {
-        printf_P(PSTR("Pad %d\nLower limit: %d\nUpper limit: %d\n\n"), lastTouchedPad, pads.getLimit(lastTouchedPad, coordinate, lower), pads.getLimit(lastTouchedPad, coordinate, upper));
+        printf_P(PSTR("Pad %d\nLower limit: %d\nUpper limit: %d\n\n"), lastTouchedPad, pads.getCoordinateLimit(lastTouchedPad, coordinate, lower), pads.getCoordinateLimit(lastTouchedPad, coordinate, upper));
     }
     #endif
 }
@@ -254,7 +254,7 @@ void handleCurve(uint8_t id, bool direction, uint8_t steps)
         break;
     }
 
-    int8_t curve = pads.getCCcurve(coordinate, lastTouchedPad);
+    int8_t curve = pads.getCCcurve(lastTouchedPad, coordinate);
 
     if (direction)
     {

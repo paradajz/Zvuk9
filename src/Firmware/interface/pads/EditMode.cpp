@@ -3,10 +3,11 @@
 #include "../lcd/LCD.h"
 #include "../../database/Database.h"
 
-bool editModeActivated;
-
-void Pads::setEditModeState(bool state, uint8_t pad)
+bool Pads::setEditModeState(bool state, int8_t pad)
 {
+    if ((pad < 0) || (pad >= NUMBER_OF_PADS))
+        return false;
+
     switch(state)
     {
         case true:
@@ -30,9 +31,6 @@ void Pads::setEditModeState(bool state, uint8_t pad)
         leds.displayActiveNoteLEDs();
         break;
     }
-}
 
-bool Pads::getEditModeState()
-{
-    return editModeActivated;
+    return true;
 }

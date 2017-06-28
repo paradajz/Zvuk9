@@ -86,15 +86,22 @@ void Pads::setMIDISendState(onOff_t type, bool state)
     }
 }
 
-void Pads::setSplitState(bool state)
+bool Pads::setSplitState(bool state)
 {
-    splitEnabled = state;
-    database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitEnabled);
-    getPadParameters();
+    if (splitEnabled != state)
+    {
+        splitEnabled = state;
+        database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), splitEnabled);
+        getPadParameters();
 
-    #ifdef DEBUG
-    printf_P(PSTR("Split %s\n"), splitEnabled ? "on" : "off");
-    #endif
+        #ifdef DEBUG
+        printf_P(PSTR("Split %s\n"), splitEnabled ? "on" : "off");
+        #endif
+
+        return true;
+    }
+
+    return false;
 }
 
 bool Pads::calibrateXY(padCoordinate_t type, calibrationDirection direction, uint8_t pad, uint16_t limit)
@@ -186,8 +193,8 @@ bool Pads::setActiveProgram(int8_t program)
     return false;
 }
 
-bool Pads::setActiveScale(int8_t scale)  {
-
+bool Pads::setActiveScale(int8_t scale)
+{
     if (scale < 0 || scale > 16)
         return false;
 
@@ -236,16 +243,14 @@ void Pads::setAftertouchType(aftertouchType_t type)
     aftertouchType = type;
 }
 
-void Pads::changeActiveOctave(bool direction)
+bool Pads::setActiveOctave(int8_t octave)
 {
-    //used in pad edit mode
-    direction ? activeOctave++ : activeOctave--;
+    if ((octave < 0) || (octave >= MIDI_NOTES))
+        return false;
 
-    //overflow check
-    if (activeOctave > MIDI_NOTES)
-        activeOctave--;
-    if (activeOctave < 0)
-        activeOctave++;
+    activeOctave = octave;
+
+    return true;
 }
 
 changeOutput_t Pads::changeCCvalue(bool direction, padCoordinate_t type, int8_t steps)
@@ -546,7 +551,7 @@ bool Pads::setMIDIchannel(uint8_t pad, uint8_t channel)
     return false;
 }
 
-changeOutput_t Pads::assignPadNote(uint8_t pad, note_t note)
+changeOutput_t Pads::addNote(uint8_t pad, note_t note)
 {
     //used in pad edit mode (user scale)
     //add or delete note on pressed pad
@@ -880,8 +885,11 @@ void Pads::checkRemainingOctaveShift()
     }
 }
 
-changeOutput_t Pads::setTonic(note_t newTonic, bool internalChange)
+changeOutput_t Pads::setActiveTonic(note_t newTonic, bool internalChange)
 {
+    if (newTonic >= MIDI_NOTES)
+        return outOfRange;
+
     changeOutput_t result = noChange;
     note_t currentScaleTonic;
 
@@ -1043,7 +1051,7 @@ void Pads::checkRemainingNoteShift()
             {
                 note_t note = getTonicFromNote(tempPadNotes[i][j]);
 
-                if (!noteActive(note))
+                if (!isNoteAssigned(note))
                     leds.setNoteLEDstate(note, ledStateOff);
             }
         }
@@ -1068,10 +1076,10 @@ void Pads::setFunctionLEDs(uint8_t padNumber)
         leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
 
         //turn on feature LEDs depending on enabled features for last touched pad
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(onOff_aftertouch, padNumber) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(onOff_notes, padNumber) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(onOff_x, padNumber) ? ledStateFull : ledStateOff);
-        leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(onOff_y, padNumber) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(padNumber, onOff_aftertouch) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(padNumber, onOff_notes) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(padNumber, onOff_x) ? ledStateFull : ledStateOff);
+        leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(padNumber, onOff_y) ? ledStateFull : ledStateOff);
     }
 }
 
