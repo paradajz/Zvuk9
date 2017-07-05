@@ -656,6 +656,7 @@ void Pads::getPadLimits()
     printf_P(PSTR("Printing out limits for pads\n"));
     #endif
     setPressureSensitivity(pressureSensitivity);
+    getAftertouchLimits();
     getXLimits();
     getYLimits();
 }
@@ -704,41 +705,14 @@ void Pads::getAftertouchLimits()
     printf_P(PSTR("Printing out aftertouch limits for pads on "));
     #endif
 
-    uint8_t percentageIncrease = 0;
-
-    switch(pressureSensitivity)
-    {
-        case pressure_soft:
-        #ifdef DEBUG
-        printf_P(PSTR("soft sensitivity setting.\n"));
-        #endif
-        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_LOW;
-        break;
-
-        case pressure_medium:
-        #ifdef DEBUG
-        printf_P(PSTR("medium sensitivity setting.\n"));
-        #endif
-        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_MEDIUM;
-        break;
-
-        case pressure_hard:
-        #ifdef DEBUG
-        printf_P(PSTR("hard sensitivity setting.\n"));
-        #endif
-        percentageIncrease = AFTERTOUCH_PRESSURE_RATIO_UPPER_HARD;
-        break;
-
-        default:
-        return;
-    }
-
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
         for (int j=0; j<PRESSURE_CALIBRATION_ZONES; j++)
         {
-            int32_t lowerLimit = padPressureLimitUpper[i][j] + (int32_t)((padPressureLimitUpper[i][j] * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
-            int32_t upperLimit = lowerLimit + (int32_t)((lowerLimit * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
+            uint16_t upperPressure_limit = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+j, i);
+
+            int32_t lowerLimit = upperPressure_limit + (int32_t)((upperPressure_limit * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
+            int32_t upperLimit = lowerLimit + (int32_t)((lowerLimit * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_UPPER) / 10000;
 
             padAftertouchLimitLower[i][j] = lowerLimit;
             padAftertouchLimitUpper[i][j] = upperLimit;

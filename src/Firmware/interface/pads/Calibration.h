@@ -4,7 +4,7 @@
 /// \brief Counts after which pad press is considered stable once pad press has been detected.
 /// Debouncing time is 20 milliseconds. Divide time with PAD_READOUT_TIME to get counts instead of milliseconds to save RAM.
 ///
-#define PAD_DEBOUNCE_TIME                           ((20/PAD_READOUT_TIME)+1)
+#define PAD_DEBOUNCE_TIME                           1
 
 ///
 /// \brief Time in milliseconds after which notes from pad are sent once X and Y MIDI messages have been sent.
@@ -25,27 +25,15 @@
 
 ///
 ///\brief Percentage used to calculate lower pressure limit to send aftertouch.
-/// Lower aftertouch value = Upper pressure (velocity) value + (Upper pressure (velocity) value * AFTERTOUCH_PRESSURE_RATIO_LOWER%)
+/// Lower aftertouch value = Upper pressure (without sensitivity scaling) value + (Upper pressure (velocity) value * AFTERTOUCH_PRESSURE_RATIO_LOWER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_LOWER             15
+#define AFTERTOUCH_PRESSURE_RATIO_LOWER             70
 
 ///
-///\brief Percentage used to calculate upper pressure limit on low pressure sensitivity to send aftertouch.
-/// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER_LOW%)
+///\brief Percentage used to calculate upper pressure limit to send aftertouch.
+/// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER_LOW         25
-
-///
-///\brief Percentage used to calculate upper pressure limit on medium pressure sensitivity to send aftertouch.
-/// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER_MEDIUM%)
-///
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER_MEDIUM      20
-
-///
-///\brief Percentage used to calculate upper pressure limit on hard pressure sensitivity to send aftertouch.
-/// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER_HARD%)
-///
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER_HARD        10
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER             11
 
 ///
 /// \brief Time in milliseconds after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.

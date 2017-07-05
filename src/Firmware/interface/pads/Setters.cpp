@@ -3,6 +3,20 @@
 #include "../lcd/LCD.h"
 #include "../../database/Database.h"
 
+bool Pads::setActiveProgram(int8_t program)
+{
+    assert(PROGRAM_CHECK(program));
+
+    if (program != activeProgram)
+    {
+        database.update(DB_BLOCK_PROGRAM, programLastActiveProgramSection, (uint16_t)0, program);
+        getProgramParameters();
+        return true;
+    }
+
+    return false;
+}
+
 void Pads::setMIDISendState(onOff_t type, bool state)
 {
     uint16_t *variablePointer;
@@ -176,21 +190,6 @@ void Pads::setCalibrationMode(bool state, padCoordinate_t type)
 {
     calibrationEnabled = state;
     activeCalibration = type;
-}
-
-bool Pads::setActiveProgram(int8_t program)
-{
-    if (program < 0 || program >= NUMBER_OF_PROGRAMS)
-        return false;
-
-    if (program != activeProgram)
-    {
-        database.update(DB_BLOCK_PROGRAM, programLastActiveProgramSection, (uint16_t)0, program);
-        getProgramParameters();
-        return true;
-    }
-
-    return false;
 }
 
 bool Pads::setActiveScale(int8_t scale)
@@ -1089,7 +1088,6 @@ void Pads::setPressureSensitivity(pressureSensitivity_t type)
     database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID, type);
 
     getPressureLimits();
-    getAftertouchLimits();
 }
 
 void Pads::setPressureCurve(curve_t curve)
