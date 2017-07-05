@@ -220,7 +220,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
     #ifdef DEBUG
     else
     {
-        printf_P(PSTR("Pad %d\nLower limit: %d\nUpper limit: %d\n\n"), lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinate, lower), pads.getCalibrationLimit(lastTouchedPad, coordinate, upper));
+        printf_P(PSTR("Pad %d\nLower limit: %d\nUpper limit: %d\n\n"), lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinate, limitTypeMin), pads.getCalibrationLimit(lastTouchedPad, coordinate, limitTypeMax));
     }
     #endif
 }
