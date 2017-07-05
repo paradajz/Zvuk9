@@ -516,7 +516,7 @@ bool Pads::pressureStable(uint8_t pad, bool pressDetected)
         }
         else
         {
-            if (padDebounceTimer[pad] > PAD_DEBOUNCE_TIME)
+            if (padDebounceTimer[pad] >= PAD_DEBOUNCE_TIME)
             {
                 return true;
             }
