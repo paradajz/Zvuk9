@@ -11,6 +11,7 @@ typedef enum
 
 #define DEFAULT_OCTAVE                              4
 #define PREDEFINED_SCALE_OCTAVE                     DEFAULT_OCTAVE
+#define NOTES_PER_PAD                               7
 #define DEFAULT_NOTE                                (DEFAULT_OCTAVE*MIDI_NOTES)
 #define BLANK_NOTE                                  128
 #define PREDEFINED_SCALE_TONIC                      C
