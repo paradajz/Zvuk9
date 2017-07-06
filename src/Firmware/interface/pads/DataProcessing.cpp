@@ -2,12 +2,11 @@
 #include "../lcd/menu/Menu.h"
 #include "../../database/blocks/PadCalibration.h"
 
+uint16_t padPressed;
+
 void Pads::update()
 {
     bool restoreLCD = false;
-
-    if (!board.padDataAvailable())
-        return;
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
@@ -199,11 +198,14 @@ void Pads::update()
 
 bool Pads::checkVelocity(uint8_t pad)
 {
-    uint16_t value = board.getPadPressure(pad);
+    int16_t value = board.getPadPressure(pad);
+
+    if (value == -1)
+        return false;
 
     //detect if pressure is increasing or decreasing, but only if pad is pressed
     if (isPadPressed(pad))
-        bitWrite(pressureReduction, pad, value < (uint16_t)lastPressureValue[pad]);
+        bitWrite(pressureReduction, pad, (uint16_t)value < (uint16_t)lastPressureValue[pad]);
     else
         bitWrite(pressureReduction, pad, 0);
 
@@ -404,18 +406,25 @@ bool Pads::checkX(uint8_t pad)
     if (bitRead(pressureReduction, pad))
         return false;
 
-    uint16_t value = board.getPadX(pad);
+    int16_t value = board.getPadX(pad);
+
+    #ifdef DEBUG
+    printf_P(PSTR("X for pad %d: %d\n"), pad, value);
+    #endif
+
+    if (value == -1)
+        return false;
 
     if (calibrationEnabled && (activeCalibration == coordinateX) && (bool)leds.getLEDstate(LED_TRANSPORT_RECORD))
     {
-        if (value < padXLimitLower[pad])
+        if ((uint16_t)value < padXLimitLower[pad])
         {
             #ifdef DEBUG
             printf_P(PSTR("Calibrating lowest value for X, pad %d: %d\n"), pad, value);
             #endif
             calibrateXY(coordinateX, limitTypeMin, pad, value);
         }
-        else if (value > padXLimitUpper[pad])
+        else if ((uint16_t)value > padXLimitUpper[pad])
         {
             #ifdef DEBUG
             printf_P(PSTR("Calibrating max value for X, pad %d: %d\n"), pad, value);
@@ -457,18 +466,21 @@ bool Pads::checkY(uint8_t pad)
     if (bitRead(pressureReduction, pad))
         return false;
 
-    uint16_t value = board.getPadY(pad);
+    int16_t value = board.getPadY(pad);
+
+    if (value == -1)
+        return false;
 
     if (calibrationEnabled && (activeCalibration == coordinateY) && (bool)leds.getLEDstate(LED_TRANSPORT_RECORD))
     {
-        if (value < padYLimitLower[pad])
+        if ((uint16_t)value < padYLimitLower[pad])
         {
             #ifdef DEBUG
             printf_P(PSTR("Calibrating lowest value for Y, pad %d: %d\n"), pad, value);
             #endif
             calibrateXY(coordinateY, limitTypeMin, pad, value);
         }
-        else if (value > padYLimitUpper[pad])
+        else if ((uint16_t)value > padYLimitUpper[pad])
         {
             #ifdef DEBUG
             printf_P(PSTR("Calibrating max value for Y, pad %d: %d\n"), pad, value);

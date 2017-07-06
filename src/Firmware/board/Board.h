@@ -33,12 +33,11 @@ class Board
     void init();
     bool encoderEnabled(uint8_t encoderNumber);
     int8_t getEncoderState(uint8_t encoderID);
-    bool padDataAvailable();
     uint8_t getButtonState(uint8_t buttonID);
     uint8_t getEncoderPair(uint8_t buttonID);
     uint16_t getPadPressure(uint8_t pad);
-    uint16_t getPadX(uint8_t pad);
-    uint16_t getPadY(uint8_t pad);
+    int16_t getPadX(uint8_t pad);
+    int16_t getPadY(uint8_t pad);
     void reboot(rebootType_t type);
 
     private:

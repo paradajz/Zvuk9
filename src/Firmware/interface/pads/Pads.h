@@ -176,9 +176,6 @@ class Pads
     //needed to get correct aftertouch value
     int16_t                 lastPressureValue[NUMBER_OF_PADS];
 
-    //store press states for all pads inside this variable
-    uint16_t                padPressed;
-
     //parameters from eeprom
     uint8_t                 ccXPad[NUMBER_OF_PADS],
                             ccYPad[NUMBER_OF_PADS],

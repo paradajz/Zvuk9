@@ -1,4 +1,5 @@
 #include "Board.h"
+#include "../interface/pads/DataTypes.h"
 
 #define PAD_SAMPLE_BUFFER_SIZE  3
 
@@ -31,21 +32,16 @@ uint8_t             adcPinReadOrder_board[] =
     muxCommonPinsAnalogRead[2]  //y coordinate
 };
 
-//four readings - two for pressure, one for x, one for y
-//PAD_SAMPLE_BUFFER_SIZE total samples
-//for each pad
-volatile uint16_t   samples[PAD_SAMPLE_BUFFER_SIZE][PAD_READINGS][NUMBER_OF_PADS];
+volatile uint16_t   coordinateSamples[3];
+volatile uint16_t   pressureReading[2];
+
+uint8_t             sampleCounter;
 
 //three coordinates
-uint16_t            extractedSamples[PAD_READINGS][NUMBER_OF_PADS];
-
-uint8_t             dataReady;
-
-volatile uint8_t    pad_sample_buffer_head;
-volatile uint8_t    pad_sample_buffer_tail;
+volatile int16_t    extractedSamples[3][NUMBER_OF_PADS];
 
 uint8_t             activePad;
-uint8_t             readIndex;
+uint8_t             padReadingIndex;
 
 void                (*valueSetup[PAD_READINGS]) (void);
 
@@ -76,12 +72,12 @@ void setupX()
 {
     //x is read from y+
     //set 0/5V across x+/x-
-    setInput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
-    setInput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
+    setInput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN); //read this
+    setInput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN); //output!
     setOutput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
     setOutput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 
-    setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
+    setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN); //read this
     setLow(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
     setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
     setHigh(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
@@ -93,12 +89,12 @@ void setupY()
     //set 0/5V across y+/y-
     setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
     setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
-    setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
-    setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
+    setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN); //read this
+    setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN); //output!
 
     setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
     setHigh(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
-    setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
+    setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN); //read this
     setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 }
 
@@ -114,14 +110,11 @@ void Board::initPads()
     valueSetup[readX] = setupX;
     valueSetup[readY] = setupY;
 
-    for (int i=0; i<PAD_SAMPLE_BUFFER_SIZE; i++)
+    for (int i=0; i<3; i++)
     {
-        for (int j=0; j<PAD_READINGS; j++)
+        for (int k=0; k<NUMBER_OF_PADS; k++)
         {
-            for (int k=0; k<NUMBER_OF_PADS; k++)
-            {
-                samples[i][j][k] = 0;
-            }
+            extractedSamples[i][k] = -1;
         }
     }
 
@@ -130,115 +123,158 @@ void Board::initPads()
 
 uint16_t Board::getPadPressure(uint8_t pad)
 {
-    uint16_t value1, value2;
+    int16_t returnValue;
 
-    value1 = extractedSamples[readPressure0][pad];
-    value2 = extractedSamples[readPressure1][pad];
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    {
+        returnValue = extractedSamples[coordinateZ][pad];
+    }
 
-    return (1023 - (value2 - value1));
+    return returnValue;
 }
 
-uint16_t Board::getPadX(uint8_t pad)
+int16_t Board::getPadX(uint8_t pad)
 {
-    return extractedSamples[readY][pad];
+    int16_t returnValue;
+
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    {
+        returnValue = extractedSamples[coordinateX][pad];
+    }
+
+    return returnValue;
 }
 
-uint16_t Board::getPadY(uint8_t pad)
+int16_t Board::getPadY(uint8_t pad)
 {
-    return extractedSamples[readX][pad];
+    int16_t returnValue;
+
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    {
+        returnValue = extractedSamples[coordinateY][pad];
+    }
+
+    return returnValue;
+}
+
+inline void storeMedianValue(padCoordinate_t coordinate)
+{
+    if ((coordinateSamples[0] <= coordinateSamples[1]) && (coordinateSamples[0] <= coordinateSamples[2]))
+    {
+        extractedSamples[coordinate][activePad] = (coordinateSamples[1] <= coordinateSamples[2]) ? coordinateSamples[1] : coordinateSamples[2];
+    }
+    else if ((coordinateSamples[1] <= coordinateSamples[0]) && (coordinateSamples[1] <= coordinateSamples[2]))
+    {
+        extractedSamples[coordinate][activePad] = (coordinateSamples[0] <= coordinateSamples[2]) ? coordinateSamples[0] : coordinateSamples[2];
+    }
+    else
+    {
+        extractedSamples[coordinate][activePad] = (coordinateSamples[0] <= coordinateSamples[1]) ? coordinateSamples[0] : coordinateSamples[1];
+    }
 }
 
 ISR(ADC_vect)
 {
-    static bool insert = true;
-
-    if (insert)
+    if (padReadingIndex < readX)
     {
-        uint8_t index = pad_sample_buffer_head + 1;
+        pressureReading[padReadingIndex] = ADC;
 
-        if (index >= PAD_SAMPLE_BUFFER_SIZE)
-            index = 0;
-
-        //if buffer is full, wait until there is some space
-        if (pad_sample_buffer_tail == index)
+        if (padReadingIndex == readPressure1)
         {
-            return;
-        }
+            //store pressure sample
+            coordinateSamples[sampleCounter] = (1023 - (pressureReading[readPressure1] - pressureReading[readPressure0]));
+            sampleCounter++;
 
-        pad_sample_buffer_head = index;
-        insert = false;
-    }
-
-    samples[pad_sample_buffer_head][readIndex][activePad] = ADC;
-
-    activePad++;
-
-    if (activePad == NUMBER_OF_PADS)
-    {
-        activePad = 0;
-
-        //switch to next pad value readout
-        readIndex++;
-
-        if (readIndex == PAD_READINGS)
-        {
-            readIndex = 0;
-            insert = true;
-            bitWrite(dataReady, pad_sample_buffer_head, 1);
-        }
-
-        (*valueSetup[readIndex])();
-
-        //switch adc channel
-        setADCchannel(adcPinReadOrder_board[readIndex]);
-    }
-
-    //always switch mux input
-    setMuxInput(activePad);
-}
-
-///
-/// \brief Checks if there's sampled data in pad sample buffer.
-/// \returns True if there's data, false otherwise.
-///
-bool Board::padDataAvailable()
-{
-    bool returnValue = true;
-
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-    {
-        if ((pad_sample_buffer_head == pad_sample_buffer_tail) || !bitRead(dataReady, pad_sample_buffer_head))
-        {
-            //buffer is empty
-            returnValue = false;
-        }
-    }
-
-    if (!returnValue)
-        return false;
-
-    uint8_t index;
-
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-    {
-        //there is something in buffer
-        index = pad_sample_buffer_tail + 1;
-
-        if (index >= PAD_SAMPLE_BUFFER_SIZE)
-            index = 0;
-
-        pad_sample_buffer_tail = index;
-
-        for (int i=0; i<PAD_READINGS; i++)
-        {
-            for (int j=0; j<NUMBER_OF_PADS; j++)
+            if (sampleCounter == 3)
             {
-                extractedSamples[i][j] = samples[index][i][j];
+                //first, store median value
+                storeMedianValue(coordinateZ);
+
+                //reset pressure count
+                sampleCounter = 0;
+
+                //only allow x/y readout if pad is pressed
+                if (!bitRead(padPressed, activePad))
+                {
+                    //pad isn't pressed - don't bother with x/y reading
+                    //reset readIndex
+                    padReadingIndex = 0;
+
+                    //switch to new pad
+                    activePad++;
+
+                    if (activePad == NUMBER_OF_PADS)
+                        activePad = 0;
+
+                    //set new pad
+                    setMuxInput(activePad);
+                }
+                else
+                {
+                    //start reading x/y coordinates
+                    padReadingIndex++;
+                }
+            }
+            else
+            {
+                //just reset read index back to zero, don't switch pad yet
+                padReadingIndex = 0;
             }
         }
+        else
+        {
+            //next pressure reading
+            padReadingIndex++;
+        }
+    }
+    else if (padReadingIndex == readX)
+    {
+        //read x
+        coordinateSamples[sampleCounter] = ADC;
+        sampleCounter++;
 
-        bitWrite(dataReady, pad_sample_buffer_head, 0);
+        if (sampleCounter == 3)
+        {
+            //store median value
+            storeMedianValue(coordinateX);
+
+            //reset pressure count
+            sampleCounter = 0;
+
+            //start sampling y
+            padReadingIndex++;
+        }
+    }
+    else if (padReadingIndex == readY)
+    {
+        //read y
+        coordinateSamples[sampleCounter] = ADC;
+        sampleCounter++;
+
+        if (sampleCounter == 3)
+        {
+            //store median value
+            storeMedianValue(coordinateY);
+
+            //reset pressure count
+            sampleCounter = 0;
+
+            //everything is read, skip to next pad and start over
+            padReadingIndex = 0;
+
+            activePad++;
+
+            if (activePad == NUMBER_OF_PADS)
+                activePad = 0;
+
+            //set new pad
+            setMuxInput(activePad);
+        }
     }
 
-    return returnValue;
+    //configure i/o for readout
+    (*valueSetup[padReadingIndex])();
+
+    //switch adc channel
+    setADCchannel(adcPinReadOrder_board[padReadingIndex]);
 }

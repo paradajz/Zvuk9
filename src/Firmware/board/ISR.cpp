@@ -328,5 +328,18 @@ ISR(TIMER3_COMPA_vect)
         updateStuff = 0;
     }
 
-    startADCconversion();
+    static uint8_t xyDelay = 0;
+
+    if (padReadingIndex == readX)
+    {
+        if (xyDelay < 50)
+            xyDelay++;
+        else
+            startADCconversion();
+    }
+    else
+    {
+        xyDelay = 0;
+        startADCconversion();
+    }
 }
