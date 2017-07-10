@@ -20,7 +20,14 @@ bool Pads::isPadPressed(int8_t pad)
 {
     assert(SCALE_CHECK(pad));
 
-    return bitRead(padPressed, pad);
+    bool value;
+
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    {
+        value = bitRead(padPressed, pad);
+    }
+
+    return value;
 }
 
 ///

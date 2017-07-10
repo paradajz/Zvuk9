@@ -118,9 +118,6 @@ class Pads
     //midi scaling
     uint8_t scalePressure(uint8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type);
 
-    //data sampling/debouncing
-    bool pressureStable(uint8_t padNumber, bool pressDetected);
-
     //data availability checks
     bool checkVelocity(uint8_t pad);
     bool checkAftertouch(uint8_t pad, bool velocityAvailable);
@@ -218,8 +215,7 @@ class Pads
     //debouncing
     uint16_t                aftertouchActivated;
 
-    uint8_t                 padDebounceTimer[NUMBER_OF_PADS],
-                            xSendTimer[NUMBER_OF_PADS],
+    uint8_t                 xSendTimer[NUMBER_OF_PADS],
                             ySendTimer[NUMBER_OF_PADS],
                             lastAftertouchUpdateTime[NUMBER_OF_PADS];
 

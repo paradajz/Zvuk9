@@ -1060,7 +1060,10 @@ void Pads::checkRemainingNoteShift()
 
 void Pads::setPadPressState(uint8_t padNumber, bool padState)
 {
-    bitWrite(padPressed, padNumber, padState);
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    {
+        bitWrite(padPressed, padNumber, padState);
+    }
 }
 
 void Pads::setFunctionLEDs(uint8_t padNumber)

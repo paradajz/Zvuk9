@@ -2,7 +2,7 @@
 #include "../lcd/menu/Menu.h"
 #include "../../database/blocks/PadCalibration.h"
 
-uint16_t padPressed;
+volatile uint16_t   padPressed;
 
 void Pads::update()
 {
@@ -215,50 +215,47 @@ bool Pads::checkVelocity(uint8_t pad)
     bool pressDetected = (calibratedPressure > 0);
     bool returnValue = false;
 
-    if (pressureStable(pad, pressDetected))
+    switch (pressDetected)
     {
-        //pad reading is stable
-        switch (pressDetected)
+        case true:
+        if (!isPadPressed(pad))
         {
-            case true:
-            if (!bitRead(padPressed, pad))
-            {
-                //pad isn't already pressed
-                //sensor is really pressed
-                lastVelocityValue[pad] = calibratedPressure;
-                bitWrite(padPressed, pad, true);  //set pad pressed
-                bitWrite(lastMIDInoteState, pad, true);
-                returnValue = true;
-            }
-
-            //always update lastPressure value
-            lastPressureValue[pad] = value;
-            break;
-
-            case false:
-            if (bitRead(padPressed, pad))
-            {
-                //pad is already pressed
-                lastVelocityValue[pad] = calibratedPressure;
-                bitWrite(lastMIDInoteState, pad, false);
-                returnValue = true;
-                lastXMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
-                lastYMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
-                bitWrite(padPressed, pad, false);  //set pad not pressed
-                if (isCalibrationEnabled() && (activeCalibration == coordinateZ))
-                {
-                    //reset calibration
-                    if (!leds.getLEDstate(LED_TRANSPORT_RECORD))
-                        display.displayPressureCalibrationStatus(false);
-                    else
-                        display.displayPressureCalibrationStatus(true);
-
-                    pressureCalibrationTime = 0;
-                    pressureCalibrationLastChange = 0;
-                }
-            }
-            break;
+            //pad isn't already pressed
+            //sensor is really pressed
+            setPadPressState(pad, true);
+            lastVelocityValue[pad] = calibratedPressure;
+            bitWrite(lastMIDInoteState, pad, true);
+            returnValue = true;
         }
+
+        //always update lastPressure value
+        lastPressureValue[pad] = value;
+        break;
+
+        case false:
+        if (isPadPressed(pad))
+        {
+            //pad is already pressed
+            setPadPressState(pad, false);
+            lastVelocityValue[pad] = calibratedPressure;
+            bitWrite(lastMIDInoteState, pad, false);
+            returnValue = true;
+            lastXMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
+            lastYMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
+
+            if (isCalibrationEnabled() && (activeCalibration == coordinateZ))
+            {
+                //reset calibration
+                if (!leds.getLEDstate(LED_TRANSPORT_RECORD))
+                display.displayPressureCalibrationStatus(false);
+                else
+                display.displayPressureCalibrationStatus(true);
+
+                pressureCalibrationTime = 0;
+                pressureCalibrationLastChange = 0;
+            }
+        }
+        break;
     }
 
     return returnValue;
@@ -408,10 +405,6 @@ bool Pads::checkX(uint8_t pad)
 
     int16_t value = board.getPadX(pad);
 
-    #ifdef DEBUG
-    printf_P(PSTR("X for pad %d: %d\n"), pad, value);
-    #endif
-
     if (value == -1)
         return false;
 
@@ -515,35 +508,6 @@ bool Pads::checkY(uint8_t pad)
     }
 
     return false;
-}
-
-bool Pads::pressureStable(uint8_t pad, bool pressDetected)
-{
-    if (pressDetected)
-    {
-        if (!padDebounceTimer[pad])
-        {
-            padDebounceTimer[pad]++;
-            return false;
-        }
-        else
-        {
-            if (padDebounceTimer[pad] >= PAD_DEBOUNCE_TIME)
-            {
-                return true;
-            }
-            else
-            {
-                padDebounceTimer[pad]++;
-                return false;
-            }
-        }
-    }
-    else
-    {
-        padDebounceTimer[pad] = 0;
-        return true;
-    }
 }
 
 void Pads::checkMIDIdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)

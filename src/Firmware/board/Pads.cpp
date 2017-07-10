@@ -1,8 +1,6 @@
 #include "Board.h"
 #include "../interface/pads/DataTypes.h"
 
-#define PAD_SAMPLE_BUFFER_SIZE  3
-
 const uint8_t       padIDArray[] =
 {
     PAD_0,
@@ -16,26 +14,21 @@ const uint8_t       padIDArray[] =
     PAD_8
 };
 
-const uint8_t       muxCommonPinsAnalogRead[] =
+const uint8_t             adcPinReadOrder_board[] =
 {
-    MUX_COMMON_PIN_0_PIN,
-    MUX_COMMON_PIN_1_PIN,
-    MUX_COMMON_PIN_2_PIN,
-    MUX_COMMON_PIN_3_PIN
-};
-
-uint8_t             adcPinReadOrder_board[] =
-{
-    muxCommonPinsAnalogRead[2], //pressure, first reading
-    muxCommonPinsAnalogRead[0], //pressure, second reading
-    muxCommonPinsAnalogRead[0], //x coordinate
-    muxCommonPinsAnalogRead[2]  //y coordinate
+    MUX_COMMON_PIN_2_PIN, //pressure, first reading
+    MUX_COMMON_PIN_0_PIN, //pressure, second reading
+    MUX_COMMON_PIN_2_PIN, //x coordinate
+    MUX_COMMON_PIN_0_PIN  //y coordinate
 };
 
 volatile uint16_t   coordinateSamples[3];
 volatile uint16_t   pressureReading[2];
 
 uint8_t             sampleCounter;
+
+//uint16_t firstPressureIgnored;
+volatile uint16_t   velocityStored;
 
 //three coordinates
 volatile int16_t    extractedSamples[3][NUMBER_OF_PADS];
@@ -68,7 +61,7 @@ void setupPressure()
     setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 }
 
-void setupX()
+void setupY()
 {
     //x is read from y+
     //set 0/5V across x+/x-
@@ -83,14 +76,14 @@ void setupX()
     setHigh(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 }
 
-void setupY()
+void setupX()
 {
     //y is read from x+
     //set 0/5V across y+/y-
     setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
     setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
     setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN); //read this
-    setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN); //output!
+    setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 
     setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
     setHigh(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
@@ -128,6 +121,7 @@ uint16_t Board::getPadPressure(uint8_t pad)
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
         returnValue = extractedSamples[coordinateZ][pad];
+        bitWrite(velocityStored, activePad, 0);
     }
 
     return returnValue;
@@ -182,38 +176,35 @@ ISR(ADC_vect)
         if (padReadingIndex == readPressure1)
         {
             //store pressure sample
-            coordinateSamples[sampleCounter] = (1023 - (pressureReading[readPressure1] - pressureReading[readPressure0]));
+            if (sampleCounter >= 3)
+            {
+                //ignore first three readings
+                coordinateSamples[sampleCounter-3] = (1023 - (pressureReading[readPressure1] - pressureReading[readPressure0]));
+            }
+
             sampleCounter++;
 
-            if (sampleCounter == 3)
+            if (sampleCounter == 6)
             {
-                //first, store median value
-                storeMedianValue(coordinateZ);
+                //make sure *not* to overwrite velocity value
+                if (!bitRead(padPressed, activePad) && !bitRead(velocityStored, activePad))
+                {
+                    //store median value
+                    storeMedianValue(coordinateZ);
+
+                    if (extractedSamples[coordinateZ][activePad] > 0)
+                        bitWrite(velocityStored, activePad, 1);
+                }
+                else if (bitRead(padPressed, activePad))
+                {
+                    storeMedianValue(coordinateZ);
+                }
 
                 //reset pressure count
                 sampleCounter = 0;
 
-                //only allow x/y readout if pad is pressed
-                if (!bitRead(padPressed, activePad))
-                {
-                    //pad isn't pressed - don't bother with x/y reading
-                    //reset readIndex
-                    padReadingIndex = 0;
-
-                    //switch to new pad
-                    activePad++;
-
-                    if (activePad == NUMBER_OF_PADS)
-                        activePad = 0;
-
-                    //set new pad
-                    setMuxInput(activePad);
-                }
-                else
-                {
-                    //start reading x/y coordinates
-                    padReadingIndex++;
-                }
+                //start reading x/y coordinates
+                padReadingIndex++;
             }
             else
             {

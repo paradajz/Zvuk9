@@ -1,12 +1,6 @@
 #pragma once
 
 ///
-/// \brief Counts after which pad press is considered stable once pad press has been detected.
-/// Debouncing time is 20 milliseconds. Divide time with PAD_READOUT_TIME to get counts instead of milliseconds to save RAM.
-///
-#define PAD_DEBOUNCE_TIME                           1
-
-///
 /// \brief Time in milliseconds after which notes from pad are sent once X and Y MIDI messages have been sent.
 ///
 #define PAD_NOTE_SEND_DELAY                         5
@@ -36,10 +30,10 @@
 #define AFTERTOUCH_PRESSURE_RATIO_UPPER             11
 
 ///
-/// \brief Time in milliseconds after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.
+/// \brief Readings after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.
 /// Used to debounce rapidly changing aftertouch values.
 ///
-#define AFTERTOUCH_SEND_TIMEOUT                     (100/PAD_READOUT_TIME)+1
+#define AFTERTOUCH_SEND_TIMEOUT                     5
 
 ///
 /// \brief Difference between current and previous aftertouch reading after AFTERTOUCH_SEND_TIMEOUTms used to detect value change.
@@ -47,10 +41,10 @@
 #define AFTERTOUCH_SEND_TIMEOUT_STEP                3
 
 ///
-/// \brief Time in milliseconds after which X/Y value needs to change by XY_SEND_TIMEOUT_STEP in order to send new value.
+/// \brief Readings after which X/Y value needs to change by XY_SEND_TIMEOUT_STEP in order to send new value.
 /// Used to debounce rapidly changing X/Y values.
 ///
-#define XY_SEND_TIMEOUT                             (35/PAD_READOUT_TIME)
+#define XY_SEND_TIMEOUT                             5
 
 ///
 /// \brief Difference between current and previous aftertouch reading after XY_SEND_TIMEOUT used to detect value change.
@@ -89,12 +83,6 @@
 /// \brief Total number of zones per pad for which calibration data is stored.
 ///
 #define PRESSURE_CALIBRATION_ZONES                  (PRESSURE_CALIBRATION_X_ZONES*PRESSURE_CALIBRATION_Y_ZONES)
-
-///
-/// \brief Hardcoded lower pressure limit for all pads/zones.
-/// Only upper pressure limit is being calibrated.
-///
-#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER            40
 
 ///
 /// \brief Time in seconds after which last read pressure value on certain pressure zone is considered calibrated value in calibration mode.
