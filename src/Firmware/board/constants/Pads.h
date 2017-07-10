@@ -4,4 +4,8 @@
 #include "Hardware.h"
 #include "../DataTypes.h"
 
-#define PAD_READOUT_TIME    (int)(CORE_TIMER_RUN_TIME*(float)NUMBER_OF_PADS*(float)PAD_READINGS+(float)1.0)
+///
+/// \brief Hardcoded lower pressure limit for all pads/zones.
+/// Only upper pressure limit is being calibrated.
+///
+#define DEFAULT_PAD_PRESSURE_LIMIT_LOWER            20

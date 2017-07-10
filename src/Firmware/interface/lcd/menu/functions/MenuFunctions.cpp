@@ -103,9 +103,6 @@ bool factoryReset(functionArgument argument)
 bool deviceInfo(functionArgument argument)
 {
     display.displayDeviceInfo();
-    #ifdef DEBUG
-    printf_P(PSTR("Pad readout time: %d\n"), PAD_READOUT_TIME);
-    #endif
     return true;
 }
 
