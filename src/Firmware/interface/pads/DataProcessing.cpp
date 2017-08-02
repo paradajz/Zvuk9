@@ -159,14 +159,14 @@ void Pads::update()
         if (!getEditModeState())
         {
             //don't send midi data while in menu
-            if (!menu.menuDisplayed())
+            if (!menu.isMenuDisplayed())
                 checkMIDIdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
             if (restoreLCD)
             {
                 uint8_t padIndex = getLastTouchedPad();
 
-                if (!menu.menuDisplayed())
+                if (!menu.isMenuDisplayed())
                     checkLCDdata(padIndex, true, true, true, true);
 
                 if (splitEnabled)
@@ -178,7 +178,7 @@ void Pads::update()
                 //i hate this function
                 if (i == getLastTouchedPad())
                 {
-                    if (menu.menuDisplayed())
+                    if (menu.isMenuDisplayed())
                     {
                         if (calibrationEnabled)
                             checkLCDdata(i, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
@@ -297,7 +297,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
             lastAftertouchUpdateTime[pad] = 0;
 
             if (!bitRead(aftertouchActivated, pad))
-            bitWrite(aftertouchActivated, pad, true);
+                bitWrite(aftertouchActivated, pad, true);
 
             uint8_t padsPressed = 0;
 
@@ -312,14 +312,15 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                 for (int i=0; i<NUMBER_OF_PADS; i++)
                 {
                     if (isPadPressed(i) && bitRead(aftertouchActivated, i))
-                    padsPressed++;
+                        padsPressed++;
                 }
 
                 if (padsPressed == 1)
                 {
                     maxAftertouchValue = calibratedPressureAfterTouch;
                     return true;
-                } else if (padsPressed > 1)
+                }
+                else if (padsPressed > 1)
                 {
                     //find max pressure
                     uint8_t tempMaxValue = 0;
@@ -365,8 +366,8 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
         if (velocityAvailable && bitRead(aftertouchActivated, pad))
         {
             uint8_t pressedPadCounter = 0;
-
             lastAftertouchValue[pad] = 0;
+
             switch(aftertouchType)
             {
                 case aftertouchPoly:
@@ -377,7 +378,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                 {
                     //count how many pads are pressed with activated aftertouch
                     if (bitRead(aftertouchActivated, i) && isPadPressed(i) && bitRead(aftertouchSendEnabled, i))
-                    pressedPadCounter++;
+                        pressedPadCounter++;
                 }
 
                 if (!pressedPadCounter)
@@ -589,17 +590,14 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
         {
             if (bitRead(xSendEnabled, pad))
             {
-                display.displayXYposition(lastXMIDIvalue[pad], coordinateX);
-
-                if (!calibrationEnabled)
-                    display.displayXYcc(ccXPad[pad], coordinateX);
+                display.displayXYcc(coordinateX, ccXPad[pad]);
+                display.displayXYposition(coordinateX, lastXMIDIvalue[pad]);
             }
             else
             {
-                display.clearXYposition(coordinateX);
-
-                if (!calibrationEnabled)
-                    display.clearXYcc(coordinateX);
+                //clear
+                display.displayXYcc(coordinateX);
+                display.displayXYposition(coordinateX);
             }
         }
 
@@ -607,23 +605,19 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
         {
             if (bitRead(ySendEnabled, pad))
             {
-                display.displayXYposition(lastYMIDIvalue[pad], coordinateY);
-
-                if (!calibrationEnabled)
-                    display.displayXYcc(ccYPad[pad], coordinateY);
+                display.displayXYcc(coordinateY, ccYPad[pad]);
+                display.displayXYposition(coordinateY, lastYMIDIvalue[pad]);
             }
             else
             {
-                display.clearXYposition(coordinateY);
-
-                if (!calibrationEnabled)
-                    display.clearXYcc(coordinateY);
+                display.displayXYcc(coordinateY);
+                display.displayXYposition(coordinateY);
             }
         }
 
         if (aftertouchAvailable)
         {
-            if (bitRead(aftertouchSendEnabled, pad) && bitRead(aftertouchActivated, pad))
+            if (getMIDISendState(pad, onOff_aftertouch) && bitRead(aftertouchActivated, pad))
             {
                 switch(aftertouchType)
                 {
@@ -638,47 +632,38 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
             }
             else
             {
-                display.clearAftertouch();
+                //clear
+                display.displayAftertouch();
             }
-        }
-        else if (velocityAvailable && !bitRead(aftertouchActivated, pad))
-        {
-            display.clearAftertouch();
         }
 
         if (velocityAvailable)
         {
-            display.displayVelocity(lastVelocityValue[getLastTouchedPad()]);
+            display.displayVelocity(lastVelocityValue[pad]);
 
             if (!isCalibrationEnabled())
             {
                 display.displayActivePadNotes();
-                display.displayMIDIchannel();
-
-                if (isPredefinedScale(activeScale))
-                {
-                    if (noteShiftLevel != 0)
-                        display.displayNoteShiftLevel(noteShiftLevel);
-                }
+                display.displayMIDIchannel(getMIDIchannel(pad));
             }
         }
 
         if (lastShownPad != pad)
         {
             lastShownPad = pad;
-            display.displayPad();
+            display.displayPad(pad+1);
         }
     }
     else if (!getNumberOfPressedPads() && !lcdCleared)
     {
-        display.clearPadData();
+        display.clearPadPressData();
         lcdCleared = true;
         lastShownPad = -1;
     }
     else
     {
-        if (velocityAvailable)
-            display.clearAftertouch();
+        //if (velocityAvailable)
+            //display.clearAftertouch();
     }
 }
 
