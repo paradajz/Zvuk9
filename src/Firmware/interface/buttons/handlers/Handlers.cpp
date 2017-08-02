@@ -1,6 +1,7 @@
 #include "Handlers.h"
 
 #include "../../pads/Pads.h"
+#include "../../MIDIconf.h"
 #include "../../buttons/Buttons.h"
 #include "../../leds/LEDs.h"
 #include "../../lcd/LCD.h"
@@ -323,8 +324,6 @@ void handleUpDown(uint8_t id, bool state)
                 }
                 else
                 {
-                    //normally, this is called in automatically in Pads.cpp
-                    //but on first occasion call it manually
                     #ifdef DEBUG
                     printf_P(PSTR("Pad edit mode entered.\n"));
                     #endif
@@ -363,7 +362,7 @@ void handleUpDown(uint8_t id, bool state)
             {
                 case false:
                 pads.setActiveOctave(direction ? pads.getActiveOctave()+1 : pads.getActiveOctave()-1);
-                display.displayActiveOctave();
+                display.setupPadEditScreen(pads.getLastTouchedPad()+1, pads.getActiveOctave());
                 leds.displayActiveNoteLEDs(true, lastTouchedPad);
                 direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
                 break;
@@ -405,6 +404,8 @@ void handleUpDown(uint8_t id, bool state)
                     buttons.disable(BUTTON_ON_OFF_NOTES);
 
                     changeOutput_t shiftResult = pads.shiftNote(direction);
+                    //make sure scale shifting is updated on display after message is cleared
+                    display.displayProgramInfo(pads.getActiveProgram()+1, pads.getActiveScale(), pads.getActiveTonic(), pads.getScaleShiftLevel());
                     display.displayNoteChange(shiftResult, noteShift, pads.getScaleShiftLevel());
                 }
                 else
@@ -437,6 +438,8 @@ void handleTonic(uint8_t id, bool state)
             case outputChanged:
             case noChange:
             leds.displayActiveNoteLEDs();
+            //make sure tonic is updated on display after message is cleared
+            display.displayProgramInfo(pads.getActiveProgram()+1, pads.getActiveScale(), pads.getActiveTonic(), pads.getScaleShiftLevel());
             display.displayNoteChange(result, tonicChange, activeTonic);
             break;
 
@@ -463,9 +466,9 @@ void handleProgramEncButton(uint8_t id, bool state)
     if (!state)
         return;
 
-    if (!menu.menuDisplayed())
+    if (!menu.isMenuDisplayed())
     {
-        menu.displayMenu(userMenu);
+        menu.show(userMenu);
         #ifdef DEBUG
         printf_P(PSTR("Entering user menu\n"));
         #endif
@@ -482,7 +485,7 @@ void handlePresetEncButton(uint8_t id, bool state)
     if (!state)
         return;
 
-    if (menu.menuDisplayed())
+    if (menu.isMenuDisplayed())
     {
         //return
         menu.confirmOption(false);
@@ -502,6 +505,6 @@ void handlePresetEncButton(uint8_t id, bool state)
     else
     {
         //return
-        display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());
+        display.displayProgramInfo(pads.getActiveProgram()+1, pads.getActiveScale(), pads.getActiveTonic(), pads.getScaleShiftLevel());
     }
 }
