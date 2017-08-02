@@ -18,13 +18,17 @@ void LCD::init()
     u8x8.setFont(u8x8_font_pressstart2p_r);
     u8x8.clear();
 
-    setupLCDlayout();
-
     //init char arrays
     for (int i=0; i<LCD_HEIGHT; i++)
     {
-        lcdLine[i][0] = '\0';
-        lcdLineMessage[i][0] = '\0';
+        for (int j=0; j<MAX_TEXT_SIZE-2; j++)
+        {
+            lcdLine[i][j] = ' ';
+            lcdLineMessage[i][j] = ' ';
+        }
+
+        lcdLine[i][MAX_TEXT_SIZE-1] = '\0';
+        lcdLineMessage[i][MAX_TEXT_SIZE-1] = '\0';
     }
 
     displayMessage_var = false;
@@ -130,9 +134,19 @@ void LCD::removeMessage()
     messageTime = 0;
 }
 
-void LCD::displayMessage(uint8_t row, const char *message)
+void LCD::displayMessage(uint8_t row, const char *message, uint8_t startIndex)
 {
-    strcpy(lcdLineMessage[row], message);
+    uint8_t size = strlen(message);
+
+    //clear entire message first
+    for (int j=0; j<MAX_TEXT_SIZE-2; j++)
+        lcdLineMessage[row][j] = ' ';
+
+    lcdLineMessage[row][MAX_TEXT_SIZE-1] = '\0';
+
+    for (int i=0; i<size; i++)
+        lcdLineMessage[row][startIndex+i] = message[i];
+
     messageDisplayTime = rTimeMs();
     displayMessage_var = true;
 
@@ -144,73 +158,29 @@ void LCD::displayMessage(uint8_t row, const char *message)
         charChange[i] = (uint32_t)0xFFFFFFFF;
 }
 
-void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex, bool overwrite)
+void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex)
 {
     uint8_t size = strlen(text);
 
-    if (overwrite)
+    //#ifdef DEBUG
+    //printf_P(PSTR("Received following text for row %d: >%s<\nText size: %d\n"), row, text, size);
+    //#endif
+
+    for (int i=0; i<size; i++)
     {
-        //overwrite current text on selected line
-
-        //append spaces to beginning
-        if (startIndex)
-        {
-            //first, start new line with startIndex spaces
-            //use tempBuffer since it's highly likely that text actually points to stringBuffer
-            uint8_t size_sb = 0;
-            startLine(true);
-            addSpaceToCharArray(startIndex, size_sb, true);
-            endLine(size_sb, true);
-
-            //join tempbuffer with text
-            strcat(tempBuffer, text);
-
-            for (int i=0; i<(int)strlen(tempBuffer); i++)
-            {
-                if (tempBuffer[i] != lcdLine[row][i])
-                    bitWrite(charChange[row], i, 1);
-            }
-
-            //finally, copy new line to lcdLine[row]
-            strcpy(lcdLine[row], tempBuffer);
-        }
-        else
-        {
-            strcpy(lcdLine[row], text);
-            charChange[row] = (uint32_t)0xFFFFFFFF;
-        }
+        lcdLine[row][startIndex+i] = text[i];
+        bitWrite(charChange[row], startIndex+i, 1);
     }
-    else
-    {
-        //append characters
-        //we need to find out current string size
-        uint8_t currentStringSize = strlen(lcdLine[row]);
 
-        //now, we append the characters
-        uint8_t charArrayIndex = 0;
-
-        while (charArrayIndex < size)
-        {
-            //make sure EOL isn't copied
-            lcdLine[row][startIndex+charArrayIndex] = text[charArrayIndex];
-            bitWrite(charChange[row], startIndex+charArrayIndex, 1);
-            charArrayIndex++;
-        }
-
-        //we need to determine whether we need to change current EOL index
-        bool changeEOLindex = (size+startIndex) > currentStringSize;
-
-        switch(changeEOLindex)
-        {
-            case false:
-            break;
-
-            case true:
-            //we need to set EOL char to a new position
-            lcdLine[row][startIndex+size] = '\0';
-            break;
-        }
-    }
+    //#ifdef DEBUG
+    //for (int i=0; i<MAX_TEXT_SIZE; i++)
+    //{
+        //if (lcdLine[row][i] == '\0')
+            //printf_P(PSTR("EOL\n"));
+        //else
+            //printf_P(PSTR("%c\n"), lcdLine[row][i]);
+    //}
+    //#endif
 }
 
 void LCD::setMessageTime(int32_t msgTime)
@@ -221,6 +191,11 @@ void LCD::setMessageTime(int32_t msgTime)
 void LCD::setDirectWriteState(bool state)
 {
     directWrite = state;
+}
+
+uint8_t LCD::getTextCenter(uint8_t textSize)
+{
+    return LCD_WIDTH/2 - (textSize/2);
 }
 
 LCD display;
