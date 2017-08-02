@@ -35,14 +35,12 @@ void Encoders::update(bool process)
             continue;
 
         if (steps == 0)
-            continue;;
+            continue;
 
         bool direction = steps > 0;
 
         if (lastStepTime[i] < SPEED_TIMEOUT)
             steps = ENCODER_SPEED_2;
-
-        lastStepTime[i] = 0;
 
         if (pads.getEditModeState())
         {
@@ -65,6 +63,7 @@ void Encoders::update(bool process)
                 buttons.setModifierState(false);
 
             (*encoderHandler[i])(i, direction, abs(steps));
+            lastStepTime[i] = 0;
         }
     }
 }
