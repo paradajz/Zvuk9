@@ -176,15 +176,15 @@ ISR(ADC_vect)
         if (padReadingIndex == readPressure1)
         {
             //store pressure sample
-            if (sampleCounter >= 3)
+            if (sampleCounter >= 1)
             {
-                //ignore first three readings
-                coordinateSamples[sampleCounter-3] = (1023 - (pressureReading[readPressure1] - pressureReading[readPressure0]));
+                //ignore first reading
+                coordinateSamples[sampleCounter-1] = (1023 - (pressureReading[readPressure1] - pressureReading[readPressure0]));
             }
 
             sampleCounter++;
 
-            if (sampleCounter == 6)
+            if (sampleCounter == 4)
             {
                 //make sure *not* to overwrite velocity value
                 if (!bitRead(padPressed, activePad) && !bitRead(velocityStored, activePad))
