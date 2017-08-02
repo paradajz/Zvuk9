@@ -42,7 +42,7 @@ void Buttons::init()
 
     if (getButtonState(BUTTON_PROGRAM_ENC) && getButtonState(BUTTON_PRESET_ENC))
     {
-        menu.displayMenu(serviceMenu);
+        menu.show(serviceMenu);
         disable();
     }
     else
