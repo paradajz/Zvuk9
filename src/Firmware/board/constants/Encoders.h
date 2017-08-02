@@ -1,7 +1,5 @@
 #pragma once
 
-#define ENCODER_READOUT_TIME    1
-
 const int8_t encoderLookUpTable[] =
 {
     0,
