@@ -7,7 +7,7 @@
 #include "FunctionsOnOff.h"
 #include "CC.h"
 #include "TransportControl.h"
-#include "PadAmount.h"
+#include "Pads.h"
 #include "Misc.h"
 #include "Reset.h"
 #include "Calibration.h"
