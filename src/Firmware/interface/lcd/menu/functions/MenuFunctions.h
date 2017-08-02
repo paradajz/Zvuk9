@@ -54,7 +54,7 @@ bool checkRunningStatus(functionArgument argument);
 
 bool checkTransportCC(functionArgument argument);
 
-bool checkPressureSensitivity(functionArgument argument);
+bool checkVelocitySensitivity(functionArgument argument);
 
 bool checkPressureCurve(functionArgument argument);
 

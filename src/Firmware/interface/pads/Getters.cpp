@@ -335,19 +335,19 @@ curve_t Pads::getCCcurve(int8_t pad, padCoordinate_t coordinate)
 /// \brief Checks for currently active pressure sensitivity setting.
 /// \returns Active pressure sensitivity (enumerated type). See pressureSensitivity_t enumeration.
 ///
-pressureSensitivity_t Pads::getPressureSensitivity()
+velocitySensitivity_t Pads::getVelocitySensitivity()
 {
-    return pressureSensitivity;
+    return velocitySensitivity;
 }
 
 ///
-/// \brief Checks for currently active pressure curve.
-/// Possible pressure curves are curve_linear_up, curve_log_up_1 and curve_exp_up.
-/// \returns Active pressure curve (enumerated type). See curve_t enumeration.
+/// \brief Checks for currently active velocity curve.
+/// Possible velocity curves are curve_linear_up, curve_log_up_1 and curve_exp_up.
+/// \returns Active velocity curve (enumerated type). See curve_t enumeration.
 ///
-curve_t Pads::getPressureCurve()
+curve_t Pads::getVelocityCurve()
 {
-    return pressureCurve;
+    return velocityCurve;
 }
 
 ///
@@ -409,8 +409,8 @@ void Pads::getConfiguration()
 {
     //globals
     aftertouchType = (aftertouchType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
-    pressureSensitivity = (pressureSensitivity_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID);
-    pressureCurve = (curve_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID);
+    velocitySensitivity = (velocitySensitivity_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsVelocitySensitivity, VELOCITY_SETTING_SENSITIVITY_ID);
+    velocityCurve = (curve_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsVelocitySensitivity, VELOCITY_SETTING_CURVE_ID);
 
     //read pad configuration from EEPROM
     getProgramParameters();
@@ -662,7 +662,7 @@ void Pads::getPadLimits()
     #ifdef DEBUG
     printf_P(PSTR("Printing out limits for pads\n"));
     #endif
-    setPressureSensitivity(pressureSensitivity);
+    setVelocitySensitivity(velocitySensitivity);
     getAftertouchLimits();
     getXLimits();
     getYLimits();
@@ -672,17 +672,17 @@ void Pads::getPressureLimits()
 {
     uint8_t percentageIncrease = 0;
 
-    switch(pressureSensitivity)
+    switch(velocitySensitivity)
     {
-        case pressure_soft:
+        case velocity_soft:
         //default
         break;
 
-        case pressure_medium:
+        case velocity_medium:
         percentageIncrease = VELOCITY_PRESSURE_RATIO_UPPER_MEDIUM;
         break;
 
-        case pressure_hard:
+        case velocity_hard:
         percentageIncrease = VELOCITY_PRESSURE_RATIO_UPPER_HARD;
         break;
 

@@ -110,7 +110,7 @@ typedef enum
 
 typedef enum
 {
-    pressure_soft,
-    pressure_medium,
-    pressure_hard
-} pressureSensitivity_t;
+    velocity_soft,
+    velocity_medium,
+    velocity_hard
+} velocitySensitivity_t;

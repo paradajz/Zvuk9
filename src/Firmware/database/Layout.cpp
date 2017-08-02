@@ -266,8 +266,8 @@ void Database::createLayout()
 
         DBMS::addSection(DB_BLOCK_GLOBAL_SETTINGS, section);
 
-        //globalSettingsPressure
-        section.numberOfParameters = PRESSURE_SETTINGS;
+        //globalSettingsVelocity
+        section.numberOfParameters = VELOCITY_SETTINGS;
         section.defaultValue = 0;
         section.autoIncrement = false;
         section.parameterType = BYTE_PARAMETER;

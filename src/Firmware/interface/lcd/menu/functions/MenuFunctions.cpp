@@ -162,7 +162,7 @@ bool enableCalibration(functionArgument argument)
         pads.setMIDISendState(onOff_aftertouch, false);
         leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
         //set lowest level for pressure sensitivity
-        pads.setPressureSensitivity(pressure_soft);
+        pads.setVelocitySensitivity(velocity_soft);
         if (!leds.getLEDstate(LED_TRANSPORT_RECORD))
             display.displayPressureCalibrationStatus(false);
         else
@@ -313,13 +313,13 @@ bool checkTransportCC(functionArgument argument)
     return false;
 }
 
-bool checkPressureSensitivity(functionArgument argument)
+bool checkVelocitySensitivity(functionArgument argument)
 {
-    switch((pressureSensitivity_t)argument.argument1)
+    switch((velocitySensitivity_t)argument.argument1)
     {
-        case pressure_soft:
-        case pressure_medium:
-        case pressure_hard:
+        case velocity_soft:
+        case velocity_medium:
+        case velocity_hard:
         //ok
         break;
 
@@ -331,12 +331,12 @@ bool checkPressureSensitivity(functionArgument argument)
     switch(argument.argument2)
     {
         case true:
-        pads.setPressureSensitivity((pressureSensitivity_t)argument.argument1);
+        pads.setVelocitySensitivity((velocitySensitivity_t)argument.argument1);
         return true;
         break;
 
         case false:
-        return (pads.getPressureSensitivity() == (pressureSensitivity_t)argument.argument1);
+        return (pads.getVelocitySensitivity() == (velocitySensitivity_t)argument.argument1);
         break;
     }
 
@@ -361,12 +361,12 @@ bool checkPressureCurve(functionArgument argument)
     switch(argument.argument2)
     {
         case true:
-        pads.setPressureCurve((curve_t)argument.argument1);
+        pads.setVelocityCurve((curve_t)argument.argument1);
         return true;
         break;
 
         case false:
-        return (pads.getPressureCurve() == (curve_t)argument.argument1);
+        return (pads.getVelocityCurve() == (curve_t)argument.argument1);
         break;
 
     }

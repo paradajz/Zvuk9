@@ -6,7 +6,7 @@
 typedef enum
 {
     globalSettingsMIDI,
-    globalSettingsPressure,
+    globalSettingsVelocitySensitivity,
     GLOBAL_SETTINGS_SECTIONS
 } globalSettingsSection;
 
@@ -38,18 +38,18 @@ const uint8_t defaultMIDIsettingArray[MIDI_SETTINGS] =
     0 //reserved
 };
 
-#define PRESSURE_SETTING_SENSITIVITY                0
-#define PRESSURE_SETTING_CURVE                      curve_linear_up
+#define VELOCITY_SETTING_SENSITIVITY                0
+#define VELOCITY_SETTING_CURVE                      curve_linear_up
 
 typedef enum
 {
-    PRESSURE_SETTING_SENSITIVITY_ID,
-    PRESSURE_SETTING_CURVE_ID,
-    PRESSURE_SETTINGS
-} pressureSettings;
+    VELOCITY_SETTING_SENSITIVITY_ID,
+    VELOCITY_SETTING_CURVE_ID,
+    VELOCITY_SETTINGS
+} velocitySettings;
 
-const uint8_t defaultPressureSettingsArray[PRESSURE_SETTINGS] =
+const uint8_t defaultVelocitySettingsArray[VELOCITY_SETTINGS] =
 {
-    PRESSURE_SETTING_SENSITIVITY,
-    PRESSURE_SETTING_CURVE
+    VELOCITY_SETTING_SENSITIVITY,
+    VELOCITY_SETTING_CURVE
 };

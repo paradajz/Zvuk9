@@ -19,20 +19,20 @@ void Menu::createUserMenuLayout()
             menuItem[userMenuItem_pressureSensitivity_1].stringPointer = pressure_sensitivity_1_string;
             menuItem[userMenuItem_pressureSensitivity_1].level = 111;
             menuItem[userMenuItem_pressureSensitivity_1].checkable = true;
-            menuItem[userMenuItem_pressureSensitivity_1].function = checkPressureSensitivity;
-            menuItem[userMenuItem_pressureSensitivity_1].argument.argument1 = (uint8_t)pressure_soft;
+            menuItem[userMenuItem_pressureSensitivity_1].function = checkVelocitySensitivity;
+            menuItem[userMenuItem_pressureSensitivity_1].argument.argument1 = (uint8_t)velocity_soft;
 
             menuItem[userMenuItem_pressureSensitivity_2].stringPointer = pressure_sensitivity_2_string;
             menuItem[userMenuItem_pressureSensitivity_2].level = 112;
             menuItem[userMenuItem_pressureSensitivity_2].checkable = true;
-            menuItem[userMenuItem_pressureSensitivity_2].function = checkPressureSensitivity;
-            menuItem[userMenuItem_pressureSensitivity_2].argument.argument1 = (uint8_t)pressure_medium;
+            menuItem[userMenuItem_pressureSensitivity_2].function = checkVelocitySensitivity;
+            menuItem[userMenuItem_pressureSensitivity_2].argument.argument1 = (uint8_t)velocity_medium;
 
             menuItem[userMenuItem_pressureSensitivity_3].stringPointer = pressure_sensitivity_3_string;
             menuItem[userMenuItem_pressureSensitivity_3].level = 113;
             menuItem[userMenuItem_pressureSensitivity_3].checkable = true;
-            menuItem[userMenuItem_pressureSensitivity_3].function = checkPressureSensitivity;
-            menuItem[userMenuItem_pressureSensitivity_3].argument.argument1 = (uint8_t)pressure_hard;
+            menuItem[userMenuItem_pressureSensitivity_3].function = checkVelocitySensitivity;
+            menuItem[userMenuItem_pressureSensitivity_3].argument.argument1 = (uint8_t)velocity_hard;
         }
 
         menuItem[userMenuItem_pressureCurve].stringPointer = menuOption_pressureCurve_string;

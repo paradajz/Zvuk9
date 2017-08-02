@@ -88,6 +88,6 @@ void Database::initGlobalSettings()
         database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, i, defaultMIDIsettingArray[i]);
 
     //init pressure settings
-    for (int i=0; i<PRESSURE_SETTINGS; i++)
-        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, i, defaultPressureSettingsArray[i]);
+    for (int i=0; i<VELOCITY_SETTINGS; i++)
+        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsVelocitySensitivity, i, defaultVelocitySettingsArray[i]);
 }

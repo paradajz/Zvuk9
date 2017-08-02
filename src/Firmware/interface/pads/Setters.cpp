@@ -1085,16 +1085,16 @@ void Pads::setFunctionLEDs(uint8_t padNumber)
     }
 }
 
-void Pads::setPressureSensitivity(pressureSensitivity_t type)
+void Pads::setVelocitySensitivity(velocitySensitivity_t type)
 {
-    pressureSensitivity = type;
-    database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_SENSITIVITY_ID, type);
+    velocitySensitivity = type;
+    database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsVelocitySensitivity, VELOCITY_SETTING_SENSITIVITY_ID, type);
 
     getPressureLimits();
 }
 
-void Pads::setPressureCurve(curve_t curve)
+void Pads::setVelocityCurve(curve_t curve)
 {
-    pressureCurve = curve;
-    database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsPressure, PRESSURE_SETTING_CURVE_ID, curve);
+    velocityCurve = curve;
+    database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsVelocitySensitivity, VELOCITY_SETTING_CURVE_ID, curve);
 }

@@ -40,8 +40,8 @@ class Pads
     uint8_t getCC(int8_t pad, padCoordinate_t type);
     uint8_t getCClimit(int8_t pad, padCoordinate_t type, limitType_t limitType);
     curve_t getCCcurve(int8_t pad, padCoordinate_t curve);
-    pressureSensitivity_t getPressureSensitivity();
-    curve_t getPressureCurve();
+    velocitySensitivity_t getVelocitySensitivity();
+    curve_t getVelocityCurve();
     uint8_t getMIDIchannel(int8_t pad);
     bool isCalibrationEnabled();
     padCoordinate_t getCalibrationMode();
@@ -90,8 +90,8 @@ class Pads
     //pad info
     
 
-    void setPressureSensitivity(pressureSensitivity_t type);
-    void setPressureCurve(curve_t curve);
+    void setVelocitySensitivity(velocitySensitivity_t type);
+    void setVelocityCurve(curve_t curve);
 
     //calibration
     bool calibrateXY(padCoordinate_t type, limitType_t limitType, uint8_t pad, uint16_t limit);
@@ -247,8 +247,8 @@ class Pads
     padCoordinate_t         activeCalibration;
 
     //pressure info
-    pressureSensitivity_t   pressureSensitivity;
-    curve_t                 pressureCurve;
+    velocitySensitivity_t   velocitySensitivity;
+    curve_t                 velocityCurve;
 
     bool                    editModeActivated;
 };

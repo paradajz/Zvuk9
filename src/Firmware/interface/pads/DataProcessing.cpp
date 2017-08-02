@@ -210,7 +210,7 @@ bool Pads::checkVelocity(uint8_t pad)
         bitWrite(pressureReduction, pad, 0);
 
     uint8_t calibratedPressure = scalePressure(pad, value, getPressureZone(pad), pressureVelocity);
-    calibratedPressure = curves.getCurveValue(pressureCurve, calibratedPressure, 0, 127);
+    calibratedPressure = curves.getCurveValue(velocityCurve, calibratedPressure, 0, 127);
 
     bool pressDetected = (calibratedPressure > 0);
     bool returnValue = false;
