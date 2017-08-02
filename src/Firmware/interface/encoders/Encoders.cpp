@@ -52,7 +52,7 @@ void Encoders::update(bool process)
 
         //allow only program and scale encoder while in menu
         //no message on display? maybe TO-DO
-        if (menu.menuDisplayed())
+        if (menu.isMenuDisplayed())
         {
             if (!((i == PROGRAM_ENCODER) || (i == X_MAX_ENCODER) || (i == X_MIN_ENCODER) || (i == Y_MAX_ENCODER) || (i == Y_MIN_ENCODER)))
                 continue;
