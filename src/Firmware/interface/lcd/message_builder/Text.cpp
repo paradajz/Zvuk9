@@ -75,6 +75,11 @@ void LCD::displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, int8_
 
             addNumberToCharArray(scaleShift, size);
         }
+        else
+        {
+            while (size < LCD_WIDTH)
+                addSpaceToCharArray(1, size);
+        }
     }
     else
     {
