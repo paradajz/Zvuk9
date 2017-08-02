@@ -14,9 +14,6 @@ typedef enum
 #define MIDI_SETTING_RUNNING_STATUS                 0
 #define MIDI_SETTING_NOTE_OFF_TYPE                  1 //noteOffType_standardNoteOff
 #define MIDI_SETTING_TRANSPORT_CC                   0x00
-#define MIDI_SETTING_TRANSPORT_CC_PLAY              125
-#define MIDI_SETTING_TRANSPORT_CC_STOP              126
-#define MIDI_SETTING_TRANSPORT_CC_RECORD            127
 
 typedef enum
 {
@@ -36,9 +33,9 @@ const uint8_t defaultMIDIsettingArray[MIDI_SETTINGS] =
     MIDI_SETTING_RUNNING_STATUS,
     MIDI_SETTING_NOTE_OFF_TYPE,
     MIDI_SETTING_TRANSPORT_CC,
-    MIDI_SETTING_TRANSPORT_CC_PLAY,
-    MIDI_SETTING_TRANSPORT_CC_STOP,
-    MIDI_SETTING_TRANSPORT_CC_RECORD
+    0, //reserved
+    0, //reserved
+    0 //reserved
 };
 
 #define PRESSURE_SETTING_SENSITIVITY                0
