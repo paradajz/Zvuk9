@@ -138,7 +138,7 @@ int main()
     sei();
     #endif
 
-    display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());
+    display.setupHomeScreen();
 
     buttons.init();
 
