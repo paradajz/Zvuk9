@@ -268,9 +268,6 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
     {
         uint8_t calibratedPressureAfterTouch = scalePressure(pad, lastPressureValue[pad], getPressureZone(pad), pressureAftertouch);
 
-        if (!calibratedPressureAfterTouch)
-            return false; //don't allow aftertouch 0
-
         if (lastAftertouchUpdateTime[pad] < 255)
             lastAftertouchUpdateTime[pad]++;
 
@@ -282,7 +279,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
         //so that we don't send fluctuating values
         if (lastAftertouchUpdateTime[pad] > AFTERTOUCH_SEND_TIMEOUT)
         {
-            if (abs(calibratedPressureAfterTouch - lastAftertouchValue[pad]) > AFTERTOUCH_SEND_TIMEOUT_STEP)
+            if ((abs(calibratedPressureAfterTouch - lastAftertouchValue[pad]) > AFTERTOUCH_SEND_TIMEOUT_STEP) || ((calibratedPressureAfterTouch != lastAftertouchValue[pad]) && !calibratedPressureAfterTouch))
                 updateAftertouch = true;
         }
         else if (calibratedPressureAfterTouch != lastAftertouchValue[pad])
@@ -328,7 +325,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                     for (int i=0; i<NUMBER_OF_PADS; i++)
                     {
                         if (!isPadPressed(i))
-                        continue;
+                            continue;
 
                         if (!bitRead(aftertouchActivated, i))
                         continue;
@@ -522,7 +519,12 @@ void Pads::checkMIDIdata(uint8_t pad, bool velocityAvailable, bool aftertouchAva
 
     //send aftertouch immediately
     if (aftertouchAvailable && bitRead(aftertouchSendEnabled, pad))
+    {
         sendAftertouch(pad);
+
+        if (isAftertouchActivated(pad) && !lastAftertouchValue[pad])
+            bitWrite(aftertouchActivated, pad, 0);
+    }
 
     if (velocityAvailable && bitRead(noteSendEnabled, pad))
     {
