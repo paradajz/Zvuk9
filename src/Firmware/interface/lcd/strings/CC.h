@@ -8,14 +8,11 @@ const char yMin_string[] PROGMEM = "Y min=";
 const char xCC_string[] PROGMEM = "X CC=";
 const char yCC_string[] PROGMEM = "Y CC=";
 
-const char xCCid_string[] PROGMEM = "CCx";
-const char yCCid_string[] PROGMEM = "CCy";
+const char xCCid_string[] PROGMEM = "ccX: ";
+const char yCCid_string[] PROGMEM = "ccY: ";
 
 const char xPosition_string[] PROGMEM = "x";
 const char yPosition_string[] PROGMEM = "y";
-
-const char xyPositionClear_string[] PROGMEM = "    ";
-const char xyCCclear_string[] PROGMEM = "      ";
 
 PGM_P const ccArray[] PROGMEM =
 {
