@@ -158,6 +158,8 @@ class Pads
     void checkRemainingOctaveShift();
     void checkRemainingNoteShift();
 
+    bool isAftertouchActivated(uint8_t pad);
+
     padCalibrationSection getPressureZone(uint8_t pad);
 
     //last midi values

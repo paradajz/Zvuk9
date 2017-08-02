@@ -805,3 +805,13 @@ padCalibrationSection Pads::getPressureZone(uint8_t pad)
 
     return (padCalibrationSection)(column + row*PRESSURE_CALIBRATION_X_ZONES);
 }
+
+///
+/// \brief Checks if aftertouch is activated on requested pad.
+/// @param [in] pad Pad which is being checked.
+/// \returns True if aftertouch is activated on requested pad, false otherwise.
+///
+bool Pads::isAftertouchActivated(uint8_t pad)
+{
+    return bitRead(aftertouchActivated, pad);
+}
