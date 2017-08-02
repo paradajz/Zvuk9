@@ -5,8 +5,7 @@
 
 bool Pads::setEditModeState(bool state, int8_t pad)
 {
-    if ((pad < 0) || (pad >= NUMBER_OF_PADS))
-        return false;
+    assert(PAD_CHECK(pad));
 
     switch(state)
     {
@@ -17,16 +16,13 @@ bool Pads::setEditModeState(bool state, int8_t pad)
 
         editModeActivated = true;
 
-        display.displayPadEditMode();
-        display.displayActiveOctave();
-        display.displayActivePadNotes();
+        display.setupPadEditScreen(pad+1, getActiveOctave(), true);
         leds.displayActiveNoteLEDs(true, pad);
         break;
 
         case false:
         editModeActivated = false;
-        display.clearPadEditMode();
-        display.displayProgramAndScale(activeProgram+1, activeScale);
+        display.setupHomeScreen();
         //after exiting from pad edit mode, restore note led states
         leds.displayActiveNoteLEDs();
         break;
