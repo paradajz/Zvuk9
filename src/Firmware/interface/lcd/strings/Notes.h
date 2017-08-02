@@ -17,21 +17,17 @@ const char noNotes_string[] PROGMEM = "<no assigned notes>";
 
 const char tonic_string[] PROGMEM = "Tonic ";
 const char octave_string[] PROGMEM = "Octave ";
-const char activeOctave_string[] PROGMEM = "Active octave: ";
-
-const char padEditMode_string[] PROGMEM = "Pad edit mode";
+const char padEditOctave_string[] PROGMEM = "Octave ";
+const char assignedNotes_string[] PROGMEM = "Assigned notes:";
 
 const char notesShifted_string[] PROGMEM = "Notes shifted";
 const char notesShiftLevel_string[] PROGMEM = "Current level: ";
 const char notesShiftNoLevel_string[] PROGMEM = "No shift";
 
-const char velocity_string[] PROGMEM = "v";
-const char velocityClear_string[] PROGMEM = "    ";
-const char notesClear_editMode_string[] PROGMEM = "                         ";
-const char notesClear_string[] PROGMEM = "     ";
+const char velocity_string[] PROGMEM = "v: ";
+const char aftertouch_string[] PROGMEM = "at: ";
 
 const char noteShift_string[] PROGMEM = "n";
-const char noteShiftClear_string[] PROGMEM = "   ";
 
 PGM_P const noteNameArray[] PROGMEM =
 {
