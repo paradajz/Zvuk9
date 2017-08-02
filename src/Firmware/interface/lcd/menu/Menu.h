@@ -21,8 +21,8 @@ class Menu : LCD
     Menu();
     void init();
     void exitMenu();
-    void displayMenu(menuType_t type);
-    bool menuDisplayed();
+    void show(menuType_t type);
+    bool isMenuDisplayed();
     void changeOption(bool direction);
     void confirmOption(bool confirm);
     void createServiceMenuLayout();

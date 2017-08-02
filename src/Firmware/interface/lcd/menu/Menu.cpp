@@ -17,7 +17,7 @@ void Menu::init()
     
 }
 
-void Menu::displayMenu(menuType_t type)
+void Menu::show(menuType_t type)
 {
     activeMenu = type;
 
@@ -40,6 +40,9 @@ void Menu::displayMenu(menuType_t type)
     activeOption = 0;
     functionRunning = false;
 
+    //clear entire display
+    display.clearAll();
+
     setMenuTitle(true);
     menuSize = getMenuSize();
     getMenuItems();
@@ -59,7 +62,8 @@ void Menu::setMenuTitle(bool rootTitle)
         strcpy_P(tempBuffer, menuItem[indexes[currentOptionIndex]].stringPointer);
         strcat(stringBuffer, tempBuffer);
         size = strlen_P(menuItem[indexes[currentOptionIndex]].stringPointer) + 1;
-        updateDisplay(0, text, 0, true, size);
+
+        updateDisplay(0, text, 0, size);
     }
     else
     {
@@ -68,14 +72,14 @@ void Menu::setMenuTitle(bool rootTitle)
             case userMenu:
             strcpy_P(stringBuffer, menuType_user_string);
             size = progmemCharArraySize(menuType_user_string);
-            updateDisplay(0, text, 0, true, size);
+            updateDisplay(0, text, 0, size);
             break;
             break;
 
             case serviceMenu:
             strcpy_P(stringBuffer, menuType_service_string);
             size = progmemCharArraySize(menuType_service_string);
-            updateDisplay(0, text, 0, true, size);
+            updateDisplay(0, text, 0, size);
             break;
 
             default:
@@ -171,12 +175,8 @@ void Menu::updateMenuScreen()
             strcat(stringBuffer, tempBuffer);
         }
 
-        updateDisplay(i+1, text, 0, true, size);
+        updateDisplay(i+1, text, 0, size);
     }
-
-    //#ifdef DEBUG
-    //printf_P(PSTR("menuHierarchyPosition: %d\n"), menuHierarchyPosition);
-    //#endif
 }
 
 void Menu::changeOption(bool direction)
@@ -213,7 +213,7 @@ void Menu::exitMenu()
     #endif
 
     //exit menu and restore initial state
-    display.displayProgramAndScale(pads.getActiveProgram()+1, pads.getActiveScale());
+    display.setupHomeScreen();
     //disable calibration if active
     pads.setCalibrationMode(false);
     //re-enable buttons
@@ -224,7 +224,7 @@ void Menu::exitMenu()
     exitTime = rTimeMs();
 }
 
-bool Menu::menuDisplayed()
+bool Menu::isMenuDisplayed()
 {
     return (activeMenu != noMenu);
 }
@@ -253,7 +253,8 @@ void Menu::confirmOption(bool confirm)
     }
 
     //clear all lines except for the first one
-    clearLines(1);
+    for (int i=1; i<LCD_HEIGHT; i++)
+        clearLine(i);
 
     if (confirm)
     {
