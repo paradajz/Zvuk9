@@ -8,11 +8,10 @@ void LCD::displayOutOfRange()
     strcpy_P(stringBuffer, outOfRange_string);
     size = progmemCharArraySize(outOfRange_string);
 
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
-    strcpy_P(stringBuffer, emptyLine_string);
-    size = LCD_WIDTH;
-    updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+    clearLine(LCD_ROW_MESSAGE_2, false);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
 }
 
 void LCD::displayMIDIchannelChange()
@@ -24,7 +23,11 @@ void LCD::displayMIDIchannelChange()
     size = progmemCharArraySize(midiChannelChange_string);
 
     addNumberToCharArray(channel, size);
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
+
+    clearLine(LCD_ROW_MESSAGE_2, false);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
+
     displayPadAmount(pad+1);
     display.setMessageTime(INFINITE_MESSAGE_TIME);
 }
@@ -33,10 +36,15 @@ void LCD::displayCCchange(padCoordinate_t type, uint8_t ccValue)
 {
     uint8_t size = 0;
     uint8_t pad = pads.getLastTouchedPad()+1;
+
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(ccArray[(uint8_t)type])));
     size = pgm_read_byte(&ccArray_sizes[type]);
     addNumberToCharArray(ccValue, size);
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
+
+    clearLine(LCD_ROW_MESSAGE_2, false);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
+
     displayPadAmount(pad);
 }
 
@@ -52,8 +60,11 @@ void LCD::displayCurveChange(padCoordinate_t coordinate)
     strcpy_P(tempBuffer, (char*)pgm_read_word(&(curveNameArray[(uint8_t)curve])));
     strcat(stringBuffer, tempBuffer);
     size += pgm_read_byte(&curveNameArray_sizes[(uint8_t)curve]);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    clearLine(LCD_ROW_MESSAGE_2, false);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
+
     displayPadAmount(padNumber+1);
 }
 
@@ -99,7 +110,11 @@ void LCD::displayCClimitChange(padCoordinate_t coordinate, limitType_t type, uin
     }
 
     addNumberToCharArray(ccValue, size);
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
+
+    clearLine(LCD_ROW_MESSAGE_2, false);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
+
     displayPadAmount(padNumber);
 }
 
@@ -126,10 +141,17 @@ void LCD::displayOnOffChange(onOff_t type, uint8_t functionState)
             size = pgm_read_byte(&onArray_sizes[type]);
         }
 
-        updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+        updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
         if (type != onOff_split)
+        {
             displayPadAmount(padNumber);
+        }
+        else
+        {
+            clearLine(LCD_ROW_MESSAGE_2, false);
+            updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
+        }
         break;
 
         default:
@@ -153,21 +175,19 @@ void LCD::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t
             strcpy_P(tempBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
             size += pgm_read_byte(&noteNameArray_sizes[value]);
             strcat(stringBuffer, tempBuffer);
-            updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+            updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
-            strcpy_P(stringBuffer, emptyLine_string);
-            size = LCD_WIDTH;
-            updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+            clearLine(LCD_ROW_MESSAGE_2, false);
+            updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
             break;
 
             case outOfRange:
             strcpy_P(stringBuffer, outOfRange_string);
             size = progmemCharArraySize(outOfRange_string);
-            updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+            updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
-            strcpy_P(stringBuffer, emptyLine_string);
-            size = LCD_WIDTH;
-            updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+            clearLine(LCD_ROW_MESSAGE_2, false);
+            updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
             break;
 
             default:
@@ -180,11 +200,10 @@ void LCD::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t
         strcpy_P(stringBuffer, octave_string);
         size = progmemCharArraySize(octave_string);
         addNumberToCharArray(value, size);
+        updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
-        updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
-        strcpy_P(stringBuffer, emptyLine_string);
-        size = LCD_WIDTH;
-        updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+        clearLine(LCD_ROW_MESSAGE_2, false);
+        updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
         break;
 
         case noteShift:
@@ -193,7 +212,7 @@ void LCD::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t
             case outputChanged:
             strcpy_P(stringBuffer, notesShifted_string);
             size = progmemCharArraySize(notesShifted_string);
-            updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+            updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
             strcpy_P(stringBuffer, notesShiftLevel_string);
             size = progmemCharArraySize(notesShiftLevel_string);
@@ -214,17 +233,16 @@ void LCD::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t
                 addNumberToCharArray(value, size);
             }
 
-            updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+            updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
             break;
 
             case outOfRange:
             strcpy_P(stringBuffer, outOfRange_string);
             size = progmemCharArraySize(outOfRange_string);
-            updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+            updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
-            strcpy_P(stringBuffer, emptyLine_string);
-            size = LCD_WIDTH;
-            updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+            clearLine(LCD_ROW_MESSAGE_2, false);
+            updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
             break;
 
             default:
@@ -246,11 +264,11 @@ void LCD::displayEditModeNotAllowed(padEditModeResult_t errorType)
         case notUserPreset:
         strcpy_P(stringBuffer, editModeEnterError0_string);
         size = progmemCharArraySize(editModeEnterError0_string);
-        updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+        updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
         strcpy_P(stringBuffer, editModeEnterError1_string);
         size = progmemCharArraySize(editModeEnterError1_string);
-        updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+        updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
         break;
 
         case padNotReleased:
@@ -266,7 +284,7 @@ void LCD::displayNoNotesError()
 {
     strcpy_P(stringBuffer, noNotes_string);
     uint8_t size = progmemCharArraySize(noNotes_string);
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 }
 
 void LCD::displayTransportControl(transportControl_t type)
@@ -296,10 +314,10 @@ void LCD::displayTransportControl(transportControl_t type)
         break;
     }
 
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
-    strcpy_P(stringBuffer, emptyLine_string);
-    size = LCD_WIDTH;
-    updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
+
+    clearLine(LCD_ROW_MESSAGE_2, false);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, LCD_POSITION_MESSAGE_2, size);
 }
 
 void LCD::displayMaxNotesSet()
@@ -308,11 +326,11 @@ void LCD::displayMaxNotesSet()
 
     strcpy_P(stringBuffer, maxNotesSet0_string);
     size = progmemCharArraySize(maxNotesSet0_string);
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
     strcpy_P(stringBuffer, maxNotesSet1_string);
     size = progmemCharArraySize(maxNotesSet1_string);
-    updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
 }
 
 void LCD::displayPadReleaseError(padReleaseError_t error)
@@ -320,7 +338,7 @@ void LCD::displayPadReleaseError(padReleaseError_t error)
     uint8_t size = 0;
     strcpy_P(stringBuffer, relasePad_string);
     size = progmemCharArraySize(relasePad_string);
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
     switch(error)
     {
@@ -363,7 +381,7 @@ void LCD::displayPadReleaseError(padReleaseError_t error)
         return;
     }
 
-    updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
 }
 
 void LCD::displayPadEditChangeParametersError()
@@ -372,18 +390,18 @@ void LCD::displayPadEditChangeParametersError()
 
     strcpy_P(stringBuffer, exitPadMode_string);
     size = progmemCharArraySize(exitPadMode_string);
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
     strcpy_P(stringBuffer, changeParameters_string);
     size = progmemCharArraySize(changeParameters_string);
-    updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
 }
 
 void LCD::displayFirmwareUpdated()
 {
     strcpy_P(stringBuffer, firmware_updated);
     uint8_t size = progmemCharArraySize(firmware_updated);
-    updateDisplay(lcdElements.messageText1.row, message, lcdElements.messageText1.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
     size = 0;
     strcpy_P(stringBuffer, deviceInfo_swVersion_string);
@@ -394,5 +412,40 @@ void LCD::displayFirmwareUpdated()
     appendText(".", size);
     addNumberToCharArray(getSWversion(swVersion_revision), size);
 
-    updateDisplay(lcdElements.messageText2.row, message, lcdElements.messageText2.startIndex, true, size);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
+}
+
+void LCD::displayPadAmount(uint8_t padNumber)
+{
+    uint8_t size = 0;
+
+    bool singlePad = pads.getSplitState();
+
+    strcpy_P(stringBuffer, singlePad ? padAmountSingle_string : padAmountAll_string);
+    size = singlePad ? progmemCharArraySize(padAmountSingle_string) : progmemCharArraySize(padAmountAll_string);
+
+    if (singlePad)
+    {
+        addSpaceToCharArray(1, size);
+        addNumberToCharArray(padNumber, size);
+    }
+
+    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
+}
+
+void LCD::displayWelcomeMessage()
+{
+    strcpy_P(stringBuffer, welcome_string);
+
+    uint8_t charIndex = 0;
+    uint8_t location = getTextCenter(progmemCharArraySize(welcome_string));
+
+    while (stringBuffer[charIndex] != '\0')
+    {
+        u8x8.drawGlyph(location+charIndex, 3, stringBuffer[charIndex]);
+        wait_ms(50);
+        charIndex++;
+    }
+
+    wait_ms(250);
 }
