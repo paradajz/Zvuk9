@@ -280,7 +280,7 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
             <Value>FIXED_NUM_CONFIGURATIONS=1</Value>
             <Value>INTERRUPT_CONTROL_ENDPOINT</Value>
             <Value>USE_STRINGS</Value>
-            <Value>MAX_TEXT_SIZE=32</Value>
+            <Value>MAX_TEXT_SIZE=33</Value>
             <Value>MIDI_SYSEX_ARRAY_SIZE=20</Value>
             <Value>UART_BUFFER_SIZE=30</Value>
             <Value>USE_TX</Value>
@@ -791,7 +791,7 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
     <Compile Include="interface\lcd\DataTypes.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\Layout.cpp">
+    <Compile Include="interface\lcd\Layout.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\LCD.h">
@@ -827,7 +827,7 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
     <Compile Include="interface\lcd\menu\Menu.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\message_builder\MessageBuilder.cpp">
+    <Compile Include="interface\lcd\message_builder\Text.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\message_builder\Messages.cpp">
@@ -857,7 +857,7 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
     <Compile Include="interface\lcd\strings\Notes.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\strings\PadAmount.h">
+    <Compile Include="interface\lcd\strings\Pads.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\strings\Reset.h">
@@ -885,6 +885,9 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\leds\Variables.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="interface\MIDIconf.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\pads\Calibration.h">
