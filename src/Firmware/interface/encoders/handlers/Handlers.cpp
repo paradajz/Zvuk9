@@ -8,7 +8,7 @@
 
 void handleProgram(uint8_t id, bool direction, uint8_t steps)
 {
-    if (menu.menuDisplayed())
+    if (menu.isMenuDisplayed())
     {
         menu.changeOption(direction);
         return;
@@ -41,7 +41,7 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
     leds.displayActiveNoteLEDs();
 
     //display scale on display
-    display.displayProgramAndScale(activeProgram+1, currentPreset);
+    display.displayProgramInfo(activeProgram+1, currentPreset, pads.getActiveTonic(), pads.getScaleShiftLevel());
 }
 
 void handleScale(uint8_t id, bool direction, uint8_t steps)
@@ -96,7 +96,7 @@ void handleScale(uint8_t id, bool direction, uint8_t steps)
         leds.displayActiveNoteLEDs();
 
         //display scale on display
-        display.displayProgramAndScale(pads.getActiveProgram()+1, activePreset);
+        display.displayProgramInfo(pads.getActiveProgram()+1, activePreset, pads.getActiveTonic(), pads.getScaleShiftLevel());
     }
 }
 
@@ -136,10 +136,10 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         return;
     }
 
-    if (menu.menuDisplayed() && !pads.getNumberOfPressedPads())
+    if (menu.isMenuDisplayed() && !pads.getNumberOfPressedPads())
         return;
 
-    if (!pads.isCalibrationEnabled() && menu.menuDisplayed())
+    if (!pads.isCalibrationEnabled() && menu.isMenuDisplayed())
         return;
 
     padCoordinate_t coordinate = coordinateX;
@@ -159,7 +159,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
-            display.displayXYposition(newValue, coordinateX);
+            //display.displayXYposition(newValue, coordinateX);
         }
         break;
 
@@ -174,7 +174,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
-            display.displayXYposition(newValue, coordinateX);
+            //display.displayXYposition(newValue, coordinateX);
         }
         break;
 
@@ -190,7 +190,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
-            display.displayXYposition(newValue, coordinateY);
+            //display.displayXYposition(newValue, coordinateY);
         }
         break;
 
@@ -206,7 +206,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
             //refresh value on display
             uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
-            display.displayXYposition(newValue, coordinateY);
+            //display.displayXYposition(newValue, coordinateY);
         }
         break;
     }
