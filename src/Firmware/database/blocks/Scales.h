@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../interface/pads/DataTypes.h"
+
 typedef enum
 {
     scalePredefinedSection,

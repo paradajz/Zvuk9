@@ -1,6 +1,7 @@
 #include "Pads.h"
 #include "../leds/LEDs.h"
 #include "../../database/Database.h"
+#include "Scales.h"
 
 ///
 /// \brief Checks last pad which has been pressed.
@@ -405,6 +406,38 @@ uint16_t Pads::getCalibrationLimit(int8_t pad, padCoordinate_t coordinate, limit
     }
 }
 
+///
+/// \brief Checks if aftertouch is activated on requested pad.
+/// @param [in] pad Pad which is being checked.
+/// \returns True if aftertouch is activated on requested pad, false otherwise.
+///
+bool Pads::isAftertouchActivated(int8_t pad)
+{
+    assert(PAD_CHECK(pad));
+
+    return bitRead(aftertouchActivated, pad);
+}
+
+///
+/// \brief Checks for currently active pressure zone on requested pad.
+/// @param [in] pad Pad which is being checked.
+/// \returns Currently active pressure zone (16 zones in total).
+///
+padCalibrationSection Pads::getActivePressureZone(int8_t pad)
+{
+    assert(PAD_CHECK(pad));
+
+    //find out pressure zone
+    uint8_t row = PRESSURE_CALIBRATION_Y_ZONES - 1 - (getScaledXY(pad, board.getPadY(pad), coordinateY, false) / PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE);
+    //invert
+    uint8_t column = getScaledXY(pad, board.getPadX(pad), coordinateX, false) / PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE;
+
+    return (padCalibrationSection)(column + row*PRESSURE_CALIBRATION_X_ZONES);
+}
+
+///
+/// \brief Initializes all global, pad, scale and program data by reading values from database.
+///
 void Pads::getConfiguration()
 {
     //globals
@@ -417,6 +450,9 @@ void Pads::getConfiguration()
     getPadLimits();
 }
 
+///
+/// \brief Initializes all program data by reading values from database.
+///
 void Pads::getProgramParameters()
 {
     #ifdef DEBUG
@@ -436,6 +472,9 @@ void Pads::getProgramParameters()
     getScaleParameters();
 }
 
+///
+/// \brief Initializes all pad data by reading values from database.
+///
 void Pads::getPadParameters()
 {
     splitEnabled = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
@@ -537,13 +576,11 @@ void Pads::getPadParameters()
     leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(lastTouchedPad, onOff_y) ? ledStateFull : ledStateOff);
 }
 
+///
+/// \brief Initializes all scale data by reading values from database.
+///
 void Pads::getScaleParameters()
 {
-    //#ifdef DEBUG
-    //printf_P("Printing out scale settings\n");
-    //printf_P("Scale: %d\n", activeScale);
-    //#endif
-
     //clear all pad notes before assigning new ones
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
@@ -551,30 +588,10 @@ void Pads::getScaleParameters()
             padNote[i][j] = BLANK_NOTE;
     }
 
-    generateScale((scale_t)activeScale);
-
-    //reset this variable first
-    activeOctave = DEFAULT_OCTAVE;
-
-    for (int i=0; i<NOTES_PER_PAD; i++)
-    {
-        if (padNote[0][i] != BLANK_NOTE)
-        {
-            activeOctave = getOctaveFromNote(padNote[0][i]);
-            #ifdef DEBUG
-            printf_P(PSTR("Active octave: %d\n"), activeOctave);
-            #endif
-            break;
-        }
-    }
-}
-
-void Pads::generateScale(scale_t scale)
-{
-    if (isPredefinedScale(scale))
+    if (isPredefinedScale(activeScale))
     {
         //predefined scale
-        uint8_t notesPerScale = getNotesPerScale(scale);
+        uint8_t notesPerScale = getPredefinedScaleNotes((scale_t)activeScale);
         uint8_t octave = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
         note_t tonic = (note_t)database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
         noteShiftLevel = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
@@ -589,7 +606,7 @@ void Pads::generateScale(scale_t scale)
 
         for (int i=0; i<notesPerScale; i++)
         {
-            padNote[i][0] = getScaleNote(scale, i);
+            padNote[i][0] = getScaleNote((scale_t)activeScale, i);
             noteCounter++;
         }
 
@@ -599,7 +616,7 @@ void Pads::generateScale(scale_t scale)
 
             for (int i=notesPerScale; i<NUMBER_OF_PADS; i++)
             {
-                padNote[i][0] = getScaleNote(scale, noteCounter);
+                padNote[i][0] = getScaleNote((scale_t)activeScale, noteCounter);
                 //these notes are actually in another octave
                 padNote[i][0] += MIDI_NOTES;
                 noteCounter++;
@@ -621,22 +638,18 @@ void Pads::generateScale(scale_t scale)
         {
             uint8_t temp = abs(noteShiftLevel);
             for (int i=0; i<temp; i++)
-                shiftNote(false, true);
+            shiftNote(false, true);
         }
         else
         {
             for (int i=0; i<noteShiftLevel; i++)
-                shiftNote(true, true);
+            shiftNote(true, true);
         }
     }
     else
     {
         //user scales
-        //#ifdef DEBUG
-        //printf_P("User scale %d\n", scale-PREDEFINED_SCALES);
-        //#endif
-
-        uint16_t noteID = (scale - PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
+        uint16_t noteID = (activeScale - PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
 
         for (int i=0; i<NUMBER_OF_PADS; i++)
         {
@@ -645,29 +658,40 @@ void Pads::generateScale(scale_t scale)
         }
     }
 
-    //#ifdef DEBUG
-    //printf_P("Printing out notes for pads\n");
-    //for (int i=0; i<MAX_PADS; i++)
-    //{
-        //printf_P("Pad %d: \n", i+1);
-//
-        //for (int j=0; j<NOTES_PER_PAD; j++)
-            //printf_P("%d\n", padNote[i][j]);
-    //}
-    //#endif
+    //reset this variable first
+    activeOctave = DEFAULT_OCTAVE;
+
+    for (int i=0; i<NOTES_PER_PAD; i++)
+    {
+        if (padNote[0][i] != BLANK_NOTE)
+        {
+            activeOctave = getOctaveFromNote(padNote[0][i]);
+            #ifdef DEBUG
+            printf_P(PSTR("Active octave: %d\n"), activeOctave);
+            #endif
+            break;
+        }
+    }
 }
 
+///
+/// \brief Initializes all pad limits for all coordinates by reading values from database.
+///
 void Pads::getPadLimits()
 {
     #ifdef DEBUG
     printf_P(PSTR("Printing out limits for pads\n"));
     #endif
-    setVelocitySensitivity(velocitySensitivity);
+
+    getPressureLimits();
     getAftertouchLimits();
     getXLimits();
     getYLimits();
 }
 
+///
+/// \brief Initializes all pad limits for pressure (Z coordinate) by reading values from database.
+///
 void Pads::getPressureLimits()
 {
     uint8_t percentageIncrease = 0;
@@ -706,6 +730,9 @@ void Pads::getPressureLimits()
     }
 }
 
+///
+/// \brief Initializes all pad limits for aftertouch by scaling pressure limits.
+///
 void Pads::getAftertouchLimits()
 {
     #ifdef DEBUG
@@ -732,6 +759,9 @@ void Pads::getAftertouchLimits()
     }
 }
 
+///
+/// \brief Initializes all pad limits for X coordinate by reading values from database.
+///
 void Pads::getXLimits()
 {
     #ifdef DEBUG
@@ -754,6 +784,9 @@ void Pads::getXLimits()
     #endif
 }
 
+///
+/// \brief Initializes all pad limits for Y coordinate by reading values from database.
+///
 void Pads::getYLimits()
 {
     #ifdef DEBUG
@@ -776,42 +809,89 @@ void Pads::getYLimits()
     #endif
 }
 
-scaleType_t Pads::getScaleType(int8_t scale)
+///
+/// \brief Checks how many notes there are in requested predefined scale.
+/// @param [in] scale Scale which is being checked.
+/// \returns Number of notes in requested scale. If user scale is requested, -1 is returned.
+///
+int8_t Pads::getPredefinedScaleNotes(scale_t scale)
 {
-    switch(scale)
-    {
-        case scaleNaturalMinor:
-        case scaleMelodicMinor:
-        case scaleHarmonicMinor:
-        case scaleMajor:
-        case scaleHarmonicMajor:
-        return sevenNoteScale;
+    //safety check
+    if (isUserScale(scale))
+        return -1;
 
-        case scaleMinorPentatonic:
-        case scaleMajorPentatonic:
-        return fiveNoteScale;
+    return sizeof(scale_notes[scale]) / sizeof(note_t);
+}
+
+///
+/// \brief Returns specific note from specified scale.
+/// @param [in] scale Scale which is being checked.
+/// @param [in] note Note index which is being checked.
+/// \returns Note at specified index from requested scale (enumerated type). See note_t enumeration.
+///
+note_t Pads::getScaleNote(scale_t scale, int8_t note)
+{
+    //safety checks
+
+    if (isUserScale(scale))
+        return MIDI_NOTES;
+
+    if (note >= MIDI_NOTES)
+        return MIDI_NOTES;
+
+    if (note < 0)
+        return MIDI_NOTES;
+
+    return scale_notes[scale][note];
+}
+
+///
+/// \brief Calculates scaled pressure value (0-127) from raw reading (0-1023) on specified pad.
+/// @param [in] pad Pad which is being checked.
+/// @param [in] pressure Raw pressure reading (0-1023).
+/// @param [in] pressureZone Pressure zone which is being checked. Different zones on pad have different calibration data.
+/// @param [in] type Pressure type (velocity or aftertouch). Enumerated type. See pressureType_t enumeration.
+/// \returns Scaled pressure value.
+///
+uint8_t Pads::getScaledPressure(int8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type)
+{
+    assert(PAD_CHECK(pad));
+
+    switch(type)
+    {
+        case pressureAftertouch:
+        return curves.map(constrain(pressure, padAftertouchLimitLower[pad][pressureZone], padAftertouchLimitUpper[pad][pressureZone]), padAftertouchLimitLower[pad][pressureZone], padAftertouchLimitUpper[pad][pressureZone], 0, 127);
+        break;
+
+        case pressureVelocity:
+        return curves.map(constrain(pressure, DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad][pressureZone]), DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad][pressureZone], 0, 127);
+        break;
+    }
+
+    return 0;
+}
+
+///
+/// \brief Calculates scaled X or Y value from raw reading (0-1023) on specified pad.
+/// @param [in] pad Pad which is being checked.
+/// @param [in] xyValue Raw X or Y value (0-1023).
+/// @param [in] type Coordinate which is being checked (X or Y). Enumerated type. See padCoordinate_t enumeration.
+/// @param [in] midiScale If set to true, requested value will be scaled to MIDI range (0-127), otherwise, value will be scaled to raw range (0-1023).
+/// Scaling to raw range is useful in certain scenarios since lowest and largest X or Y values are never 0 and 1023 but some values in between.
+///
+uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale)
+{
+    assert(PAD_CHECK(pad));
+
+    switch (type)
+    {
+        case coordinateX:
+        return curves.map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, midiScale ? 127 : 1023);
+
+        case coordinateY:
+        return curves.invertRange(curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, midiScale ? 127 : 1023), 0, midiScale ? 127 : 1023);
 
         default:
-        return userScale;
+        return 0;
     }
-}
-
-padCalibrationSection Pads::getPressureZone(uint8_t pad)
-{
-    //find out pressure zone
-    uint8_t row = PRESSURE_CALIBRATION_Y_ZONES - 1 - (scaleXY(pad, board.getPadY(pad), coordinateY, false) / PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE);
-    //invert
-    uint8_t column = scaleXY(pad, board.getPadX(pad), coordinateX, false) / PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE;
-
-    return (padCalibrationSection)(column + row*PRESSURE_CALIBRATION_X_ZONES);
-}
-
-///
-/// \brief Checks if aftertouch is activated on requested pad.
-/// @param [in] pad Pad which is being checked.
-/// \returns True if aftertouch is activated on requested pad, false otherwise.
-///
-bool Pads::isAftertouchActivated(uint8_t pad)
-{
-    return bitRead(aftertouchActivated, pad);
 }

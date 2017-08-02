@@ -935,13 +935,7 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
     <Compile Include="interface\pads\Sanity.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\pads\scales\Scales.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="interface\pads\scales\Scales.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="interface\pads\Scaling.cpp">
+    <Compile Include="interface\pads\Scales.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\pads\Setters.cpp">
@@ -1354,7 +1348,6 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
     <Folder Include="interface\leds\" />
     <Folder Include="interface\pads\" />
     <Folder Include="interface\pads\curves" />
-    <Folder Include="interface\pads\scales\" />
     <Folder Include="lufa\" />
     <Folder Include="lufa\LUFA\" />
     <Folder Include="lufa\LUFA\Common\" />

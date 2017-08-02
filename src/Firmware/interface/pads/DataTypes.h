@@ -8,35 +8,6 @@ typedef enum
 
 typedef enum
 {
-    C,
-    C_SHARP,
-    D,
-    D_SHARP,
-    E,
-    F,
-    F_SHARP,
-    G,
-    G_SHARP,
-    A,
-    A_SHARP,
-    B,
-    MIDI_NOTES
-} note_t;
-
-typedef enum
-{
-    scaleNaturalMinor,
-    scaleMelodicMinor,
-    scaleHarmonicMinor,
-    scaleMajor,
-    scaleHarmonicMajor,
-    scaleMinorPentatonic,
-    scaleMajorPentatonic,
-    PREDEFINED_SCALES
-} scale_t;
-
-typedef enum
-{
     aftertouchChannel,
     aftertouchPoly
 } aftertouchType_t;
@@ -54,13 +25,6 @@ typedef enum
     pressureVelocity,
     pressureAftertouch
 } pressureType_t;
-
-typedef enum
-{
-    fiveNoteScale = 5,
-    sevenNoteScale = 7,
-    userScale
-} scaleType_t;
 
 typedef enum
 {
@@ -114,3 +78,32 @@ typedef enum
     velocity_medium,
     velocity_hard
 } velocitySensitivity_t;
+
+typedef enum
+{
+    C,
+    C_SHARP,
+    D,
+    D_SHARP,
+    E,
+    F,
+    F_SHARP,
+    G,
+    G_SHARP,
+    A,
+    A_SHARP,
+    B,
+    MIDI_NOTES
+} note_t;
+
+typedef enum
+{
+    scaleNaturalMinor,
+    scaleMelodicMinor,
+    scaleHarmonicMinor,
+    scaleMajor,
+    scaleHarmonicMajor,
+    scaleMinorPentatonic,
+    scaleMajorPentatonic,
+    PREDEFINED_SCALES
+} scale_t;

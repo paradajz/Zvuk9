@@ -1,7 +1,6 @@
 #pragma once
 
 #include "curves/Curves.h"
-#include "scales/Scales.h"
 #include "Calibration.h"
 #include "../../board/Board.h"
 #include "Config.h"
@@ -46,6 +45,10 @@ class Pads
     bool isCalibrationEnabled();
     padCoordinate_t getCalibrationMode();
     uint16_t getCalibrationLimit(int8_t pad, padCoordinate_t coordinate, limitType_t limitType);
+    int8_t getPredefinedScaleNotes(scale_t scale);
+    note_t getScaleNote(scale_t scale, int8_t note);
+    uint8_t getScaledPressure(int8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type);
+    uint16_t getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale);
 
     //setters
     bool setActiveProgram(int8_t program);
@@ -55,53 +58,19 @@ class Pads
     bool setEditModeState(bool state, int8_t pad = 0);
     bool setSplitState(bool state);
     void setMIDISendState(onOff_t type, bool state);
-
-    //pad edit mode
-    changeOutput_t addNote(uint8_t pad, note_t note);
-
-    //functions on/off
-    //getters
-    
-    //setters
     void setAftertouchType(aftertouchType_t type);
-
-    //notes
-    //getters
-    
-    //setters
-    changeOutput_t shiftOctave(bool direction);
-    changeOutput_t shiftNote(bool direction, bool internalChange = false);
-
-    //CC
-    //getters
-    
-
-
-    //setters
-    changeOutput_t changeCCvalue(bool direction, padCoordinate_t type, int8_t steps);
-    changeOutput_t changeCClimitValue(bool direction, padCoordinate_t coordinate, limitType_t limitType, int8_t steps);
-
-
-    bool setCCcurve(padCoordinate_t coordinate, uint8_t curve);
-
-    //midi channel
     bool setMIDIchannel(uint8_t pad, uint8_t channel);
-
-    //pad info
-    
-
     void setVelocitySensitivity(velocitySensitivity_t type);
     void setVelocityCurve(curve_t curve);
-
-    //calibration
+    void setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
+    bool setCCcurve(padCoordinate_t coordinate, uint8_t curve);
+    changeOutput_t addNote(uint8_t pad, note_t note);
+    changeOutput_t shiftOctave(bool direction);
+    changeOutput_t shiftNote(bool direction, bool internalChange = false);
+    changeOutput_t changeCCvalue(bool direction, padCoordinate_t type, int8_t steps);
+    changeOutput_t changeCClimitValue(bool direction, padCoordinate_t coordinate, limitType_t limitType, int8_t steps);
     bool calibrateXY(padCoordinate_t type, limitType_t limitType, uint8_t pad, uint16_t limit);
     void calibratePressure(uint8_t pad, uint8_t pressureZone, uint16_t limit);
-    void setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
-
-   
-
-    uint16_t scaleXY(uint8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale);
-
 
     private:
     //EEPROM config read
@@ -109,14 +78,13 @@ class Pads
     void getProgramParameters();
     void getScaleParameters();
     void getPadLimits();
-    void getPressureLimits();
     void getXLimits();
     void getYLimits();
+    void getPressureLimits();
     void getAftertouchLimits();
     void getPadParameters();
 
     //midi scaling
-    uint8_t scalePressure(uint8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type);
 
     //data availability checks
     bool checkVelocity(uint8_t pad);
@@ -130,10 +98,6 @@ class Pads
 
     //lcd/led handling on midi event
     void handleNoteLEDs(uint8_t pad, bool state);
-
-    //scale
-    scaleType_t getScaleType(int8_t scale);
-    void generateScale(scale_t scale);
 
     //features on/off
     void setFunctionLEDs(uint8_t padNumber);
@@ -158,9 +122,9 @@ class Pads
     void checkRemainingOctaveShift();
     void checkRemainingNoteShift();
 
-    bool isAftertouchActivated(uint8_t pad);
+    bool isAftertouchActivated(int8_t pad);
 
-    padCalibrationSection getPressureZone(uint8_t pad);
+    padCalibrationSection getActivePressureZone(int8_t pad);
 
     //last midi values
     uint8_t                 lastXMIDIvalue[NUMBER_OF_PADS],

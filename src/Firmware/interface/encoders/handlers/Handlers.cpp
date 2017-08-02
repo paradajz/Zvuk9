@@ -157,7 +157,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
             int8_t step = direction ? -1 : 1;
             pads.calibrateXY(coordinateX, limitTypeMin, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMin) + step);
             //refresh value on display
-            uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
+            uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
             //display.displayXYposition(newValue, coordinateX);
         }
@@ -172,7 +172,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
             int8_t step = direction ? -1 : 1;
             pads.calibrateXY(coordinateX, limitTypeMax, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMax) + step);
             //refresh value on display
-            uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
+            uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
             //display.displayXYposition(newValue, coordinateX);
         }
@@ -188,7 +188,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
             //invert lower/upper logic here
             pads.calibrateXY(coordinateY, limitTypeMax, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + step);
             //refresh value on display
-            uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
+            uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
             //display.displayXYposition(newValue, coordinateY);
         }
@@ -204,7 +204,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
             //invert lower/upper logic here
             pads.calibrateXY(coordinateY, limitTypeMin, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + step);
             //refresh value on display
-            uint16_t newValue = pads.scaleXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
+            uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
             //display.displayXYposition(newValue, coordinateY);
         }

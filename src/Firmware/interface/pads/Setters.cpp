@@ -645,10 +645,10 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange)
     //shift scale one note up or down
     //tonic remains the same, it just gets shifted to other pad
 
-    scaleType_t currentScaleType = getScaleType(activeScale);
-
-    if (currentScaleType == userScale)
+    if (isUserScale(activeScale))
         return notAllowed;
+
+    uint8_t scaleNotes = getPredefinedScaleNotes((scale_t)activeScale);
 
     int16_t tempNoteArray[NUMBER_OF_PADS];
 
@@ -657,7 +657,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange)
         case true:
         //up, one note higher
         //last note gets increased, other notes get shifted down
-        tempNoteArray[NUMBER_OF_PADS-1] = padNote[NUMBER_OF_PADS-currentScaleType][0] + MIDI_NOTES;
+        tempNoteArray[NUMBER_OF_PADS-1] = padNote[NUMBER_OF_PADS-scaleNotes][0] + MIDI_NOTES;
 
         if (tempNoteArray[NUMBER_OF_PADS-1] > 127)
             return outOfRange;
@@ -672,7 +672,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange)
         case false:
         //down, one note lower
         //first note gets decreased, other notes get shifted up
-        tempNoteArray[0] = padNote[currentScaleType-1][0] - MIDI_NOTES;
+        tempNoteArray[0] = padNote[scaleNotes-1][0] - MIDI_NOTES;
 
         if (tempNoteArray[0] < 0)
             return outOfRange;
@@ -688,7 +688,7 @@ changeOutput_t Pads::shiftNote(bool direction, bool internalChange)
 
     if (!internalChange)
     {
-        if (abs(noteShiftLevel) == (uint8_t)currentScaleType)
+        if (abs(noteShiftLevel) == scaleNotes)
             noteShiftLevel = 0;
     }
 

@@ -34,12 +34,12 @@ void Pads::update()
                     pressureCalibrationTime++;
                     if (pressureCalibrationTime < PRESSURE_ZONE_CALIBRATION_TIMEOUT)
                     {
-                        display.displayPressureCalibrationTime(PRESSURE_ZONE_CALIBRATION_TIMEOUT-pressureCalibrationTime, getPressureZone(i)+1, false);
+                        display.displayPressureCalibrationTime(PRESSURE_ZONE_CALIBRATION_TIMEOUT-pressureCalibrationTime, getActivePressureZone(i)+1, false);
                     }
                     else
                     {
-                        display.displayPressureCalibrationTime(0, getPressureZone(i)+1, true);
-                        calibratePressure(i, getPressureZone(i), board.getPadPressure(i));
+                        display.displayPressureCalibrationTime(0, getActivePressureZone(i)+1, true);
+                        calibratePressure(i, getActivePressureZone(i), board.getPadPressure(i));
                     }
 
                     pressureCalibrationLastChange = rTimeMs();
@@ -209,7 +209,7 @@ bool Pads::checkVelocity(uint8_t pad)
     else
         bitWrite(pressureReduction, pad, 0);
 
-    uint8_t calibratedPressure = scalePressure(pad, value, getPressureZone(pad), pressureVelocity);
+    uint8_t calibratedPressure = getScaledPressure(pad, value, getActivePressureZone(pad), pressureVelocity);
     calibratedPressure = curves.getCurveValue(velocityCurve, calibratedPressure, 0, 127);
 
     bool pressDetected = (calibratedPressure > 0);
@@ -266,7 +266,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
     //pad is pressed
     if (bitRead(lastMIDInoteState, pad))
     {
-        uint8_t calibratedPressureAfterTouch = scalePressure(pad, lastPressureValue[pad], getPressureZone(pad), pressureAftertouch);
+        uint8_t calibratedPressureAfterTouch = getScaledPressure(pad, lastPressureValue[pad], getActivePressureZone(pad), pressureAftertouch);
 
         if (lastAftertouchUpdateTime[pad] < 255)
             lastAftertouchUpdateTime[pad]++;
@@ -424,7 +424,7 @@ bool Pads::checkX(uint8_t pad)
         }
     }
 
-    int16_t xValue = scaleXY(pad, value, coordinateX, true);
+    int16_t xValue = getScaledXY(pad, value, coordinateX, true);
     xValue = curves.getCurveValue((curve_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
 
     bool xChanged = false;
@@ -480,7 +480,7 @@ bool Pads::checkY(uint8_t pad)
         }
     }
 
-    int16_t yValue = scaleXY(pad, value, coordinateY, true);
+    int16_t yValue = getScaledXY(pad, value, coordinateY, true);
     yValue = curves.getCurveValue((curve_t)padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
 
     bool yChanged = false;
