@@ -21,7 +21,7 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
         return;
     }
 
-    int8_t activeProgram = pads.getActiveProgram();
+    int8_t activeProgram = pads.getProgram();
 
     if (direction)
         activeProgram++;
@@ -32,16 +32,16 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
         activeProgram = 0;
     else if (activeProgram < 0)
         activeProgram = (NUMBER_OF_PROGRAMS-1);
-    pads.setActiveProgram(activeProgram);
+    pads.setProgram(activeProgram);
 
     //get last active scale on current program
-    uint8_t currentPreset = pads.getActiveScale();
+    uint8_t currentPreset = pads.getScale();
 
     //scale is changed
     leds.displayActiveNoteLEDs();
 
     //display scale on display
-    display.displayProgramInfo(activeProgram+1, currentPreset, pads.getActiveTonic(), pads.getScaleShiftLevel());
+    display.displayProgramInfo(activeProgram+1, currentPreset, pads.getTonic(), pads.getScaleShiftLevel());
 }
 
 void handleScale(uint8_t id, bool direction, uint8_t steps)
@@ -80,7 +80,7 @@ void handleScale(uint8_t id, bool direction, uint8_t steps)
     }
     else
     {
-        int8_t activePreset = pads.getActiveScale();
+        int8_t activePreset = pads.getScale();
 
         if (direction)
         activePreset++;
@@ -92,11 +92,11 @@ void handleScale(uint8_t id, bool direction, uint8_t steps)
         else if (activePreset < 0)
         activePreset = (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1);
 
-        pads.setActiveScale(activePreset);
+        pads.setScale(activePreset);
         leds.displayActiveNoteLEDs();
 
         //display scale on display
-        display.displayProgramInfo(pads.getActiveProgram()+1, activePreset, pads.getActiveTonic(), pads.getScaleShiftLevel());
+        display.displayProgramInfo(pads.getProgram()+1, activePreset, pads.getTonic(), pads.getScaleShiftLevel());
     }
 }
 
@@ -155,7 +155,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         if (pads.isCalibrationEnabled())
         {
             int8_t step = direction ? -1 : 1;
-            pads.calibrateXY(coordinateX, limitTypeMin, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMin) + step);
+            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMin) + step);
             //refresh value on display
             uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
@@ -170,7 +170,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         if (pads.isCalibrationEnabled())
         {
             int8_t step = direction ? -1 : 1;
-            pads.calibrateXY(coordinateX, limitTypeMax, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMax) + step);
+            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMax) + step);
             //refresh value on display
             uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
@@ -186,7 +186,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         {
             int8_t step = direction ? 1 : -1;
             //invert lower/upper logic here
-            pads.calibrateXY(coordinateY, limitTypeMax, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + step);
+            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + step);
             //refresh value on display
             uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
@@ -202,7 +202,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
         {
             int8_t step = direction ? 1 : -1;
             //invert lower/upper logic here
-            pads.calibrateXY(coordinateY, limitTypeMin, lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + step);
+            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + step);
             //refresh value on display
             uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
@@ -263,6 +263,6 @@ void handleCurve(uint8_t id, bool direction, uint8_t steps)
             curve = 0;
     }
 
-    pads.setCCcurve(coordinate, curve);
+    pads.setCCcurve(coordinate, (curve_t)curve);
     display.displayCurveChange(coordinate);
 }

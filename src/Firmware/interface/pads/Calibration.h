@@ -55,8 +55,10 @@
 /// \brief Offset values used to compensate slightly inaccurate calibration when calibrating X/Y coordinates.
 /// @{
 ///
+
 #define X_MIN_CALIBRATION_OFFSET                    10
 #define X_MAX_CALIBRATION_OFFSET                    -10
+
 /// @}
 
 ///

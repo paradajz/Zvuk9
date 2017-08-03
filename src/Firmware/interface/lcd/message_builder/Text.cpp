@@ -10,7 +10,7 @@ void LCD::setupHomeScreen()
 {
     clearAll();
 
-    displayProgramInfo(pads.getActiveProgram()+1, pads.getActiveScale(), pads.getActiveTonic(), pads.getScaleShiftLevel());
+    displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
     displayPad();
     displayActivePadNotes(false);
     displayVelocity();

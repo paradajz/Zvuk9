@@ -660,9 +660,168 @@ bool Pads::calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, 
     return false;
 }
 
+///
+/// \brief Adds note to requested pad.
+/// @param [in] pad Pad to which note is being added.
+/// @param [in] note MIDI note to add (enumerated type). See note_t enumeration.
+/// \returns Result of adding note to pad (enumerated type). See changeResult_t enumeration.
+///
+changeResult_t Pads::addNoteToPad(int8_t pad, note_t note)
+{
+    //used in pad edit mode (user scale)
+    //add or delete note on pressed pad
 
+    uint16_t noteIndex = 0;
+    //calculate note to be added or removed
+    uint8_t newNote = getOctave()*MIDI_NOTES + (uint8_t)note;
 
+    if (newNote > 127)
+    {
+        display.displayOutOfRange();
+        return outOfRange;
+    }
 
+    //note can added or removed, assume adding by default
+    bool addOrRemove = true;
+
+    //check if calculated note is already assigned to pad
+    for (int i=0; i<NOTES_PER_PAD; i++)
+    {
+        if (padNote[pad][i] == newNote)
+        {
+            //note is already present - remove it
+            addOrRemove = false;
+            noteIndex = i;
+            break;
+        }
+    }
+
+    uint16_t noteID = ((uint16_t)activeScale - PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
+
+    //if it isn't, add it
+    if (addOrRemove)
+    {
+        //get number of assigned notes to last touched pad
+        for (int i=0; i<NOTES_PER_PAD; i++)
+        {
+            if (padNote[pad][i] != BLANK_NOTE)
+            noteIndex++;
+        }
+
+        //pads cannot have more than NOTES_PER_PAD notes
+        if (noteIndex == NOTES_PER_PAD)
+        {
+            display.displayMaxNotesSet();
+            return overflow;
+        }
+
+        //assign new pad note
+        padNote[pad][noteIndex] = newNote;
+        database.update(DB_BLOCK_SCALE, scaleUserSection, noteID+noteIndex+(NOTES_PER_PAD*(uint16_t)pad), newNote);
+
+        #ifdef DEBUG
+        printf_P(PSTR("Adding note "));
+        #endif
+    }
+    else
+    {
+        //delete note (assign BLANK_NOTE)
+        newNote = BLANK_NOTE;
+
+        //assign new pad note
+        padNote[pad][noteIndex] = newNote;
+
+        //copy note array
+        uint8_t tempNoteArray[NOTES_PER_PAD];
+
+        for (int i=0; i<NOTES_PER_PAD; i++)
+        tempNoteArray[i] = padNote[pad][i];
+
+        //shift all notes so that BLANK_NOTE is at the end of array
+        for (int i=noteIndex; i<(NOTES_PER_PAD-1); i++)
+        padNote[pad][i] = tempNoteArray[i+1];
+
+        padNote[pad][NOTES_PER_PAD-1] = BLANK_NOTE;
+
+        for (int i=0; i<NOTES_PER_PAD; i++)
+        database.update(DB_BLOCK_SCALE, scaleUserSection, noteID+i+(NOTES_PER_PAD*(uint16_t)pad), padNote[pad][i]);
+
+        #ifdef DEBUG
+        printf_P(PSTR("Removing note "));
+        #endif
+    }
+
+    #ifdef DEBUG
+    printf_P(PSTR("%d, to pad %d"), (uint8_t)note, pad);
+    #endif
+
+    return outputChanged;
+}
+
+changeResult_t Pads::shiftScale(bool direction, bool internalChange)
+{
+    //shift scale one note up or down
+    //tonic remains the same, it just gets shifted to other pad
+
+    if (isUserScale(activeScale))
+        return notAllowed;
+
+    uint8_t scaleNotes = getPredefinedScaleNotes((scale_t)activeScale);
+
+    int16_t tempNoteArray[NUMBER_OF_PADS];
+
+    switch(direction)
+    {
+        case true:
+        //up, one note higher
+        //last note gets increased, other notes get shifted down
+        tempNoteArray[NUMBER_OF_PADS-1] = padNote[NUMBER_OF_PADS-scaleNotes][0] + MIDI_NOTES;
+
+        if (tempNoteArray[NUMBER_OF_PADS-1] > 127)
+            return outOfRange;
+
+        for (int i=0; i<NUMBER_OF_PADS-1; i++)
+            tempNoteArray[i] = padNote[i+1][0];
+
+        if (!internalChange)
+            noteShiftLevel++;
+        break;
+
+        case false:
+        //down, one note lower
+        //first note gets decreased, other notes get shifted up
+        tempNoteArray[0] = padNote[scaleNotes-1][0] - MIDI_NOTES;
+
+        if (tempNoteArray[0] < 0)
+            return outOfRange;
+
+        for (int i=0; i<NUMBER_OF_PADS-1; i++)
+            tempNoteArray[i+1] = padNote[i][0];
+
+        if (!internalChange)
+            noteShiftLevel--;
+        break;
+
+    }
+
+    if (!internalChange)
+    {
+        if (abs(noteShiftLevel) == scaleNotes)
+            noteShiftLevel = 0;
+    }
+
+    if (!internalChange)
+        database.update(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, noteShiftLevel);
+
+    #ifdef DEBUG
+    printf_P(PSTR("Notes shifted %s"), direction ? "up\n" : "down\n");
+    #endif
+
+    for (int i=0; i<NUMBER_OF_PADS; i++)
+        padNote[i][0] = tempNoteArray[i];
+
+    return outputChanged;
+}
 
 
 
@@ -882,160 +1041,9 @@ changeResult_t Pads::changeCClimitValue(bool direction, padCoordinate_t coordina
     return result;
 }
 
-changeResult_t Pads::addNote(uint8_t pad, note_t note)
-{
-    //used in pad edit mode (user scale)
-    //add or delete note on pressed pad
 
-    uint16_t noteIndex = 0;
-    //calculate note to be added or removed
-    uint8_t newNote = getOctave()*MIDI_NOTES + (uint8_t)note;
 
-    if (newNote > 127)
-    {
-        display.displayOutOfRange();
-        return outOfRange;
-    }
-    //note can added or removed, assume adding by default
-    bool addOrRemove = true;
 
-    //check if calculated note is already assigned to pad
-    for (int i=0; i<NOTES_PER_PAD; i++)
-    {
-        if (padNote[pad][i] == newNote)
-        {
-            addOrRemove = false;
-            noteIndex = i;
-            break;
-        }
-    }
-
-    uint16_t noteID = ((uint16_t)activeScale - PREDEFINED_SCALES)*(NUMBER_OF_PADS*NOTES_PER_PAD);
-
-    //if it isn't, add it
-    if (addOrRemove)
-    {
-        //get number of assigned notes to last touched pad
-        for (int i=0; i<NOTES_PER_PAD; i++)
-        {
-            if (padNote[pad][i] != BLANK_NOTE)
-                noteIndex++;
-        }
-
-        //pads cannot have more than NOTES_PER_PAD notes
-        if (noteIndex == NOTES_PER_PAD)
-        {
-            display.displayMaxNotesSet();
-            return overflow;
-        }
-
-        //assign new pad note
-        padNote[pad][noteIndex] = newNote;
-        database.update(DB_BLOCK_SCALE, scaleUserSection, noteID+noteIndex+(NOTES_PER_PAD*(uint16_t)pad), newNote);
-
-        #ifdef DEBUG
-        printf_P(PSTR("Adding note "));
-        #endif
-    }
-    else
-    {
-        //delete note (assign BLANK_NOTE)
-        newNote = BLANK_NOTE;
-
-        //assign new pad note
-        padNote[pad][noteIndex] = newNote;
-
-        //copy note array
-        uint8_t tempNoteArray[NOTES_PER_PAD];
-
-        for (int i=0; i<NOTES_PER_PAD; i++)
-            tempNoteArray[i] = padNote[pad][i];
-
-        //shift all notes so that BLANK_NOTE is at the end of array
-        for (int i=noteIndex; i<(NOTES_PER_PAD-1); i++)
-            padNote[pad][i] = tempNoteArray[i+1];
-
-        padNote[pad][NOTES_PER_PAD-1] = BLANK_NOTE;
-
-        for (int i=0; i<NOTES_PER_PAD; i++)
-            database.update(DB_BLOCK_SCALE, scaleUserSection, noteID+i+(NOTES_PER_PAD*(uint16_t)pad), padNote[pad][i]);
-
-        #ifdef DEBUG
-        printf_P(PSTR("Removing note "));
-        #endif
-    }
-
-    #ifdef DEBUG
-    printf_P(PSTR("%d, to pad %d"), (uint8_t)note, pad);
-    #endif
-
-    return outputChanged;
-}
-
-changeResult_t Pads::shiftNote(bool direction, bool internalChange)
-{
-    //shift scale one note up or down
-    //tonic remains the same, it just gets shifted to other pad
-
-    if (isUserScale(activeScale))
-        return notAllowed;
-
-    uint8_t scaleNotes = getPredefinedScaleNotes((scale_t)activeScale);
-
-    int16_t tempNoteArray[NUMBER_OF_PADS];
-
-    switch(direction)
-    {
-        case true:
-        //up, one note higher
-        //last note gets increased, other notes get shifted down
-        tempNoteArray[NUMBER_OF_PADS-1] = padNote[NUMBER_OF_PADS-scaleNotes][0] + MIDI_NOTES;
-
-        if (tempNoteArray[NUMBER_OF_PADS-1] > 127)
-            return outOfRange;
-
-        for (int i=0; i<NUMBER_OF_PADS-1; i++)
-            tempNoteArray[i] = padNote[i+1][0];
-
-        if (!internalChange)
-            noteShiftLevel++;
-        break;
-
-        case false:
-        //down, one note lower
-        //first note gets decreased, other notes get shifted up
-        tempNoteArray[0] = padNote[scaleNotes-1][0] - MIDI_NOTES;
-
-        if (tempNoteArray[0] < 0)
-            return outOfRange;
-
-        for (int i=0; i<NUMBER_OF_PADS-1; i++)
-            tempNoteArray[i+1] = padNote[i][0];
-
-        if (!internalChange)
-            noteShiftLevel--;
-        break;
-
-    }
-
-    if (!internalChange)
-    {
-        if (abs(noteShiftLevel) == scaleNotes)
-            noteShiftLevel = 0;
-    }
-
-    if (!internalChange)
-        database.update(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, noteShiftLevel);
-
-    #ifdef DEBUG
-    printf_P(PSTR("Notes shifted %s"), direction ? "up\n" : "down\n");
-    #endif
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        padNote[i][0] = tempNoteArray[i];
-
-    return outputChanged;
-}
 
 changeResult_t Pads::shiftOctave(bool direction)
 {

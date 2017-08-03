@@ -246,7 +246,7 @@ inline void storeDigitalIn(uint8_t column)
         even = !even;
 
         //pulse clock pin
-        pulseHightToLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
+        pulseHighToLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
 
         if (even)
         {

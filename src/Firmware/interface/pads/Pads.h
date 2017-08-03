@@ -66,9 +66,9 @@ class Pads
     void setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
     bool calibratePressure(int8_t pad, uint8_t pressureZone, int16_t limit);
     bool calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit);
-    changeResult_t addNote(int8_t pad, note_t note);
+    changeResult_t addNoteToPad(int8_t pad, note_t note);
     changeResult_t shiftOctave(bool direction);
-    changeResult_t shiftNote(bool direction, bool internalChange = false);
+    changeResult_t shiftScale(bool direction, bool internalChange = false);
     changeResult_t changeCCvalue(bool direction, padCoordinate_t type, int8_t steps);
     changeResult_t changeCClimitValue(bool direction, padCoordinate_t coordinate, limitType_t limitType, int8_t steps);
 

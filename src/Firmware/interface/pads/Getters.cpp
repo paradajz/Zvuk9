@@ -50,7 +50,7 @@ uint8_t Pads::getNumberOfPressedPads()
 /// \brief Checks for currently active program.
 /// \returns Currently active program (0 - NUMBER_OF_PROGRAMS-1)
 ///
-uint8_t Pads::getActiveProgram()
+uint8_t Pads::getProgram()
 {
     return activeProgram;
 }
@@ -59,7 +59,7 @@ uint8_t Pads::getActiveProgram()
 /// \brief Checks for currently active scale.
 /// \returns Currently active scale (0 - PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1).
 ///
-uint8_t Pads::getActiveScale()
+uint8_t Pads::getScale()
 {
     return activeScale;
 }
@@ -103,7 +103,7 @@ bool Pads::getEditModeState()
 /// In predefined scales, tonic is written in EEPROM since it's configurable.
 /// \returns Currently active tonic (enumerated type). See note_t enumeration.
 ///
-note_t Pads::getActiveTonic()
+note_t Pads::getTonic()
 {
     if (isUserScale(activeScale))
     {
@@ -128,7 +128,7 @@ note_t Pads::getActiveTonic()
 /// \brief Checks for currently active octave.
 /// \returns Currently active octave (0 - MIDI_NOTES-1).
 ///
-uint8_t Pads::getActiveOctave()
+uint8_t Pads::getOctave()
 {
     return activeOctave;
 }
@@ -631,19 +631,19 @@ void Pads::getScaleParameters()
 
         //now apply saved tonic
         //internal change, do not write anything to eeprom
-        setActiveTonic((note_t)tonic, true);
+        setTonic((note_t)tonic, true);
 
         //finally, apply note shift
         if (noteShiftLevel < 0)
         {
             uint8_t temp = abs(noteShiftLevel);
             for (int i=0; i<temp; i++)
-            shiftNote(false, true);
+            shiftScale(false, true);
         }
         else
         {
             for (int i=0; i<noteShiftLevel; i++)
-            shiftNote(true, true);
+            shiftScale(true, true);
         }
     }
     else
