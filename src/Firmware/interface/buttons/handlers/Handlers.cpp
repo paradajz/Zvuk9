@@ -28,7 +28,7 @@ void handleOnOff(uint8_t id, bool state)
                 leds.setBlinkState(LED_ON_OFF_NOTES, false);
                 //make sure led state is correct
                 //hack: notes on/off can only be ledStateOff (0) or ledStateFull (2) - multiply by 2
-                leds.setLEDstate(LED_ON_OFF_NOTES, (ledState_t)(pads.getMIDISendState(pads.getLastTouchedPad(), onOff_notes)*2));
+                leds.setLEDstate(LED_ON_OFF_NOTES, (ledState_t)(pads.getMIDISendState(pads.getLastTouchedPad(), function_notes)*2));
                 break;
 
                 case BUTTON_ON_OFF_SPLIT:
@@ -68,7 +68,7 @@ void handleOnOff(uint8_t id, bool state)
     //determine action based on pressed button
 
     uint8_t ledNumber = 0;
-    onOff_t lcdMessageType;
+    function_t lcdMessageType;
     ledState_t ledState = ledStateOff;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
@@ -77,10 +77,10 @@ void handleOnOff(uint8_t id, bool state)
         case BUTTON_ON_OFF_NOTES:
         ledNumber = LED_ON_OFF_NOTES;
 
-        pads.setMIDISendState(onOff_notes, !pads.getMIDISendState(lastTouchedPad, onOff_notes));
-        lcdMessageType = onOff_notes;
+        pads.setMIDISendState(function_notes, !pads.getMIDISendState(lastTouchedPad, function_notes));
+        lcdMessageType = function_notes;
 
-        if (pads.getMIDISendState(lastTouchedPad, onOff_notes))
+        if (pads.getMIDISendState(lastTouchedPad, function_notes))
             ledState = ledStateFull;
         else
             ledState = ledStateOff;
@@ -88,33 +88,33 @@ void handleOnOff(uint8_t id, bool state)
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
-        pads.setMIDISendState(onOff_aftertouch, !pads.getMIDISendState(lastTouchedPad, onOff_aftertouch));
-        lcdMessageType = onOff_aftertouch;
+        pads.setMIDISendState(function_aftertouch, !pads.getMIDISendState(lastTouchedPad, function_aftertouch));
+        lcdMessageType = function_aftertouch;
         ledNumber = LED_ON_OFF_AFTERTOUCH;
 
-        if (pads.getMIDISendState(lastTouchedPad, onOff_aftertouch))
+        if (pads.getMIDISendState(lastTouchedPad, function_aftertouch))
             ledState = ledStateFull;
         else
             ledState = ledStateOff;
         break;
 
         case BUTTON_ON_OFF_X:
-        pads.setMIDISendState(onOff_x, !pads.getMIDISendState(lastTouchedPad, onOff_x));
-        lcdMessageType = onOff_x;
+        pads.setMIDISendState(function_x, !pads.getMIDISendState(lastTouchedPad, function_x));
+        lcdMessageType = function_x;
         ledNumber = LED_ON_OFF_X;
 
-        if (pads.getMIDISendState(lastTouchedPad, onOff_x))
+        if (pads.getMIDISendState(lastTouchedPad, function_x))
             ledState = ledStateFull;
         else
             ledState = ledStateOff;
         break;
 
         case BUTTON_ON_OFF_Y:
-        pads.setMIDISendState(onOff_y, !pads.getMIDISendState(lastTouchedPad, onOff_y));
-        lcdMessageType = onOff_y;
+        pads.setMIDISendState(function_y, !pads.getMIDISendState(lastTouchedPad, function_y));
+        lcdMessageType = function_y;
         ledNumber = LED_ON_OFF_Y;
 
-        if (pads.getMIDISendState(lastTouchedPad, onOff_y))
+        if (pads.getMIDISendState(lastTouchedPad, function_y))
             ledState = ledStateFull;
         else
             ledState = ledStateOff;
@@ -123,7 +123,7 @@ void handleOnOff(uint8_t id, bool state)
         case BUTTON_ON_OFF_SPLIT:
         ledNumber = LED_ON_OFF_SPLIT;
         pads.setSplitState(!pads.getSplitState());
-        lcdMessageType = onOff_split;
+        lcdMessageType = function_split;
         pads.getSplitState() ? ledState = ledStateFull : ledState = ledStateOff;
         leds.setBlinkState(ledNumber, false);
         break;
@@ -379,7 +379,7 @@ void handleUpDown(uint8_t id, bool state)
                 //shift entire octave up or down
                 if (!state)
                 {
-                    changeOutput_t shiftResult = pads.shiftOctave(direction);
+                    changeResult_t shiftResult = pads.shiftOctave(direction);
                     uint8_t activeOctave = pads.getActiveOctave();
                     display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
@@ -403,7 +403,7 @@ void handleUpDown(uint8_t id, bool state)
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                     buttons.disable(BUTTON_ON_OFF_NOTES);
 
-                    changeOutput_t shiftResult = pads.shiftNote(direction);
+                    changeResult_t shiftResult = pads.shiftNote(direction);
                     //make sure scale shifting is updated on display after message is cleared
                     display.displayProgramInfo(pads.getActiveProgram()+1, pads.getActiveScale(), pads.getActiveTonic(), pads.getScaleShiftLevel());
                     display.displayNoteChange(shiftResult, noteShift, pads.getScaleShiftLevel());
@@ -430,7 +430,7 @@ void handleTonic(uint8_t id, bool state)
 
     if (!pads.getEditModeState())
     {
-        changeOutput_t result = pads.setActiveTonic(note);
+        changeResult_t result = pads.setActiveTonic(note);
         note_t activeTonic = pads.getActiveTonic();
 
         switch(result)

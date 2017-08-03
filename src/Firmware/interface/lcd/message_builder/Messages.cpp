@@ -118,18 +118,18 @@ void LCD::displayCClimitChange(padCoordinate_t coordinate, limitType_t type, uin
     displayPadAmount(padNumber);
 }
 
-void LCD::displayOnOffChange(onOff_t type, uint8_t functionState)
+void LCD::displayOnOffChange(function_t type, uint8_t functionState)
 {
     uint8_t size = 0;
     uint8_t padNumber = pads.getLastTouchedPad()+1;
 
     switch(type)
     {
-        case onOff_notes:
-        case onOff_aftertouch:
-        case onOff_x:
-        case onOff_y:
-        case onOff_split:
+        case function_notes:
+        case function_aftertouch:
+        case function_x:
+        case function_y:
+        case function_split:
         if (!functionState)
         {
             strcpy_P(stringBuffer, (char*)pgm_read_word(&(offArray[type])));
@@ -143,7 +143,7 @@ void LCD::displayOnOffChange(onOff_t type, uint8_t functionState)
 
         updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
-        if (type != onOff_split)
+        if (type != function_split)
         {
             displayPadAmount(padNumber);
         }
@@ -159,7 +159,7 @@ void LCD::displayOnOffChange(onOff_t type, uint8_t functionState)
     }
 }
 
-void LCD::displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value)
+void LCD::displayNoteChange(changeResult_t result, noteChangeType_t type, int8_t value)
 {
     uint8_t size = 0;
 

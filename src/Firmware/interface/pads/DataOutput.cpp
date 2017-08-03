@@ -109,7 +109,7 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)
         break;
     }
 
-    handleNoteLEDs(pad, state);
+    updateNoteLEDs(pad, state);
 }
 
 void Pads::sendAftertouch(uint8_t pad)
@@ -145,7 +145,7 @@ void Pads::sendAftertouch(uint8_t pad)
         bitWrite(aftertouchActivated, pad, false);
 }
 
-void Pads::handleNoteLEDs(uint8_t pad, bool state)
+void Pads::updateNoteLEDs(uint8_t pad, bool state)
 {
     uint8_t noteArray[NOTES_PER_PAD],
             noteCounter = 0;

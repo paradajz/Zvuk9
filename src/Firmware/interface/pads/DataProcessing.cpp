@@ -143,7 +143,7 @@ void Pads::update()
                 {
                     //update function leds only once, on press
                     //don't update if split is disabled (no need)
-                    setFunctionLEDs(i);
+                    updateFunctionLEDs(i);
                 }
             }
             else
@@ -170,7 +170,7 @@ void Pads::update()
                     checkLCDdata(padIndex, true, true, true, true);
 
                 if (splitEnabled)
-                    setFunctionLEDs(padIndex);
+                    updateFunctionLEDs(padIndex);
             }
             else
             {
@@ -413,14 +413,14 @@ bool Pads::checkX(uint8_t pad)
             #ifdef DEBUG
             printf_P(PSTR("Calibrating lowest value for X, pad %d: %d\n"), pad, value);
             #endif
-            calibrateXY(coordinateX, limitTypeMin, pad, value);
+            calibrateXY(pad, coordinateX, limitTypeMin, value);
         }
         else if ((uint16_t)value > padXLimitUpper[pad])
         {
             #ifdef DEBUG
             printf_P(PSTR("Calibrating max value for X, pad %d: %d\n"), pad, value);
             #endif
-            calibrateXY(coordinateX, limitTypeMax, pad, value);
+            calibrateXY(pad, coordinateX, limitTypeMax, value);
         }
     }
 
@@ -469,14 +469,14 @@ bool Pads::checkY(uint8_t pad)
             #ifdef DEBUG
             printf_P(PSTR("Calibrating lowest value for Y, pad %d: %d\n"), pad, value);
             #endif
-            calibrateXY(coordinateY, limitTypeMin, pad, value);
+            calibrateXY(pad, coordinateY, limitTypeMin, value);
         }
         else if ((uint16_t)value > padYLimitUpper[pad])
         {
             #ifdef DEBUG
             printf_P(PSTR("Calibrating max value for Y, pad %d: %d\n"), pad, value);
             #endif
-            calibrateXY(coordinateY, limitTypeMax, pad, value);
+            calibrateXY(pad, coordinateY, limitTypeMax, value);
         }
     }
 
@@ -619,7 +619,7 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
         if (aftertouchAvailable)
         {
-            if (getMIDISendState(pad, onOff_aftertouch) && bitRead(aftertouchActivated, pad))
+            if (getMIDISendState(pad, function_aftertouch) && bitRead(aftertouchActivated, pad))
             {
                 switch(aftertouchType)
                 {
@@ -671,93 +671,82 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
 
 void Pads::updateLastPressedPad(uint8_t pad, bool state)
 {
-    switch(state)
+    uint8_t pressedPads = 0;
+
+    if (state)
     {
-        case true:
         //pad is pressed, add it to touch history buffer
         if (pad != getLastTouchedPad())
         {
-            updatePressHistory(pad);
-            //setup curve?
+            //store currently pressed pad in buffer
+
+            for (int i=0; i<NUMBER_OF_PADS; i++)
+                if (isPadPressed(i))
+                    pressedPads++;
+
+            if (pressedPads == 1)
+            {
+                padPressHistory_buffer[0] = pad;
+                padPressHistory_counter = 0;
+            }
+            else
+            {
+                padPressHistory_counter++;
+
+                if (padPressHistory_counter >= NUMBER_OF_PADS)
+                    padPressHistory_counter = 0; //overwrite
+
+                padPressHistory_buffer[padPressHistory_counter] = pad;
+            }
         }
-        break;
-
-        case false:
-        //pad released, clear it from buffer
-        clearTouchHistoryPad(pad);
-        break;
-    }
-}
-
-void Pads::updatePressHistory(uint8_t pad)
-{
-    //store currently pressed pad in buffer
-    uint8_t pressedPads = 0;
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        if (isPadPressed(i)) pressedPads++;
-
-    if (pressedPads == 1)
-    {
-        padPressHistory_buffer[0] = pad;
-        padPressHistory_counter = 0;
     }
     else
     {
-        padPressHistory_counter++;
+        //pad released, clear it from buffer
 
-        if (padPressHistory_counter >= NUMBER_OF_PADS)
-            padPressHistory_counter = 0; //overwrite
-
-        padPressHistory_buffer[padPressHistory_counter] = pad;
-    }
-}
-
-void Pads::clearTouchHistoryPad(uint8_t pad)
-{
-    uint8_t padPressedCounter = 0;
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        if (isPadPressed(i)) padPressedCounter++;
-
-    if (padPressedCounter < 1)
-    {
         for (int i=0; i<NUMBER_OF_PADS; i++)
-            padPressHistory_buffer[i] = 0;
+            if (isPadPressed(i))
+                pressedPads++;
 
-        padPressHistory_buffer[0] = pad;
-        padPressHistory_counter = 0;
-
-        return;
-    }
-
-    uint8_t index = pad;
-    uint8_t newValue = 0;
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-    {
-        if (padPressHistory_buffer[i] == pad)
+        if (pressedPads < 1)
         {
-            index = i;
-            padPressHistory_buffer[i] = newValue;
-            break;
+            for (int i=0; i<NUMBER_OF_PADS; i++)
+                padPressHistory_buffer[i] = 0;
+
+            padPressHistory_buffer[0] = pad;
+            padPressHistory_counter = 0;
+
+            return;
         }
+
+        uint8_t index = pad;
+        uint8_t newValue = 0;
+
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+        {
+            if (padPressHistory_buffer[i] == pad)
+            {
+                index = i;
+                padPressHistory_buffer[i] = newValue;
+                break;
+            }
+        }
+
+        //copy history array
+        int8_t tempHistoryArray[NUMBER_OF_PADS];
+
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+            tempHistoryArray[i] = padPressHistory_buffer[i];
+
+        //shift all values so that newValue is at the end of array
+        for (int i=index; i<(NUMBER_OF_PADS-1); i++)
+            padPressHistory_buffer[i] = tempHistoryArray[i+1];
+
+        padPressHistory_counter--;
+
+        if (padPressHistory_counter < 0)
+            padPressHistory_counter = 0;
     }
-
-    //copy history array
-    int8_t tempHistoryArray[NUMBER_OF_PADS];
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        tempHistoryArray[i] = padPressHistory_buffer[i];
-
-    //shift all values so that newValue is at the end of array
-    for (int i=index; i<(NUMBER_OF_PADS-1); i++)
-        padPressHistory_buffer[i] = tempHistoryArray[i+1];
-
-    padPressHistory_counter--;
-
-    if (padPressHistory_counter < 0)
-        padPressHistory_counter = 0;
 }
 
 void Pads::storeNotes(uint8_t pad)

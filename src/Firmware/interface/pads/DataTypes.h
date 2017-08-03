@@ -28,12 +28,12 @@ typedef enum
 
 typedef enum
 {
-    onOff_notes,
-    onOff_aftertouch,
-    onOff_x,
-    onOff_y,
-    onOff_split
-} onOff_t;
+    function_notes,
+    function_aftertouch,
+    function_x,
+    function_y,
+    function_split
+} function_t;
 
 typedef enum
 {
@@ -42,7 +42,7 @@ typedef enum
     outOfRange,
     overflow,
     notAllowed
-} changeOutput_t;
+} changeResult_t;
 
 typedef enum
 {

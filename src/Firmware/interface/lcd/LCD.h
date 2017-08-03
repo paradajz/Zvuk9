@@ -45,12 +45,12 @@ class LCD
     void displayFirmwareUpdated();
 
     void displayTransportControl(transportControl_t type);
-    void displayOnOffChange(onOff_t type, uint8_t functionState);
+    void displayOnOffChange(function_t type, uint8_t functionState);
     void displayCurveChange(padCoordinate_t coordinate);
     void displayCClimitChange(padCoordinate_t coordinate, limitType_t type, uint8_t ccValue);
     void displayCCchange(padCoordinate_t type, uint8_t ccValue);
     void displayMIDIchannelChange();
-    void displayNoteChange(changeOutput_t result, noteChangeType_t type, int8_t value);
+    void displayNoteChange(changeResult_t result, noteChangeType_t type, int8_t value);
     void displayEditModeNotAllowed(padEditModeResult_t errorType);
     void displayNoNotesError();
     void displayOutOfRange();

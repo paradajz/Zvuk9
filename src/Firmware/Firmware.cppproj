@@ -920,9 +920,6 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
     <Compile Include="interface\pads\DataTypes.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\pads\EditMode.cpp">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="interface\pads\Getters.cpp">
       <SubType>compile</SubType>
     </Compile>

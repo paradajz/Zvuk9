@@ -148,22 +148,22 @@ bool Pads::getSplitState()
 /// @param [in] type    MIDI functionality (enumerated type). See onOff_t enumeration.
 /// \returns True if functionality is enabled, false otherwise.
 ///
-bool Pads::getMIDISendState(int8_t pad, onOff_t type)
+bool Pads::getMIDISendState(int8_t pad, function_t type)
 {
     assert(PAD_CHECK(pad));
 
     switch(type)
     {
-        case onOff_aftertouch:
+        case function_aftertouch:
         return bitRead(aftertouchSendEnabled, pad);
 
-        case onOff_notes:
+        case function_notes:
         return bitRead(noteSendEnabled, pad);
 
-        case onOff_x:
+        case function_x:
         return bitRead(xSendEnabled, pad);
 
-        case onOff_y:
+        case function_y:
         return bitRead(ySendEnabled, pad);
 
         default:
@@ -460,7 +460,7 @@ void Pads::getProgramParameters()
     #endif
 
     activeProgram = database.read(DB_BLOCK_PROGRAM, programLastActiveProgramSection, 0);
-    activeScale = database.read(DB_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram);
+    splitEnabled = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
 
     #ifdef DEBUG
     printf_P(PSTR("Active program: %d\n"), activeProgram+1);
@@ -477,8 +477,6 @@ void Pads::getProgramParameters()
 ///
 void Pads::getPadParameters()
 {
-    splitEnabled = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
-
     #ifdef DEBUG
     printf_P(PSTR("Printing out pad configuration\n"));
     #endif
@@ -570,10 +568,10 @@ void Pads::getPadParameters()
     uint8_t lastTouchedPad = getLastTouchedPad();
 
     leds.setLEDstate(LED_ON_OFF_SPLIT, splitEnabled ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(lastTouchedPad, onOff_aftertouch) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(lastTouchedPad, onOff_notes) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(lastTouchedPad, onOff_x) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(lastTouchedPad, onOff_y) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(lastTouchedPad, function_aftertouch) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(lastTouchedPad, function_notes) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(lastTouchedPad, function_x) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(lastTouchedPad, function_y) ? ledStateFull : ledStateOff);
 }
 
 ///
@@ -581,6 +579,8 @@ void Pads::getPadParameters()
 ///
 void Pads::getScaleParameters()
 {
+    activeScale = database.read(DB_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram);
+
     //clear all pad notes before assigning new ones
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
@@ -826,23 +826,26 @@ int8_t Pads::getPredefinedScaleNotes(scale_t scale)
 ///
 /// \brief Returns specific note from specified scale.
 /// @param [in] scale Scale which is being checked.
-/// @param [in] note Note index which is being checked.
+/// @param [in] index Note index which is being checked.
 /// \returns Note at specified index from requested scale (enumerated type). See note_t enumeration.
 ///
-note_t Pads::getScaleNote(scale_t scale, int8_t note)
+note_t Pads::getScaleNote(scale_t scale, int8_t index)
 {
     //safety checks
 
     if (isUserScale(scale))
         return MIDI_NOTES;
 
-    if (note >= MIDI_NOTES)
+    if (index >= MIDI_NOTES)
         return MIDI_NOTES;
 
-    if (note < 0)
+    if (index < 0)
         return MIDI_NOTES;
 
-    return scale_notes[scale][note];
+    if ((uint8_t)index >= (sizeof(scale_notes[scale])/sizeof(note_t)))
+        return MIDI_NOTES;
+
+    return scale_notes[scale][index];
 }
 
 ///
