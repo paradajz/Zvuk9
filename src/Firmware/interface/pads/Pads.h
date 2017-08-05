@@ -1,13 +1,10 @@
 #pragma once
 
 #include "curves/Curves.h"
-#include "Calibration.h"
 #include "../../board/Board.h"
 #include "Config.h"
 #include "../../database/Database.h"
 #include "Sanity.h"
-
-#define constrain(input, low, high) ((input)<(low)?(low):((input)>(high)?(high):(input)))
 
 class Pads
 {
@@ -27,7 +24,7 @@ class Pads
     bool isPredefinedScale(int8_t scale);
     bool getEditModeState();
     note_t getTonic();
-    uint8_t getOctave();
+    uint8_t getOctave(bool padEditMode = false);
     bool getSplitState();
     bool getMIDISendState(int8_t pad, function_t type);
     aftertouchType_t getAftertouchType();
@@ -36,7 +33,7 @@ class Pads
     note_t getTonicFromNote(int8_t note);
     uint8_t getOctaveFromNote(int8_t note);
     int8_t getScaleShiftLevel();
-    uint8_t getCC(int8_t pad, padCoordinate_t type);
+    uint8_t getCCvalue(int8_t pad, padCoordinate_t type);
     uint8_t getCClimit(int8_t pad, padCoordinate_t type, limitType_t limitType);
     curve_t getCCcurve(int8_t pad, padCoordinate_t curve);
     velocitySensitivity_t getVelocitySensitivity();
@@ -45,16 +42,16 @@ class Pads
     bool isCalibrationEnabled();
     padCoordinate_t getCalibrationMode();
     uint16_t getCalibrationLimit(int8_t pad, padCoordinate_t coordinate, limitType_t limitType);
-    int8_t getPredefinedScaleNotes(scale_t scale);
-    note_t getScaleNote(scale_t scale, int8_t index);
+    int8_t getPredefinedScaleNotes(int8_t scale);
+    note_t getScaleNote(int8_t scale, int8_t index);
     uint8_t getScaledPressure(int8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type);
     uint16_t getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale);
 
     //setters
     bool setProgram(int8_t program);
     bool setScale(int8_t scale);
+    void resetPredefinedScale();
     changeResult_t setTonic(note_t note, bool internalChange = false);
-    bool setOctave(int8_t octave);
     bool setEditModeState(bool state, int8_t pad = 0);
     bool setSplitState(bool state);
     bool setMIDISendState(function_t type, bool state);
@@ -63,14 +60,14 @@ class Pads
     bool setVelocitySensitivity(velocitySensitivity_t type);
     bool setVelocityCurve(curve_t curve);
     bool setCCcurve(padCoordinate_t coordinate, curve_t curve);
+    bool setCCvalue(padCoordinate_t coordinate, uint8_t cc);
+    bool setCClimit(padCoordinate_t coordinate, limitType_t limitType, uint8_t value);
     void setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
     bool calibratePressure(int8_t pad, uint8_t pressureZone, int16_t limit);
     bool calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit);
-    changeResult_t addNoteToPad(int8_t pad, note_t note);
-    changeResult_t shiftOctave(bool direction);
-    changeResult_t shiftScale(bool direction, bool internalChange = false);
-    changeResult_t changeCCvalue(bool direction, padCoordinate_t type, int8_t steps);
-    changeResult_t changeCClimitValue(bool direction, padCoordinate_t coordinate, limitType_t limitType, int8_t steps);
+    changeResult_t setPadNote(int8_t pad, note_t note);
+    bool setOctave(int8_t shift, bool padEditMode = false);
+    changeResult_t setScaleShiftLevel(int8_t shiftLevel, bool internalChange = false);
 
     private:
     //getters
@@ -87,7 +84,9 @@ class Pads
     padCalibrationSection getActivePressureZone(int8_t pad);
 
     //setters
-    void setPadPressState(int8_t pad, bool padState);
+    void setPadPressState(int8_t pad, bool state);
+    void updateNoteLEDs(int8_t pad, bool state);
+    void updateLastPressedPad(int8_t pad, bool state);
 
     //checking
     void checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
@@ -98,7 +97,7 @@ class Pads
     bool checkY(int8_t pad);
     void checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
     void checkRemainingOctaveShift();
-    void checkRemainingNoteShift();
+    void checkRemainingTonicShift();
 
     //MIDI send
     void sendNotes(int8_t pad, uint8_t velocity, bool state);
@@ -107,10 +106,9 @@ class Pads
     void sendY(int8_t pad);
 
     //misc
-    void updateLastPressedPad(int8_t pad, bool state);
-    void updateFunctionLEDs(int8_t pad);
-    void updateNoteLEDs(int8_t pad, bool state);
+    bool updateFunctionLEDs(int8_t pad);
     void storeNotes(int8_t pad);
+    void resetScale();
 
     //last midi values
     uint8_t                 lastXMIDIvalue[NUMBER_OF_PADS],
@@ -158,11 +156,11 @@ class Pads
 
     bool                    splitEnabled;
 
-    int8_t                  activeOctave,
-                            noteShiftLevel;
+    int8_t                  noteShiftLevel;
 
     int8_t                  activeScale,
-                            activeProgram;
+                            activeProgram,
+                            activePadEditOctave;
 
     //debouncing
     uint16_t                aftertouchActivated;
@@ -179,7 +177,7 @@ class Pads
 
     //used to shift scale once all pads are released
     int8_t                  noteShiftAmount[NUMBER_OF_PADS];
-    uint16_t                scaleShiftPadBuffer;
+    uint16_t                tonicShiftPadBuffer;
 
     //pad press history buffer
     uint8_t                 padPressHistory_buffer[NUMBER_OF_PADS];
@@ -187,7 +185,6 @@ class Pads
 
     //note buffer
     uint8_t                 pad_buffer[PAD_NOTE_BUFFER_SIZE];
-    uint8_t                 velocity_buffer[PAD_NOTE_BUFFER_SIZE];
     uint32_t                pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
     uint8_t                 note_buffer_head;
     uint8_t                 note_buffer_tail;

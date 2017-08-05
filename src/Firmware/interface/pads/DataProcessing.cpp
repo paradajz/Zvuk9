@@ -171,6 +171,10 @@ void Pads::update()
 
                 if (splitEnabled)
                     updateFunctionLEDs(padIndex);
+
+                #ifdef DEBUG
+                printf_P(PSTR("Restoring data on LCD from last pad.\n"));
+                #endif
             }
             else
             {
@@ -180,6 +184,7 @@ void Pads::update()
                 {
                     if (menu.isMenuDisplayed())
                     {
+                        //is menu is active and calibration mode is enabled, display only data for coordinate which is being calibrated
                         if (calibrationEnabled)
                             checkLCDdata(i, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
                     }
@@ -193,11 +198,13 @@ void Pads::update()
     }
 
     checkRemainingOctaveShift();
-    checkRemainingNoteShift();
+    checkRemainingTonicShift();
 }
 
-bool Pads::checkVelocity(uint8_t pad)
+bool Pads::checkVelocity(int8_t pad)
 {
+    assert(PAD_CHECK(pad));
+
     int16_t value = board.getPadPressure(pad);
 
     if (value == -1)
@@ -261,8 +268,10 @@ bool Pads::checkVelocity(uint8_t pad)
     return returnValue;
 }
 
-bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
+bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable)
 {
+    assert(PAD_CHECK(pad));
+
     //pad is pressed
     if (bitRead(lastMIDInoteState, pad))
     {
@@ -293,7 +302,7 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
             lastAftertouchValue[pad] = calibratedPressureAfterTouch;
             lastAftertouchUpdateTime[pad] = 0;
 
-            if (!bitRead(aftertouchActivated, pad))
+            if (!bitRead(aftertouchActivated, pad) && calibratedPressureAfterTouch)
                 bitWrite(aftertouchActivated, pad, true);
 
             uint8_t padsPressed = 0;
@@ -328,13 +337,13 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
                             continue;
 
                         if (!bitRead(aftertouchActivated, i))
-                        continue;
+                            continue;
 
                         if (!bitRead(aftertouchSendEnabled, i))
-                        continue;
+                            continue;
 
                         if (lastAftertouchValue[i] > tempMaxValue)
-                        tempMaxValue = lastAftertouchValue[i];
+                            tempMaxValue = lastAftertouchValue[i];
                     }
 
                     if (tempMaxValue != maxAftertouchValue)
@@ -396,8 +405,10 @@ bool Pads::checkAftertouch(uint8_t pad, bool velocityAvailable)
     return false;
 }
 
-bool Pads::checkX(uint8_t pad)
+bool Pads::checkX(int8_t pad)
 {
+    assert(PAD_CHECK(pad));
+
     if (bitRead(pressureReduction, pad))
         return false;
 
@@ -452,8 +463,10 @@ bool Pads::checkX(uint8_t pad)
     return false;
 }
 
-bool Pads::checkY(uint8_t pad)
+bool Pads::checkY(int8_t pad)
 {
+    assert(PAD_CHECK(pad));
+
     if (bitRead(pressureReduction, pad))
         return false;
 
@@ -508,8 +521,10 @@ bool Pads::checkY(uint8_t pad)
     return false;
 }
 
-void Pads::checkMIDIdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
+void Pads::checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
 {
+    assert(PAD_CHECK(pad));
+
     //send X/Y immediately
     if (xAvailable && bitRead(xSendEnabled, pad))
         sendX(pad);
@@ -573,14 +588,17 @@ bool Pads::checkNoteBuffer()
     //send
     //make sure to check if pad is still pressed!
     if (bitRead(noteSendEnabled, pad_buffer[index]) && isPadPressed(pad_buffer[index]))
-        sendNotes(pad_buffer[index], velocity_buffer[index], true);
+        sendNotes(pad_buffer[index], lastVelocityValue[index], true);
 
     note_buffer_tail = index;
+
     return true;
 }
 
-void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
+void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
 {
+    assert(PAD_CHECK(pad));
+
     static bool lcdCleared = false;
     static int8_t lastShownPad = -1;
 
@@ -667,107 +685,4 @@ void Pads::checkLCDdata(uint8_t pad, bool velocityAvailable, bool aftertouchAvai
         //if (velocityAvailable)
             //display.clearAftertouch();
     }
-}
-
-void Pads::updateLastPressedPad(uint8_t pad, bool state)
-{
-    uint8_t pressedPads = 0;
-
-    if (state)
-    {
-        //pad is pressed, add it to touch history buffer
-        if (pad != getLastTouchedPad())
-        {
-            //store currently pressed pad in buffer
-
-            for (int i=0; i<NUMBER_OF_PADS; i++)
-                if (isPadPressed(i))
-                    pressedPads++;
-
-            if (pressedPads == 1)
-            {
-                padPressHistory_buffer[0] = pad;
-                padPressHistory_counter = 0;
-            }
-            else
-            {
-                padPressHistory_counter++;
-
-                if (padPressHistory_counter >= NUMBER_OF_PADS)
-                    padPressHistory_counter = 0; //overwrite
-
-                padPressHistory_buffer[padPressHistory_counter] = pad;
-            }
-        }
-    }
-    else
-    {
-        //pad released, clear it from buffer
-
-        for (int i=0; i<NUMBER_OF_PADS; i++)
-            if (isPadPressed(i))
-                pressedPads++;
-
-        if (pressedPads < 1)
-        {
-            for (int i=0; i<NUMBER_OF_PADS; i++)
-                padPressHistory_buffer[i] = 0;
-
-            padPressHistory_buffer[0] = pad;
-            padPressHistory_counter = 0;
-
-            return;
-        }
-
-        uint8_t index = pad;
-        uint8_t newValue = 0;
-
-        for (int i=0; i<NUMBER_OF_PADS; i++)
-        {
-            if (padPressHistory_buffer[i] == pad)
-            {
-                index = i;
-                padPressHistory_buffer[i] = newValue;
-                break;
-            }
-        }
-
-        //copy history array
-        int8_t tempHistoryArray[NUMBER_OF_PADS];
-
-        for (int i=0; i<NUMBER_OF_PADS; i++)
-            tempHistoryArray[i] = padPressHistory_buffer[i];
-
-        //shift all values so that newValue is at the end of array
-        for (int i=index; i<(NUMBER_OF_PADS-1); i++)
-            padPressHistory_buffer[i] = tempHistoryArray[i+1];
-
-        padPressHistory_counter--;
-
-        if (padPressHistory_counter < 0)
-            padPressHistory_counter = 0;
-    }
-}
-
-void Pads::storeNotes(uint8_t pad)
-{
-    uint8_t i = note_buffer_head + 1;
-
-    if (i >= PAD_NOTE_BUFFER_SIZE)
-        i = 0;
-
-    //if buffer is full, wait until there is some space
-    if (note_buffer_tail == i)
-    {
-        #ifdef DEBUG
-        printf_P(PSTR("Oops, buffer full. Waiting...\n"));
-        #endif
-
-        while (!checkNoteBuffer());
-    }
-
-    pad_buffer[i] = pad;
-    velocity_buffer[i] = lastVelocityValue[pad];
-    pad_note_timer_buffer[i] = rTimeMs();
-    note_buffer_head = i;
 }

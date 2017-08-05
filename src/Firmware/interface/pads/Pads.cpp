@@ -18,6 +18,7 @@ Pads::Pads()
 
     activeProgram = -1;
     activeScale = -1;
+    activePadEditOctave = DEFAULT_OCTAVE;
 }
 
 ///

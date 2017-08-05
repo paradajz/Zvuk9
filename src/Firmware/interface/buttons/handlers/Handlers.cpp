@@ -358,11 +358,12 @@ void handleUpDown(uint8_t id, bool state)
         switch(editMode)
         {
             case true:
+            //pad edit mode
             switch(state)
             {
                 case false:
-                pads.setOctave(direction ? pads.getOctave()+1 : pads.getOctave()-1);
-                display.setupPadEditScreen(pads.getLastTouchedPad()+1, pads.getOctave());
+                pads.setOctave(direction ? pads.getOctave(true)+1 : pads.getOctave(true)-1, true);
+                display.setupPadEditScreen(pads.getLastTouchedPad()+1, pads.getOctave(true));
                 leds.displayActiveNoteLEDs(true, lastTouchedPad);
                 direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
                 break;
@@ -374,14 +375,14 @@ void handleUpDown(uint8_t id, bool state)
             break;
 
             case false:
-            if (pads.isUserScale(pads.getScale()) || (pads.isPredefinedScale(pads.getScale()) && !buttons.getButtonState(BUTTON_ON_OFF_NOTES)))
+            if (!buttons.getButtonState(BUTTON_ON_OFF_NOTES))
             {
                 //shift entire octave up or down
                 if (!state)
                 {
-                    changeResult_t shiftResult = pads.shiftOctave(direction);
+                    pads.setOctave(direction ? pads.getOctave()+1 : pads.getOctave()-1);
                     uint8_t activeOctave = pads.getOctave();
-                    display.displayNoteChange(shiftResult, octaveChange, normalizeOctave(activeOctave));
+                    display.displayNoteChange(outputChanged, octaveChange, activeOctave);
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                 }
                 else
@@ -394,16 +395,17 @@ void handleUpDown(uint8_t id, bool state)
                 //shift single note, but only in predefined presets
                 if (!state)
                 {
-                    if (pads.isPadPressed(lastTouchedPad))
+                    if (pads.isPadPressed(lastTouchedPad) || pads.isUserScale(pads.getScale()))
                     {
-                        display.displayEditModeNotAllowed(padNotReleased);
+                        //don't allow this
                         return;
                     }
 
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                     buttons.disable(BUTTON_ON_OFF_NOTES);
 
-                    changeResult_t shiftResult = pads.shiftScale(direction);
+                    int8_t shiftLevel = direction ? 1 : -1;
+                    changeResult_t shiftResult = pads.setScaleShiftLevel(pads.getScaleShiftLevel()+shiftLevel);
                     //make sure scale shifting is updated on display after message is cleared
                     display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
                     display.displayNoteChange(shiftResult, noteShift, pads.getScaleShiftLevel());
@@ -455,7 +457,7 @@ void handleTonic(uint8_t id, bool state)
     {
         //add note to pad
         uint8_t pad = pads.getLastTouchedPad();
-        pads.addNoteToPad(pad, note);
+        pads.setPadNote(pad, note);
         display.displayActivePadNotes();
         leds.displayActiveNoteLEDs(true, pad);
     }

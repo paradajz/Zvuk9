@@ -9,7 +9,7 @@ const char menuType_service_string[] PROGMEM = "Service menu";
 const char menuOption_padCalibration_string[] PROGMEM = "Pad calibration";
 const char menuOption_deviceInfo_string[] PROGMEM = "Device info";
 const char menuOption_factoryReset_string[] PROGMEM = "Factory reset";
-const char menuOption_factoryReset_caps_string[] PROGMEM = "***FACTORY RESET***";
+const char menuOption_factoryReset_title_string[] PROGMEM = "***FACTORY RESET***";
 const char menuOption_pressureSettings_string[] PROGMEM = "Velocity settings";
 const char menuOption_pressureSensitivity_string[] PROGMEM = "Sensitivity";
 const char menuOption_pressureCurve_string[] PROGMEM = "Curve";
@@ -72,20 +72,9 @@ const char unchecked_string[] PROGMEM = "[ ]";
 const char yes_string[] PROGMEM = "Yes";
 const char no_string[] PROGMEM = "No";
 
-//hardcoding...
-#define FACTORY_RESET_CONFIRM_TEXT_START    6
-#define FACTORY_RESET_STRING_PAD_1_LOCATION (4+FACTORY_RESET_CONFIRM_TEXT_START)
-#define FACTORY_RESET_STRING_PAD_7_LOCATION (9+FACTORY_RESET_CONFIRM_TEXT_START)
-#define FACTORY_RESET_STRING_PAD_9_LOCATION (14+FACTORY_RESET_CONFIRM_TEXT_START)
-
-#define FACTORY_RESET_PADS_ROW              4
-
-const char factory_reset_warning_1_string[] PROGMEM = " Confirm with pads:";
-const char factory_reset_warning_2_string[] PROGMEM = "  1[ ] 7[ ] 9[ ]   ";
-const char factory_reset_warning_3_string[] PROGMEM = " Cancel: any other";
-
-#define FACTORY_RESET_START_1_TEXT_START    2
-#define FACTORY_RESET_START_2_TEXT_START    7
+const char factory_reset_info_confirm_string[] PROGMEM = " Confirm with pads:";
+const char factory_reset_pads_string[] PROGMEM = " 1[ ] 7[ ] 9[ ]";
+const char factory_reset_info_cancel_string[] PROGMEM = " Cancel: any other";
 
 const char factory_reset_start_1_string[] PROGMEM = "Performing factory reset.";
 const char factory_reset_start_2_string[] PROGMEM = "Please wait.";

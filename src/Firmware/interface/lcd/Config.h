@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../pads/Calibration.h"
+#include "../pads/Config.h"
 
 #define LCD_MESSAGE_DURATION                1500
 

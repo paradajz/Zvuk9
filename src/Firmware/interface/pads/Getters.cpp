@@ -1,7 +1,7 @@
 #include "Pads.h"
 #include "../leds/LEDs.h"
 #include "../../database/Database.h"
-#include "Scales.h"
+#include "PredefinedScales.h"
 
 ///
 /// \brief Checks last pad which has been pressed.
@@ -126,11 +126,41 @@ note_t Pads::getTonic()
 
 ///
 /// \brief Checks for currently active octave.
+/// @param [in] padEditMode If set to true, active octave used in pad edit mode is returned.
+/// Otherwise, calculated octave is returned based on active pad notes.
 /// \returns Currently active octave (0 - MIDI_NOTES-1).
 ///
-uint8_t Pads::getOctave()
+uint8_t Pads::getOctave(bool padEditMode)
 {
-    return activeOctave;
+    if (padEditMode)
+    {
+        return activePadEditOctave;
+    }
+    else
+    {
+        if (isPredefinedScale(activeScale))
+        {
+            //in predefined scales octave is always calculated using first note on first pad
+            return getOctaveFromNote(padNote[0][0] + MIDI_NOTES*octaveShiftAmount[0]);
+        }
+        else
+        {
+            //in user scales octave is calculated based on first found note
+            for (int i=0; i<NUMBER_OF_PADS; i++)
+            {
+                for (int j=0; j<NOTES_PER_PAD; j++)
+                {
+                    if (padNote[i][j] != BLANK_NOTE)
+                    {
+                        return getOctaveFromNote(padNote[i][j] + MIDI_NOTES*octaveShiftAmount[i]);
+                    }
+                }
+            }
+        }
+    }
+
+    //no notes found, return default octave
+    return DEFAULT_OCTAVE;
 }
 
 ///
@@ -253,11 +283,11 @@ int8_t Pads::getScaleShiftLevel()
 }
 
 ///
-/// \brief Checks for assigned CC number on requested coordinate and pad.
-/// @param [in] pad     Pad on which CC number is checked
-/// @param [in] type    Coordinate from which CC number is requested (X or Y) (enumerated type). See padCoordinate_t enumeration.
+/// \brief Checks for assigned CC value on requested coordinate and pad.
+/// @param [in] pad     Pad on which CC value is being checked.
+/// @param [in] type    Coordinate from which CC value is requested (X or Y) (enumerated type). See padCoordinate_t enumeration.
 ///
-uint8_t Pads::getCC(int8_t pad, padCoordinate_t type)
+uint8_t Pads::getCCvalue(int8_t pad, padCoordinate_t type)
 {
     assert(PAD_CHECK(pad));
 
@@ -591,7 +621,6 @@ void Pads::getScaleParameters()
     if (isPredefinedScale(activeScale))
     {
         //predefined scale
-        uint8_t notesPerScale = getPredefinedScaleNotes((scale_t)activeScale);
         uint8_t octave = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
         note_t tonic = (note_t)database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
         noteShiftLevel = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
@@ -602,26 +631,8 @@ void Pads::getScaleParameters()
         printf_P(PSTR("Shift: %d\n"), noteShiftLevel);
         #endif
 
-        uint8_t noteCounter = 0;
-
-        for (int i=0; i<notesPerScale; i++)
-        {
-            padNote[i][0] = getScaleNote((scale_t)activeScale, i);
-            noteCounter++;
-        }
-
-        if (notesPerScale < NUMBER_OF_PADS)
-        {
-            noteCounter = 0;
-
-            for (int i=notesPerScale; i<NUMBER_OF_PADS; i++)
-            {
-                padNote[i][0] = getScaleNote((scale_t)activeScale, noteCounter);
-                //these notes are actually in another octave
-                padNote[i][0] += MIDI_NOTES;
-                noteCounter++;
-            }
-        }
+        //apply default scale parameters
+        resetPredefinedScale();
 
         //default notes in scale are now applied to pads
         //apply saved octave
@@ -633,17 +644,10 @@ void Pads::getScaleParameters()
         //internal change, do not write anything to eeprom
         setTonic((note_t)tonic, true);
 
-        //finally, apply note shift
-        if (noteShiftLevel < 0)
+        if (noteShiftLevel)
         {
-            uint8_t temp = abs(noteShiftLevel);
-            for (int i=0; i<temp; i++)
-            shiftScale(false, true);
-        }
-        else
-        {
-            for (int i=0; i<noteShiftLevel; i++)
-            shiftScale(true, true);
+            //finally, apply note shift
+            setScaleShiftLevel(noteShiftLevel, true);
         }
     }
     else
@@ -655,21 +659,6 @@ void Pads::getScaleParameters()
         {
             for (int j=0; j<NOTES_PER_PAD; j++)
                 padNote[i][j] = database.read(DB_BLOCK_SCALE, scaleUserSection, noteID+j+(NOTES_PER_PAD*i));
-        }
-    }
-
-    //reset this variable first
-    activeOctave = DEFAULT_OCTAVE;
-
-    for (int i=0; i<NOTES_PER_PAD; i++)
-    {
-        if (padNote[0][i] != BLANK_NOTE)
-        {
-            activeOctave = getOctaveFromNote(padNote[0][i]);
-            #ifdef DEBUG
-            printf_P(PSTR("Active octave: %d\n"), activeOctave);
-            #endif
-            break;
         }
     }
 }
@@ -814,13 +803,15 @@ void Pads::getYLimits()
 /// @param [in] scale Scale which is being checked.
 /// \returns Number of notes in requested scale. If user scale is requested, -1 is returned.
 ///
-int8_t Pads::getPredefinedScaleNotes(scale_t scale)
+int8_t Pads::getPredefinedScaleNotes(int8_t scale)
 {
+    assert(SCALE_CHECK(scale));
+
     //safety check
     if (isUserScale(scale))
         return -1;
 
-    return sizeof(scale_notes[scale]) / sizeof(note_t);
+    return scale_notes_sizes[scale];
 }
 
 ///
@@ -829,8 +820,10 @@ int8_t Pads::getPredefinedScaleNotes(scale_t scale)
 /// @param [in] index Note index which is being checked.
 /// \returns Note at specified index from requested scale (enumerated type). See note_t enumeration.
 ///
-note_t Pads::getScaleNote(scale_t scale, int8_t index)
+note_t Pads::getScaleNote(int8_t scale, int8_t index)
 {
+    assert(SCALE_CHECK(scale));
+
     //safety checks
 
     if (isUserScale(scale))
@@ -842,7 +835,7 @@ note_t Pads::getScaleNote(scale_t scale, int8_t index)
     if (index < 0)
         return MIDI_NOTES;
 
-    if ((uint8_t)index >= (sizeof(scale_notes[scale])/sizeof(note_t)))
+    if ((uint8_t)index >= scale_notes_sizes[scale])
         return MIDI_NOTES;
 
     return scale_notes[scale][index];

@@ -121,7 +121,7 @@ void LCD::displayActivePadNotes(bool showNotes)
     uint8_t pad = pads.getLastTouchedPad();
     uint8_t note;
     uint8_t tonic;
-    uint8_t octave;
+    int8_t octave;
     uint8_t noteCounter = 0;
 
     bool padEditMode = pads.getEditModeState();
@@ -178,9 +178,9 @@ void LCD::displayActivePadNotes(bool showNotes)
         while ((size+LCD_POSITION_PRESS_INFO_NOTES) < (MAX_TEXT_SIZE-1))
             addSpaceToCharArray(1, size);
 
-        #ifdef DEBUG
-        printf_P(PSTR("Notes string: <%s>\n"), stringBuffer);
-        #endif
+        //#ifdef DEBUG
+        //printf_P(PSTR("Notes string: <%s>\n"), stringBuffer);
+        //#endif
 
         updateDisplay(LCD_ROW_PRESS_INFO_NOTES, text, LCD_POSITION_PRESS_INFO_NOTES, size);
     }
@@ -385,6 +385,10 @@ void LCD::setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh)
     strcat(stringBuffer, tempBuffer);
     size += tempSize;
 
+    //make sure entire row is filled
+    while (size < LCD_WIDTH)
+        addSpaceToCharArray(1, size);
+
     updateDisplay(LCD_ROW_PAD_EDIT_PAD_NUMBER, text, getTextCenter(size), size);
 
     displayActivePadNotes();
@@ -420,25 +424,25 @@ void LCD::displayFactoryResetConfirm()
     uint8_t size = 0;
     uint8_t location;
 
-    strcpy_P(stringBuffer, menuOption_factoryReset_caps_string);
-    size = progmemCharArraySize(menuOption_factoryReset_caps_string);
+    strcpy_P(stringBuffer, menuOption_factoryReset_title_string);
+    size = progmemCharArraySize(menuOption_factoryReset_title_string);
     location = getTextCenter(size);
-    updateDisplay(2, text, location, size);
+    updateDisplay(LCD_ROW_FACTORY_RESET_TITLE, text, location, size);
 
-    strcpy_P(stringBuffer, factory_reset_warning_1_string);
-    size = progmemCharArraySize(factory_reset_warning_1_string);
+    strcpy_P(stringBuffer, factory_reset_info_confirm_string);
+    size = progmemCharArraySize(factory_reset_info_confirm_string);
     location = getTextCenter(size);
-    updateDisplay(3, text, location, size);
+    updateDisplay(LCD_ROW_FACTORY_RESET_INFO_CONFIRM, text, location, size);
 
-    strcpy_P(stringBuffer, factory_reset_warning_2_string);
-    size = progmemCharArraySize(factory_reset_warning_2_string);
+    strcpy_P(stringBuffer, factory_reset_pads_string);
+    size = progmemCharArraySize(factory_reset_pads_string);
     location = getTextCenter(size);
-    updateDisplay(4, text, location, size);
+    updateDisplay(LCD_ROW_FACTORY_RESET_PADS, text, location, size);
 
-    strcpy_P(stringBuffer, factory_reset_warning_3_string);
-    size = progmemCharArraySize(factory_reset_warning_3_string);
+    strcpy_P(stringBuffer, factory_reset_info_cancel_string);
+    size = progmemCharArraySize(factory_reset_info_cancel_string);
     location = getTextCenter(size);
-    updateDisplay(5, text, location, size);
+    updateDisplay(LCD_ROW_FACTORY_RESET_INFO_CANCEL, text, location, size);
 }
 
 void LCD::displayFactoryResetStart()

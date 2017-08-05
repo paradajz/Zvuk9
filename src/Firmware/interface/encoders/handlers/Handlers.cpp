@@ -123,8 +123,8 @@ void handleCC(uint8_t id, bool direction, uint8_t steps)
         break;
     }
 
-    pads.changeCCvalue(direction, coordinate, steps);
-    display.displayCCchange(coordinate, pads.getCC(lastTouchedPad, coordinate));
+    pads.setCCvalue(coordinate, pads.getCCvalue(lastTouchedPad, coordinate));
+    display.displayCCchange(coordinate, pads.getCCvalue(lastTouchedPad, coordinate));
 }
 
 void handleLimit(uint8_t id, bool direction, uint8_t steps)
@@ -213,7 +213,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
     if (!pads.isCalibrationEnabled())
     {
-        pads.changeCClimitValue(direction, coordinate, limit, steps);
+        pads.setCClimit(coordinate, limit, pads.getCClimit(lastTouchedPad, coordinate, limit) + steps);
         uint8_t value = pads.getCClimit(lastTouchedPad, coordinate, limit);
         display.displayCClimitChange(coordinate, limit, value);
     }

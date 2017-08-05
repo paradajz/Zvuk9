@@ -199,7 +199,7 @@ void LCD::displayNoteChange(changeResult_t result, noteChangeType_t type, int8_t
         //always display active octave, ignore out of range here
         strcpy_P(stringBuffer, octave_string);
         size = progmemCharArraySize(octave_string);
-        addNumberToCharArray(value, size);
+        addNumberToCharArray(normalizeOctave(value), size);
         updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
         clearLine(LCD_ROW_MESSAGE_2, false);

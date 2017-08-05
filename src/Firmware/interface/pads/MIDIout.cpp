@@ -6,8 +6,14 @@
 #include "../../midi/src/MIDI.h"
 #endif
 
-void Pads::sendX(uint8_t pad)
+///
+/// \brief Sends MIDI CC message on X coordinate for requested pad.
+/// @param [in] pad Pad for which MIDI CC value on X coordinate is being sent.
+///
+void Pads::sendX(int8_t pad)
 {
+    assert(PAD_CHECK(pad));
+
     #ifdef DEBUG
     printf_P(PSTR("X for pad %d: "), pad);
     printf_P(PSTR("%d\n"), lastXMIDIvalue[pad]);
@@ -17,8 +23,14 @@ void Pads::sendX(uint8_t pad)
     #endif
 }
 
-void Pads::sendY(uint8_t pad)
+///
+/// \brief Sends MIDI CC message on Y coordinate for requested pad.
+/// @param [in] pad Pad for which MIDI CC value on Y coordinate is being sent.
+///
+void Pads::sendY(int8_t pad)
 {
+    assert(PAD_CHECK(pad));
+
     #ifdef DEBUG
     printf_P(PSTR("Y for pad %d: "), pad);
     printf_P(PSTR("%d\n"), lastYMIDIvalue[pad]);
@@ -28,8 +40,16 @@ void Pads::sendY(uint8_t pad)
     #endif
 }
 
-void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)
+///
+/// \brief Sends MIDI notes for requested pad.
+/// @param [in] pad Pad for which MIDI notes are being sent.
+/// @param [in] velocity MIDI velocity value for sent pad notes.
+/// @param [in] state State of MIDI notes (true/on, false/off).
+///
+void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
 {
+    assert(PAD_CHECK(pad));
+
     bool sendOff;
 
     switch(state)
@@ -112,8 +132,14 @@ void Pads::sendNotes(uint8_t pad, uint8_t velocity, bool state)
     updateNoteLEDs(pad, state);
 }
 
-void Pads::sendAftertouch(uint8_t pad)
+///
+/// \brief Sends MIDI aftertouch for requested pad.
+/// @param [in] pad Pad for which MIDI aftertouch is being sent.
+///
+void Pads::sendAftertouch(int8_t pad)
 {
+    assert(PAD_CHECK(pad));
+
     #ifdef NDEBUG
     uint8_t aftertouchValue = bitRead(lastMIDInoteState, pad) ? lastAftertouchValue[pad] : 0;
     #endif
@@ -143,63 +169,4 @@ void Pads::sendAftertouch(uint8_t pad)
 
     if (!bitRead(lastMIDInoteState, pad))
         bitWrite(aftertouchActivated, pad, false);
-}
-
-void Pads::updateNoteLEDs(uint8_t pad, bool state)
-{
-    uint8_t noteArray[NOTES_PER_PAD],
-            noteCounter = 0;
-
-    for (int i=0; i<NOTES_PER_PAD; i++)
-    {
-        if (padNote[pad][i] != BLANK_NOTE)
-        {
-            noteArray[noteCounter] = padNote[pad][i];
-            noteCounter++;
-        }
-    }
-
-    switch(state)
-    {
-        case true:
-        //note on
-        uint8_t tonicArray[NOTES_PER_PAD];
-
-        for (int i=0; i<noteCounter; i++)
-        {
-            tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
-            leds.setNoteLEDstate((note_t)tonicArray[i], ledStateFull);
-        }
-        break;
-
-        case false:
-        //note off
-        //we need to set LEDs back to dim states for released pad, but only if
-        //some other pad with same active note isn't already pressed
-        bool noteActive;
-
-        for (int z=0; z<noteCounter; z++)
-        {
-            //iterate over every note on released pad
-            noteActive = false;
-
-            for (int i=0; i<NUMBER_OF_PADS; i++)
-            {
-                if (!isPadPressed(i))
-                    continue; //skip released pad
-                if (i == pad)
-                    continue; //skip current pad
-
-                for (int j=0; j<NOTES_PER_PAD; j++)
-                {
-                    if (getTonicFromNote(padNote[i][j]) == getTonicFromNote(noteArray[z]))
-                        noteActive = true;
-                }
-            }
-
-            if (!noteActive)
-                leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledStateDim);
-        }
-        break;
-    }
 }

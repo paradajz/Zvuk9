@@ -1,17 +1,26 @@
 #pragma once
 
+///
+/// \brief List of possible limits for various values (min or max).
+///
 typedef enum
 {
     limitTypeMin,
     limitTypeMax
 } limitType_t;
 
+///
+/// \brief List of all possible aftertouch types.
+///
 typedef enum
 {
     aftertouchChannel,
     aftertouchPoly
 } aftertouchType_t;
 
+///
+/// \brief List of all possible pad coordinates.
+///
 typedef enum
 {
     coordinateX,
@@ -20,12 +29,18 @@ typedef enum
     PAD_COORDINATES
 } padCoordinate_t;
 
+///
+/// \brief List of all possible pad pressure types.
+///
 typedef enum
 {
     pressureVelocity,
     pressureAftertouch
 } pressureType_t;
 
+///
+/// \brief List of various functions on controller which can be turned on or off.
+///
 typedef enum
 {
     function_notes,
@@ -35,6 +50,9 @@ typedef enum
     function_split
 } function_t;
 
+///
+/// \brief List of all possible results when shifting notes.
+///
 typedef enum
 {
     noChange,
@@ -44,23 +62,28 @@ typedef enum
     notAllowed
 } changeResult_t;
 
+///
+/// \brief List of all possible types of changing MIDI notes.
+///
 typedef enum
 {
     tonicChange,
     octaveChange,
-    noteShift,
-    noteAdded,
-    noteRemoved
+    noteShift
 } noteChangeType_t;
 
+///
+/// \brief List of all possible errors when entering pad edit mode.
+///
 typedef enum
 {
     notUserPreset,
     padNotReleased,
-    padEditEnter,
-    padEditExit
 } padEditModeResult_t;
 
+///
+/// \brief List of all possible errors which result when all pads aren't released.
+///
 typedef enum
 {
     changeProgram,
@@ -72,6 +95,9 @@ typedef enum
     enterPadEditMode
 } padReleaseError_t;
 
+///
+/// \brief List of all possible velocity sensitivity levels.
+///
 typedef enum
 {
     velocity_soft,
@@ -79,6 +105,9 @@ typedef enum
     velocity_hard
 } velocitySensitivity_t;
 
+///
+/// \brief List off all possible MIDI notes.
+///
 typedef enum
 {
     C,
@@ -96,6 +125,9 @@ typedef enum
     MIDI_NOTES
 } note_t;
 
+///
+/// \brief List of all possible predefined scales.
+///
 typedef enum
 {
     scaleNaturalMinor,
