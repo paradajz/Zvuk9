@@ -12,8 +12,8 @@ class Encoders
     void flush();
 
     private:
-    void handleEncoder(uint8_t encoderNumber, bool direction, uint8_t steps);
     uint8_t lastStepTime[MAX_NUMBER_OF_ENCODERS];
+    int8_t encoderSpeed[MAX_NUMBER_OF_ENCODERS];
 };
 
 extern Encoders encoders;

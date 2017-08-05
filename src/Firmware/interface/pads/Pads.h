@@ -56,12 +56,12 @@ class Pads
     bool setSplitState(bool state);
     bool setMIDISendState(function_t type, bool state);
     bool setAftertouchType(aftertouchType_t type);
-    bool setMIDIchannel(int8_t pad, uint8_t channel);
+    bool setMIDIchannel(int8_t pad, int8_t channel);
     bool setVelocitySensitivity(velocitySensitivity_t type);
     bool setVelocityCurve(curve_t curve);
-    bool setCCcurve(padCoordinate_t coordinate, curve_t curve);
-    bool setCCvalue(padCoordinate_t coordinate, uint8_t cc);
-    bool setCClimit(padCoordinate_t coordinate, limitType_t limitType, uint8_t value);
+    bool setCCcurve(padCoordinate_t coordinate, int16_t curve);
+    bool setCCvalue(padCoordinate_t coordinate, int16_t cc);
+    bool setCClimit(padCoordinate_t coordinate, limitType_t limitType, int16_t value);
     void setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
     bool calibratePressure(int8_t pad, uint8_t pressureZone, int16_t limit);
     bool calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit);

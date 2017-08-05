@@ -5,18 +5,28 @@
 #include "../../database/Database.h"
 #include "handlers/Handlers.h"
 
-extern void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, bool state, uint8_t steps);
+extern void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
 
+///
+/// \brief Default constructor.
+///
 Encoders::Encoders()
 {
     
 }
 
+///
+/// \brief Initializes Encoders object.
+///
 void Encoders::init()
 {
     initHandlers_encoders();
 }
 
+///
+/// \brief Continuously checks state of all encoders.
+/// @param [in] If set to true, data from encoders won't be processed. Set to true by default.
+///
 void Encoders::update(bool process)
 {
     int8_t steps;
@@ -37,10 +47,15 @@ void Encoders::update(bool process)
         if (steps == 0)
             continue;
 
-        bool direction = steps > 0;
-
         if (lastStepTime[i] < SPEED_TIMEOUT)
-            steps = ENCODER_SPEED_2;
+        {
+            encoderSpeed[i] += ENCODER_SPEED_CHANGE;
+            steps = steps > 0 ? encoderSpeed[i] : -encoderSpeed[i];
+        }
+        else
+        {
+            encoderSpeed[i] = 0;
+        }
 
         if (pads.getEditModeState())
         {
@@ -62,12 +77,15 @@ void Encoders::update(bool process)
             if ((i != PRESET_ENCODER) && buttons.getModifierState())
                 buttons.setModifierState(false);
 
-            (*encoderHandler[i])(i, direction, abs(steps));
+            (*encoderHandler[i])(i, steps);
             lastStepTime[i] = 0;
         }
     }
 }
 
+///
+/// \brief Flushes all data from encoders.
+///
 void Encoders::flush()
 {
     update(false);

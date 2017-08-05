@@ -10,7 +10,11 @@
 ///
 bool Pads::setProgram(int8_t program)
 {
-    assert(PROGRAM_CHECK(program));
+    //input validation
+    if (program < 0)
+        program = 0;
+    else if (program >= NUMBER_OF_PROGRAMS)
+        program = NUMBER_OF_PROGRAMS-1;
 
     if (program != activeProgram)
     {
@@ -30,6 +34,12 @@ bool Pads::setProgram(int8_t program)
 bool Pads::setScale(int8_t scale)
 {
     assert(SCALE_CHECK(scale));
+
+    //input validation
+    if (scale < 0)
+        scale = 0;
+    else if (scale > (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES))
+        scale = (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES) - 1;
 
     if (activeScale != scale)
     {
@@ -399,9 +409,15 @@ bool Pads::setAftertouchType(aftertouchType_t type)
 /// @param [in] channel Channel which is being applied to requested pad.
 /// \returns True on success, false otherwise.
 ///
-bool Pads::setMIDIchannel(int8_t pad, uint8_t channel)
+bool Pads::setMIDIchannel(int8_t pad, int8_t channel)
 {
     assert(PAD_CHECK(pad));
+
+    //input validation
+    if (channel < 1)
+        channel = 1;
+    else if (channel > 16)
+        channel = 16;
 
     if (channel != midiChannel[pad])
     {
@@ -488,8 +504,14 @@ bool Pads::setVelocityCurve(curve_t curve)
 /// @param [in] curve Curve which is being applied to requested coordinate (enumerated type). See curve_t enumeration.
 /// \returns True on success, false otherwise.
 ///
-bool Pads::setCCcurve(padCoordinate_t coordinate, curve_t curve)
+bool Pads::setCCcurve(padCoordinate_t coordinate, int16_t curve)
 {
+    //input validation
+    if (curve < 0)
+        curve = 0;
+    else if (curve >= NUMBER_OF_CURVES)
+        curve = NUMBER_OF_CURVES-1;
+
     uint8_t startPad = !splitEnabled ? 0 : getLastTouchedPad();
     uint8_t *variablePointer;
     uint16_t configurationID;
@@ -552,10 +574,13 @@ bool Pads::setCCcurve(padCoordinate_t coordinate, curve_t curve)
 /// @param [in] cc CC value which is being applied to requested coordinate (enumerated type). See curve_t enumeration.
 /// \returns True on success, false otherwise.
 ///
-bool Pads::setCCvalue(padCoordinate_t coordinate, uint8_t cc)
+bool Pads::setCCvalue(padCoordinate_t coordinate, int16_t cc)
 {
-    if (cc > 124)
-        return false;
+    //input validation
+    if (cc < 0)
+        cc = 0;
+    else if (cc > 124)
+        cc = 124;
 
     uint8_t startPad = !splitEnabled ? 0 : getLastTouchedPad();
     uint8_t *variablePointer;
@@ -604,10 +629,13 @@ bool Pads::setCCvalue(padCoordinate_t coordinate, uint8_t cc)
 /// @param [in] value CC limit value which is being applied to requested coordinate (enumerated type). See curve_t enumeration.
 /// \returns True on success, false otherwise.
 ///
-bool Pads::setCClimit(padCoordinate_t coordinate, limitType_t limitType, uint8_t value)
+bool Pads::setCClimit(padCoordinate_t coordinate, limitType_t limitType, int16_t value)
 {
-    if (value > 127)
-        return false;
+    //input validation
+    if (value < 0)
+        value = 0;
+    else if (value > 127)
+        value = 127;
 
     uint8_t lastPressedPad = getLastTouchedPad();
     uint8_t startPad = !splitEnabled ? 0 : lastPressedPad;

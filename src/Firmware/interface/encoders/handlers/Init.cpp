@@ -2,7 +2,7 @@
 
 #include "../../../board/Board.h"
 
-void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, bool state, uint8_t steps);
+void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
 
 void initHandlers_encoders()
 {

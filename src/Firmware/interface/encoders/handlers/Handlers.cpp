@@ -6,11 +6,11 @@
 #include "../../encoders/Encoders.h"
 #include "../../../database/Database.h"
 
-void handleProgram(uint8_t id, bool direction, uint8_t steps)
+void handleProgram(uint8_t id, int8_t steps)
 {
     if (menu.isMenuDisplayed())
     {
-        menu.changeOption(direction);
+        menu.changeOption(steps > 0);
         return;
     }
 
@@ -21,30 +21,27 @@ void handleProgram(uint8_t id, bool direction, uint8_t steps)
         return;
     }
 
-    int8_t activeProgram = pads.getProgram();
+    //allow only 1 step change
+    steps = steps > 0 ? 1 : -1;
 
-    if (direction)
-        activeProgram++;
-    else
-        activeProgram--;
+    int8_t newProgram = pads.getProgram()+steps;
 
-    if (activeProgram == NUMBER_OF_PROGRAMS)
-        activeProgram = 0;
-    else if (activeProgram < 0)
-        activeProgram = (NUMBER_OF_PROGRAMS-1);
-    pads.setProgram(activeProgram);
+    //rollover
+    if (newProgram == NUMBER_OF_PROGRAMS)
+        newProgram = 0;
+    else if (newProgram < 0)
+        newProgram = (NUMBER_OF_PROGRAMS-1);
 
-    //get last active scale on current program
-    uint8_t currentPreset = pads.getScale();
+    pads.setProgram(newProgram);
 
     //scale is changed
     leds.displayActiveNoteLEDs();
 
     //display scale on display
-    display.displayProgramInfo(activeProgram+1, currentPreset, pads.getTonic(), pads.getScaleShiftLevel());
+    display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
 }
 
-void handleScale(uint8_t id, bool direction, uint8_t steps)
+void handleScale(uint8_t id, int8_t steps)
 {
     if (pads.getNumberOfPressedPads())
     {
@@ -53,54 +50,46 @@ void handleScale(uint8_t id, bool direction, uint8_t steps)
         return;
     }
 
-    if (rTimeMs() - menu.getExitTime() < SCALE_ENC_DISABLE_MENU_EXIT)
-        return; //disable this encoder for a while after menu is exited to avoid accidental scale change
-
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
+
+    //allow only 1 step change
+    steps = steps > 0 ? 1 : -1;
 
     if (buttons.getModifierState())
     {
         //change midi channel
         buttons.disable(BUTTON_ON_OFF_SPLIT);
 
-        uint8_t midiChannel = pads.getMIDIchannel(lastTouchedPad);
+        int8_t newMIDIchannel = pads.getMIDIchannel(lastTouchedPad) + steps;
 
-        if (direction)
-            midiChannel++;
-        else
-            midiChannel--;
+        //rollover
+        if (newMIDIchannel < 1)
+            newMIDIchannel = 16;
+        else if (newMIDIchannel > 16)
+            newMIDIchannel = 1;
 
-        if (midiChannel < 1)
-            midiChannel = 16;
-        if (midiChannel > 16)
-            midiChannel = 1;
-
-        pads.setMIDIchannel(lastTouchedPad, midiChannel);
+        pads.setMIDIchannel(lastTouchedPad, newMIDIchannel);
         display.displayMIDIchannelChange();
     }
     else
     {
-        int8_t activePreset = pads.getScale();
+        int8_t newScale = pads.getScale()+steps;
 
-        if (direction)
-        activePreset++;
-        else
-        activePreset--;
+        //rollover
+        if (newScale == (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES))
+            newScale = 0;
+        else if (newScale < 0)
+            newScale = (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1);
 
-        if (activePreset == (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES))
-        activePreset = 0;
-        else if (activePreset < 0)
-        activePreset = (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1);
-
-        pads.setScale(activePreset);
+        pads.setScale(newScale);
         leds.displayActiveNoteLEDs();
 
         //display scale on display
-        display.displayProgramInfo(pads.getProgram()+1, activePreset, pads.getTonic(), pads.getScaleShiftLevel());
+        display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
     }
 }
 
-void handleCC(uint8_t id, bool direction, uint8_t steps)
+void handleCC(uint8_t id, int8_t steps)
 {
     if (pads.getNumberOfPressedPads())
     {
@@ -123,11 +112,11 @@ void handleCC(uint8_t id, bool direction, uint8_t steps)
         break;
     }
 
-    pads.setCCvalue(coordinate, pads.getCCvalue(lastTouchedPad, coordinate));
+    pads.setCCvalue(coordinate, pads.getCCvalue(lastTouchedPad, coordinate)+steps);
     display.displayCCchange(coordinate, pads.getCCvalue(lastTouchedPad, coordinate));
 }
 
-void handleLimit(uint8_t id, bool direction, uint8_t steps)
+void handleLimit(uint8_t id, int8_t steps)
 {
     if (pads.getNumberOfPressedPads() && !pads.isCalibrationEnabled())
     {
@@ -154,8 +143,8 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
         if (pads.isCalibrationEnabled())
         {
-            int8_t step = direction ? -1 : 1;
-            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMin) + step);
+            steps = steps > 0 ? 1 : -1;
+            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMin) + steps);
             //refresh value on display
             uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
@@ -169,8 +158,8 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
         if (pads.isCalibrationEnabled())
         {
-            int8_t step = direction ? -1 : 1;
-            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMax) + step);
+            steps = steps > 0 ? 1 : -1;
+            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMax) + steps);
             //refresh value on display
             uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
@@ -184,9 +173,9 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
         if (pads.isCalibrationEnabled())
         {
-            int8_t step = direction ? 1 : -1;
+            steps = steps > 0 ? 1 : -1;
             //invert lower/upper logic here
-            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + step);
+            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + steps);
             //refresh value on display
             uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
@@ -200,9 +189,9 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
 
         if (pads.isCalibrationEnabled())
         {
-            int8_t step = direction ? 1 : -1;
+            steps = steps > 0 ? 1 : -1;
             //invert lower/upper logic here
-            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + step);
+            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + steps);
             //refresh value on display
             uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
             newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
@@ -225,7 +214,7 @@ void handleLimit(uint8_t id, bool direction, uint8_t steps)
     #endif
 }
 
-void handleCurve(uint8_t id, bool direction, uint8_t steps)
+void handleCurve(uint8_t id, int8_t steps)
 {
     if (pads.getNumberOfPressedPads())
     {
@@ -248,21 +237,6 @@ void handleCurve(uint8_t id, bool direction, uint8_t steps)
         break;
     }
 
-    int8_t curve = pads.getCCcurve(lastTouchedPad, coordinate);
-
-    if (direction)
-    {
-        curve++;
-        if (curve >= NUMBER_OF_CURVES)
-            curve = NUMBER_OF_CURVES-1;
-    }
-    else
-    {
-        curve--;
-        if (curve < 0)
-            curve = 0;
-    }
-
-    pads.setCCcurve(coordinate, (curve_t)curve);
+    pads.setCCcurve(coordinate, pads.getCCcurve(lastTouchedPad, coordinate)+steps);
     display.displayCurveChange(coordinate);
 }
