@@ -28,7 +28,7 @@ void handleOnOff(uint8_t id, bool state)
                 leds.setBlinkState(LED_ON_OFF_NOTES, false);
                 //make sure led state is correct
                 //hack: notes on/off can only be ledStateOff (0) or ledStateFull (2) - multiply by 2
-                leds.setLEDstate(LED_ON_OFF_NOTES, (ledState_t)(pads.getMIDISendState(pads.getLastTouchedPad(), function_notes)*2));
+                leds.setLEDstate(LED_ON_OFF_NOTES, (ledState_t)(pads.getMIDISendState(pads.getLastTouchedPad(), functionOnOffNotes)*2));
                 break;
 
                 case BUTTON_ON_OFF_SPLIT:
@@ -68,19 +68,19 @@ void handleOnOff(uint8_t id, bool state)
     //determine action based on pressed button
 
     uint8_t ledNumber = 0;
-    function_t lcdMessageType;
     ledState_t ledState = ledStateOff;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
+    changeResult_t result;
+    function_t function;
 
     switch (id)
     {
         case BUTTON_ON_OFF_NOTES:
         ledNumber = LED_ON_OFF_NOTES;
+        function = functionOnOffNotes;
+        result = pads.setMIDISendState(functionOnOffNotes, !pads.getMIDISendState(lastTouchedPad, functionOnOffNotes));
 
-        pads.setMIDISendState(function_notes, !pads.getMIDISendState(lastTouchedPad, function_notes));
-        lcdMessageType = function_notes;
-
-        if (pads.getMIDISendState(lastTouchedPad, function_notes))
+        if (pads.getMIDISendState(lastTouchedPad, functionOnOffNotes))
             ledState = ledStateFull;
         else
             ledState = ledStateOff;
@@ -88,33 +88,32 @@ void handleOnOff(uint8_t id, bool state)
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
-        pads.setMIDISendState(function_aftertouch, !pads.getMIDISendState(lastTouchedPad, function_aftertouch));
-        lcdMessageType = function_aftertouch;
+        result = pads.setMIDISendState(functionOnOffAftertouch, !pads.getMIDISendState(lastTouchedPad, functionOnOffAftertouch));
         ledNumber = LED_ON_OFF_AFTERTOUCH;
-
-        if (pads.getMIDISendState(lastTouchedPad, function_aftertouch))
+        function = functionOnOffAftertouch;
+        if (pads.getMIDISendState(lastTouchedPad, functionOnOffAftertouch))
             ledState = ledStateFull;
         else
             ledState = ledStateOff;
         break;
 
         case BUTTON_ON_OFF_X:
-        pads.setMIDISendState(function_x, !pads.getMIDISendState(lastTouchedPad, function_x));
-        lcdMessageType = function_x;
+        result = pads.setMIDISendState(functionOnOffX, !pads.getMIDISendState(lastTouchedPad, functionOnOffX));
         ledNumber = LED_ON_OFF_X;
+        function = functionOnOffX;
 
-        if (pads.getMIDISendState(lastTouchedPad, function_x))
+        if (pads.getMIDISendState(lastTouchedPad, functionOnOffX))
             ledState = ledStateFull;
         else
             ledState = ledStateOff;
         break;
 
         case BUTTON_ON_OFF_Y:
-        pads.setMIDISendState(function_y, !pads.getMIDISendState(lastTouchedPad, function_y));
-        lcdMessageType = function_y;
+        result = pads.setMIDISendState(functionOnOffY, !pads.getMIDISendState(lastTouchedPad, functionOnOffY));
         ledNumber = LED_ON_OFF_Y;
+        function = functionOnOffY;
 
-        if (pads.getMIDISendState(lastTouchedPad, function_y))
+        if (pads.getMIDISendState(lastTouchedPad, functionOnOffY))
             ledState = ledStateFull;
         else
             ledState = ledStateOff;
@@ -122,8 +121,8 @@ void handleOnOff(uint8_t id, bool state)
 
         case BUTTON_ON_OFF_SPLIT:
         ledNumber = LED_ON_OFF_SPLIT;
-        pads.setSplitState(!pads.getSplitState());
-        lcdMessageType = function_split;
+        function = functionOnOffSplit;
+        result = pads.setSplitState(!pads.getSplitState());
         pads.getSplitState() ? ledState = ledStateFull : ledState = ledStateOff;
         leds.setBlinkState(ledNumber, false);
         break;
@@ -132,8 +131,18 @@ void handleOnOff(uint8_t id, bool state)
         return;
     }
 
-    leds.setLEDstate(ledNumber, ledState);
-    display.displayOnOffChange(lcdMessageType, (uint8_t)ledState);
+    if (result == valueChanged)
+    {
+        leds.setLEDstate(ledNumber, ledState);
+        if (function == functionOnOffSplit)
+            display.displayChangeResult(function, (bool)ledState, globalSetting);
+        else
+            display.displayChangeResult(function, (bool)ledState, pads.getSplitState() ? singlePadSetting : allPadsSetting);
+    }
+    else
+    {
+        display.displayError(function, result);
+    }
 }
 
 void handleTransportControl(uint8_t id, bool state)
@@ -141,14 +150,11 @@ void handleTransportControl(uint8_t id, bool state)
     if (pads.getEditModeState())
         return;
 
-    if (!buttons.getButtonEnableState(id))
-        return;
-
     #ifdef NDEBUG
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
     #endif
 
-    transportControl_t type;
+    function_t function;
 
     if (state)
         return;
@@ -156,7 +162,7 @@ void handleTransportControl(uint8_t id, bool state)
     switch(id)
     {
         case BUTTON_TRANSPORT_PLAY:
-        type = transportPlay;
+        function = functionPlay;
         #ifdef NDEBUG
         switch(buttons.getTransportControlType())
         {
@@ -178,7 +184,7 @@ void handleTransportControl(uint8_t id, bool state)
         break;
 
         case BUTTON_TRANSPORT_STOP:
-        type = transportStop;
+        function = functionStop;
         #ifdef NDEBUG
         switch(buttons.getTransportControlType())
         {
@@ -201,6 +207,7 @@ void handleTransportControl(uint8_t id, bool state)
         break;
 
         case BUTTON_TRANSPORT_RECORD:
+        function = functionRecord;
         if (pads.isCalibrationEnabled())
         {
             if ((pads.getCalibrationMode() == coordinateX) || (pads.getCalibrationMode() == coordinateY))
@@ -239,7 +246,6 @@ void handleTransportControl(uint8_t id, bool state)
             if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
             {
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
-                type = transportRecordOff;
                 #ifdef NDEBUG
                 switch(buttons.getTransportControlType())
                 {
@@ -261,7 +267,6 @@ void handleTransportControl(uint8_t id, bool state)
             else
             {
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
-                type = transportRecordOn;
                 #ifdef NDEBUG
                 switch(buttons.getTransportControlType())
                 {
@@ -292,7 +297,7 @@ void handleTransportControl(uint8_t id, bool state)
         midi.sendSysEx(6, sysExArray, true);
     #endif
 
-    display.displayTransportControl(type);
+    display.displayChangeResult(function, 0, globalSetting);
 }
 
 void handleUpDown(uint8_t id, bool state)
@@ -312,39 +317,33 @@ void handleUpDown(uint8_t id, bool state)
         printf_P(PSTR("Trying to enter pad edit mode...\n"));
         #endif
 
-        //try to enter pad edit mode
-        if (pads.isUserScale(pads.getScale()))
+        if (!pads.getEditModeState())
         {
-            if (!pads.getEditModeState())
-            {
-                //check if last touched pad is pressed
-                if (pads.isPadPressed(pads.getLastTouchedPad()))
-                {
-                    display.displayEditModeNotAllowed(padNotReleased);
-                }
-                else
-                {
-                    #ifdef DEBUG
-                    printf_P(PSTR("Pad edit mode entered.\n"));
-                    #endif
-                    pads.setEditModeState(true, pads.getLastTouchedPad());
+            //try to enter pad edit mode
+            changeResult_t result = pads.setEditModeState(true, pads.getLastTouchedPad());
 
-                    leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
-                    leds.setLEDstate(LED_OCTAVE_UP, ledStateFull);
-                }
+            if (result == valueChanged)
+            {
+                #ifdef DEBUG
+                printf_P(PSTR("Pad edit mode entered.\n"));
+                #endif
+
+                leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
+                leds.setLEDstate(LED_OCTAVE_UP, ledStateFull);
             }
             else
             {
+                display.displayError(functionPadEditMode, result);
                 leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                 leds.setLEDstate(LED_OCTAVE_UP, ledStateOff);
-                pads.setEditModeState(false);
             }
         }
         else
         {
-            display.displayEditModeNotAllowed(notUserPreset);
+            //exit pad edit mode
             leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
             leds.setLEDstate(LED_OCTAVE_UP, ledStateOff);
+            pads.setEditModeState(false);
         }
 
         //temporarily disable buttons
@@ -380,9 +379,20 @@ void handleUpDown(uint8_t id, bool state)
                 //shift entire octave up or down
                 if (!state)
                 {
-                    pads.setOctave(direction ? pads.getOctave()+1 : pads.getOctave()-1);
-                    uint8_t activeOctave = pads.getOctave();
-                    display.displayNoteChange(outputChanged, octaveChange, activeOctave);
+                    changeResult_t result = pads.setOctave(direction ? pads.getOctave()+1 : pads.getOctave()-1);
+
+                    switch(result)
+                    {
+                        case noChange:
+                        case valueChanged:
+                        display.displayChangeResult(functionOctave, pads.getOctave(), globalSetting);
+                        break;
+
+                        default:
+                        display.displayError(functionOctave, result);
+                        break;
+                    }
+
                     direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
                 }
                 else
@@ -395,20 +405,24 @@ void handleUpDown(uint8_t id, bool state)
                 //shift single note, but only in predefined presets
                 if (!state)
                 {
-                    if (pads.isPadPressed(lastTouchedPad) || pads.isUserScale(pads.getScale()))
-                    {
-                        //don't allow this
-                        return;
-                    }
-
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
-                    buttons.disable(BUTTON_ON_OFF_NOTES);
-
                     int8_t shiftLevel = direction ? 1 : -1;
-                    changeResult_t shiftResult = pads.setScaleShiftLevel(pads.getScaleShiftLevel()+shiftLevel);
-                    //make sure scale shifting is updated on display after message is cleared
-                    display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
-                    display.displayNoteChange(shiftResult, noteShift, pads.getScaleShiftLevel());
+                    changeResult_t result = pads.setScaleShiftLevel(pads.getScaleShiftLevel()+shiftLevel);
+
+                    switch(result)
+                    {
+                        case noChange:
+                        case valueChanged:
+                        direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
+                        buttons.disable(BUTTON_ON_OFF_NOTES);
+
+                        //make sure scale shifting is updated on display after message is cleared
+                        display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
+                        display.displayChangeResult(functionNoteShift, pads.getScaleShiftLevel(), globalSetting);
+                        break;
+
+                        default:
+                        display.displayError(functionNoteShift, result);
+                    }
                 }
                 else
                 {
@@ -433,33 +447,39 @@ void handleTonic(uint8_t id, bool state)
     if (!pads.getEditModeState())
     {
         changeResult_t result = pads.setTonic(note);
-        note_t activeTonic = pads.getTonic();
 
         switch(result)
         {
-            case outputChanged:
+            case valueChanged:
             case noChange:
             leds.displayActiveNoteLEDs();
             //make sure tonic is updated on display after message is cleared
             display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
-            display.displayNoteChange(result, tonicChange, activeTonic);
-            break;
-
-            case notAllowed:
-            display.displayNoNotesError();
+            display.displayChangeResult(functionNotes, pads.getTonic(), globalSetting);
             break;
 
             default:
+            display.displayError(functionNotes, result);
             break;
         }
     }
     else
     {
         //add note to pad
-        uint8_t pad = pads.getLastTouchedPad();
-        pads.setPadNote(pad, note);
-        display.displayActivePadNotes();
-        leds.displayActiveNoteLEDs(true, pad);
+        uint8_t lastTouchedPad = pads.getLastTouchedPad();
+        changeResult_t result = pads.setPadNote(lastTouchedPad, note);
+
+        switch(result)
+        {
+            case noChange:
+            case valueChanged:
+            display.displayActivePadNotes();
+            leds.displayActiveNoteLEDs(true, lastTouchedPad);
+            break;
+
+            default:
+            display.displayError(functionNotes, result);
+        }
     }
 }
 
@@ -470,10 +490,17 @@ void handleProgramEncButton(uint8_t id, bool state)
 
     if (!menu.isMenuDisplayed())
     {
-        menu.show(userMenu);
-        #ifdef DEBUG
-        printf_P(PSTR("Entering user menu\n"));
-        #endif
+        if (pads.getNumberOfPressedPads())
+        {
+            display.displayError(functionMenu, releasePads);
+        }
+        else
+        {
+            menu.show(userMenu);
+            #ifdef DEBUG
+            printf_P(PSTR("Entering user menu\n"));
+            #endif
+        }
     }
     else
     {
@@ -494,15 +521,13 @@ void handlePresetEncButton(uint8_t id, bool state)
         return;
     }
 
-    //make sure movement is enabled ion case we just exited menu
-    menu.resetExitTime();
-
     buttons.setModifierState(!buttons.getModifierState());
 
     if (buttons.getModifierState())
     {
         //midi channel change mode, display on lcd
-        display.displayMIDIchannelChange();
+        display.displayChangeResult(functionChannel, pads.getMIDIchannel(pads.getLastTouchedPad()), pads.getSplitState() ? singlePadSetting : globalSetting);
+        display.setMessageTime(INFINITE_MESSAGE_TIME);
     }
     else
     {

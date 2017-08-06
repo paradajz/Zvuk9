@@ -57,12 +57,6 @@ void Encoders::update(bool process)
             encoderSpeed[i] = 0;
         }
 
-        if (pads.getEditModeState())
-        {
-            display.displayPadEditChangeParametersError();
-            continue;
-        }
-
         //allow only program and scale encoder while in menu
         //no message on display? maybe TO-DO
         if (menu.isMenuDisplayed())

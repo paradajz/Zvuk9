@@ -23,12 +23,12 @@ PGM_P const presetNameArray[] PROGMEM =
 
 const uint8_t presetNameArray_sizes[] PROGMEM =
 {
-    sizeof(presetNaturalMinor_string) - 1,
-    sizeof(presetMelodicMinor_string) - 1,
-    sizeof(presetHarmonicMinor_string) - 1,
-    sizeof(presetMajor_string) - 1,
-    sizeof(presetHarmonicMajor_string) - 1,
-    sizeof(presetMinorPentatonic_string) - 1,
-    sizeof(presetMajorPentatonic_string) - 1,
-    sizeof(presetUser_string) - 1
+    ARRAY_SIZE_CHAR(presetNaturalMinor_string),
+    ARRAY_SIZE_CHAR(presetMelodicMinor_string),
+    ARRAY_SIZE_CHAR(presetHarmonicMinor_string),
+    ARRAY_SIZE_CHAR(presetMajor_string),
+    ARRAY_SIZE_CHAR(presetHarmonicMajor_string) ,
+    ARRAY_SIZE_CHAR(presetMinorPentatonic_string),
+    ARRAY_SIZE_CHAR(presetMajorPentatonic_string),
+    ARRAY_SIZE_CHAR(presetUser_string)
 };

@@ -9,8 +9,6 @@
 #include "Macros.h"
 #include "strings/Strings.h"
 
-#define SPACE_CHAR          32
-
 extern U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
 
 class LCD
@@ -34,33 +32,22 @@ class LCD
     void displayXYcc(padCoordinate_t type, uint8_t cc = 255);
     void displayXYposition(padCoordinate_t type, uint8_t position = 255);
     void displayMIDIchannel(uint8_t channel = 255);
+    void clearPadPressData();
+
+    void displayChangeResult(function_t function, int16_t value, settingType_t type);
+    void displayError(function_t function, changeResult_t result);
 
     void setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh = false);
-
-    void clearPadPressData();
 
     void clearAll();
     void clearLine(uint8_t row, bool writeToDisplay = true);
 
     void displayFirmwareUpdated();
 
-    void displayTransportControl(transportControl_t type);
-    void displayOnOffChange(function_t type, uint8_t functionState);
-    void displayCurveChange(padCoordinate_t coordinate);
-    void displayCClimitChange(padCoordinate_t coordinate, limitType_t type, uint8_t ccValue);
-    void displayCCchange(padCoordinate_t type, uint8_t ccValue);
-    void displayMIDIchannelChange();
     void displayNoteChange(changeResult_t result, noteChangeType_t type, int8_t value);
-    void displayEditModeNotAllowed(padEditModeResult_t errorType);
-    void displayNoNotesError();
-    void displayOutOfRange();
-    void displayMaxNotesSet();
-    void displayPadReleaseError(padReleaseError_t error);
-    void displayPadEditChangeParametersError();
     void displayFactoryResetConfirm();
     void displayFactoryResetStart();
     void displayFactoryResetEnd();
-    void displayNoteUpDown(bool state, int8_t shiftLevel = 0);
 
     void displayScrollCalibrationStatus(bool status);
     void displayPressureCalibrationTime(uint8_t seconds, uint8_t pressureZone, bool done);
@@ -95,7 +82,6 @@ class LCD
     messageStatus_t getMessageStatus();
     void displayText(uint8_t row, const char *text, uint8_t startIndex);
     void displayMessage(uint8_t row, const char *message, uint8_t startIndex);
-    void displayPadAmount(uint8_t padNumber);
     void removeMessage();
 
     uint32_t messageDisplayTime;

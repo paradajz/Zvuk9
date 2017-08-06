@@ -1,21 +1,82 @@
 #pragma once
 
-const char outOfRange_string[] PROGMEM = "Out of range";
+const char error_changeProgram_string[] PROGMEM = "Program change error:";
+const char error_changeScale_string[] PROGMEM = "Scale change error:";
+const char error_changeMIDIchannel_string[] PROGMEM = "MIDI channel change error";
+const char error_play_string[] PROGMEM = "Play error:";
+const char error_stop_string[] PROGMEM = "Stop error:";
+const char error_record_string[] PROGMEM = "Record error:";
+const char error_noteChange_string[] PROGMEM = "Note change error:";
+const char error_splitMode_string[] PROGMEM = "Split mode change error:";
+const char error_sendX_string[] PROGMEM = "X send mode change error:";
+const char error_sendY_string[] PROGMEM = "Y send mode change error:";
+const char error_sendAftertouch_string[] PROGMEM = "Aftertouch send mode change error:";
+const char error_sendNotes_string[] PROGMEM = "Note send mode change error:";
+const char error_octaveChange_string[] PROGMEM = "Octave change error:";
+const char error_noteShift_string[] PROGMEM = "Note shift change error:";
+const char error_padEdit_string[] PROGMEM = "Pad edit mode entry error:";
+const char error_ccX_string[] PROGMEM = "X CC change error:";
+const char error_ccY_string[] PROGMEM = "Y CC change error:";
+const char error_xMin_string[] PROGMEM = "X min change error:";
+const char error_xMax_string[] PROGMEM = "X max change error:";
+const char error_yMin_string[] PROGMEM = "Y min change error:";
+const char error_yMax_string[] PROGMEM = "Y max change error:";
+const char error_xCurve_string[] PROGMEM = "X curve change error:";
+const char error_yCurve_string[] PROGMEM = "Y curve change error:";
+const char error_menu_string[] PROGMEM = "Menu entry error:";
 
-const char editModeEnterError0_string[] PROGMEM = "Select user scale";
-const char editModeEnterError1_string[] PROGMEM = "to edit pad notes!";
+PGM_P const functionErrorArray[] PROGMEM =
+{
+    error_changeProgram_string,
+    error_changeScale_string,
+    error_changeMIDIchannel_string,
+    error_play_string,
+    error_stop_string,
+    error_record_string,
+    error_noteChange_string,
+    error_splitMode_string,
+    error_sendX_string,
+    error_sendY_string,
+    error_sendAftertouch_string,
+    error_sendNotes_string,
+    error_octaveChange_string,
+    error_noteShift_string,
+    error_padEdit_string,
+    error_ccX_string,
+    error_ccY_string,
+    error_xMin_string,
+    error_xMax_string,
+    error_yMin_string,
+    error_yMax_string,
+    error_xCurve_string,
+    error_yCurve_string,
+    error_menu_string
+};
 
-const char relasePad_string[] PROGMEM = "Release all pads to";
-const char changeParameters_string[] PROGMEM = "change parameters!";
-const char changeProgram_string[] PROGMEM = "change program!";
-const char changePreset_string[] PROGMEM = "change scale!";
-const char changeCurve_string[] PROGMEM = "change curve!";
-const char changeCC_string[] PROGMEM = "change CC!";
-const char changeCClimit_string[] PROGMEM = "change CC limit!";
-const char enterPadEditMode_string[] PROGMEM = "enter pad edit mode!";
-const char calibrationMode_string[] PROGMEM = "enter calibration!";
-
-const char exitPadMode_string[] PROGMEM = "Exit pad edit mode to";
-
-const char maxNotesSet0_string[] PROGMEM = "Maximum number of";
-const char maxNotesSet1_string[] PROGMEM = "notes set!";
+const uint8_t functionErrorArray_sizes[] PROGMEM =
+{
+    ARRAY_SIZE_CHAR(error_changeProgram_string),
+    ARRAY_SIZE_CHAR(error_changeScale_string),
+    ARRAY_SIZE_CHAR(error_changeMIDIchannel_string),
+    ARRAY_SIZE_CHAR(error_play_string),
+    ARRAY_SIZE_CHAR(error_stop_string),
+    ARRAY_SIZE_CHAR(error_record_string),
+    ARRAY_SIZE_CHAR(error_noteChange_string),
+    ARRAY_SIZE_CHAR(error_splitMode_string),
+    ARRAY_SIZE_CHAR(error_sendX_string),
+    ARRAY_SIZE_CHAR(error_sendY_string),
+    ARRAY_SIZE_CHAR(error_sendAftertouch_string),
+    ARRAY_SIZE_CHAR(error_sendNotes_string),
+    ARRAY_SIZE_CHAR(error_octaveChange_string),
+    ARRAY_SIZE_CHAR(error_noteShift_string),
+    ARRAY_SIZE_CHAR(error_padEdit_string),
+    ARRAY_SIZE_CHAR(error_ccX_string),
+    ARRAY_SIZE_CHAR(error_ccY_string),
+    ARRAY_SIZE_CHAR(error_xMin_string),
+    ARRAY_SIZE_CHAR(error_xMax_string),
+    ARRAY_SIZE_CHAR(error_yMin_string),
+    ARRAY_SIZE_CHAR(error_yMax_string),
+    ARRAY_SIZE_CHAR(error_xCurve_string),
+    ARRAY_SIZE_CHAR(error_yCurve_string),
+    ARRAY_SIZE_CHAR(error_menu_string)
+};

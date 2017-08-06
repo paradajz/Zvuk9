@@ -144,8 +144,10 @@ int main()
 
     buttons.init();
 
+    #ifndef DEBUG
     if (checkNewRevision())
         display.displayFirmwareUpdated();
+    #endif
 
     #ifdef SYS_EX_CONF
     sysEx.setHandleGet(onGet);

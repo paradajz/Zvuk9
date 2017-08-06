@@ -1,22 +1,5 @@
 #pragma once
 
-const char curveCoordinateX_string[] PROGMEM = "X curve=";
-const char curveCoordinateY_string[] PROGMEM = "Y curve=";
-
-PGM_P const curveCoordinateArray[] PROGMEM =
-{
-    //match order with coordinateType_t enum
-    curveCoordinateX_string,
-    curveCoordinateY_string
-};
-
-const uint8_t curveCoordinateArray_sizes[] PROGMEM =
-{
-    //match order with coordinateType_t enum
-    sizeof(curveCoordinateX_string) - 1,
-    sizeof(curveCoordinateY_string) - 1
-};
-
 const char curve_linear_up_string[] PROGMEM = "Linear up";
 const char curve_linear_down_string[] PROGMEM = "Linear down";
 const char curve_linear_up_broken_1_string[] PROGMEM = "Linear up broken 1";
@@ -53,17 +36,17 @@ PGM_P const curveNameArray[] PROGMEM =
 const uint8_t curveNameArray_sizes[] PROGMEM =
 {
     //match order with coordinateType_t enum
-    sizeof(curve_linear_up_string) - 1,
-    sizeof(curve_linear_down_string) - 1,
-    sizeof(curve_linear_up_broken_1_string) - 1,
-    sizeof(curve_linear_up_broken_2_string) - 1,
-    sizeof(curve_linear_up_down_broken_string) - 1,
-    sizeof(curve_linear_down_broken_string) - 1,
-    sizeof(curve_flat_center_up_string) - 1,
-    sizeof(curve_log_up_1_string) - 1,
-    sizeof(curve_log_up_2_string) - 1,
-    sizeof(curve_exp_up_string) - 1,
-    sizeof(curve_switch_string) - 1,
-    sizeof(curve_five_steps_up_string) - 1,
-    sizeof(curve_eight_waves_up_down_string) - 1
+    ARRAY_SIZE_CHAR(curve_linear_up_string),
+    ARRAY_SIZE_CHAR(curve_linear_down_string),
+    ARRAY_SIZE_CHAR(curve_linear_up_broken_1_string),
+    ARRAY_SIZE_CHAR(curve_linear_up_broken_2_string),
+    ARRAY_SIZE_CHAR(curve_linear_up_down_broken_string),
+    ARRAY_SIZE_CHAR(curve_linear_down_broken_string),
+    ARRAY_SIZE_CHAR(curve_flat_center_up_string),
+    ARRAY_SIZE_CHAR(curve_log_up_1_string),
+    ARRAY_SIZE_CHAR(curve_log_up_2_string),
+    ARRAY_SIZE_CHAR(curve_exp_up_string),
+    ARRAY_SIZE_CHAR(curve_switch_string),
+    ARRAY_SIZE_CHAR(curve_five_steps_up_string),
+    ARRAY_SIZE_CHAR(curve_eight_waves_up_down_string)
 };

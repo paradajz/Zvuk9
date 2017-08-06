@@ -14,13 +14,6 @@ void handleProgram(uint8_t id, int8_t steps)
         return;
     }
 
-    if (pads.getNumberOfPressedPads())
-    {
-        //disable encoders while pads are pressed
-        display.displayPadReleaseError(changeProgram);
-        return;
-    }
-
     //allow only 1 step change
     steps = steps > 0 ? 1 : -1;
 
@@ -32,24 +25,24 @@ void handleProgram(uint8_t id, int8_t steps)
     else if (newProgram < 0)
         newProgram = (NUMBER_OF_PROGRAMS-1);
 
-    pads.setProgram(newProgram);
+    changeResult_t result = pads.setProgram(newProgram);
 
-    //scale is changed
-    leds.displayActiveNoteLEDs();
+    if (result == valueChanged)
+    {
+        //display scale on display
+        display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
 
-    //display scale on display
-    display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
+        //scale is changed as well
+        leds.displayActiveNoteLEDs();
+    }
+    else if (result != noChange)
+    {
+        display.displayError(functionProgram, result);
+    }
 }
 
 void handleScale(uint8_t id, int8_t steps)
 {
-    if (pads.getNumberOfPressedPads())
-    {
-        //disable encoders while pads are pressed
-        display.displayPadReleaseError(changePreset);
-        return;
-    }
-
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     //allow only 1 step change
@@ -68,8 +61,16 @@ void handleScale(uint8_t id, int8_t steps)
         else if (newMIDIchannel > 16)
             newMIDIchannel = 1;
 
-        pads.setMIDIchannel(lastTouchedPad, newMIDIchannel);
-        display.displayMIDIchannelChange();
+        changeResult_t result = pads.setMIDIchannel(lastTouchedPad, newMIDIchannel);
+
+        if (result == valueChanged)
+        {
+            display.displayChangeResult(functionChannel, pads.getMIDIchannel(pads.getLastTouchedPad()), pads.getSplitState() ? singlePadSetting : globalSetting);
+        }
+        else if (result != noChange)
+        {
+            display.displayError(functionChannel, result);
+        }
     }
     else
     {
@@ -81,23 +82,23 @@ void handleScale(uint8_t id, int8_t steps)
         else if (newScale < 0)
             newScale = (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES-1);
 
-        pads.setScale(newScale);
-        leds.displayActiveNoteLEDs();
+        changeResult_t result = pads.setScale(newScale);
 
-        //display scale on display
-        display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
+        if (result == valueChanged)
+        {
+            leds.displayActiveNoteLEDs();
+            //display scale on display
+            display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
+        }
+        else if (result != noChange)
+        {
+            display.displayError(functionScale, result);
+        }
     }
 }
 
 void handleCC(uint8_t id, int8_t steps)
 {
-    if (pads.getNumberOfPressedPads())
-    {
-        //disable encoders while pads are pressed
-        display.displayPadReleaseError(changeCCnumber);
-        return;
-    }
-
     padCoordinate_t coordinate = coordinateX;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
@@ -112,19 +113,23 @@ void handleCC(uint8_t id, int8_t steps)
         break;
     }
 
-    pads.setCCvalue(coordinate, pads.getCCvalue(lastTouchedPad, coordinate)+steps);
-    display.displayCCchange(coordinate, pads.getCCvalue(lastTouchedPad, coordinate));
+    changeResult_t result = pads.setCCvalue(coordinate, pads.getCCvalue(lastTouchedPad, coordinate)+steps);
+
+    switch(result)
+    {
+        case valueChanged:
+        case noChange:
+        display.displayChangeResult(coordinate == coordinateX ? functionXCC : functionYCC, pads.getCCvalue(lastTouchedPad, coordinate), pads.getSplitState() ? singlePadSetting : allPadsSetting);
+        break;
+
+        default:
+        display.displayError(coordinate == coordinateX ? functionXCC : functionYCC, result);
+        break;
+    }
 }
 
 void handleLimit(uint8_t id, int8_t steps)
 {
-    if (pads.getNumberOfPressedPads() && !pads.isCalibrationEnabled())
-    {
-        //disable encoders while pads are pressed
-        display.displayPadReleaseError(changeCClimit);
-        return;
-    }
-
     if (menu.isMenuDisplayed() && !pads.getNumberOfPressedPads())
         return;
 
@@ -134,11 +139,13 @@ void handleLimit(uint8_t id, int8_t steps)
     padCoordinate_t coordinate = coordinateX;
     limitType_t limit = limitTypeMin;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
+    function_t function;
 
     switch(id)
     {
         case X_MIN_ENCODER:
         coordinate = coordinateX;
+        function = functionXMinLimit;
         limit = limitTypeMin;
 
         if (pads.isCalibrationEnabled())
@@ -155,6 +162,7 @@ void handleLimit(uint8_t id, int8_t steps)
         case X_MAX_ENCODER:
         coordinate = coordinateX;
         limit = limitTypeMax;
+        function = functionXMaxLimit;
 
         if (pads.isCalibrationEnabled())
         {
@@ -170,6 +178,7 @@ void handleLimit(uint8_t id, int8_t steps)
         case Y_MIN_ENCODER:
         coordinate = coordinateY;
         limit = limitTypeMin;
+        function = functionYMinLimit;
 
         if (pads.isCalibrationEnabled())
         {
@@ -186,6 +195,7 @@ void handleLimit(uint8_t id, int8_t steps)
         case Y_MAX_ENCODER:
         coordinate = coordinateY;
         limit = limitTypeMax;
+        function = functionYMaxLimit;
 
         if (pads.isCalibrationEnabled())
         {
@@ -198,31 +208,31 @@ void handleLimit(uint8_t id, int8_t steps)
             //display.displayXYposition(newValue, coordinateY);
         }
         break;
+
+        default:
+        return;
     }
 
     if (!pads.isCalibrationEnabled())
     {
-        pads.setCClimit(coordinate, limit, pads.getCClimit(lastTouchedPad, coordinate, limit) + steps);
-        uint8_t value = pads.getCClimit(lastTouchedPad, coordinate, limit);
-        display.displayCClimitChange(coordinate, limit, value);
+        changeResult_t result = pads.setCClimit(coordinate, limit, pads.getCClimit(lastTouchedPad, coordinate, limit) + steps);
+
+        switch(result)
+        {
+            case noChange:
+            case valueChanged:
+            display.displayChangeResult(function, pads.getCClimit(lastTouchedPad, coordinate, limit), pads.getSplitState() ? singlePadSetting : allPadsSetting);
+            break;
+
+            default:
+            display.displayError(function, result);
+            break;
+        }
     }
-    #ifdef DEBUG
-    else
-    {
-        printf_P(PSTR("Pad %d\nLower limit: %d\nUpper limit: %d\n\n"), lastTouchedPad, pads.getCalibrationLimit(lastTouchedPad, coordinate, limitTypeMin), pads.getCalibrationLimit(lastTouchedPad, coordinate, limitTypeMax));
-    }
-    #endif
 }
 
 void handleCurve(uint8_t id, int8_t steps)
 {
-    if (pads.getNumberOfPressedPads())
-    {
-        //disable encoders while pads are pressed
-        display.displayPadReleaseError(changeCurve);
-        return;
-    }
-
     padCoordinate_t coordinate = coordinateX;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
@@ -237,6 +247,20 @@ void handleCurve(uint8_t id, int8_t steps)
         break;
     }
 
-    pads.setCCcurve(coordinate, pads.getCCcurve(lastTouchedPad, coordinate)+steps);
-    display.displayCurveChange(coordinate);
+    //only one step change
+    steps = steps > 0 ? 1 : -1;
+
+    changeResult_t result = pads.setCCcurve(coordinate, pads.getCCcurve(lastTouchedPad, coordinate)+steps);
+
+    switch(result)
+    {
+        case noChange:
+        case valueChanged:
+        display.displayChangeResult(coordinate == coordinateX ? functionXCurve : functionYCurve, pads.getCCcurve(lastTouchedPad, coordinate), pads.getSplitState() ? singlePadSetting : allPadsSetting);
+        break;
+
+        default:
+        display.displayError(coordinate == coordinateX ? functionXCurve : functionYCurve, result);
+        break;
+    }
 }

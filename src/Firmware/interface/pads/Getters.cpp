@@ -111,7 +111,7 @@ note_t Pads::getTonic()
         for (int i=0; i<NOTES_PER_PAD; i++)
         {
             if (padNote[0][i] != BLANK_NOTE)
-                return getTonicFromNote(padNote[0][i]+noteShiftAmount[i]);
+                return getTonicFromNote(padNote[0][i]);
         }
 
         return MIDI_NOTES;
@@ -141,7 +141,7 @@ uint8_t Pads::getOctave(bool padEditMode)
         if (isPredefinedScale(activeScale))
         {
             //in predefined scales octave is always calculated using first note on first pad
-            return getOctaveFromNote(padNote[0][0] + MIDI_NOTES*octaveShiftAmount[0]);
+            return getOctaveFromNote(padNote[0][0]);
         }
         else
         {
@@ -152,7 +152,7 @@ uint8_t Pads::getOctave(bool padEditMode)
                 {
                     if (padNote[i][j] != BLANK_NOTE)
                     {
-                        return getOctaveFromNote(padNote[i][j] + MIDI_NOTES*octaveShiftAmount[i]);
+                        return getOctaveFromNote(padNote[i][j]);
                     }
                 }
             }
@@ -184,16 +184,16 @@ bool Pads::getMIDISendState(int8_t pad, function_t type)
 
     switch(type)
     {
-        case function_aftertouch:
+        case functionOnOffAftertouch:
         return bitRead(aftertouchSendEnabled, pad);
 
-        case function_notes:
+        case functionOnOffNotes:
         return bitRead(noteSendEnabled, pad);
 
-        case function_x:
+        case functionOnOffX:
         return bitRead(xSendEnabled, pad);
 
-        case function_y:
+        case functionOnOffY:
         return bitRead(ySendEnabled, pad);
 
         default:
@@ -598,10 +598,10 @@ void Pads::getPadParameters()
     uint8_t lastTouchedPad = getLastTouchedPad();
 
     leds.setLEDstate(LED_ON_OFF_SPLIT, splitEnabled ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(lastTouchedPad, function_aftertouch) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(lastTouchedPad, function_notes) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(lastTouchedPad, function_x) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(lastTouchedPad, function_y) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(lastTouchedPad, functionOnOffAftertouch) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(lastTouchedPad, functionOnOffNotes) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(lastTouchedPad, functionOnOffX) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(lastTouchedPad, functionOnOffY) ? ledStateFull : ledStateOff);
 }
 
 ///

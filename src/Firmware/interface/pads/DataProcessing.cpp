@@ -196,9 +196,6 @@ void Pads::update()
             }
         }
     }
-
-    checkRemainingOctaveShift();
-    checkRemainingTonicShift();
 }
 
 bool Pads::checkVelocity(int8_t pad)
@@ -637,7 +634,7 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
 
         if (aftertouchAvailable)
         {
-            if (getMIDISendState(pad, function_aftertouch) && bitRead(aftertouchActivated, pad))
+            if (getMIDISendState(pad, functionOnOffAftertouch) && bitRead(aftertouchActivated, pad))
             {
                 switch(aftertouchType)
                 {

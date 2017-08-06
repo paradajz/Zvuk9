@@ -29,8 +29,6 @@ class Menu : LCD
     void createUserMenuLayout();
     void createQuickMenuLayout();
     void stopFunction();
-    void resetExitTime();
-    uint32_t getExitTime();
 
     private:
     menuType_t activeMenu;
@@ -63,7 +61,6 @@ class Menu : LCD
 
     menuItem_t menuItem[MAX_MENU_OPTIONS];
     uint8_t menuSize;
-    uint32_t exitTime;
 };
 
 extern Menu menu;

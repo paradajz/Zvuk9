@@ -40,7 +40,7 @@ void LCD::displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, int8_
 {
     uint8_t size = 0;
     strcpy_P(stringBuffer, program_string);
-    size = progmemCharArraySize(program_string);
+    size = ARRAY_SIZE_CHAR(program_string);
     addNumberToCharArray(program, size);
 
     while (size < LCD_POSITION_PROGRAM_INFO_DELIMITER_1)
@@ -100,7 +100,7 @@ void LCD::displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, int8_
 void LCD::displayPad(uint8_t pad)
 {
     strcpy_P(stringBuffer, padPress_string);
-    uint8_t size = progmemCharArraySize(padPress_string);
+    uint8_t size = ARRAY_SIZE_CHAR(padPress_string);
 
     if (pad != 255)
     {
@@ -190,13 +190,13 @@ void LCD::displayVelocity(uint8_t velocity)
 {
     uint8_t size = 0;
     strcpy_P(stringBuffer, velocity_string);
-    size = progmemCharArraySize(velocity_string);
+    size = ARRAY_SIZE_CHAR(velocity_string);
 
     if (velocity != 255)
     {
         addNumberToCharArray(velocity, size);
 
-        while (size < (progmemCharArraySize(velocity_string)+3))
+        while (size < (ARRAY_SIZE_CHAR(velocity_string)+3))
             addSpaceToCharArray(1, size); //ensure three characters
     }
     else
@@ -210,13 +210,13 @@ void LCD::displayVelocity(uint8_t velocity)
 void LCD::displayAftertouch(uint8_t aftertouch)
 {
     strcpy_P(stringBuffer, aftertouch_string);
-    uint8_t size = progmemCharArraySize(aftertouch_string);
+    uint8_t size = ARRAY_SIZE_CHAR(aftertouch_string);
 
     if (aftertouch != 255)
     {
         addNumberToCharArray(aftertouch, size);
 
-        while (size < (progmemCharArraySize(aftertouch_string)+3))
+        while (size < (ARRAY_SIZE_CHAR(aftertouch_string)+3))
             addSpaceToCharArray(1, size); //ensure three characters
     }
     else
@@ -235,14 +235,14 @@ void LCD::displayXYcc(padCoordinate_t type, uint8_t cc)
     {
         case coordinateX:
         strcpy_P(stringBuffer, xCCid_string);
-        size = progmemCharArraySize(xCCid_string);
+        size = ARRAY_SIZE_CHAR(xCCid_string);
         lcdCoordinate = LCD_POSITION_PRESS_INFO_X_CC;
         lcdRow = LCD_ROW_PRESS_INFO_X_CC;
         break;
 
         case coordinateY:
         strcpy_P(stringBuffer, yCCid_string);
-        size = progmemCharArraySize(yCCid_string);
+        size = ARRAY_SIZE_CHAR(yCCid_string);
         lcdCoordinate = LCD_POSITION_PRESS_INFO_Y_CC;
         lcdRow = LCD_ROW_PRESS_INFO_Y_CC;
         break;
@@ -255,7 +255,7 @@ void LCD::displayXYcc(padCoordinate_t type, uint8_t cc)
     {
         addNumberToCharArray(cc, size);
 
-        while (size < (progmemCharArraySize(xCCid_string)+3))
+        while (size < (ARRAY_SIZE_CHAR(xCCid_string)+3))
             addSpaceToCharArray(1, size); //ensure three characters
     }
     else
@@ -309,13 +309,13 @@ void LCD::displayXYposition(padCoordinate_t type, uint8_t position)
 void LCD::displayMIDIchannel(uint8_t channel)
 {
     strcpy_P(stringBuffer, midiChannel_string);
-    uint8_t size = progmemCharArraySize(midiChannel_string);
+    uint8_t size = ARRAY_SIZE_CHAR(midiChannel_string);
 
     if (channel != 255)
     {
         addNumberToCharArray(channel, size);
 
-        while (size < (progmemCharArraySize(midiChannel_string)+2))
+        while (size < (ARRAY_SIZE_CHAR(midiChannel_string)+2))
             addSpaceToCharArray(1, size); //ensure two characters
     }
     else
@@ -365,13 +365,13 @@ void LCD::setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh)
         clearAll();
 
         strcpy_P(stringBuffer, assignedNotes_string);
-        size = progmemCharArraySize(assignedNotes_string);
+        size = ARRAY_SIZE_CHAR(assignedNotes_string);
 
         updateDisplay(LCD_ROW_PAD_EDIT_ASSIGNED_NOTES_INFO, text, getTextCenter(size), size);
     }
 
     strcpy_P(stringBuffer, padEditMode_string);
-    size = progmemCharArraySize(padEditMode_string);
+    size = ARRAY_SIZE_CHAR(padEditMode_string);
     appendText(" | pad ", size);
     addNumberToCharArray(pad, size);
     appendText(" | ", size);
@@ -399,7 +399,7 @@ void LCD::displayDeviceInfo()
 {
     uint8_t size = 0;
     strcpy_P(stringBuffer, deviceInfo_swVersion_string);
-    size += progmemCharArraySize(deviceInfo_swVersion_string);
+    size += ARRAY_SIZE_CHAR(deviceInfo_swVersion_string);
     addNumberToCharArray(getSWversion(swVersion_major), size);
     appendText(".", size);
     addNumberToCharArray(getSWversion(swVersion_minor), size);
@@ -410,7 +410,7 @@ void LCD::displayDeviceInfo()
 
     size = 0;
     strcpy_P(stringBuffer, deviceInfo_hwVersion_string);
-    size += progmemCharArraySize(deviceInfo_hwVersion_string);
+    size += ARRAY_SIZE_CHAR(deviceInfo_hwVersion_string);
     addNumberToCharArray(HARDWARE_VERSION_MAJOR, size);
     appendText(".", size);
     addNumberToCharArray(HARDWARE_VERSION_MINOR, size);
@@ -425,22 +425,22 @@ void LCD::displayFactoryResetConfirm()
     uint8_t location;
 
     strcpy_P(stringBuffer, menuOption_factoryReset_title_string);
-    size = progmemCharArraySize(menuOption_factoryReset_title_string);
+    size = ARRAY_SIZE_CHAR(menuOption_factoryReset_title_string);
     location = getTextCenter(size);
     updateDisplay(LCD_ROW_FACTORY_RESET_TITLE, text, location, size);
 
     strcpy_P(stringBuffer, factory_reset_info_confirm_string);
-    size = progmemCharArraySize(factory_reset_info_confirm_string);
+    size = ARRAY_SIZE_CHAR(factory_reset_info_confirm_string);
     location = getTextCenter(size);
     updateDisplay(LCD_ROW_FACTORY_RESET_INFO_CONFIRM, text, location, size);
 
     strcpy_P(stringBuffer, factory_reset_pads_string);
-    size = progmemCharArraySize(factory_reset_pads_string);
+    size = ARRAY_SIZE_CHAR(factory_reset_pads_string);
     location = getTextCenter(size);
     updateDisplay(LCD_ROW_FACTORY_RESET_PADS, text, location, size);
 
     strcpy_P(stringBuffer, factory_reset_info_cancel_string);
-    size = progmemCharArraySize(factory_reset_info_cancel_string);
+    size = ARRAY_SIZE_CHAR(factory_reset_info_cancel_string);
     location = getTextCenter(size);
     updateDisplay(LCD_ROW_FACTORY_RESET_INFO_CANCEL, text, location, size);
 }
@@ -451,12 +451,12 @@ void LCD::displayFactoryResetStart()
     uint8_t location;
 
     strcpy_P(stringBuffer, factory_reset_start_1_string);
-    size = progmemCharArraySize(factory_reset_start_1_string);
+    size = ARRAY_SIZE_CHAR(factory_reset_start_1_string);
     location = getTextCenter(size);
     updateDisplay(3, text, location, size);
 
     strcpy_P(stringBuffer, factory_reset_start_2_string);
-    size = progmemCharArraySize(factory_reset_start_2_string);
+    size = ARRAY_SIZE_CHAR(factory_reset_start_2_string);
     location = getTextCenter(size);
     updateDisplay(4, text, location, size);
 }
@@ -467,12 +467,12 @@ void LCD::displayFactoryResetEnd()
     uint8_t location;
 
     strcpy_P(stringBuffer, factory_reset_end_1_string);
-    size = progmemCharArraySize(factory_reset_end_1_string);
+    size = ARRAY_SIZE_CHAR(factory_reset_end_1_string);
     location = getTextCenter(size);
     updateDisplay(3, text, location, size);
 
     strcpy_P(stringBuffer, factory_reset_end_2_string);
-    size = progmemCharArraySize(factory_reset_end_2_string);
+    size = ARRAY_SIZE_CHAR(factory_reset_end_2_string);
     location = getTextCenter(size);
     updateDisplay(4, text, location, size);
 }
@@ -485,12 +485,12 @@ void LCD::displayScrollCalibrationStatus(bool status)
     {
         case true:
         strcpy_P(stringBuffer, scrollCalibrationOn_string);
-        size = progmemCharArraySize(scrollCalibrationOn_string);
+        size = ARRAY_SIZE_CHAR(scrollCalibrationOn_string);
         break;
 
         case false:
         strcpy_P(stringBuffer, scrollCalibrationOff_string);
-        size = progmemCharArraySize(scrollCalibrationOff_string);
+        size = ARRAY_SIZE_CHAR(scrollCalibrationOff_string);
         break;
     }
 
@@ -505,7 +505,7 @@ void LCD::displayPressureCalibrationTime(uint8_t seconds, uint8_t pressureZone, 
 
     if (!done)
     {
-        size = progmemCharArraySize(pressureCalibrationInitiated_string);
+        size = ARRAY_SIZE_CHAR(pressureCalibrationInitiated_string);
         strcpy_P(stringBuffer, pressureCalibrationInitiated_string);
         addSpaceToCharArray(1, size);
         addNumberToCharArray(pressureZone, size);
@@ -514,12 +514,12 @@ void LCD::displayPressureCalibrationTime(uint8_t seconds, uint8_t pressureZone, 
     }
     else
     {
-        size = progmemCharArraySize(pressureCalibrationDone1_string);
+        size = ARRAY_SIZE_CHAR(pressureCalibrationDone1_string);
         strcpy_P(stringBuffer, pressureCalibrationDone1_string);
         addSpaceToCharArray(1, size);
         addNumberToCharArray(pressureZone, size);
         addSpaceToCharArray(1, size);
-        size += progmemCharArraySize(pressureCalibrationDone2_string);
+        size += ARRAY_SIZE_CHAR(pressureCalibrationDone2_string);
         strcpy_P(tempBuffer, pressureCalibrationDone2_string);
         strcat(stringBuffer, tempBuffer);
     }
@@ -535,12 +535,12 @@ void LCD::displayPressureCalibrationStatus(bool status)
 
     if (!status)
     {
-        size = progmemCharArraySize(pressureCalibrationOff_string);
+        size = ARRAY_SIZE_CHAR(pressureCalibrationOff_string);
         strcpy_P(stringBuffer, pressureCalibrationOff_string);
     }
     else
     {
-        size = progmemCharArraySize(pressureCalibrationHold_string);
+        size = ARRAY_SIZE_CHAR(pressureCalibrationHold_string);
         strcpy_P(stringBuffer, pressureCalibrationHold_string);
         addSpaceToCharArray(1, size);
         addNumberToCharArray(PRESSURE_ZONE_CALIBRATION_TIMEOUT, size);

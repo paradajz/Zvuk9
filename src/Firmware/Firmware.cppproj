@@ -844,13 +844,16 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
     <Compile Include="interface\lcd\strings\CC.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="interface\lcd\strings\ChangeResults.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="interface\lcd\strings\Errors.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\strings\Curves.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="interface\lcd\strings\FunctionsOnOff.h">
+    <Compile Include="interface\lcd\strings\Functions.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\strings\MenuStrings.h">
@@ -872,9 +875,6 @@ call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bi
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\strings\Strings.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="interface\lcd\strings\TransportControl.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="interface\lcd\UpdateLogic.cpp">

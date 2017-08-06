@@ -76,6 +76,9 @@
 #define LCD_ROW_MESSAGE_2                               3
 #define LCD_POSITION_MESSAGE_2                          0
 
+#define LCD_ROW_MESSAGE_3                               4
+#define LCD_POSITION_MESSAGE_3                          0
+
 #define LCD_ROW_PAD_CALIBRATION                         0
 #define LCD_POSITION_PAD_CALIBRATION                    0
 

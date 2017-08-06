@@ -71,14 +71,14 @@ void Menu::setMenuTitle(bool rootTitle)
         {
             case userMenu:
             strcpy_P(stringBuffer, menuType_user_string);
-            size = progmemCharArraySize(menuType_user_string);
+            size = ARRAY_SIZE_CHAR(menuType_user_string);
             updateDisplay(0, text, 0, size);
             break;
             break;
 
             case serviceMenu:
             strcpy_P(stringBuffer, menuType_service_string);
-            size = progmemCharArraySize(menuType_service_string);
+            size = ARRAY_SIZE_CHAR(menuType_service_string);
             updateDisplay(0, text, 0, size);
             break;
 
@@ -152,7 +152,7 @@ void Menu::updateMenuScreen()
         if (i == markerOption)
             stringBuffer[0] = '>';
         else
-            stringBuffer[0] = SPACE_CHAR;
+            stringBuffer[0] = ' ';
 
         size = 1;
 
@@ -165,7 +165,7 @@ void Menu::updateMenuScreen()
         if (menuItem[indexes[i+startPosition]].checkable && menuItem[indexes[i+startPosition]].function != NULL)
         {
             //checked and unchecked strings have the same size
-            uint8_t checkMarkerSize = progmemCharArraySize(checked_string);
+            uint8_t checkMarkerSize = ARRAY_SIZE_CHAR(checked_string);
             uint8_t spaceFill = LCD_WIDTH - size - checkMarkerSize;
             addSpaceToCharArray(spaceFill, size);
             size += checkMarkerSize;
@@ -220,8 +220,6 @@ void Menu::exitMenu()
     buttons.enable();
     activeMenu = noMenu;
     functionRunning = false;
-
-    exitTime = rTimeMs();
 }
 
 bool Menu::isMenuDisplayed()
@@ -369,16 +367,6 @@ void Menu::confirmOption(bool confirm)
 void Menu::stopFunction()
 {
     functionRunning = false;
-}
-
-void Menu::resetExitTime()
-{
-    exitTime = 0;
-}
-
-uint32_t Menu::getExitTime()
-{
-    return exitTime;
 }
 
 Menu menu;

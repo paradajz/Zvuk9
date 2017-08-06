@@ -23,7 +23,7 @@ typedef enum
 
 typedef enum
 {
-    resetCheck,
-    resetStart,
-    resetEnd
-} resetState_t;
+    globalSetting,
+    singlePadSetting,
+    allPadsSetting
+} settingType_t;

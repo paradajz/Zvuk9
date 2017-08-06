@@ -39,28 +39,49 @@ typedef enum
 } pressureType_t;
 
 ///
-/// \brief List of various functions on controller which can be turned on or off.
-///
-typedef enum
-{
-    function_notes,
-    function_aftertouch,
-    function_x,
-    function_y,
-    function_split
-} function_t;
-
-///
 /// \brief List of all possible results when shifting notes.
 ///
 typedef enum
 {
     noChange,
-    outputChanged,
+    valueChanged,
     outOfRange,
-    overflow,
-    notAllowed
+    notAllowed,
+    releasePads,
+    notUserScale,
+    notPredefinedScale
 } changeResult_t;
+
+///
+/// \brief List of all functions available via buttons and encoders.
+///
+typedef enum
+{
+    functionProgram,
+    functionScale,
+    functionChannel,
+    functionPlay,
+    functionStop,
+    functionRecord,
+    functionNotes,
+    functionOnOffSplit,
+    functionOnOffX,
+    functionOnOffY,
+    functionOnOffAftertouch,
+    functionOnOffNotes,
+    functionOctave,
+    functionNoteShift,
+    functionPadEditMode,
+    functionXCC,
+    functionYCC,
+    functionXMinLimit,
+    functionXMaxLimit,
+    functionYMinLimit,
+    functionYMaxLimit,
+    functionXCurve,
+    functionYCurve,
+    functionMenu
+} function_t;
 
 ///
 /// \brief List of all possible types of changing MIDI notes.
@@ -71,29 +92,6 @@ typedef enum
     octaveChange,
     noteShift
 } noteChangeType_t;
-
-///
-/// \brief List of all possible errors when entering pad edit mode.
-///
-typedef enum
-{
-    notUserPreset,
-    padNotReleased,
-} padEditModeResult_t;
-
-///
-/// \brief List of all possible errors which result when all pads aren't released.
-///
-typedef enum
-{
-    changeProgram,
-    changePreset,
-    changeCCnumber,
-    changeCClimit,
-    changeCurve,
-    calibrationMode,
-    enterPadEditMode
-} padReleaseError_t;
 
 ///
 /// \brief List of all possible velocity sensitivity levels.

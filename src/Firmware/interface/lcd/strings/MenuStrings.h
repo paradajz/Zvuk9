@@ -80,3 +80,6 @@ const char factory_reset_start_1_string[] PROGMEM = "Performing factory reset.";
 const char factory_reset_start_2_string[] PROGMEM = "Please wait.";
 const char factory_reset_end_1_string[] PROGMEM = "Factory reset finished.";
 const char factory_reset_end_2_string[] PROGMEM = "Initiating reboot.";
+
+const char aftertouchPoly_string[] PROGMEM = "Key aftertouch";
+const char aftertouchChannel_string[] PROGMEM = "Channel aftertouch";

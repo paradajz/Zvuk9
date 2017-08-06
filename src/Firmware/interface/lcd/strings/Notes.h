@@ -15,14 +15,8 @@ const char tonicB_strig[] PROGMEM = "B";
 
 const char noNotes_string[] PROGMEM = "<no assigned notes>";
 
-const char tonic_string[] PROGMEM = "Tonic ";
-const char octave_string[] PROGMEM = "Octave ";
 const char padEditOctave_string[] PROGMEM = "Octave ";
 const char assignedNotes_string[] PROGMEM = "Assigned notes:";
-
-const char notesShifted_string[] PROGMEM = "Notes shifted";
-const char notesShiftLevel_string[] PROGMEM = "Current level: ";
-const char notesShiftNoLevel_string[] PROGMEM = "No shift";
 
 const char velocity_string[] PROGMEM = "v: ";
 const char aftertouch_string[] PROGMEM = "at: ";
@@ -47,16 +41,16 @@ PGM_P const noteNameArray[] PROGMEM =
 
 const uint8_t noteNameArray_sizes[] PROGMEM =
 {
-    sizeof(tonicC_string) - 1,
-    sizeof(tonicCSharp_string) - 1,
-    sizeof(tonicD_string) - 1,
-    sizeof(tonicDSharp_string) - 1,
-    sizeof(tonicE_string) - 1,
-    sizeof(tonicF_string) - 1,
-    sizeof(tonicFSharp_string) - 1,
-    sizeof(tonicG_string) - 1,
-    sizeof(tonicGSharp_string) - 1,
-    sizeof(tonicA_string) - 1,
-    sizeof(tonicASharp_string) - 1,
-    sizeof(tonicB_strig) - 1
+    ARRAY_SIZE_CHAR(tonicC_string),
+    ARRAY_SIZE_CHAR(tonicCSharp_string),
+    ARRAY_SIZE_CHAR(tonicD_string),
+    ARRAY_SIZE_CHAR(tonicDSharp_string),
+    ARRAY_SIZE_CHAR(tonicE_string),
+    ARRAY_SIZE_CHAR(tonicF_string),
+    ARRAY_SIZE_CHAR(tonicFSharp_string),
+    ARRAY_SIZE_CHAR(tonicG_string),
+    ARRAY_SIZE_CHAR(tonicGSharp_string),
+    ARRAY_SIZE_CHAR(tonicA_string),
+    ARRAY_SIZE_CHAR(tonicASharp_string),
+    ARRAY_SIZE_CHAR(tonicB_strig)
 };

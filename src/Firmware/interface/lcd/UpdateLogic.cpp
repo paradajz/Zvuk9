@@ -90,7 +90,7 @@ bool LCD::update()
         //now fill remaining columns with spaces
         for (int j=strlen(charPointer); j<LCD_WIDTH; j++)
         {
-            u8x8.drawGlyph(j, i, SPACE_CHAR);
+            u8x8.drawGlyph(j, i, ' ');
         }
 
         charChange[i] = 0;
@@ -139,13 +139,20 @@ void LCD::displayMessage(uint8_t row, const char *message, uint8_t startIndex)
     uint8_t size = strlen(message);
 
     //clear entire message first
-    for (int j=0; j<MAX_TEXT_SIZE-2; j++)
+    for (int j=0; j<LCD_WIDTH-2; j++)
         lcdLineMessage[row][j] = ' ';
 
-    lcdLineMessage[row][MAX_TEXT_SIZE-1] = '\0';
+    lcdLineMessage[row][LCD_WIDTH-1] = '\0';
 
     for (int i=0; i<size; i++)
         lcdLineMessage[row][startIndex+i] = message[i];
+
+    //make sure message is properly EOL'ed
+    lcdLineMessage[row][startIndex+size] = '\0';
+
+    #ifdef DEBUG
+    printf_P(PSTR("message: <%s>\n"), lcdLineMessage[row]);
+    #endif
 
     messageDisplayTime = rTimeMs();
     displayMessage_var = true;
@@ -162,25 +169,11 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex)
 {
     uint8_t size = strlen(text);
 
-    //#ifdef DEBUG
-    //printf_P(PSTR("Received following text for row %d: >%s<\nText size: %d\n"), row, text, size);
-    //#endif
-
     for (int i=0; i<size; i++)
     {
         lcdLine[row][startIndex+i] = text[i];
         bitWrite(charChange[row], startIndex+i, 1);
     }
-
-    //#ifdef DEBUG
-    //for (int i=0; i<MAX_TEXT_SIZE; i++)
-    //{
-        //if (lcdLine[row][i] == '\0')
-            //printf_P(PSTR("EOL\n"));
-        //else
-            //printf_P(PSTR("%c\n"), lcdLine[row][i]);
-    //}
-    //#endif
 }
 
 void LCD::setMessageTime(int32_t msgTime)
