@@ -1,5 +1,7 @@
 #pragma once
 
+#define LCD_ROW_WELCOME_MESSAGE                         1
+
 #define LCD_ROW_PROGRAM_INFO_PROGRAM                    0
 #define LCD_POSITION_PROGRAM_INFO_PROGRAM               0
 
@@ -63,20 +65,18 @@
 #define LCD_ROW_PAD_EDIT_PAD_NUMBER                     0
 #define LCD_POSITION_PAD_EDIT_PAD_NUMBER                0
 
-#define LCD_ROW_PAD_EDIT_OCTAVE                         3
-#define LCD_POSITION_PAD_EDIT_OCTAVE                    0
+#define LCD_ROW_PAD_EDIT_ASSIGNED_NOTES_INFO            1
 
-#define LCD_ROW_PAD_EDIT_ASSIGNED_NOTES_INFO            2
-#define LCD_ROW_PAD_EDIT_NOTES                          (LCD_ROW_PAD_EDIT_ASSIGNED_NOTES_INFO+1)
+#define LCD_ROW_PAD_EDIT_NOTES                          2
 #define LCD_POSITION_PAD_EDIT_NOTES                     0
 
-#define LCD_ROW_MESSAGE_1                               2
+#define LCD_ROW_MESSAGE_1                               1
 #define LCD_POSITION_MESSAGE_1                          0
 
-#define LCD_ROW_MESSAGE_2                               3
+#define LCD_ROW_MESSAGE_2                               2
 #define LCD_POSITION_MESSAGE_2                          0
 
-#define LCD_ROW_MESSAGE_3                               4
+#define LCD_ROW_MESSAGE_3                               3
 #define LCD_POSITION_MESSAGE_3                          0
 
 #define LCD_ROW_PAD_CALIBRATION                         0
@@ -88,17 +88,14 @@
 #define LCD_ROW_MENU_DEVICE_INFO_2                      2
 #define LCD_POSITION_MENU_DEVICE_INFO_2                 0
 
-#define LCD_ROW_FACTORY_RESET_TITLE                     1
-#define LCD_ROW_FACTORY_RESET_INFO_CONFIRM              2
-#define LCD_ROW_FACTORY_RESET_PADS                      3
-#define LCD_ROW_FACTORY_RESET_INFO_CANCEL               4
+#define LCD_ROW_FACTORY_RESET_TITLE                     0
+#define LCD_ROW_FACTORY_RESET_INFO_CONFIRM              1
+#define LCD_ROW_FACTORY_RESET_PADS                      2
+#define LCD_ROW_FACTORY_RESET_INFO_CANCEL               3
 
 #define LCD_POSITION_FACTORY_RESET_PAD_1                12
 #define LCD_POSITION_FACTORY_RESET_PAD_7                17
 #define LCD_POSITION_FACTORY_RESET_PAD_9                22
 
-#define FACTORY_RESET_CONFIRM_TEXT_START    6
-
-
-#define FACTORY_RESET_START_1_TEXT_START    2
-#define FACTORY_RESET_START_2_TEXT_START    7
+#define LCD_ROW_FACTORY_RESET_PROGRESS_1                1
+#define LCD_ROW_FACTORY_RESET_PROGRESS_2                2

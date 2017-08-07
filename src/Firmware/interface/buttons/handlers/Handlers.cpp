@@ -489,6 +489,9 @@ void handleProgramEncButton(uint8_t id, bool state)
     if (!state)
         return;
 
+    if (pads.getEditModeState())
+        return;
+
     if (!menu.isMenuDisplayed())
     {
         if (pads.getNumberOfPressedPads())
@@ -513,6 +516,9 @@ void handleProgramEncButton(uint8_t id, bool state)
 void handlePresetEncButton(uint8_t id, bool state)
 {
     if (!state)
+        return;
+
+    if (pads.getEditModeState())
         return;
 
     if (menu.isMenuDisplayed())

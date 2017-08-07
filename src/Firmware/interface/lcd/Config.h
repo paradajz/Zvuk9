@@ -11,6 +11,14 @@
 #define LCD_PAD_DATA_CLEAR_DELAY            300
 
 #define LCD_WIDTH                           32
-#define LCD_HEIGHT                          5
+#define LCD_HEIGHT                          4
 
 #define INFINITE_MESSAGE_TIME               -1
+
+const uint8_t rowMap[LCD_HEIGHT] =
+{
+    0,
+    2,
+    4,
+    6
+};

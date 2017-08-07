@@ -29,12 +29,14 @@ void LCD::displayWelcomeMessage()
 
     while (stringBuffer[charIndex] != '\0')
     {
-        u8x8.drawGlyph(location+charIndex, 3, stringBuffer[charIndex]);
+        u8x8.drawGlyph(location+charIndex, rowMap[LCD_ROW_WELCOME_MESSAGE], stringBuffer[charIndex]);
         wait_ms(50);
         charIndex++;
     }
 
     wait_ms(250);
+
+    clearAll();
 }
 
 void LCD::displayError(function_t function, changeResult_t result)

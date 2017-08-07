@@ -353,7 +353,7 @@ void LCD::clearAll()
 {
     //clear entire display
     for (int i=0; i<LCD_HEIGHT; i++)
-    clearLine(i);
+        clearLine(i);
 }
 
 void LCD::setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh)
@@ -453,12 +453,12 @@ void LCD::displayFactoryResetStart()
     strcpy_P(stringBuffer, factory_reset_start_1_string);
     size = ARRAY_SIZE_CHAR(factory_reset_start_1_string);
     location = getTextCenter(size);
-    updateDisplay(3, text, location, size);
+    updateDisplay(LCD_ROW_FACTORY_RESET_PROGRESS_1, text, location, size);
 
     strcpy_P(stringBuffer, factory_reset_start_2_string);
     size = ARRAY_SIZE_CHAR(factory_reset_start_2_string);
     location = getTextCenter(size);
-    updateDisplay(4, text, location, size);
+    updateDisplay(LCD_ROW_FACTORY_RESET_PROGRESS_2, text, location, size);
 }
 
 void LCD::displayFactoryResetEnd()
@@ -469,12 +469,12 @@ void LCD::displayFactoryResetEnd()
     strcpy_P(stringBuffer, factory_reset_end_1_string);
     size = ARRAY_SIZE_CHAR(factory_reset_end_1_string);
     location = getTextCenter(size);
-    updateDisplay(3, text, location, size);
+    updateDisplay(LCD_ROW_FACTORY_RESET_PROGRESS_1, text, location, size);
 
     strcpy_P(stringBuffer, factory_reset_end_2_string);
     size = ARRAY_SIZE_CHAR(factory_reset_end_2_string);
     location = getTextCenter(size);
-    updateDisplay(4, text, location, size);
+    updateDisplay(LCD_ROW_FACTORY_RESET_PROGRESS_2, text, location, size);
 }
 
 void LCD::displayScrollCalibrationStatus(bool status)
@@ -562,14 +562,14 @@ void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, uint8
     {
         case text:
         if (directWrite)
-            u8x8.drawString(startIndex, row, stringBuffer);
+            u8x8.drawString(startIndex, rowMap[row], stringBuffer);
         else
             display.displayText(row, stringBuffer, startIndex);
         break;
 
         case message:
         if (directWrite)
-            u8x8.drawString(startIndex, row, stringBuffer);
+            u8x8.drawString(startIndex, rowMap[row], stringBuffer);
         else
             display.displayMessage(row, stringBuffer, startIndex);
         break;

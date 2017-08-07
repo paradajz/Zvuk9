@@ -8,6 +8,9 @@
 
 void handleProgram(uint8_t id, int8_t steps)
 {
+    if (pads.getEditModeState())
+        return;
+
     if (menu.isMenuDisplayed())
     {
         menu.changeOption(steps > 0);
@@ -43,6 +46,9 @@ void handleProgram(uint8_t id, int8_t steps)
 
 void handleScale(uint8_t id, int8_t steps)
 {
+    if (pads.getEditModeState())
+        return;
+
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
     //allow only 1 step change
@@ -99,6 +105,9 @@ void handleScale(uint8_t id, int8_t steps)
 
 void handleCC(uint8_t id, int8_t steps)
 {
+    if (pads.getEditModeState())
+        return;
+
     padCoordinate_t coordinate = coordinateX;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 
@@ -130,6 +139,9 @@ void handleCC(uint8_t id, int8_t steps)
 
 void handleLimit(uint8_t id, int8_t steps)
 {
+    if (pads.getEditModeState())
+        return;
+
     if (menu.isMenuDisplayed() && !pads.getNumberOfPressedPads())
         return;
 
@@ -233,6 +245,9 @@ void handleLimit(uint8_t id, int8_t steps)
 
 void handleCurve(uint8_t id, int8_t steps)
 {
+    if (pads.getEditModeState())
+        return;
+
     padCoordinate_t coordinate = coordinateX;
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
 

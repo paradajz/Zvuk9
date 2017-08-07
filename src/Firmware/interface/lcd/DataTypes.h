@@ -27,3 +27,10 @@ typedef enum
     singlePadSetting,
     allPadsSetting
 } settingType_t;
+
+typedef enum
+{
+    screenHome,
+    screenPadEdit,
+    screenCalibration
+} screen_t;

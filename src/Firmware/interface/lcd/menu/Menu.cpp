@@ -54,6 +54,9 @@ void Menu::setMenuTitle(bool rootTitle)
     uint8_t size = 0;
     uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
 
+    //make sure to clear the first line before setting new title
+    clearLine(rowMap[0], true);
+
     //set menu title, but only if current level isn't 1 (root)
     if (!rootTitle)
     {

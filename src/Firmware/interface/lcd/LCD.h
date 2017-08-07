@@ -23,6 +23,8 @@ class LCD
     void displayWelcomeMessage();
 
     void setupHomeScreen();
+    void setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh = false);
+    void setupCalibrationScreen();
 
     void displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, int8_t scaleShift);
     void displayPad(uint8_t pad = 255);
@@ -36,8 +38,6 @@ class LCD
 
     void displayChangeResult(function_t function, int16_t value, settingType_t type);
     void displayError(function_t function, changeResult_t result);
-
-    void setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh = false);
 
     void clearAll();
     void clearLine(uint8_t row, bool writeToDisplay = true);
@@ -94,6 +94,8 @@ class LCD
     uint32_t charChange[LCD_HEIGHT];
 
     int32_t messageTime;
+
+    screen_t activeScreen;
 };
 
 extern LCD display;

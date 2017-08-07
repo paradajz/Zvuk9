@@ -36,15 +36,15 @@ bool factoryReset(functionArgument argument)
                     switch(i)
                     {
                         case 0:
-                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_1, LCD_ROW_FACTORY_RESET_PADS, 'x');
+                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_1, rowMap[LCD_ROW_FACTORY_RESET_PADS], 'x');
                         break;
 
                         case 6:
-                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_7, LCD_ROW_FACTORY_RESET_PADS, 'x');
+                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_7, rowMap[LCD_ROW_FACTORY_RESET_PADS], 'x');
                         break;
 
                         case 8:
-                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_9, LCD_ROW_FACTORY_RESET_PADS, 'x');
+                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_9, rowMap[LCD_ROW_FACTORY_RESET_PADS], 'x');
                         break;
 
                         default:
@@ -61,15 +61,15 @@ bool factoryReset(functionArgument argument)
                     switch(i)
                     {
                         case 0:
-                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_1, LCD_ROW_FACTORY_RESET_PADS, ' ');
+                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_1, rowMap[LCD_ROW_FACTORY_RESET_PADS], ' ');
                         break;
 
                         case 6:
-                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_7, LCD_ROW_FACTORY_RESET_PADS, ' ');
+                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_7, rowMap[LCD_ROW_FACTORY_RESET_PADS], ' ');
                         break;
 
                         case 8:
-                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_9, LCD_ROW_FACTORY_RESET_PADS, ' ');
+                        u8x8.drawGlyph(LCD_POSITION_FACTORY_RESET_PAD_9, rowMap[LCD_ROW_FACTORY_RESET_PADS], ' ');
                         break;
 
                         default:

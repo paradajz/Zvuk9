@@ -83,14 +83,14 @@ bool LCD::update()
         {
             if (bitRead(charChange[i], j))
             {
-                u8x8.drawGlyph(j, i, charPointer[j]);
+                u8x8.drawGlyph(j, rowMap[i], charPointer[j]);
             }
         }
 
         //now fill remaining columns with spaces
         for (int j=strlen(charPointer); j<LCD_WIDTH; j++)
         {
-            u8x8.drawGlyph(j, i, ' ');
+            u8x8.drawGlyph(j, rowMap[i], ' ');
         }
 
         charChange[i] = 0;
@@ -174,6 +174,10 @@ void LCD::displayText(uint8_t row, const char *text, uint8_t startIndex)
         lcdLine[row][startIndex+i] = text[i];
         bitWrite(charChange[row], startIndex+i, 1);
     }
+
+    #ifdef DEBUG
+    printf_P(PSTR("Received text: <%s>\n"), lcdLine[row]);
+    #endif
 }
 
 void LCD::setMessageTime(int32_t msgTime)
