@@ -43,8 +43,6 @@ class LCD
     void clearLine(uint8_t row, bool writeToDisplay = true);
 
     void displayFirmwareUpdated();
-
-    void displayNoteChange(changeResult_t result, noteChangeType_t type, int8_t value);
     void displayFactoryResetConfirm();
     void displayFactoryResetStart();
     void displayFactoryResetEnd();
@@ -54,9 +52,6 @@ class LCD
     void displayPressureCalibrationStatus(bool status);
 
     void setMessageTime(int32_t msgTime);
-
-    uint8_t getTextCenter(uint8_t textSize);
-
     //menu functions
     void displayDeviceInfo();
 
@@ -83,6 +78,7 @@ class LCD
     void displayText(uint8_t row, const char *text, uint8_t startIndex);
     void displayMessage(uint8_t row, const char *message, uint8_t startIndex);
     void removeMessage();
+    uint8_t getTextCenter(uint8_t textSize);
 
     uint32_t messageDisplayTime;
     uint32_t lastLCDupdateTime;

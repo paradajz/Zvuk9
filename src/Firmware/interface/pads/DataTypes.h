@@ -39,7 +39,7 @@ typedef enum
 } pressureType_t;
 
 ///
-/// \brief List of all possible results when shifting notes.
+/// \brief List of all possible results changing various values.
 ///
 typedef enum
 {
@@ -82,16 +82,6 @@ typedef enum
     functionYCurve,
     functionMenu
 } function_t;
-
-///
-/// \brief List of all possible types of changing MIDI notes.
-///
-typedef enum
-{
-    tonicChange,
-    octaveChange,
-    noteShift
-} noteChangeType_t;
 
 ///
 /// \brief List of all possible velocity sensitivity levels.

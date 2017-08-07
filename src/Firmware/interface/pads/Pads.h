@@ -6,6 +6,12 @@
 #include "../../database/Database.h"
 #include "Sanity.h"
 
+///
+/// \brief Pad updating and processing.
+/// \ingroup interface
+/// @{
+///
+
 class Pads
 {
     public:
@@ -108,50 +114,128 @@ class Pads
     void storeNotes(int8_t pad);
     void resetScale();
 
-    //last midi values
-    uint8_t                 lastXMIDIvalue[NUMBER_OF_PADS],
-                            lastYMIDIvalue[NUMBER_OF_PADS];
+    ///
+    /// \brief Arrays holding last MIDI values for X (CC), Y (CC) and Z (velocity and aftertouch) coordinates for each pad.
+    /// @{
+    ///
 
-    uint8_t                 lastVelocityValue[NUMBER_OF_PADS],
+    uint8_t                 lastXMIDIvalue[NUMBER_OF_PADS],
+                            lastYMIDIvalue[NUMBER_OF_PADS],
+                            lastVelocityValue[NUMBER_OF_PADS],
                             lastAftertouchValue[NUMBER_OF_PADS];
 
+    /// @}
+
+    ///
+    /// \brief Variable holding last MIDI note state for all pads(true if note on was last event, false if note off).
+    /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
+    ///
     uint16_t                lastMIDInoteState;
 
-    //last raw pressure value
-    //needed to get correct aftertouch value
+    ///
+    /// \brief Array holding last pressure value for all pads (raw value 0-1023).
+    /// Used when aftertouch value is being calculated.
+    ///
     int16_t                 lastPressureValue[NUMBER_OF_PADS];
 
-    //parameters from eeprom
+    ///
+    /// \brief Array holding CC controller number for every pad on X and Y coordinates.
+    /// @{
+    ///
+
     uint8_t                 ccXPad[NUMBER_OF_PADS],
-                            ccYPad[NUMBER_OF_PADS],
-                            ccXminPad[NUMBER_OF_PADS],
+                            ccYPad[NUMBER_OF_PADS];
+
+    /// @}
+
+    ///
+    /// \brief Arrays holding minimum and maximum values for CC messages for every pad on X and Y coordinates.
+    /// @{
+    ///
+
+    uint8_t                 ccXminPad[NUMBER_OF_PADS],
                             ccXmaxPad[NUMBER_OF_PADS],
                             ccYminPad[NUMBER_OF_PADS],
                             ccYmaxPad[NUMBER_OF_PADS];
 
+    /// @}
+
+    ///
+    /// \brief Array holding curve numbers for every pad on X and Y coordinates.
+    /// @{
+    ///
+
     uint8_t                 padCurveX[NUMBER_OF_PADS],
                             padCurveY[NUMBER_OF_PADS];
 
-    //store info for all pads in single uint16_t - we know there are only 9 pads
+    /// @}
+
+    ///
+    /// \brief Variables holding send states for MIDI notes, CC messages on X and Y coordinates and aftertouch.
+    /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
+    /// @{
+    ///
+
     uint16_t                xSendEnabled,
                             ySendEnabled,
                             noteSendEnabled,
                             aftertouchSendEnabled;
 
-    uint16_t                padPressureLimitUpper[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES],
-                            padXLimitLower[NUMBER_OF_PADS],
-                            padXLimitUpper[NUMBER_OF_PADS],
-                            padYLimitLower[NUMBER_OF_PADS],
-                            padYLimitUpper[NUMBER_OF_PADS],
-                            padAftertouchLimitLower[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES],
+    /// @}
+
+    ///
+    /// \brief Array holding upper limits (raw values, 0-1023) for pressure (used to scale velocity to MIDI value) for each pressure zone on every pad.
+    ///
+    uint16_t                padPressureLimitUpper[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES];
+
+    ///
+    /// \brief Arrays holding lower and upper limits (raw values, 0-1023) for pressure (used to scale aftertouch to MIDI value) for each pressure zone on every pad.
+    /// @{
+    ///
+
+    uint16_t                padAftertouchLimitLower[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES],
                             padAftertouchLimitUpper[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES];
 
+    /// @}
+
+    ///
+    /// \brief Arrays holding lower and upper limits (raw values, 0-1023) for X and Y coordinates (used to scale X and Y values to MIDI values) for each pressure zone on every pad.
+    /// @{
+    ///
+
+    uint16_t                padXLimitLower[NUMBER_OF_PADS],
+                            padXLimitUpper[NUMBER_OF_PADS],
+                            padYLimitLower[NUMBER_OF_PADS],
+                            padYLimitUpper[NUMBER_OF_PADS];
+
+    /// @}
+
+    ///
+    /// \brief Array holding MIDI notes for every pad.
+    /// Each pad can have several notes. See value of NOTES_PER_PAD.
+    ///
     uint8_t                 padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
 
+    ///
+    /// \brief Array holding value of MIDI channel for every pad.
+    ///
     uint8_t                 midiChannel[NUMBER_OF_PADS];
+
+    ///
+    /// \brief Holds active aftertouch type.
+    ///
     aftertouchType_t        aftertouchType;
+
+    ///
+    /// \brief Holds maximum value of aftertouch among all pads.
+    /// Used while channel aftertouch is active aftertouch type.
+    ///
     uint8_t                 maxAftertouchValue;
 
+    ///
+    /// \brief Holds state of split mode.
+    /// If set to true, split mode is enabled (disabled otherwise).
+    ///
     bool                    splitEnabled;
 
     int8_t                  noteShiftLevel;
@@ -193,3 +277,5 @@ class Pads
 };
 
 extern Pads pads;
+
+/// @}

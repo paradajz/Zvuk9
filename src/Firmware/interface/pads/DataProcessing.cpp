@@ -2,8 +2,15 @@
 #include "../lcd/menu/Menu.h"
 #include "../../database/blocks/PadCalibration.h"
 
+///
+/// \brief Holds press states for all pads.
+/// Implementation of Board variable.
+///
 volatile uint16_t   padPressed;
 
+///
+/// \brief Performs various continuous checks related to pad data.
+///
 void Pads::update()
 {
     bool restoreLCD = false;
@@ -198,6 +205,11 @@ void Pads::update()
     }
 }
 
+///
+/// \brief Checks if velocity data is available on requested pad.
+/// @param [in] pad Pad which is being checked.
+/// \returns True if data is available, false otherwise.
+///
 bool Pads::checkVelocity(int8_t pad)
 {
     assert(PAD_CHECK(pad));
@@ -265,6 +277,11 @@ bool Pads::checkVelocity(int8_t pad)
     return returnValue;
 }
 
+///
+/// \brief Checks if aftertouch data is available on requested pad.
+/// @param [in] pad Pad which is being checked.
+/// \returns True if data is available, false otherwise.
+///
 bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable)
 {
     assert(PAD_CHECK(pad));
@@ -402,6 +419,11 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable)
     return false;
 }
 
+///
+/// \brief Checks if X coordinate data is available on requested pad.
+/// @param [in] pad Pad which is being checked.
+/// \returns True if data is available, false otherwise.
+///
 bool Pads::checkX(int8_t pad)
 {
     assert(PAD_CHECK(pad));
@@ -460,6 +482,11 @@ bool Pads::checkX(int8_t pad)
     return false;
 }
 
+///
+/// \brief Checks if Y coordinate data is available on requested pad.
+/// @param [in] pad Pad which is being checked.
+/// \returns True if data is available, false otherwise.
+///
 bool Pads::checkY(int8_t pad)
 {
     assert(PAD_CHECK(pad));
@@ -518,6 +545,14 @@ bool Pads::checkY(int8_t pad)
     return false;
 }
 
+///
+/// \brief Checks if pad MIDI data is available and calls corresponding handlers if it is.
+/// @param [in] pad Pad for which MIDI data is being checked.
+/// @param [in] velocityAvailable If set to true, MIDI velocity data will be sent for requested pad.
+/// @param [in] aftertouchAvailable If set to true, MIDI aftertouch data will be sent for requested pad.
+/// @param [in] xAvailable If set to true, CC MIDI data for X coordinate will be sent for requested pad.
+/// @param [in] yAvailable If set to true, CC MIDI data for Y coordinate will be sent for requested pad.
+///
 void Pads::checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
 {
     assert(PAD_CHECK(pad));
@@ -558,6 +593,10 @@ void Pads::checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvai
     checkNoteBuffer();
 }
 
+///
+/// \brief Checks if there are any notes to send in pad note buffer.
+/// \returns True if data is available in buffer, false otherwise.s
+///
 bool Pads::checkNoteBuffer()
 {
     //notes are stored in buffer and they're sent after PAD_NOTE_SEND_DELAY
@@ -592,6 +631,14 @@ bool Pads::checkNoteBuffer()
     return true;
 }
 
+///
+/// \brief Checks if data for requested pad should be updated on LCD.
+/// @param [in] pad Pad for which MIDI data is being checked.
+/// @param [in] velocityAvailable If set to true, MIDI velocity data will be refreshed for requested pad.
+/// @param [in] aftertouchAvailable If set to true, MIDI aftertouch data will be refreshed for requested pad.
+/// @param [in] xAvailable If set to true, CC MIDI data for X coordinate will be refreshed for requested pad.
+/// @param [in] yAvailable If set to true, CC MIDI data for Y coordinate will be refreshed for requested pad.
+///
 void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
 {
     assert(PAD_CHECK(pad));

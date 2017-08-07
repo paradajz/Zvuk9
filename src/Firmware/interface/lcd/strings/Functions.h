@@ -3,7 +3,7 @@
 const char function_midiChannel[] PROGMEM = "Change MIDI channel with encoder";
 const char function_play[] PROGMEM = "Play";
 const char function_stop[] PROGMEM = "Stop";
-const char function_record[] PROGMEM = "Record";
+const char function_record[] PROGMEM = "Record state changed!";
 const char function_tonic[] PROGMEM = "Tonic changed!";
 const char function_split[] PROGMEM = "Split state changed!";
 const char function_x[] PROGMEM = "X send state changed!";

@@ -102,8 +102,11 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
 
         case functionPlay:
         case functionStop:
-        case functionRecord:
         clearLine(LCD_ROW_MESSAGE_2, false);
+        break;
+
+        case functionRecord:
+        value > 0 ? appendText("On", size) : appendText("Off", size);
         break;
 
         default:

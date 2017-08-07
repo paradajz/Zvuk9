@@ -1102,17 +1102,6 @@ changeResult_t Pads::setOctave(int8_t octave, bool padEditMode)
                 }
             }
         }
-
-        //#ifdef DEBUG
-        //printf_P(PSTR("Octave successfully set. Printing out all notes:\n"));
-        //for (int i=0; i<NUMBER_OF_PADS; i++)
-        //{
-            //for (int j=0; j<NOTES_PER_PAD; j++)
-                //printf_P(PSTR("Note %d for pad %: %d\n"), j, i, padNote[i][j]);
-//
-            //printf_P(PSTR("\n"));
-        //}
-        //#endif
     }
 
     return valueChanged;
@@ -1143,19 +1132,30 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
     uint8_t scaleNotes = getPredefinedScaleNotes(activeScale);
     int16_t tempNoteArray_1[NUMBER_OF_PADS];
     int16_t tempNoteArray_2[NUMBER_OF_PADS];
-    bool direction = shiftLevel >= 0;
-    shiftLevel = abs(shiftLevel);
 
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        tempNoteArray_2[i] = padNote[i][0];
+    //new shift level is actually the difference between received argument and currently active shift level
+    int8_t difference = shiftLevel - noteShiftLevel;
 
-    if (direction)
+    if (!difference)
     {
-        //up
-        for (int i=0; i<shiftLevel; i++)
+        //no change
+        #ifdef DEBUG
+        printf_P(PSTR("No change in shift level.\n"));
+        #endif
+        return noChange;
+    }
+    else
+    {
+        bool direction = difference > 0;
+
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+            tempNoteArray_2[i] = padNote[i][0];
+
+        if (direction)
         {
+            //up
             //last note gets increased, other notes get shifted down
-            tempNoteArray_1[NUMBER_OF_PADS-1] = tempNoteArray_2[NUMBER_OF_PADS-scaleNotes] + MIDI_NOTES*abs(shiftLevel);
+            tempNoteArray_1[NUMBER_OF_PADS-1] = tempNoteArray_2[NUMBER_OF_PADS-scaleNotes] + MIDI_NOTES*abs(difference);
 
             if (tempNoteArray_1[NUMBER_OF_PADS-1] > 127)
                 return outOfRange;
@@ -1169,14 +1169,11 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
             for (int j=0; j<NUMBER_OF_PADS; j++)
                 tempNoteArray_2[j] = tempNoteArray_1[j];
         }
-    }
-    else
-    {
-        //down
-        for (int i=0; i<abs(shiftLevel); i++)
+        else
         {
+            //down
             //first note gets decreased, other notes get shifted up
-            tempNoteArray_1[0] = tempNoteArray_2[scaleNotes-1] - MIDI_NOTES*abs(shiftLevel);
+            tempNoteArray_1[0] = tempNoteArray_2[scaleNotes-1] - MIDI_NOTES*abs(difference);
 
             if (tempNoteArray_1[0] < 0)
                 return outOfRange;
@@ -1190,25 +1187,25 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
             for (int j=0; j<NUMBER_OF_PADS; j++)
                 tempNoteArray_2[j] = tempNoteArray_1[j];
         }
+
+        if (!internalChange)
+        {
+            if (abs(noteShiftLevel) == scaleNotes)
+                noteShiftLevel = 0;
+        }
+
+        if (!internalChange)
+            database.update(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, noteShiftLevel);
+
+        #ifdef DEBUG
+        printf_P(PSTR("Notes shifted %s"), direction ? "up\n" : "down\n");
+        #endif
+
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+            padNote[i][0] = tempNoteArray_1[i];
+
+        return valueChanged;
     }
-
-    if (!internalChange)
-    {
-        if (abs(noteShiftLevel) == scaleNotes)
-            noteShiftLevel = 0;
-    }
-
-    if (!internalChange)
-        database.update(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, noteShiftLevel);
-
-    #ifdef DEBUG
-    printf_P(PSTR("Notes shifted %s"), direction ? "up\n" : "down\n");
-    #endif
-
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-        padNote[i][0] = tempNoteArray_1[i];
-
-    return valueChanged;
 }
 
 ///

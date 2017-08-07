@@ -297,7 +297,8 @@ void handleTransportControl(uint8_t id, bool state)
         midi.sendSysEx(6, sysExArray, true);
     #endif
 
-    display.displayChangeResult(function, 0, globalSetting);
+    //value is used only for record control
+    display.displayChangeResult(function, leds.getLEDstate(LED_TRANSPORT_RECORD), globalSetting);
 }
 
 void handleUpDown(uint8_t id, bool state)
