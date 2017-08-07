@@ -151,6 +151,9 @@ void Menu::updateMenuScreen()
 
     for (int i=0; i<itemsIterate; i++)
     {
+        //clear line first
+        clearLine(i+1, true);
+
         //skipping first row since it's reserved for the menu title
         if (i == markerOption)
             stringBuffer[0] = '>';
