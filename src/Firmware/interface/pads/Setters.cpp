@@ -4,6 +4,10 @@
 #include "../../database/Database.h"
 
 ///
+/// \ingroup interfacePads
+/// @{
+
+///
 /// \brief Changes active program.
 /// @param [in] program New program which is being set.
 /// \returns Result of changing program (enumerated type). See changeResult_t enumeration.
@@ -207,7 +211,7 @@ changeResult_t Pads::setEditModeState(bool state, int8_t pad)
     if (pads.isPredefinedScale(activeScale))
         return notUserScale;
 
-    if (!editModeActivated && pads.getNumberOfPressedPads())
+    if (!editModeState && pads.getNumberOfPressedPads())
         return releasePads;
 
     assert(PAD_CHECK(pad));
@@ -219,14 +223,14 @@ changeResult_t Pads::setEditModeState(bool state, int8_t pad)
         printf_P(PSTR("Editing pad %d\n"), pad);
         #endif
 
-        editModeActivated = true;
+        editModeState = true;
 
         display.setupPadEditScreen(pad+1, getOctave(true), true);
         leds.displayActiveNoteLEDs(true, pad);
         break;
 
         case false:
-        editModeActivated = false;
+        editModeState = false;
         display.setupHomeScreen();
         //after exiting from pad edit mode, restore note led states
         leds.displayActiveNoteLEDs();
@@ -1336,8 +1340,8 @@ void Pads::updateLastPressedPad(int8_t pad, bool state)
             //store currently pressed pad in buffer
 
             for (int i=0; i<NUMBER_OF_PADS; i++)
-            if (isPadPressed(i))
-            pressedPads++;
+                if (isPadPressed(i))
+                    pressedPads++;
 
             if (pressedPads == 1)
             {
@@ -1349,7 +1353,7 @@ void Pads::updateLastPressedPad(int8_t pad, bool state)
                 padPressHistory_counter++;
 
                 if (padPressHistory_counter >= NUMBER_OF_PADS)
-                padPressHistory_counter = 0; //overwrite
+                    padPressHistory_counter = 0; //overwrite
 
                 padPressHistory_buffer[padPressHistory_counter] = pad;
             }
@@ -1391,16 +1395,16 @@ void Pads::updateLastPressedPad(int8_t pad, bool state)
         int8_t tempHistoryArray[NUMBER_OF_PADS];
 
         for (int i=0; i<NUMBER_OF_PADS; i++)
-        tempHistoryArray[i] = padPressHistory_buffer[i];
+            tempHistoryArray[i] = padPressHistory_buffer[i];
 
         //shift all values so that newValue is at the end of array
         for (int i=index; i<(NUMBER_OF_PADS-1); i++)
-        padPressHistory_buffer[i] = tempHistoryArray[i+1];
+            padPressHistory_buffer[i] = tempHistoryArray[i+1];
 
         padPressHistory_counter--;
 
         if (padPressHistory_counter < 0)
-        padPressHistory_counter = 0;
+            padPressHistory_counter = 0;
     }
 }
 
@@ -1432,37 +1436,4 @@ void Pads::storeNotes(int8_t pad)
     note_buffer_head = i;
 }
 
-///
-/// \brief Resets predefined scale to its default notes without setting tonic, shift level or octave.
-///
-void Pads::resetPredefinedScale()
-{
-    uint8_t notesPerScale = getPredefinedScaleNotes(activeScale);
-    uint8_t noteCounter = 0;
-
-    for (int i=0; i<notesPerScale; i++)
-    {
-        padNote[i][0] = getScaleNote(activeScale, i);
-        noteCounter++;
-    }
-
-    if (notesPerScale < NUMBER_OF_PADS)
-    {
-        noteCounter = 0;
-
-        for (int i=notesPerScale; i<NUMBER_OF_PADS; i++)
-        {
-            padNote[i][0] = getScaleNote(activeScale, noteCounter);
-            //these notes are actually in another octave
-            padNote[i][0] += MIDI_NOTES;
-            noteCounter++;
-        }
-    }
-
-    //finally, reset all notes on pads except first one
-    for (int i=0; i<NUMBER_OF_PADS; i++)
-    {
-        for (int j=1; j<NOTES_PER_PAD; j++)
-            padNote[i][j] = BLANK_NOTE;
-    }
-}
+/// @}

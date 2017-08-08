@@ -1,6 +1,10 @@
 #pragma once
 
 ///
+/// \ingroup interfacePads
+/// @{
+
+///
 /// \brief List of possible limits for various values (min or max).
 ///
 typedef enum
@@ -127,3 +131,5 @@ typedef enum
     scaleMajorPentatonic,
     PREDEFINED_SCALES
 } scale_t;
+
+/// @}

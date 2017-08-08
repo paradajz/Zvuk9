@@ -3,9 +3,12 @@
 #include "DataTypes.h"
 
 ///
+/// \ingroup interfacePads
+/// @{
+
+///
 /// \brief Various predefined scales defined as arrays of MIDI notes.
 /// @{
-///
 
 const note_t scaleNaturalMinor_notes[]       = { C, D, D_SHARP, F, G, G_SHARP, A_SHARP };
 const note_t scaleMelodicMinor_notes[]       = { C, D, D_SHARP, F, G, A, B };
@@ -44,3 +47,5 @@ const uint8_t scale_notes_sizes[PREDEFINED_SCALES] =
     ARRAY_SIZE(scaleMinorPentatonic_notes),
     ARRAY_SIZE(scaleMajorPentatonic_notes)
 };
+
+/// @}

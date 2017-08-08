@@ -1,6 +1,10 @@
 #include "Pads.h"
 
 ///
+/// \ingroup interfacePads
+/// @{
+
+///
 /// \brief Default constructor.
 /// Initializes variables to their default states.
 ///
@@ -31,3 +35,5 @@ void Pads::init()
 }
 
 Pads pads;
+
+/// @}

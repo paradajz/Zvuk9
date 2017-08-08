@@ -4,6 +4,10 @@
 #include "PredefinedScales.h"
 
 ///
+/// \ingroup interfacePads
+/// @{
+
+///
 /// \brief Checks last pad which has been pressed.
 /// \returns Last pressed pad (0 - NUMBER_OF_PADS-1)
 ///
@@ -94,7 +98,7 @@ bool Pads::isPredefinedScale(int8_t scale)
 ///
 bool Pads::getEditModeState()
 {
-    return editModeActivated;
+    return editModeState;
 }
 
 ///
@@ -632,7 +636,34 @@ void Pads::getScaleParameters()
         #endif
 
         //apply default scale parameters
-        resetPredefinedScale();
+        uint8_t notesPerScale = getPredefinedScaleNotes(activeScale);
+        uint8_t noteCounter = 0;
+
+        for (int i=0; i<notesPerScale; i++)
+        {
+            padNote[i][0] = getScaleNote(activeScale, i);
+            noteCounter++;
+        }
+
+        if (notesPerScale < NUMBER_OF_PADS)
+        {
+            noteCounter = 0;
+
+            for (int i=notesPerScale; i<NUMBER_OF_PADS; i++)
+            {
+                padNote[i][0] = getScaleNote(activeScale, noteCounter);
+                //these notes are actually in another octave
+                padNote[i][0] += MIDI_NOTES;
+                noteCounter++;
+            }
+        }
+
+        //finally, reset all notes on pads except first one
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+        {
+            for (int j=1; j<NOTES_PER_PAD; j++)
+            padNote[i][j] = BLANK_NOTE;
+        }
 
         //default notes in scale are now applied to pads
         //apply saved octave
@@ -891,3 +922,5 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, b
         return 0;
     }
 }
+
+/// @}

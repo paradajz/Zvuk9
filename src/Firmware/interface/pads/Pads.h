@@ -8,9 +8,9 @@
 
 ///
 /// \brief Pad updating and processing.
+/// \defgroup interfacePads Pads
 /// \ingroup interface
 /// @{
-///
 
 class Pads
 {
@@ -54,7 +54,6 @@ class Pads
 
     changeResult_t setProgram(int8_t program);
     changeResult_t setScale(int8_t scale);
-    void resetPredefinedScale();
     changeResult_t setTonic(note_t note, bool internalChange = false);
     changeResult_t setEditModeState(bool state, int8_t pad = 0);
     changeResult_t setSplitState(bool state);
@@ -110,7 +109,6 @@ class Pads
     ///
     /// \brief Arrays holding last MIDI values for X (CC), Y (CC) and Z (velocity and aftertouch) coordinates for each pad.
     /// @{
-    ///
 
     uint8_t                 lastXMIDIvalue[NUMBER_OF_PADS],
                             lastYMIDIvalue[NUMBER_OF_PADS],
@@ -134,7 +132,6 @@ class Pads
     ///
     /// \brief Array holding CC controller number for every pad on X and Y coordinates.
     /// @{
-    ///
 
     uint8_t                 ccXPad[NUMBER_OF_PADS],
                             ccYPad[NUMBER_OF_PADS];
@@ -144,7 +141,6 @@ class Pads
     ///
     /// \brief Arrays holding minimum and maximum values for CC messages for every pad on X and Y coordinates.
     /// @{
-    ///
 
     uint8_t                 ccXminPad[NUMBER_OF_PADS],
                             ccXmaxPad[NUMBER_OF_PADS],
@@ -156,7 +152,6 @@ class Pads
     ///
     /// \brief Array holding curve numbers for every pad on X and Y coordinates.
     /// @{
-    ///
 
     uint8_t                 padCurveX[NUMBER_OF_PADS],
                             padCurveY[NUMBER_OF_PADS];
@@ -167,7 +162,6 @@ class Pads
     /// \brief Variables holding send states for MIDI notes, CC messages on X and Y coordinates and aftertouch.
     /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
     /// @{
-    ///
 
     uint16_t                xSendEnabled,
                             ySendEnabled,
@@ -184,7 +178,6 @@ class Pads
     ///
     /// \brief Arrays holding lower and upper limits (raw values, 0-1023) for pressure (used to scale aftertouch to MIDI value) for each pressure zone on every pad.
     /// @{
-    ///
 
     uint16_t                padAftertouchLimitLower[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES],
                             padAftertouchLimitUpper[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES];
@@ -194,7 +187,6 @@ class Pads
     ///
     /// \brief Arrays holding lower and upper limits (raw values, 0-1023) for X and Y coordinates (used to scale X and Y values to MIDI values) for each pressure zone on every pad.
     /// @{
-    ///
 
     uint16_t                padXLimitLower[NUMBER_OF_PADS],
                             padXLimitUpper[NUMBER_OF_PADS],
@@ -231,42 +223,113 @@ class Pads
     ///
     bool                    splitEnabled;
 
+    ///
+    /// \brief Holds current shift level for active predefined scale.
+    ///
     int8_t                  noteShiftLevel;
 
-    int8_t                  activeScale,
-                            activeProgram,
-                            activePadEditOctave;
+    ///
+    /// \brief Holds active scale.
+    ///
+    int8_t                  activeScale;
 
-    //debouncing
+    ///
+    /// \brief Holds active program.
+    ///
+    int8_t                  activeProgram;
+
+    ///
+    /// \brief Holds state of pad edit mode (true if pad edit mode is active, false otherwise).
+    ///
+    bool                    editModeState;
+
+    ///
+    /// \brief Holds active octave used in pad edit mode.
+    ///
+    int8_t                  activePadEditOctave;
+
+    ///
+    /// \brief Variable holding information whether aftertouch was activated on certain pad.
+    /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
+    ///
     uint16_t                aftertouchActivated;
 
-    uint8_t                 xSendTimer[NUMBER_OF_PADS],
-                            ySendTimer[NUMBER_OF_PADS],
-                            lastAftertouchUpdateTime[NUMBER_OF_PADS];
+    ///
+    /// \brief Holds current sensitivity level for velocity.
+    ///
+    velocitySensitivity_t   velocitySensitivity;
 
+    ///
+    /// \brief Holds current curve for velocity.
+    ///
+    curve_t                 velocityCurve;
+
+    ///
+    /// \brief Arrays holding last time in milliseconds values on X or Y coordinate have been changed for each pad.
+    /// Used to detect value bounce.
+    /// @{
+
+    uint8_t                 xSendTimer[NUMBER_OF_PADS],
+                            ySendTimer[NUMBER_OF_PADS];
+
+    /// @}
+
+    ///
+    /// \brief Array holding last time in milliseconds aftertouch values have been changed for each pad.
+    /// Used to detect value bounce.
+    ///
+    uint8_t                 lastAftertouchUpdateTime[NUMBER_OF_PADS];
+
+    ///
+    /// \brief Variable used to detect whether new pressure reading is smaller than previous one for every pad.
+    /// Once reduction has been detected, X and Y readings are ignored to avoid bouncing.
+    /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
+    ///
     uint16_t                pressureReduction;
 
-    //pad press history buffer
+    ///
+    /// \brief Variables used to record pad press history.
+    /// This implementation is similar to circular buffer and it's used to record order in which pads
+    /// have been pressed and released.
+    /// @{
+
     uint8_t                 padPressHistory_buffer[NUMBER_OF_PADS];
     uint8_t                 padPressHistory_counter;
 
-    //note buffer
+    /// @}
+
+    ///
+    /// \brief Variables used to implement note buffer.
+    /// Note buffer contains time and pad index and it's used to delay sending
+    /// of MIDI notes after X and Y coordinates after defined amount of time.
+    /// @{
+
     uint8_t                 pad_buffer[PAD_NOTE_BUFFER_SIZE];
     uint32_t                pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
     uint8_t                 note_buffer_head;
     uint8_t                 note_buffer_tail;
 
-    //calibration
+    /// @}
+
+    ///
+    /// \brief Holds current state of calibration mode (true if enabled, false otherwise).
+    ///
     bool                    calibrationEnabled;
-    uint8_t                 pressureCalibrationTime;
-    uint32_t                pressureCalibrationLastChange;
+
+    ///
+    /// \brief Holds type of active calibration (coordinate which is being calibrated).
+    /// Enumerated type (see padCoordinate_t enumeration).
+    ///
     padCoordinate_t         activeCalibration;
 
-    //pressure info
-    velocitySensitivity_t   velocitySensitivity;
-    curve_t                 velocityCurve;
+    ///
+    /// \brief Variables used for measuring time in seconds after which last read pressure value on certain pressure zone is considered calibrated value in calibration mode.
+    /// @{
 
-    bool                    editModeActivated;
+    uint8_t                 pressureCalibrationTime;
+    uint32_t                pressureCalibrationLastChange;
+
+    /// @}
 };
 
 extern Pads pads;

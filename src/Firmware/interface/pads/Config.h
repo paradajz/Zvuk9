@@ -1,9 +1,13 @@
 #pragma once
 
 ///
+/// \ingroup interfacePads
+/// @{
+
+///
 /// \brief Time in milliseconds after which notes from pad are sent once X and Y MIDI messages have been sent.
 ///
-#define PAD_NOTE_SEND_DELAY                         5
+#define PAD_NOTE_SEND_DELAY                         3
 
 ///
 /// \brief Size of pad note buffer in bytes.
@@ -66,7 +70,6 @@
 ///
 /// \brief Offset values used to compensate slightly inaccurate calibration when calibrating X/Y coordinates.
 /// @{
-///
 
 #define X_MIN_CALIBRATION_OFFSET                    10
 #define X_MAX_CALIBRATION_OFFSET                    -10
@@ -102,3 +105,5 @@
 /// \brief Time in seconds after which last read pressure value on certain pressure zone is considered calibrated value in calibration mode.
 ///
 #define PRESSURE_ZONE_CALIBRATION_TIMEOUT           3
+
+/// @}

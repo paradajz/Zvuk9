@@ -7,6 +7,10 @@
 #endif
 
 ///
+/// \ingroup interfacePads
+/// @{
+
+///
 /// \brief Sends MIDI CC message on X coordinate for requested pad.
 /// @param [in] pad Pad for which MIDI CC value on X coordinate is being sent.
 ///
@@ -170,3 +174,5 @@ void Pads::sendAftertouch(int8_t pad)
     if (!bitRead(lastMIDInoteState, pad))
         bitWrite(aftertouchActivated, pad, false);
 }
+
+/// @}
