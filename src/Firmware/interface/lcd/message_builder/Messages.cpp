@@ -60,9 +60,6 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
     size = pgm_read_byte(&functionArray_sizes[function]);
     updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
-    strcpy_P(stringBuffer, function_value);
-    size = ARRAY_SIZE_CHAR(function_value);
-
     //special cases
     switch(function)
     {
@@ -74,14 +71,20 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         case functionXMaxLimit:
         case functionYMinLimit:
         case functionYMaxLimit:
+        strcpy_P(stringBuffer, function_value);
+        size = ARRAY_SIZE_CHAR(function_value);
         addNumberToCharArray(value, size);
         break;
 
         case functionOctave:
+        strcpy_P(stringBuffer, function_value);
+        size = ARRAY_SIZE_CHAR(function_value);
         addNumberToCharArray(normalizeOctave(value), size);
         break;
 
         case functionNotes:
+        strcpy_P(stringBuffer, function_value);
+        size = ARRAY_SIZE_CHAR(function_value);
         strcpy_P(tempBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
         strcat(stringBuffer, tempBuffer);
         size += strlen(tempBuffer);
@@ -92,11 +95,15 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         case functionOnOffX:
         case functionOnOffY:
         case functionOnOffSplit:
+        size = 0;
+        startLine();
         value > 0 ? appendText("On", size) : appendText("Off", size);
         break;
 
         case functionXCurve:
         case functionYCurve:
+        strcpy_P(stringBuffer, function_value);
+        size = ARRAY_SIZE_CHAR(function_value);
         strcpy_P(tempBuffer, (char*)pgm_read_word(&(curveNameArray[value])));
         strcat(stringBuffer, tempBuffer);
         size += strlen(tempBuffer);
@@ -108,6 +115,8 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         break;
 
         case functionRecord:
+        startLine();
+        size = 0;
         value > 0 ? appendText("On", size) : appendText("Off", size);
         break;
 
