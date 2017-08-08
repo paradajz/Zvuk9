@@ -1,0 +1,3 @@
+/// \defgroup interface Interface
+/// \brief Buttons, encoders, LEDs and pads.
+///
