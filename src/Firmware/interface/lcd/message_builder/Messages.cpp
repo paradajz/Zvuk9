@@ -92,7 +92,7 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         case functionOnOffX:
         case functionOnOffY:
         case functionOnOffSplit:
-        value > 0 ? appendText("Enabled", size) : appendText("Disabled", size);
+        value > 0 ? appendText("On", size) : appendText("Off", size);
         break;
 
         case functionXCurve:
