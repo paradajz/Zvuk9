@@ -27,9 +27,6 @@ volatile uint16_t   pressureReading[2];
 
 uint8_t             sampleCounter;
 
-//uint16_t firstPressureIgnored;
-volatile uint16_t   velocityStored;
-
 //three coordinates
 volatile int16_t    extractedSamples[3][NUMBER_OF_PADS];
 
@@ -121,7 +118,6 @@ uint16_t Board::getPadPressure(uint8_t pad)
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
         returnValue = extractedSamples[coordinateZ][pad];
-        bitWrite(velocityStored, activePad, 0);
     }
 
     return returnValue;
@@ -175,36 +171,36 @@ ISR(ADC_vect)
 
         if (padReadingIndex == readPressure1)
         {
-            //store pressure sample
-            if (sampleCounter >= 1)
-            {
-                //ignore first reading
-                coordinateSamples[sampleCounter] = (1023 - (pressureReading[readPressure1] - pressureReading[readPressure0]));
-            }
+            coordinateSamples[sampleCounter] = (1023 - (pressureReading[readPressure1] - pressureReading[readPressure0]));
 
             sampleCounter++;
 
             if (sampleCounter == 3)
             {
-                //make sure *not* to overwrite velocity value
-                if (!bitRead(padPressed, activePad) && !bitRead(velocityStored, activePad))
-                {
-                    //store median value
-                    storeMedianValue(coordinateZ);
+                //store median pressure value
+                storeMedianValue(coordinateZ);
 
-                    if (extractedSamples[coordinateZ][activePad] > 0)
-                        bitWrite(velocityStored, activePad, 1);
-                }
-                else if (bitRead(padPressed, activePad))
+                //switch to x/y reading only if pad is pressed
+                if (bitRead(padPressed, activePad))
                 {
-                    storeMedianValue(coordinateZ);
+                    //start reading x/y coordinates
+                    padReadingIndex++;
+                }
+                else
+                {
+                    //switch to another pad
+                    activePad++;
+
+                    if (activePad == NUMBER_OF_PADS)
+                        activePad = 0;
+
+                    setMuxInput(activePad);
+
+                    padReadingIndex = 0;
                 }
 
                 //reset pressure count
                 sampleCounter = 0;
-
-                //start reading x/y coordinates
-                padReadingIndex++;
             }
             else
             {

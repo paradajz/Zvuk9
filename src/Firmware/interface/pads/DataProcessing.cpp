@@ -3,6 +3,10 @@
 #include "../../database/blocks/PadCalibration.h"
 
 ///
+/// \ingroup interfacePads
+/// @{
+
+///
 /// \brief Holds press states for all pads.
 /// Implementation of Board variable.
 ///
@@ -39,6 +43,7 @@ void Pads::update()
                 if ((rTimeMs() - pressureCalibrationLastChange) > 1000)
                 {
                     pressureCalibrationTime++;
+
                     if (pressureCalibrationTime < PRESSURE_ZONE_CALIBRATION_TIMEOUT)
                     {
                         display.displayPressureCalibrationTime(PRESSURE_ZONE_CALIBRATION_TIMEOUT-pressureCalibrationTime, getActivePressureZone(i)+1, false);
@@ -263,9 +268,9 @@ bool Pads::checkVelocity(int8_t pad)
             {
                 //reset calibration
                 if (!leds.getLEDstate(LED_TRANSPORT_RECORD))
-                display.displayPressureCalibrationStatus(false);
+                    display.displayPressureCalibrationStatus(false);
                 else
-                display.displayPressureCalibrationStatus(true);
+                    display.displayPressureCalibrationStatus(true);
 
                 pressureCalibrationTime = 0;
                 pressureCalibrationLastChange = 0;
@@ -624,7 +629,7 @@ bool Pads::checkNoteBuffer()
     //send
     //make sure to check if pad is still pressed!
     if (bitRead(noteSendEnabled, pad_buffer[index]) && isPadPressed(pad_buffer[index]))
-        sendNotes(pad_buffer[index], lastVelocityValue[index], true);
+        sendNotes(pad_buffer[index], lastVelocityValue[pad_buffer[index]], true);
 
     note_buffer_tail = index;
 
@@ -730,3 +735,5 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
             //display.clearAftertouch();
     }
 }
+
+/// @}
