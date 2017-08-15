@@ -78,6 +78,8 @@ typedef enum
     functionPadEditMode,
     functionXCC,
     functionYCC,
+    functionXPitchBend,
+    functionYPitchBend,
     functionXMinLimit,
     functionXMaxLimit,
     functionYMinLimit,

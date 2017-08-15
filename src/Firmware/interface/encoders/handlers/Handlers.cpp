@@ -128,7 +128,10 @@ void handleCC(uint8_t id, int8_t steps)
     {
         case valueChanged:
         case noChange:
-        display.displayChangeResult(coordinate == coordinateX ? functionXCC : functionYCC, pads.getCCvalue(lastTouchedPad, coordinate), pads.getSplitState() ? singlePadSetting : allPadsSetting);
+        if (pads.getPitchBendState(lastTouchedPad, coordinate))
+            display.displayChangeResult(coordinate == coordinateX ? functionXPitchBend : functionYPitchBend, 0, pads.getSplitState() ? singlePadSetting : allPadsSetting);
+        else
+            display.displayChangeResult(coordinate == coordinateX ? functionXCC : functionYCC, pads.getCCvalue(lastTouchedPad, coordinate), pads.getSplitState() ? singlePadSetting : allPadsSetting);
         break;
 
         default:

@@ -530,6 +530,8 @@ void Pads::getPadParameters()
             bitWrite(ySendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
             bitWrite(noteSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
             bitWrite(aftertouchSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
+            bitWrite(pitchBendEnabledX, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
+            bitWrite(pitchBendEnabledY, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
             ccXPad[i]                       = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_X_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccYPad[i]                       = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_Y_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccXminPad[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
@@ -542,10 +544,12 @@ void Pads::getPadParameters()
         }
 
         #ifdef DEBUG
-        printf_P(PSTR("X send enabled: %d\n"), bitRead(xSendEnabled, 0));
-        printf_P(PSTR("Y send enabled: %d\n"), bitRead(ySendEnabled, 0));
-        printf_P(PSTR("Note send enabled: %d\n"), bitRead(noteSendEnabled, 0));
-        printf_P(PSTR("Aftertouch send enabled: %d\n"), bitRead(aftertouchSendEnabled, 0));
+        printf_P(PSTR("X send %s\n"), bitRead(xSendEnabled, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Y send %s\n"), bitRead(ySendEnabled, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Note send %s\n"), bitRead(noteSendEnabled, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Aftertouch send %s\n"), bitRead(aftertouchSendEnabled, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Pitch bend X send %s\n"), bitRead(pitchBendEnabledX, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Pitch bend Y send %s\n"), bitRead(pitchBendEnabledY, 0) ? "enabled" : "disabled");
         printf_P(PSTR("CC X MIDI ID: %d\n"), ccXPad[0]);
         printf_P(PSTR("CC Y MIDI ID: %d\n"), ccYPad[0]);
         printf_P(PSTR("CC X lower limit: %d\n"), ccXminPad[0]);
@@ -571,6 +575,8 @@ void Pads::getPadParameters()
             bitWrite(ySendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
             bitWrite(noteSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
             bitWrite(aftertouchSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
+            bitWrite(pitchBendEnabledX, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
+            bitWrite(pitchBendEnabledY, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
             ccXPad[i]                   = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
             ccYPad[i]                   = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
             ccXminPad[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
@@ -931,6 +937,28 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, b
 pitchBendType_t Pads::getPitchBendType()
 {
     return pitchBendType;
+}
+
+///
+/// \brief Checks if pitch bend is enabled on requested pad.
+/// @param [in] Pad which is being checked.
+/// \returns True if pitch bend is enabled on requested pad, false otherwise.
+///
+bool Pads::getPitchBendState(int8_t pad, padCoordinate_t coordinate)
+{
+    assert(PAD_CHECK(pad));
+
+    switch(coordinate)
+    {
+        case coordinateX:
+        return bitRead(pitchBendEnabledX, pad);
+
+        case coordinateY:
+        return bitRead(pitchBendEnabledY, pad);
+
+        default:
+        return false;
+    }
 }
 
 /// @}

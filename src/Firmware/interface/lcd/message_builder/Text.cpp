@@ -10,30 +10,48 @@ void LCD::setupHomeScreen()
 {
     clearAll();
 
+    uint8_t size = 0;
+
     displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
+
+    //blank pad
     displayPad();
+
+    //clear all notes
     displayActivePadNotes(false);
+
+    //blank velocity
     displayVelocity();
+
+    //blank aftertouch
     displayAftertouch();
 
-    displayXYcc(coordinateX);
-    displayXYcc(coordinateY);
-
-    displayXYposition(coordinateX);
-    displayXYposition(coordinateY);
-
+    //blank midi channel
     displayMIDIchannel();
+
+    //xy text
+    startLine();
+    size = 0;
+    appendText("X | ", size);
+    endLine(size);
+    updateDisplay(LCD_ROW_PRESS_INFO_X, text, LCD_POSITION_PRESS_INFO_X, size);
+
+    startLine();
+    size = 0;
+    appendText("Y | ", size);
+    endLine(size);
+    updateDisplay(LCD_ROW_PRESS_INFO_Y, text, LCD_POSITION_PRESS_INFO_Y, size);
 
     //delimiter between velocity and aftertouch
     startLine();
-    uint8_t size = 0;
+    size = 0;
     appendText("| ", size);
     endLine(size);
     updateDisplay(LCD_ROW_PRESS_INFO_DELIMITER_1, text, LCD_POSITION_PRESS_INFO_DELIMITER_1, size);
 
-    //delimiter between xy cc and position
-    updateDisplay(LCD_ROW_PRESS_INFO_X_CC_POS_DELIMITER, text, LCD_POSITION_PRESS_INFO_X_CC_POS_DELIMITER, size);
-    updateDisplay(LCD_ROW_PRESS_INFO_Y_CC_POS_DELIMITER, text, LCD_POSITION_PRESS_INFO_Y_CC_POS_DELIMITER, size);
+    //delimiter between xy and message type
+    updateDisplay(LCD_ROW_PRESS_INFO_X, text, LCD_POSITION_PRESS_INFO_X_CC_POS_DELIMITER, size);
+    updateDisplay(LCD_ROW_PRESS_INFO_Y, text, LCD_POSITION_PRESS_INFO_Y_CC_POS_DELIMITER, size);
 }
 
 void LCD::displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, int8_t scaleShift)
@@ -227,81 +245,53 @@ void LCD::displayAftertouch(uint8_t aftertouch)
     updateDisplay(LCD_ROW_PRESS_INFO_ATOUCH, text, LCD_POSITION_PRESS_INFO_ATOUCH, size);
 }
 
-void LCD::displayXYcc(padCoordinate_t type, uint8_t cc)
+void LCD::displayXYvalue(padCoordinate_t type, midiMessageType_t messageType, int16_t value1, int16_t value2)
 {
     uint8_t lcdCoordinate = 0, size = 0, lcdRow = 0;
 
     switch(type)
     {
         case coordinateX:
-        strcpy_P(stringBuffer, xCCid_string);
-        size = ARRAY_SIZE_CHAR(xCCid_string);
-        lcdCoordinate = LCD_POSITION_PRESS_INFO_X_CC;
-        lcdRow = LCD_ROW_PRESS_INFO_X_CC;
+        lcdCoordinate = LCD_POSITION_PRESS_INFO_X_VALUE;
+        lcdRow = LCD_ROW_PRESS_INFO_X;
         break;
 
         case coordinateY:
-        strcpy_P(stringBuffer, yCCid_string);
-        size = ARRAY_SIZE_CHAR(yCCid_string);
-        lcdCoordinate = LCD_POSITION_PRESS_INFO_Y_CC;
-        lcdRow = LCD_ROW_PRESS_INFO_Y_CC;
+        lcdCoordinate = LCD_POSITION_PRESS_INFO_Y_VALUE;
+        lcdRow = LCD_ROW_PRESS_INFO_Y;
         break;
 
         default:
         return;
     }
 
-    if (cc != 255)
+    if (value1 != 10000)
     {
-        addNumberToCharArray(cc, size);
+        switch(messageType)
+        {
+            case midiMessageControlChange:
+            strcpy_P(stringBuffer, xyCC_string);
+            size = ARRAY_SIZE_CHAR(xyCC_string);
+            addNumberToCharArray(value1, size);
+            addSpaceToCharArray(1, size);
+            addNumberToCharArray(value2, size);
+            break;
 
-        while (size < (ARRAY_SIZE_CHAR(xCCid_string)+3))
-            addSpaceToCharArray(1, size); //ensure three characters
+            case midiMessagePitchBend:
+            strcpy_P(stringBuffer, xyPitchBend_string);
+            size = ARRAY_SIZE_CHAR(xyPitchBend_string);
+            addSpaceToCharArray(1, size);
+            addNumberToCharArray(value1, size);
+            break;
+
+            default:
+            return; //invalid
+        }
     }
     else
     {
-        addSpaceToCharArray(3, size); //three spaces for max three-digit value
+        addSpaceToCharArray(LCD_WIDTH-lcdCoordinate, size);
     }
-
-    updateDisplay(lcdRow, text, lcdCoordinate, size);
-}
-
-void LCD::displayXYposition(padCoordinate_t type, uint8_t position)
-{
-    uint8_t lcdCoordinate = 0, size = 0, lcdRow = 0;
-
-    //we aren't performing strcpy here so clear string buffer manually
-    startLine();
-
-    switch(type)
-    {
-        case coordinateX:
-        lcdCoordinate = LCD_POSITION_PRESS_INFO_X_POS;
-        lcdRow = LCD_ROW_PRESS_INFO_X_POS;
-        break;
-
-        case coordinateY:
-        lcdCoordinate = LCD_POSITION_PRESS_INFO_Y_POS;
-        lcdRow = LCD_ROW_PRESS_INFO_Y_POS;
-        break;
-
-        default:
-        return;
-    }
-
-    if (position != 255)
-    {
-        addNumberToCharArray(position, size);
-
-        while (size < 3)
-            addSpaceToCharArray(1, size); //ensure three characters
-    }
-    else
-    {
-        addSpaceToCharArray(3, size); //three spaces for max three-digit value
-    }
-
-    endLine(size);
 
     updateDisplay(lcdRow, text, lcdCoordinate, size);
 }
@@ -332,10 +322,8 @@ void LCD::clearPadPressData()
     displayActivePadNotes(false);
     displayVelocity();
     displayAftertouch();
-    displayXYcc(coordinateX);
-    displayXYcc(coordinateY);
-    displayXYposition(coordinateX);
-    displayXYposition(coordinateY);
+    displayXYvalue(coordinateX);
+    displayXYvalue(coordinateY);
     displayMIDIchannel();
 }
 

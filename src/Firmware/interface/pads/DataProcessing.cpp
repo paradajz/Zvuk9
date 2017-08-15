@@ -660,14 +660,15 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
         {
             if (bitRead(xSendEnabled, pad))
             {
-                display.displayXYcc(coordinateX, ccXPad[pad]);
-                display.displayXYposition(coordinateX, lastXMIDIvalue[pad]);
+                if (getPitchBendState(pad, coordinateX))
+                    display.displayXYvalue(coordinateX, midiMessagePitchBend, 1000);
+                else
+                    display.displayXYvalue(coordinateX, midiMessageControlChange, ccXPad[pad], lastXMIDIvalue[pad]);
             }
             else
             {
                 //clear
-                display.displayXYcc(coordinateX);
-                display.displayXYposition(coordinateX);
+                display.displayXYvalue(coordinateX);
             }
         }
 
@@ -675,13 +676,14 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
         {
             if (bitRead(ySendEnabled, pad))
             {
-                display.displayXYcc(coordinateY, ccYPad[pad]);
-                display.displayXYposition(coordinateY, lastYMIDIvalue[pad]);
+                if (getPitchBendState(pad, coordinateY))
+                    display.displayXYvalue(coordinateY, midiMessagePitchBend, 1000);
+                else
+                    display.displayXYvalue(coordinateY, midiMessageControlChange, ccYPad[pad], lastYMIDIvalue[pad]);
             }
             else
             {
-                display.displayXYcc(coordinateY);
-                display.displayXYposition(coordinateY);
+                display.displayXYvalue(coordinateY);
             }
         }
 

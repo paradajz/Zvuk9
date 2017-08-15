@@ -542,12 +542,12 @@ changeResult_t Pads::setCCcurve(padCoordinate_t coordinate, int16_t curve)
     {
         case coordinateX:
         variablePointer = (uint8_t*)padCurveX;
-        configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID;
+        configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_X_CURVE_GAIN_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN_ID;
         break;
 
         case coordinateY:
         variablePointer = (uint8_t*)padCurveY;
-        configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID;
+        configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN_ID;
         break;
 
         default:
@@ -590,19 +590,36 @@ changeResult_t Pads::setCCcurve(padCoordinate_t coordinate, int16_t curve)
 }
 
 ///
-/// \brief Changes CC value on requested coordinate and specified pad.
-/// @param [in] coordinate Coordinate on which CC value is being changed (enumerated type). See padCoordinate_t enumeration.
-/// Only X and Y coordinates are allowed.
-/// @param [in] cc CC value which is being applied to requested coordinate (enumerated type). See curve_t enumeration.
+/// \brief Changes CC value on requested coordinate.
+/// @param [in] coordinate  Coordinate on which CC value is being changed (enumerated type). See padCoordinate_t enumeration.
+///                         Only X and Y coordinates are allowed.
+/// @param [in] cc          CC value which is being applied to requested coordinate (enumerated type). See curve_t enumeration.
 /// \returns Result of changing CC value (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setCCvalue(padCoordinate_t coordinate, int16_t cc)
 {
     //input validation
     if (cc < 0)
-        cc = 0;
-    else if (cc > 124)
-        cc = 124;
+    {
+        if (getCCvalue(getLastTouchedPad(), coordinate) != 0)
+        {
+            //nothing, set 0
+            cc = 0;
+        }
+        else
+        {
+            //set pitch bend is cc is already zero
+            return setPitchBendState(true, coordinate);
+        }
+    }
+    else
+    {
+        if (setPitchBendState(false, coordinate) == valueChanged)
+            cc = 0; //start from zero when changing from pitch bend to cc
+
+        if (cc > 124)
+            cc = 124;
+    }
 
     uint8_t startPad = !splitEnabled ? 0 : getLastTouchedPad();
     uint8_t *variablePointer;
@@ -612,12 +629,12 @@ changeResult_t Pads::setCCvalue(padCoordinate_t coordinate, int16_t cc)
     {
         case coordinateX:
         variablePointer = ccXPad;
-        configurationID = !splitEnabled ? (uint8_t)GLOBAL_PROGRAM_SETTING_CC_X_ID : (uint8_t)LOCAL_PROGRAM_SETTING_CC_X_ID;
+        configurationID = splitEnabled ? (uint8_t)LOCAL_PROGRAM_SETTING_CC_X_ID : (uint8_t)GLOBAL_PROGRAM_SETTING_CC_X_ID;
         break;
 
         case coordinateY:
         variablePointer = ccYPad;
-        configurationID = !splitEnabled ? (uint8_t)GLOBAL_PROGRAM_SETTING_CC_Y_ID : (uint8_t)LOCAL_PROGRAM_SETTING_CC_Y_ID;
+        configurationID = splitEnabled ? (uint8_t)LOCAL_PROGRAM_SETTING_CC_Y_ID : (uint8_t)GLOBAL_PROGRAM_SETTING_CC_Y_ID;
         break;
 
         default:
@@ -694,7 +711,7 @@ changeResult_t Pads::setCClimit(padCoordinate_t coordinate, limitType_t limitTyp
             printf_P(PSTR("max for "));
             #endif
             variablePointer = ccXmaxPad;
-            configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_MAX_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_MAX_ID;
+            configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_X_MAX_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_X_MAX_ID;
             break;
 
             case limitTypeMin:
@@ -702,7 +719,7 @@ changeResult_t Pads::setCClimit(padCoordinate_t coordinate, limitType_t limitTyp
             printf_P(PSTR("min for "));
             #endif
             variablePointer = ccXminPad;
-            configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_X_MIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_X_MIN_ID;
+            configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_X_MIN_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_X_MIN_ID;
             break;
 
             default:
@@ -721,7 +738,7 @@ changeResult_t Pads::setCClimit(padCoordinate_t coordinate, limitType_t limitTyp
             printf_P(PSTR("max for "));
             #endif
             variablePointer = ccYmaxPad;
-            configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_MAX_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_MAX_ID;
+            configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_Y_MAX_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_Y_MAX_ID;
             break;
 
             case limitTypeMin:
@@ -729,7 +746,7 @@ changeResult_t Pads::setCClimit(padCoordinate_t coordinate, limitType_t limitTyp
             printf_P(PSTR("min for "));
             #endif
             variablePointer = ccYminPad;
-            configurationID = !splitEnabled ? (uint16_t)GLOBAL_PROGRAM_SETTING_Y_MIN_ID : (uint16_t)LOCAL_PROGRAM_SETTING_Y_MIN_ID;
+            configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_Y_MIN_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_Y_MIN_ID;
             break;
 
             default:
@@ -1368,8 +1385,8 @@ void Pads::updateLastPressedPad(int8_t pad, bool state)
         //pad released, clear it from buffer
 
         for (int i=0; i<NUMBER_OF_PADS; i++)
-        if (isPadPressed(i))
-        pressedPads++;
+            if (isPadPressed(i))
+                pressedPads++;
 
         if (pressedPads < 1)
         {
@@ -1457,6 +1474,79 @@ changeResult_t Pads::setPitchBendType(pitchBendType_t type)
     {
         return noChange;
     }
+}
+
+///
+/// \brief Enables or disables pitch bend sending.
+/// @param [in] state   New pitch bend sending state (true/enabled, false/disabled).
+/// \returns Result of changing pitch bend sending (enumerated type). See changeResult_t enumeration.
+///
+changeResult_t Pads::setPitchBendState(bool state, padCoordinate_t coordinate)
+{
+    uint8_t lastTouchedPad = getLastTouchedPad();
+    uint16_t *variablePointer;
+    uint16_t configurationID;
+
+    #ifdef DEBUG
+    printf_P(PSTR("new state: %d\ncurrent state: %d\n"), state, getPitchBendState(getLastTouchedPad(), coordinate));
+    #endif
+
+    switch(coordinate)
+    {
+        case coordinateX:
+        variablePointer = &pitchBendEnabledX;
+        configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE_ID;
+        break;
+
+        case coordinateY:
+        variablePointer = &pitchBendEnabledY;
+        configurationID = splitEnabled ? (uint16_t)LOCAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE_ID : (uint16_t)GLOBAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE_ID;
+        break;
+
+        default:
+        return outOfRange;
+    }
+
+    switch(splitEnabled)
+    {
+        case true:
+        //local
+        if (database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)lastTouchedPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)) != state)
+        {
+            database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)lastTouchedPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
+            bitWrite(*variablePointer, lastTouchedPad, state);
+            #ifdef DEBUG
+            printf_P(PSTR("Pitch bend on %s for pad %d %s\n"), coordinate == coordinateX ? "X" : "Y", lastTouchedPad, state ? "enabled" : "disabled");
+            #endif
+        }
+        else
+        {
+            return noChange;
+        }
+        break;
+
+        case false:
+        //global
+        if (database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)) != state)
+        {
+            database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
+            for (int i=0; i<NUMBER_OF_PADS; i++)
+                bitWrite(*variablePointer, i, state);
+            #ifdef DEBUG
+            printf_P(PSTR("Pitch bend on %s for all pads %s\n"), coordinate == coordinateX ? "X" : "Y", state ? "enabled" : "disabled");
+            #endif
+        }
+        else
+        {
+            #ifdef DEBUG
+            printf_P(PSTR("here\n"));
+            #endif
+            return noChange;
+        }
+        break;
+    }
+
+    return valueChanged;
 }
 
 /// @}

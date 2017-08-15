@@ -52,6 +52,7 @@ class Pads
     uint8_t getScaledPressure(int8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type);
     uint16_t getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale);
     pitchBendType_t getPitchBendType();
+    bool getPitchBendState(int8_t pad, padCoordinate_t coordinate);
 
     changeResult_t setProgram(int8_t program);
     changeResult_t setScale(int8_t scale);
@@ -73,6 +74,7 @@ class Pads
     changeResult_t setOctave(int8_t shift, bool padEditMode = false);
     changeResult_t setScaleShiftLevel(int8_t shiftLevel, bool internalChange = false);
     changeResult_t setPitchBendType(pitchBendType_t type);
+    changeResult_t setPitchBendState(bool state, padCoordinate_t coordinate);
 
     private:
     void getConfiguration();
@@ -120,7 +122,7 @@ class Pads
     /// @}
 
     ///
-    /// \brief Variable holding last MIDI note state for all pads(true if note on was last event, false if note off).
+    /// \brief Variable holding last MIDI note state for all pads (true if note on was last event, false if note off).
     /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
     ///
     uint16_t                lastMIDInoteState;
@@ -337,6 +339,17 @@ class Pads
     /// \brif Holds currently active pitch bend type.
     ///
     pitchBendType_t         pitchBendType;
+
+    /// \brief Variables holding pitch bend enable state for all pads on X and Y coordinates
+    /// If pitch bend is enabled for certain pad, pitch bend MIDI message is sent instead of CC messages.
+    /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
+    /// @{
+
+    uint16_t                pitchBendEnabledX,
+                            pitchBendEnabledY;
+
+    /// @}
+
 };
 
 extern Pads pads;

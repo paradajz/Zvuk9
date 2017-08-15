@@ -14,6 +14,8 @@ const char function_octave[] PROGMEM = "Octave: ";
 const char function_noteShift[] PROGMEM = "Note shift level: ";
 const char function_xCC[] PROGMEM = "X CC: ";
 const char function_yCC[] PROGMEM = "Y CC: ";
+const char function_xPitchBend[] PROGMEM = "X Pitch bend";
+const char function_yPitchBend[] PROGMEM = "Y Pitch bend";
 const char function_xMin[] PROGMEM = "X min: ";
 const char function_xMax[] PROGMEM = "X max: ";
 const char function_yMin[] PROGMEM = "Y min: ";
@@ -40,6 +42,8 @@ PGM_P const functionArray[] PROGMEM =
     NULL,
     function_xCC,
     function_yCC,
+    function_xPitchBend,
+    function_yPitchBend,
     function_xMin,
     function_xMax,
     function_yMin,
@@ -68,6 +72,8 @@ const uint8_t functionArray_sizes[] PROGMEM =
     0,
     ARRAY_SIZE_CHAR(function_xCC),
     ARRAY_SIZE_CHAR(function_yCC),
+    ARRAY_SIZE_CHAR(function_xPitchBend),
+    ARRAY_SIZE_CHAR(function_yPitchBend),
     ARRAY_SIZE_CHAR(function_xMin),
     ARRAY_SIZE_CHAR(function_xMax),
     ARRAY_SIZE_CHAR(function_yMin),

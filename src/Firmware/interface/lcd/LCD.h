@@ -31,8 +31,7 @@ class LCD
     void displayActivePadNotes(bool showNotes = true);
     void displayVelocity(uint8_t velocity = 255);
     void displayAftertouch(uint8_t aftertouch = 255);
-    void displayXYcc(padCoordinate_t type, uint8_t cc = 255);
-    void displayXYposition(padCoordinate_t type, uint8_t position = 255);
+    void displayXYvalue(padCoordinate_t type, midiMessageType_t messageType = midiMessageInvalidType, int16_t value1 = 10000, int16_t value2 = 10000);
     void displayMIDIchannel(uint8_t channel = 255);
     void clearPadPressData();
 
