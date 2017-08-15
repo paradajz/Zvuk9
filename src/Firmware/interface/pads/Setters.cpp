@@ -794,6 +794,10 @@ changeResult_t Pads::calibratePressure(int8_t pad, uint8_t pressureZone, int16_t
 
     if (database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+pressureZone, pad) != limit)
     {
+        #ifdef DEBUG
+        printf_P(PSTR("Calibrating pressure for pad %d on zone %d. New value: %d\n"), pad, pressureZone, limit);
+        #endif
+
         database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+pressureZone, pad, limit);
         getPressureLimits();
         getAftertouchLimits();
