@@ -29,13 +29,14 @@ void Pads::update()
 
         //all needed pressure samples are obtained
         velocityAvailable = checkVelocity(i);
-        aftertouchAvailable = checkAftertouch(i, velocityAvailable);
 
-        //only check x/y if pad is pressed
+        //only check x/y and aftertouch if pad is pressed
         if (isPadPressed(i))
         {
             xAvailable = checkX(i);
             yAvailable = checkY(i);
+
+            aftertouchAvailable = checkAftertouch(i, velocityAvailable);
 
             if (calibrationEnabled && (activeCalibration == coordinateZ) && (pressureCalibrationTime != PRESSURE_ZONE_CALIBRATION_TIMEOUT) && (bool)leds.getLEDstate(LED_TRANSPORT_RECORD))
             {
