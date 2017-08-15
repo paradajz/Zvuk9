@@ -94,7 +94,7 @@ void startUpAnimation()
 
     display.displayWelcomeMessage();
 
-    wait_ms(2000);
+    wait_ms(1500);
 
     //restore led states
     for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
