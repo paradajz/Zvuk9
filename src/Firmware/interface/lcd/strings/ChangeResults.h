@@ -8,8 +8,8 @@ const char changeResult_releasePads_string[] PROGMEM = "pads not released";
 const char changeResult_notUserScale_string[] PROGMEM = "user scale not active";
 const char changeResult_notPredefinedScale_string[] PROGMEM = "predefined scale not active";
 
-const char settinType_singlePad_string[] PROGMEM = "Applied to pad ";
-const char settinType_allPads_string[] PROGMEM = "Applied to all pads";
+const char settinType_singlePad_string[] PROGMEM = "Pad ";
+const char settinType_allPads_string[] PROGMEM = "All pads";
 
 PGM_P const changeResultArray[] PROGMEM =
 {
