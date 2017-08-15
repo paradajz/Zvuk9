@@ -288,11 +288,8 @@ void LCD::displayXYvalue(padCoordinate_t type, midiMessageType_t messageType, in
             return; //invalid
         }
     }
-    else
-    {
-        addSpaceToCharArray(LCD_WIDTH-lcdCoordinate, size);
-    }
 
+    addSpaceToCharArray(LCD_WIDTH-lcdCoordinate-size, size);
     updateDisplay(lcdRow, text, lcdCoordinate, size);
 }
 
