@@ -7,7 +7,7 @@
 #include "items/ServiceMenu.h"
 #include "items/UserMenu.h"
 
-#define MAX_MENU_OPTIONS    25
+#define MAX_MENU_OPTIONS    USER_MENU_ITEMS //more items in user menu than service
 
 typedef struct
 {

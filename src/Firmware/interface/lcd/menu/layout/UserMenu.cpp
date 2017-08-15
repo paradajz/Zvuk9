@@ -142,6 +142,24 @@ void Menu::createUserMenuLayout()
                 menuItem[userMenuItem_midiSettings_transport_mmc_cc].function = checkTransportCC;
                 menuItem[userMenuItem_midiSettings_transport_mmc_cc].argument.argument1 = transportMMC_CC;
             }
+
+            menuItem[userMenuItem_midiSettings_pitchBend].stringPointer = midiSettings_pitchBend_string;
+            menuItem[userMenuItem_midiSettings_pitchBend].level = 25;
+            menuItem[userMenuItem_midiSettings_pitchBend].function = NULL;
+
+            {
+                menuItem[userMenuItem_midiSettings_pitchBend_1].stringPointer = midiSettings_pitchBend_1_string;
+                menuItem[userMenuItem_midiSettings_pitchBend_1].level = 251;
+                menuItem[userMenuItem_midiSettings_pitchBend_1].checkable = true;
+                menuItem[userMenuItem_midiSettings_pitchBend_1].function = checkPitchBendType;
+                menuItem[userMenuItem_midiSettings_pitchBend_1].argument.argument1 = pitchBend1;
+
+                menuItem[userMenuItem_midiSettings_pitchBend_2].stringPointer = midiSettings_pitchBend_2_string;
+                menuItem[userMenuItem_midiSettings_pitchBend_2].level = 252;
+                menuItem[userMenuItem_midiSettings_pitchBend_2].checkable = true;
+                menuItem[userMenuItem_midiSettings_pitchBend_2].function = checkPitchBendType;
+                menuItem[userMenuItem_midiSettings_pitchBend_2].argument.argument1 = pitchBend2;
+            }
         }
 
     menuItem[userMenuItem_deviceInfo].stringPointer = menuOption_deviceInfo_string;

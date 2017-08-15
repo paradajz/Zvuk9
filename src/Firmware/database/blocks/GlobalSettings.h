@@ -2,6 +2,8 @@
 
 #include "../../interface/pads/curves/Curves.h"
 #include "../../midi/src/DataTypes.h"
+#include "../../interface/pads/DataTypes.h"
+#include "../../interface/buttons/DataTypes.h"
 
 typedef enum
 {
@@ -11,9 +13,10 @@ typedef enum
 } globalSettingsSection;
 
 #define MIDI_SETTING_AFTERTOUCH_TYPE                aftertouchChannel
-#define MIDI_SETTING_RUNNING_STATUS                 0
-#define MIDI_SETTING_NOTE_OFF_TYPE                  1 //noteOffType_standardNoteOff
-#define MIDI_SETTING_TRANSPORT_CC                   0x00
+#define MIDI_SETTING_RUNNING_STATUS                 0 //disabled
+#define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_standardNoteOff
+#define MIDI_SETTING_TRANSPORT_CC                   transportMMC
+#define MIDI_SETTING_PITCH_BEND_TYPE                pitchBend1
 
 typedef enum
 {
@@ -21,9 +24,10 @@ typedef enum
     MIDI_SETTING_RUNNING_STATUS_ID,
     MIDI_SETTING_NOTE_OFF_TYPE_ID,
     MIDI_SETTING_TRANSPORT_CC_ID,
-    MIDI_SETTING_TRANSPORT_CC_PLAY_ID,
-    MIDI_SETTING_TRANSPORT_CC_STOP_ID,
-    MIDI_SETTING_TRANSPORT_CC_RECORD_ID,
+    MIDI_SETTING_PITCH_BEND_TYPE_ID,
+    MIDI_SETTING_RESERVED_1_ID,
+    MIDI_SETTING_RESERVED_2_ID,
+    MIDI_SETTING_RESERVED_3_ID,
     MIDI_SETTINGS
 } midiSettings;
 
@@ -33,12 +37,13 @@ const uint8_t defaultMIDIsettingArray[MIDI_SETTINGS] =
     MIDI_SETTING_RUNNING_STATUS,
     MIDI_SETTING_NOTE_OFF_TYPE,
     MIDI_SETTING_TRANSPORT_CC,
-    0, //reserved
-    0, //reserved
-    0 //reserved
+    MIDI_SETTING_PITCH_BEND_TYPE,
+    0,  //reserved
+    0,  //reserved
+    0   //reserved
 };
 
-#define VELOCITY_SETTING_SENSITIVITY                0
+#define VELOCITY_SETTING_SENSITIVITY                velocity_soft
 #define VELOCITY_SETTING_CURVE                      curve_linear_up
 
 typedef enum

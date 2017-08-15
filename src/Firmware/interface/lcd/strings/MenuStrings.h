@@ -52,10 +52,14 @@ const char midiSettings_atouchType_string[] PROGMEM = "Aftertouch type";
 const char midiSettings_runningStatus_string[] PROGMEM = "Running status";
 const char midiSettings_noteOff_string[] PROGMEM = "Note off type";
 const char midiSettings_transport_string[] PROGMEM = "Transport controls";
+const char midiSettings_pitchBend_string[] PROGMEM = "Pitch bend type";
 
 const char midiSettings_transport_MMC_string[] PROGMEM = "MMC";
 const char midiSettings_transport_CC_string[] PROGMEM = "CC";
 const char midiSettings_transport_MMC_CC_string[] PROGMEM = "MMC+CC";
+
+const char midiSettings_pitchBend_1_string[] PROGMEM = "Type 1";
+const char midiSettings_pitchBend_2_string[] PROGMEM = "Type 2";
 
 const char aftertouchType_channel_string[] PROGMEM = "Channel";
 const char aftertouchType_poly_string[] PROGMEM = "Poly";

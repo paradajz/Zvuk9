@@ -1440,4 +1440,23 @@ void Pads::storeNotes(int8_t pad)
     note_buffer_head = i;
 }
 
+///
+/// \brief Changes active pitch bend type.
+/// @param [in] type    New pitch bend type (enumerated type). See pitchBend_t enumeration.
+/// \returns Result of changing pitch bend type (enumerated type). See changeResult_t enumeration.
+///
+changeResult_t Pads::setPitchBendType(pitchBendType_t type)
+{
+    if (type != pitchBendType)
+    {
+        pitchBendType = type;
+        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_PITCH_BEND_TYPE_ID, (uint8_t)type);
+        return valueChanged;
+    }
+    else
+    {
+        return noChange;
+    }
+}
+
 /// @}

@@ -163,6 +163,7 @@ note_t Buttons::getTonicFromButton(uint8_t buttonNumber)
 void Buttons::setTransportControlType(transportControlType_t type)
 {
     transportControlType = type;
+    database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID, type);
 }
 
 transportControlType_t Buttons::getTransportControlType()

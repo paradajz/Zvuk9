@@ -478,6 +478,7 @@ void Pads::getConfiguration()
     aftertouchType = (aftertouchType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_AFTERTOUCH_TYPE_ID);
     velocitySensitivity = (velocitySensitivity_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsVelocitySensitivity, VELOCITY_SETTING_SENSITIVITY_ID);
     velocityCurve = (curve_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsVelocitySensitivity, VELOCITY_SETTING_CURVE_ID);
+    pitchBendType = (pitchBendType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_PITCH_BEND_TYPE_ID);
 
     //read pad configuration from EEPROM
     getProgramParameters();
@@ -921,6 +922,15 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, b
         default:
         return 0;
     }
+}
+
+///
+/// \brief Checks for currently active pitch bend type.
+/// \returns Active pitch bend type (enumerated type). See pitchBend_t enumeration.
+///
+pitchBendType_t Pads::getPitchBendType()
+{
+    return pitchBendType;
 }
 
 /// @}

@@ -298,7 +298,6 @@ bool checkTransportCC(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         buttons.setTransportControlType((transportControlType_t)argument.argument1);
-        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID, argument.argument1);
         #endif
         return true;
 
@@ -306,6 +305,36 @@ bool checkTransportCC(functionArgument argument)
         #ifdef NDEBUG
         return (buttons.getTransportControlType() == (transportControlType_t)argument.argument1);
         #endif
+        break;
+
+    }
+
+    return false;
+}
+
+bool checkPitchBendType(functionArgument argument)
+{
+    switch((pitchBendType_t)argument.argument1)
+    {
+        case pitchBend1:
+        case pitchBend2:
+        //nothing
+        break;
+
+        default:
+        //invalid argument
+        return false;
+    }
+
+    switch(argument.argument2)
+    {
+        case true:
+        //switch option
+        pads.setPitchBendType((pitchBendType_t)argument.argument1);
+        return true;
+
+        case false:
+        return (pads.getPitchBendType() == (pitchBendType_t)argument.argument1);
         break;
 
     }

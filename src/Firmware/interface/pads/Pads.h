@@ -51,6 +51,7 @@ class Pads
     note_t getScaleNote(int8_t scale, int8_t index);
     uint8_t getScaledPressure(int8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type);
     uint16_t getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale);
+    pitchBendType_t getPitchBendType();
 
     changeResult_t setProgram(int8_t program);
     changeResult_t setScale(int8_t scale);
@@ -71,6 +72,7 @@ class Pads
     changeResult_t setPadNote(int8_t pad, note_t note);
     changeResult_t setOctave(int8_t shift, bool padEditMode = false);
     changeResult_t setScaleShiftLevel(int8_t shiftLevel, bool internalChange = false);
+    changeResult_t setPitchBendType(pitchBendType_t type);
 
     private:
     void getConfiguration();
@@ -330,6 +332,11 @@ class Pads
     uint32_t                pressureCalibrationLastChange;
 
     /// @}
+
+    ///
+    /// \brif Holds currently active pitch bend type.
+    ///
+    pitchBendType_t         pitchBendType;
 };
 
 extern Pads pads;

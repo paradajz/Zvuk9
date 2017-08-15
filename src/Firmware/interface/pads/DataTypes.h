@@ -132,4 +132,13 @@ typedef enum
     PREDEFINED_SCALES
 } scale_t;
 
+///
+/// \brief List of all possible pitch bend types.
+///
+typedef enum
+{
+    pitchBend1,
+    pitchBend2
+} pitchBendType_t;
+
 /// @}

@@ -21,6 +21,7 @@ typedef enum
     userMenuItem_midiSettings_runningStatus,
     userMenuItem_midiSettings_noteOff,
     userMenuItem_midiSettings_transport,
+    userMenuItem_midiSettings_pitchBend,
 
     userMenuItem_midiSettings_aftertouchType_channel,
     userMenuItem_midiSettings_aftertouchType_poly,
@@ -34,6 +35,9 @@ typedef enum
     userMenuItem_midiSettings_transport_mmc,
     userMenuItem_midiSettings_transport_cc,
     userMenuItem_midiSettings_transport_mmc_cc,
+
+    userMenuItem_midiSettings_pitchBend_1,
+    userMenuItem_midiSettings_pitchBend_2,
 
     USER_MENU_ITEMS
 } userMenuItems_t;
