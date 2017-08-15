@@ -58,7 +58,6 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
 
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(functionArray[function])));
     size = pgm_read_byte(&functionArray_sizes[function]);
-    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
     //special cases
     switch(function)
@@ -71,20 +70,14 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         case functionXMaxLimit:
         case functionYMinLimit:
         case functionYMaxLimit:
-        strcpy_P(stringBuffer, function_value);
-        size = ARRAY_SIZE_CHAR(function_value);
         addNumberToCharArray(value, size);
         break;
 
         case functionOctave:
-        strcpy_P(stringBuffer, function_value);
-        size = ARRAY_SIZE_CHAR(function_value);
         addNumberToCharArray(normalizeOctave(value), size);
         break;
 
         case functionNotes:
-        strcpy_P(stringBuffer, function_value);
-        size = ARRAY_SIZE_CHAR(function_value);
         strcpy_P(tempBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
         strcat(stringBuffer, tempBuffer);
         size += strlen(tempBuffer);
@@ -95,41 +88,27 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         case functionOnOffX:
         case functionOnOffY:
         case functionOnOffSplit:
-        size = 0;
-        startLine();
-        value > 0 ? appendText("On", size) : appendText("Off", size);
+        case functionRecord:
+        value > 0 ? appendText("on", size) : appendText("off", size);
         break;
 
         case functionXCurve:
         case functionYCurve:
-        strcpy_P(stringBuffer, function_value);
-        size = ARRAY_SIZE_CHAR(function_value);
         strcpy_P(tempBuffer, (char*)pgm_read_word(&(curveNameArray[value])));
         strcat(stringBuffer, tempBuffer);
         size += strlen(tempBuffer);
-        break;
-
-        case functionPlay:
-        case functionStop:
-        clearLine(LCD_ROW_MESSAGE_2, false);
-        break;
-
-        case functionRecord:
-        startLine();
-        size = 0;
-        value > 0 ? appendText("On", size) : appendText("Off", size);
         break;
 
         default:
         break;
     }
 
-    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
+    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
 
     switch(type)
     {
         case globalSetting:
-        clearLine(LCD_ROW_MESSAGE_3, false);
+        clearLine(LCD_ROW_MESSAGE_2, false);
         break;
 
         case singlePadSetting:
@@ -144,5 +123,5 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         break;
     }
 
-    updateDisplay(LCD_ROW_MESSAGE_3, message, getTextCenter(size), size);
+    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
 }
