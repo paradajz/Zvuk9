@@ -170,27 +170,25 @@
         </avrgcccpp.assembler.general.IncludePaths>
       </AvrGccCpp>
     </ToolchainSettings>
-    <PostBuildEvent>REM cd to tools dir
+    <PostBuildEvent>REM cd to bin dir
 call cd $(SolutionDir)
-call cd ..\tools\
+call cd ..\bin\
 
 REM copy compiled hex to current dir
 call cp "$(MSBuildProjectDirectory)\$(Configuration)\$(OutputFileName).hex" FLASH.hex
 
 REM convert hex to bin and remove hex
-call C:\Windows\Sysnative\bash.exe -c "./version_script.sh"
+call C:\Windows\Sysnative\bash.exe -c "srec_cat FLASH.hex --intel --fill 0xFF 0x0000 0x1E000 -o FLASH.bin -binary"
+call del FLASH.hex
 
 REM copy bin file, MAJOR, MINOR, REVISION and HASH to versioning/bin directory
-call cp FLASH.bin "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin"
+call move FLASH.bin "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin"
 call cp "$(MSBuildProjectDirectory)\version\MAJOR" "$(MSBuildProjectDirectory)\versioning\bin\MAJOR"
 call cp "$(MSBuildProjectDirectory)\version\MINOR" "$(MSBuildProjectDirectory)\versioning\bin\MINOR"
 call cp "$(MSBuildProjectDirectory)\version\REVISION" "$(MSBuildProjectDirectory)\versioning\bin\REVISION"
 call cp "$(MSBuildProjectDirectory)\version\HASH" "$(MSBuildProjectDirectory)\versioning\bin\HASH"
 
-REM remove FLASH.bin from current dir
-call del FLASH.bin
-
-REM change to av2b dir
+REM change to av2b dir and append version, hash and CRC
 call cd "$(MSBuildProjectDirectory)\versioning\bin"
 call av2b.exe
 
@@ -200,9 +198,22 @@ call del MINOR
 call del REVISION
 call del HASH
 
-REM move binary to root/bin
+REM move bin to root/bin
 call cd $(SolutionDir)
-call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bin"</PostBuildEvent>
+call move "$(MSBuildProjectDirectory)\versioning\bin\FLASH.bin" "../bin/FLASH.bin"
+
+REM back to bin dir
+call cd $(SolutionDir)
+call cd ..\bin\
+
+REM encrypt
+call Encrypt.exe
+
+REM convert back to hex since HID bootloader doesn't like bin
+call C:\Windows\Sysnative\bash.exe -c "avr-objcopy -I binary -O ihex FLASH_ENC.bin FLASH_ENC.hex"
+
+REM convert back to hex since HID bootloader doesn't like bin
+REM call C:\Windows\Sysnative\bash.exe -c "avr-objcopy -I binary -O ihex FLASH.bin FLASH.hex"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
