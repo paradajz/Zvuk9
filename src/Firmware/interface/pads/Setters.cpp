@@ -1487,10 +1487,6 @@ changeResult_t Pads::setPitchBendState(bool state, padCoordinate_t coordinate)
     uint16_t *variablePointer;
     uint16_t configurationID;
 
-    #ifdef DEBUG
-    printf_P(PSTR("new state: %d\ncurrent state: %d\n"), state, getPitchBendState(getLastTouchedPad(), coordinate));
-    #endif
-
     switch(coordinate)
     {
         case coordinateX:
@@ -1538,9 +1534,6 @@ changeResult_t Pads::setPitchBendState(bool state, padCoordinate_t coordinate)
         }
         else
         {
-            #ifdef DEBUG
-            printf_P(PSTR("here\n"));
-            #endif
             return noChange;
         }
         break;
