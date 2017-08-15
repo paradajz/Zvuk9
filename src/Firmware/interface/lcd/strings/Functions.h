@@ -1,27 +1,25 @@
 #pragma once
 
-const char function_midiChannel[] PROGMEM = "Change MIDI channel with encoder";
+const char function_midiChannel[] PROGMEM = "MIDI channel: ";
 const char function_play[] PROGMEM = "Play";
 const char function_stop[] PROGMEM = "Stop";
-const char function_record[] PROGMEM = "Record";
-const char function_tonic[] PROGMEM = "Tonic changed!";
-const char function_split[] PROGMEM = "Split mode";
-const char function_x[] PROGMEM = "X sending";
-const char function_y[] PROGMEM = "Y sending";
-const char function_aftertouch[] PROGMEM = "Aftertouch sending";
-const char function_notes[] PROGMEM = "Note sending";
-const char function_octave[] PROGMEM = "Octave changed!";
-const char function_noteShift[] PROGMEM = "Note shift level changed!";
-const char function_xCC[] PROGMEM = "X CC changed!";
-const char function_yCC[] PROGMEM = "Y CC changed!";
-const char function_xMin[] PROGMEM = "X min changed!";
-const char function_xMax[] PROGMEM = "X max changed!";
-const char function_yMin[] PROGMEM = "Y min changed!";
-const char function_yMax[] PROGMEM = "Y max changed!";
-const char function_xCurve[] PROGMEM = "X curve changed!";
-const char function_yCurve[] PROGMEM = "Y curve changed!";
-
-const char function_value[] PROGMEM = "New value: ";
+const char function_record[] PROGMEM = "Record ";
+const char function_tonic[] PROGMEM = "Tonic: ";
+const char function_split[] PROGMEM = "Split ";
+const char function_x[] PROGMEM = "X ";
+const char function_y[] PROGMEM = "Y ";
+const char function_aftertouch[] PROGMEM = "Aftertouch ";
+const char function_notes[] PROGMEM = "Notes ";
+const char function_octave[] PROGMEM = "Octave: ";
+const char function_noteShift[] PROGMEM = "Note shift level: ";
+const char function_xCC[] PROGMEM = "X CC: ";
+const char function_yCC[] PROGMEM = "Y CC: ";
+const char function_xMin[] PROGMEM = "X min: ";
+const char function_xMax[] PROGMEM = "X max: ";
+const char function_yMin[] PROGMEM = "Y min: ";
+const char function_yMax[] PROGMEM = "Y max: ";
+const char function_xCurve[] PROGMEM = "X curve: ";
+const char function_yCurve[] PROGMEM = "Y curve: ";
 
 PGM_P const functionArray[] PROGMEM =
 {
