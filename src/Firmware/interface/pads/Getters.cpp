@@ -669,7 +669,7 @@ void Pads::getScaleParameters()
         for (int i=0; i<NUMBER_OF_PADS; i++)
         {
             for (int j=1; j<NOTES_PER_PAD; j++)
-            padNote[i][j] = BLANK_NOTE;
+                padNote[i][j] = BLANK_NOTE;
         }
 
         //default notes in scale are now applied to pads
