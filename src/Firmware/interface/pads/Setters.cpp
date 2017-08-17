@@ -81,14 +81,6 @@ changeResult_t Pads::setTonic(note_t newTonic, bool internalChange)
     if (newTonic >= MIDI_NOTES)
         return outOfRange;
 
-    if (newTonic == getTonic())
-    {
-        #ifdef DEBUG
-        printf_P(PSTR("No change in tonic.\n"));
-        #endif
-        return noChange;
-    }
-
     changeResult_t result = noChange;
     note_t currentScaleTonic;
 
@@ -102,6 +94,14 @@ changeResult_t Pads::setTonic(note_t newTonic, bool internalChange)
     else
     {
         currentScaleTonic = getTonic();
+    }
+
+    if (newTonic == currentScaleTonic)
+    {
+        #ifdef DEBUG
+        printf_P(PSTR("No change in tonic.\n"));
+        #endif
+        return noChange;
     }
 
     //determine distance between notes
@@ -186,7 +186,6 @@ changeResult_t Pads::setTonic(note_t newTonic, bool internalChange)
         #ifdef DEBUG
         printf_P(PSTR("Tonic changed, active tonic %d\n"), newTonic);
         #endif
-
     }
     else
     {
