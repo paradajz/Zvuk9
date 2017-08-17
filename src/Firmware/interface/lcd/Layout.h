@@ -68,8 +68,12 @@
 #define LCD_ROW_MESSAGE_2                               2
 #define LCD_POSITION_MESSAGE_2                          0
 
-#define LCD_ROW_PAD_CALIBRATION                         0
-#define LCD_POSITION_PAD_CALIBRATION                    0
+#define LCD_ROW_CALIBRATION_VALUES                      2
+#define LCD_ROW_CALIBRATION_SCROLL_INFO                 3
+#define LCD_POSITION_CALIBRATION_RAW_VALUE_TEXT         0
+#define LCD_POSITION_CALIBRATION_RAW_VALUE_VALUE        5
+#define LCD_POSITION_CALIBRATION_MIDI_VALUE_TEXT        10
+#define LCD_POSITION_CALIBRATION_MIDI_VALUE_VALUE       16
 
 #define LCD_ROW_MENU_DEVICE_INFO_1                      1
 #define LCD_POSITION_MENU_DEVICE_INFO_1                 0

@@ -457,7 +457,7 @@ bool Pads::isAftertouchActivated(int8_t pad)
 /// @param [in] pad Pad which is being checked.
 /// \returns Currently active pressure zone (16 zones in total).
 ///
-padCalibrationSection Pads::getActivePressureZone(int8_t pad)
+padCalibrationSection Pads::getPressureZone(int8_t pad)
 {
     assert(PAD_CHECK(pad));
 

@@ -68,8 +68,8 @@ class Pads
     changeResult_t setCCvalue(padCoordinate_t coordinate, int16_t cc);
     changeResult_t setCClimit(padCoordinate_t coordinate, limitType_t limitType, int16_t value);
     void setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
-    changeResult_t calibratePressure(int8_t pad, uint8_t pressureZone, int16_t limit);
-    changeResult_t calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit);
+    changeResult_t calibratePressure(int8_t pad, uint8_t pressureZone, int16_t limit, bool updateMIDIvalue = false);
+    changeResult_t calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit, bool updateMIDIvalue = false);
     changeResult_t setPadNote(int8_t pad, note_t note);
     changeResult_t setOctave(int8_t shift, bool padEditMode = false);
     changeResult_t setScaleShiftLevel(int8_t shiftLevel, bool internalChange = false);
@@ -87,7 +87,7 @@ class Pads
     void getAftertouchLimits();
     void getPadParameters();
     bool isAftertouchActivated(int8_t pad);
-    padCalibrationSection getActivePressureZone(int8_t pad);
+    padCalibrationSection getPressureZone(int8_t pad);
 
     void setPadPressState(int8_t pad, bool state);
     void updateNoteLEDs(int8_t pad, bool state);

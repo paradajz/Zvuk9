@@ -204,25 +204,41 @@ void LCD::displayActivePadNotes(bool showNotes)
     }
 }
 
-void LCD::displayVelocity(uint8_t velocity)
+void LCD::displayVelocity(uint8_t midiVelocity, int16_t rawPressure)
 {
     uint8_t size = 0;
-    strcpy_P(stringBuffer, velocity_string);
-    size = ARRAY_SIZE_CHAR(velocity_string);
 
-    if (velocity != 255)
+    if (pads.isCalibrationEnabled())
     {
-        addNumberToCharArray(velocity, size);
+        startLine();
+        size = 0;
+        if (midiVelocity != 255)
+            addNumberToCharArray(midiVelocity, size);
+        addSpaceToCharArray(3-size, size);
 
-        while (size < (ARRAY_SIZE_CHAR(velocity_string)+3))
-            addSpaceToCharArray(1, size); //ensure three characters
+        updateDisplay(LCD_ROW_CALIBRATION_VALUES, text, LCD_POSITION_CALIBRATION_MIDI_VALUE_VALUE, size);
+
+        startLine();
+        size = 0;
+        if (midiVelocity != 255)
+            addNumberToCharArray(rawPressure, size);
+        addSpaceToCharArray(4-size, size);
+
+        updateDisplay(LCD_ROW_CALIBRATION_VALUES, text, LCD_POSITION_CALIBRATION_RAW_VALUE_VALUE, size);
     }
     else
     {
-        addSpaceToCharArray(3, size); //three spaces for max three-digit value
-    }
+        strcpy_P(stringBuffer, velocity_string);
+        size = ARRAY_SIZE_CHAR(velocity_string);
 
-    updateDisplay(LCD_ROW_PRESS_INFO_VELOCITY, text, LCD_POSITION_PRESS_INFO_VELOCITY, size);
+        if (midiVelocity != 255)
+            addNumberToCharArray(midiVelocity, size);
+
+        while (size < (ARRAY_SIZE_CHAR(velocity_string)+3))
+            addSpaceToCharArray(1, size); //ensure three characters
+
+        updateDisplay(LCD_ROW_PRESS_INFO_VELOCITY, text, LCD_POSITION_PRESS_INFO_VELOCITY, size);
+    }
 }
 
 void LCD::displayAftertouch(uint8_t aftertouch)
@@ -249,48 +265,76 @@ void LCD::displayXYvalue(padCoordinate_t type, midiMessageType_t messageType, in
 {
     uint8_t lcdCoordinate = 0, size = 0, lcdRow = 0;
 
-    switch(type)
+    if (pads.isCalibrationEnabled())
     {
-        case coordinateX:
-        lcdCoordinate = LCD_POSITION_PRESS_INFO_X_VALUE;
-        lcdRow = LCD_ROW_PRESS_INFO_X;
-        break;
+        //pad calibration screen is already set, only update values
+        lcdRow = LCD_ROW_CALIBRATION_VALUES;
 
-        case coordinateY:
-        lcdCoordinate = LCD_POSITION_PRESS_INFO_Y_VALUE;
-        lcdRow = LCD_ROW_PRESS_INFO_Y;
-        break;
-
-        default:
-        return;
-    }
-
-    if (value1 != 10000)
-    {
-        switch(messageType)
-        {
-            case midiMessageControlChange:
-            strcpy_P(stringBuffer, xyCC_string);
-            size = ARRAY_SIZE_CHAR(xyCC_string);
+        startLine();
+        size = 0;
+        lcdCoordinate = LCD_POSITION_CALIBRATION_RAW_VALUE_VALUE;
+        if (value1 != 10000)
             addNumberToCharArray(value1, size);
-            addSpaceToCharArray(1, size);
+        addSpaceToCharArray(4-size, size);
+        endLine(size);
+
+        updateDisplay(lcdRow, text, lcdCoordinate, size);
+
+        startLine();
+        size = 0;
+        lcdCoordinate = LCD_POSITION_CALIBRATION_MIDI_VALUE_VALUE;
+        if (value1 != 10000)
             addNumberToCharArray(value2, size);
+        addSpaceToCharArray(3-size, size);
+        endLine(size);
+
+        updateDisplay(lcdRow, text, lcdCoordinate, size);
+    }
+    else
+    {
+        switch(type)
+        {
+            case coordinateX:
+            lcdCoordinate = LCD_POSITION_PRESS_INFO_X_VALUE;
+            lcdRow = LCD_ROW_PRESS_INFO_X;
             break;
 
-            case midiMessagePitchBend:
-            strcpy_P(stringBuffer, xyPitchBend_string);
-            size = ARRAY_SIZE_CHAR(xyPitchBend_string);
-            addSpaceToCharArray(1, size);
-            addNumberToCharArray(value1, size);
+            case coordinateY:
+            lcdCoordinate = LCD_POSITION_PRESS_INFO_Y_VALUE;
+            lcdRow = LCD_ROW_PRESS_INFO_Y;
             break;
 
             default:
-            return; //invalid
+            return;
         }
-    }
 
-    addSpaceToCharArray(LCD_WIDTH-lcdCoordinate-size, size);
-    updateDisplay(lcdRow, text, lcdCoordinate, size);
+        if (value1 != 10000)
+        {
+            switch(messageType)
+            {
+                case midiMessageControlChange:
+                strcpy_P(stringBuffer, xyCC_string);
+                size = ARRAY_SIZE_CHAR(xyCC_string);
+                addNumberToCharArray(value1, size);
+                addSpaceToCharArray(1, size);
+                addNumberToCharArray(value2, size);
+                break;
+
+                case midiMessagePitchBend:
+                strcpy_P(stringBuffer, xyPitchBend_string);
+                size = ARRAY_SIZE_CHAR(xyPitchBend_string);
+                addSpaceToCharArray(1, size);
+                addNumberToCharArray(value1, size);
+                break;
+
+                default:
+                return; //invalid
+            }
+        }
+
+        addSpaceToCharArray(LCD_WIDTH-lcdCoordinate-size, size);
+        updateDisplay(lcdRow, text, lcdCoordinate, size);
+    }
 }
 
 void LCD::displayMIDIchannel(uint8_t channel)
@@ -315,13 +359,21 @@ void LCD::displayMIDIchannel(uint8_t channel)
 
 void LCD::clearPadPressData()
 {
+    if (pads.isCalibrationEnabled())
+    {
+        
+    }
+    else
+    {
+        displayActivePadNotes(false);
+        displayAftertouch();
+        displayMIDIchannel();
+        displayVelocity();
+    }
+
     displayPad();
-    displayActivePadNotes(false);
-    displayVelocity();
-    displayAftertouch();
     displayXYvalue(coordinateX);
     displayXYvalue(coordinateY);
-    displayMIDIchannel();
 }
 
 void LCD::clearLine(uint8_t row, bool writeToDisplay)
@@ -377,6 +429,44 @@ void LCD::setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh)
     updateDisplay(LCD_ROW_PAD_EDIT_PAD_NUMBER, text, getTextCenter(size), size);
 
     displayActivePadNotes();
+}
+
+void LCD::setupCalibrationScreen(padCoordinate_t coordinate, bool scrollCalibration)
+{
+    clearLine(LCD_ROW_CALIBRATION_VALUES, true);
+    clearLine(LCD_ROW_CALIBRATION_SCROLL_INFO, true);
+    clearLine(LCD_ROW_PRESS_INFO_PAD_NUMBER, true);
+
+    displayPad();
+
+    uint8_t size;
+
+    strcpy_P(stringBuffer, calibration_rawValue_string);
+    size = ARRAY_SIZE_CHAR(calibration_rawValue_string);
+
+    updateDisplay(LCD_ROW_CALIBRATION_VALUES, text, LCD_POSITION_CALIBRATION_RAW_VALUE_TEXT, size);
+
+    strcpy_P(stringBuffer, calibration_midiValue_string);
+    size = ARRAY_SIZE_CHAR(calibration_midiValue_string);
+
+    updateDisplay(LCD_ROW_CALIBRATION_VALUES, text, LCD_POSITION_CALIBRATION_MIDI_VALUE_TEXT, size);
+
+    switch(scrollCalibration)
+    {
+        case true:
+        strcpy_P(stringBuffer, scrollCalibrationOn_string);
+        size = ARRAY_SIZE_CHAR(scrollCalibrationOn_string);
+        break;
+
+        case false:
+        strcpy_P(stringBuffer, scrollCalibrationOff_string);
+        size = ARRAY_SIZE_CHAR(scrollCalibrationOff_string);
+        break;
+    }
+
+    uint8_t location = getTextCenter(size);
+
+    updateDisplay(LCD_ROW_CALIBRATION_SCROLL_INFO, text, location, size);
 }
 
 //menu
@@ -462,28 +552,6 @@ void LCD::displayFactoryResetEnd()
     updateDisplay(LCD_ROW_FACTORY_RESET_PROGRESS_2, text, location, size);
 }
 
-void LCD::displayScrollCalibrationStatus(bool status)
-{
-    uint8_t size = 0;
-
-    switch(status)
-    {
-        case true:
-        strcpy_P(stringBuffer, scrollCalibrationOn_string);
-        size = ARRAY_SIZE_CHAR(scrollCalibrationOn_string);
-        break;
-
-        case false:
-        strcpy_P(stringBuffer, scrollCalibrationOff_string);
-        size = ARRAY_SIZE_CHAR(scrollCalibrationOff_string);
-        break;
-    }
-
-    uint8_t location = getTextCenter(size);
-
-    updateDisplay(LCD_HEIGHT-1, text, location, size);
-}
-
 void LCD::displayPressureCalibrationTime(uint8_t seconds, uint8_t pressureZone, bool done)
 {
     uint8_t size;
@@ -518,18 +586,17 @@ void LCD::displayPressureCalibrationStatus(bool status)
 {
     uint8_t size = 0;
 
-    if (!status)
-    {
-        size = ARRAY_SIZE_CHAR(pressureCalibrationOff_string);
-        strcpy_P(stringBuffer, pressureCalibrationOff_string);
-    }
-    else
+    if (status)
     {
         size = ARRAY_SIZE_CHAR(pressureCalibrationHold_string);
         strcpy_P(stringBuffer, pressureCalibrationHold_string);
         addSpaceToCharArray(1, size);
         addNumberToCharArray(PRESSURE_ZONE_CALIBRATION_TIMEOUT, size);
         appendText(" seconds", size);
+    }
+    else
+    {
+        
     }
 
     uint8_t location = getTextCenter(size);

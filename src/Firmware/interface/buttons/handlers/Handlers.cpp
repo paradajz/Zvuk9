@@ -215,13 +215,13 @@ void handleTransportControl(uint8_t id, bool state)
                 if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
                 {
                     leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
-                    display.displayScrollCalibrationStatus(false);
+                    display.setupCalibrationScreen(pads.getCalibrationMode(), false);
                     return;
                 }
                 else
                 {
                     leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
-                    display.displayScrollCalibrationStatus(true);
+                    display.setupCalibrationScreen(pads.getCalibrationMode(), true);
                     return;
                 }
             }

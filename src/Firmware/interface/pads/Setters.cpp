@@ -320,14 +320,15 @@ changeResult_t Pads::setMIDISendState(function_t type, bool state)
     {
         case false:
         //global
+        #ifdef DEBUG
+        printf_P(PSTR("%s for all pads.\n"), state ? "on" : "off");
+        #endif
+
         if (database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)) != state)
         {
             database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
             for (int i=0; i<NUMBER_OF_PADS; i++)
                 bitWrite(*variablePointer, i, state);
-            #ifdef DEBUG
-            printf_P(PSTR("%s for all pads\n"), state ? "on" : "off");
-            #endif
         }
         else
         {
@@ -337,13 +338,13 @@ changeResult_t Pads::setMIDISendState(function_t type, bool state)
 
         case true:
         //local
+        #ifdef DEBUG
+        printf_P(PSTR("%s for pad %d.\n"), state ? "on" : "off", lastTouchedPad);
+        #endif
         if (database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)lastTouchedPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)) != state)
         {
             database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)lastTouchedPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
             bitWrite(*variablePointer, lastTouchedPad, state);
-            #ifdef DEBUG
-            printf_P(PSTR("%s for pad %d\n"), state ? "on" : "off", lastTouchedPad);
-            #endif
         }
         else
         {
@@ -795,6 +796,61 @@ void Pads::setCalibrationMode(bool state, padCoordinate_t type)
 {
     calibrationEnabled = state;
     activeCalibration = type;
+
+    if (state)
+    {
+        //ensure proper setup when going to calibration mode
+        switch(type)
+        {
+            case coordinateX:
+            //disable y
+            pads.setMIDISendState(functionOnOffY, false);
+            leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
+            //disable aftertouch
+            pads.setMIDISendState(functionOnOffAftertouch, false);
+            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
+            //enable x
+            pads.setMIDISendState(functionOnOffX, true);
+            leds.setLEDstate(LED_ON_OFF_X, ledStateFull);
+            //set linear curve
+            pads.setCCcurve(coordinateX, curve_linear_up);
+            pads.setCClimit(coordinateX, limitTypeMin, 0);
+            pads.setCClimit(coordinateX, limitTypeMax, 127);
+            break;
+
+            case coordinateY:
+            //disable x
+            pads.setMIDISendState(functionOnOffX, false);
+            leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
+            //disable aftertouch
+            pads.setMIDISendState(functionOnOffAftertouch, false);
+            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
+            //enable y
+            pads.setMIDISendState(functionOnOffY, true);
+            leds.setLEDstate(LED_ON_OFF_Y, ledStateFull);
+            //set linear curve
+            pads.setCCcurve(coordinateY, curve_linear_up);
+            pads.setCClimit(coordinateY, limitTypeMin, 0);
+            pads.setCClimit(coordinateY, limitTypeMax, 127);
+            break;
+
+            case coordinateZ:
+            //disable x and y
+            pads.setMIDISendState(functionOnOffX, false);
+            leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
+            pads.setMIDISendState(functionOnOffY, false);
+            leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
+            //disable aftertouch
+            pads.setMIDISendState(functionOnOffAftertouch, false);
+            leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
+            //set lowest level for pressure sensitivity
+            pads.setVelocitySensitivity(velocity_soft);
+            break;
+
+            default:
+            break;
+        }
+    }
 }
 
 ///
@@ -802,9 +858,10 @@ void Pads::setCalibrationMode(bool state, padCoordinate_t type)
 /// @param [in] pad Pad for which new calibration value is being written.
 /// @param [in] pressureZone Pressure zone which is being updated.
 /// @param [in] limit New calibration value (0-1023).
+/// @param [in] updateMIDIvalue If set to true, last MIDI velocity and aftertouch values will be updated.
 /// \returns Result of changing calibration value (enumerated type). See changeResult_t enumeration.
 ///
-changeResult_t Pads::calibratePressure(int8_t pad, uint8_t pressureZone, int16_t limit)
+changeResult_t Pads::calibratePressure(int8_t pad, uint8_t pressureZone, int16_t limit, bool updateMIDIvalue)
 {
     assert(RAW_ANALOG_VALUE_CHECK(limit));
     assert(PAD_CHECK(pad));
@@ -832,11 +889,17 @@ changeResult_t Pads::calibratePressure(int8_t pad, uint8_t pressureZone, int16_t
 /// @param [in] type Pad coordinate (X or Y). Enumerated type. See padCoordinate_t enumeration.
 /// @param [in] limitType Lower or upper calibration value (enumerated type). See limitType_t enumeration.
 /// @param [in] limit New calibration value (0-1023).
+/// @param [in] updateMIDIvalue If set to true, last MIDI X or Y value will be updated.
 /// \returns Result of changing calibration value (enumerated type). See changeResult_t enumeration.
 ///
-changeResult_t Pads::calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit)
+changeResult_t Pads::calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit, bool updateMIDIvalue)
 {
-    assert(RAW_ANALOG_VALUE_CHECK(limit));
+    //validate limit
+    if (limit < 0)
+        limit = 0;
+    else if (limit > 1023)
+        limit = 1023;
+
     assert(PAD_CHECK(pad));
 
     uint16_t *variablePointer;
@@ -888,6 +951,18 @@ changeResult_t Pads::calibrateXY(int8_t pad, padCoordinate_t type, limitType_t l
     {
         variablePointer[pad] = limit;
         database.update(DB_BLOCK_PAD_CALIBRATION, configurationSection, (uint16_t)pad, limit);
+
+        if (updateMIDIvalue)
+        {
+            if (type == coordinateX)
+                lastXMIDIvalue[getLastTouchedPad()] = getScaledXY(getLastTouchedPad(), board.getPadX(getLastTouchedPad()), coordinateX, true);
+            else
+                lastYMIDIvalue[getLastTouchedPad()] = getScaledXY(getLastTouchedPad(), board.getPadY(getLastTouchedPad()), coordinateY, true);
+        }
+
+        #ifdef DEBUG
+        printf_P(PSTR("changing calibration value\n"));
+        #endif
         return valueChanged;
     }
 

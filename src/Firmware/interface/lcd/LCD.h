@@ -24,12 +24,12 @@ class LCD
 
     void setupHomeScreen();
     void setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh = false);
-    void setupCalibrationScreen();
+    void setupCalibrationScreen(padCoordinate_t coordinate, bool scrollCalibration);
 
     void displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, int8_t scaleShift);
     void displayPad(uint8_t pad = 255);
     void displayActivePadNotes(bool showNotes = true);
-    void displayVelocity(uint8_t velocity = 255);
+    void displayVelocity(uint8_t velocity = 255, int16_t rawPressure = 10000);
     void displayAftertouch(uint8_t aftertouch = 255);
     void displayXYvalue(padCoordinate_t type, midiMessageType_t messageType = midiMessageInvalidType, int16_t value1 = 10000, int16_t value2 = 10000);
     void displayMIDIchannel(uint8_t channel = 255);
@@ -46,7 +46,6 @@ class LCD
     void displayFactoryResetStart();
     void displayFactoryResetEnd();
 
-    void displayScrollCalibrationStatus(bool status);
     void displayPressureCalibrationTime(uint8_t seconds, uint8_t pressureZone, bool done);
     void displayPressureCalibrationStatus(bool status);
 

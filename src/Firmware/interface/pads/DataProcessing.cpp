@@ -47,12 +47,12 @@ void Pads::update()
 
                     if (pressureCalibrationTime < PRESSURE_ZONE_CALIBRATION_TIMEOUT)
                     {
-                        display.displayPressureCalibrationTime(PRESSURE_ZONE_CALIBRATION_TIMEOUT-pressureCalibrationTime, getActivePressureZone(i)+1, false);
+                        display.displayPressureCalibrationTime(PRESSURE_ZONE_CALIBRATION_TIMEOUT-pressureCalibrationTime, getPressureZone(i)+1, false);
                     }
                     else
                     {
-                        display.displayPressureCalibrationTime(0, getActivePressureZone(i)+1, true);
-                        calibratePressure(i, getActivePressureZone(i), board.getPadPressure(i));
+                        display.displayPressureCalibrationTime(0, getPressureZone(i)+1, true);
+                        calibratePressure(i, getPressureZone(i), board.getPadPressure(i));
                     }
 
                     pressureCalibrationLastChange = rTimeMs();
@@ -199,7 +199,7 @@ void Pads::update()
                     {
                         //is menu is active and calibration mode is enabled, display only data for coordinate which is being calibrated
                         if (calibrationEnabled)
-                            checkLCDdata(i, (velocityAvailable && (activeCalibration == coordinateZ)), false, (xAvailable && (activeCalibration == coordinateX)), (yAvailable && (activeCalibration == coordinateY)));
+                            checkLCDdata(i, (activeCalibration == coordinateZ), false, (activeCalibration == coordinateX), activeCalibration == coordinateY);
                     }
                     else
                     {
@@ -231,7 +231,7 @@ bool Pads::checkVelocity(int8_t pad)
     else
         bitWrite(pressureReduction, pad, 0);
 
-    uint8_t calibratedPressure = getScaledPressure(pad, value, getActivePressureZone(pad), pressureVelocity);
+    uint8_t calibratedPressure = getScaledPressure(pad, value, getPressureZone(pad), pressureVelocity);
     calibratedPressure = curves.getCurveValue(velocityCurve, calibratedPressure, 0, 127);
 
     bool pressDetected = (calibratedPressure > 0);
@@ -295,7 +295,7 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable)
     //pad is pressed
     if (bitRead(lastMIDInoteState, pad))
     {
-        uint8_t calibratedPressureAfterTouch = getScaledPressure(pad, lastPressureValue[pad], getActivePressureZone(pad), pressureAftertouch);
+        uint8_t calibratedPressureAfterTouch = getScaledPressure(pad, lastPressureValue[pad], getPressureZone(pad), pressureAftertouch);
 
         if (lastAftertouchUpdateTime[pad] < 255)
             lastAftertouchUpdateTime[pad]++;
@@ -439,7 +439,7 @@ bool Pads::checkX(int8_t pad)
 
     int16_t value = board.getPadX(pad);
 
-    if (value == -1)
+    if ((value == -1) || (!value))
         return false;
 
     if (calibrationEnabled && (activeCalibration == coordinateX) && (bool)leds.getLEDstate(LED_TRANSPORT_RECORD))
@@ -502,7 +502,7 @@ bool Pads::checkY(int8_t pad)
 
     int16_t value = board.getPadY(pad);
 
-    if (value == -1)
+    if ((value == -1) || (!value))
         return false;
 
     if (calibrationEnabled && (activeCalibration == coordinateY) && (bool)leds.getLEDstate(LED_TRANSPORT_RECORD))
@@ -639,17 +639,17 @@ bool Pads::checkNoteBuffer()
 
 ///
 /// \brief Checks if data for requested pad should be updated on LCD.
-/// @param [in] pad Pad for which MIDI data is being checked.
-/// @param [in] velocityAvailable If set to true, MIDI velocity data will be refreshed for requested pad.
+/// @param [in] pad                 Pad for which MIDI data is being checked.
+/// @param [in] velocityAvailable   If set to true, MIDI velocity data will be refreshed for requested pad.
 /// @param [in] aftertouchAvailable If set to true, MIDI aftertouch data will be refreshed for requested pad.
-/// @param [in] xAvailable If set to true, CC MIDI data for X coordinate will be refreshed for requested pad.
-/// @param [in] yAvailable If set to true, CC MIDI data for Y coordinate will be refreshed for requested pad.
+/// @param [in] xAvailable          If set to true, CC MIDI data for X coordinate will be refreshed for requested pad.
+/// @param [in] yAvailable          If set to true, CC MIDI data for Y coordinate will be refreshed for requested pad.
 ///
 void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
 {
     assert(PAD_CHECK(pad));
 
-    static bool lcdCleared = false;
+    static bool lcdCleared = true;
     static int8_t lastShownPad = -1;
 
     if (isPadPressed(pad))
@@ -660,10 +660,18 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
         {
             if (bitRead(xSendEnabled, pad))
             {
-                if (getPitchBendState(pad, coordinateX))
-                    display.displayXYvalue(coordinateX, midiMessagePitchBend, 1000);
+                if (isCalibrationEnabled())
+                {
+                    if (lastXMIDIvalue[pad] != DEFAULT_XY_AT_VALUE)
+                        display.displayXYvalue(coordinateX, midiMessageControlChange, board.getPadX(pad), lastXMIDIvalue[pad]);
+                }
                 else
-                    display.displayXYvalue(coordinateX, midiMessageControlChange, ccXPad[pad], lastXMIDIvalue[pad]);
+                {
+                    if (getPitchBendState(pad, coordinateX))
+                        display.displayXYvalue(coordinateX, midiMessagePitchBend, 1000);
+                    else
+                        display.displayXYvalue(coordinateX, midiMessageControlChange, ccXPad[pad], lastXMIDIvalue[pad]);
+                }
             }
             else
             {
@@ -676,10 +684,18 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
         {
             if (bitRead(ySendEnabled, pad))
             {
-                if (getPitchBendState(pad, coordinateY))
-                    display.displayXYvalue(coordinateY, midiMessagePitchBend, 1000);
+                if (isCalibrationEnabled())
+                {
+                    if (lastYMIDIvalue[pad] != DEFAULT_XY_AT_VALUE)
+                        display.displayXYvalue(coordinateY, midiMessageControlChange, board.getPadY(pad), lastYMIDIvalue[pad]);
+                }
                 else
-                    display.displayXYvalue(coordinateY, midiMessageControlChange, ccYPad[pad], lastYMIDIvalue[pad]);
+                {
+                    if (getPitchBendState(pad, coordinateY))
+                        display.displayXYvalue(coordinateY, midiMessagePitchBend, 1000);
+                    else
+                        display.displayXYvalue(coordinateY, midiMessageControlChange, ccYPad[pad], lastYMIDIvalue[pad]);
+                }
             }
             else
             {
@@ -711,7 +727,7 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
 
         if (velocityAvailable)
         {
-            display.displayVelocity(lastVelocityValue[pad]);
+            isCalibrationEnabled() ? display.displayVelocity(getScaledPressure(pad, board.getPadPressure(pad), getPressureZone(pad), pressureAftertouch), board.getPadPressure(pad)) : display.displayVelocity(lastVelocityValue[pad]);
 
             if (!isCalibrationEnabled())
             {

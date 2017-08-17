@@ -163,14 +163,10 @@ void handleLimit(uint8_t id, int8_t steps)
         function = functionXMinLimit;
         limit = limitTypeMin;
 
-        if (pads.isCalibrationEnabled())
+        if (pads.isCalibrationEnabled() && (pads.getCalibrationMode() == coordinateX))
         {
-            steps = steps > 0 ? 1 : -1;
-            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMin) + steps);
-            //refresh value on display
-            uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
-            newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
-            //display.displayXYposition(newValue, coordinateX);
+            steps = steps > 0 ? -1 : 1;
+            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMin) + steps, true);
         }
         break;
 
@@ -179,14 +175,10 @@ void handleLimit(uint8_t id, int8_t steps)
         limit = limitTypeMax;
         function = functionXMaxLimit;
 
-        if (pads.isCalibrationEnabled())
+        if (pads.isCalibrationEnabled() && (pads.getCalibrationMode() == coordinateX))
         {
-            steps = steps > 0 ? 1 : -1;
-            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMax) + steps);
-            //refresh value on display
-            uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadX(lastTouchedPad), coordinateX, true);
-            newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateX), newValue, 0, 127);
-            //display.displayXYposition(newValue, coordinateX);
+            steps = steps > 0 ? -1 : 1;
+            pads.calibrateXY(lastTouchedPad, coordinateX, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateX, limitTypeMax) + steps, true);
         }
         break;
 
@@ -195,15 +187,10 @@ void handleLimit(uint8_t id, int8_t steps)
         limit = limitTypeMin;
         function = functionYMinLimit;
 
-        if (pads.isCalibrationEnabled())
+        if (pads.isCalibrationEnabled() && (pads.getCalibrationMode() == coordinateY))
         {
             steps = steps > 0 ? 1 : -1;
-            //invert lower/upper logic here
-            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + steps);
-            //refresh value on display
-            uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
-            newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
-            //display.displayXYposition(newValue, coordinateY);
+            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + steps, true);
         }
         break;
 
@@ -212,15 +199,10 @@ void handleLimit(uint8_t id, int8_t steps)
         limit = limitTypeMax;
         function = functionYMaxLimit;
 
-        if (pads.isCalibrationEnabled())
+        if (pads.isCalibrationEnabled() && (pads.getCalibrationMode() == coordinateY))
         {
             steps = steps > 0 ? 1 : -1;
-            //invert lower/upper logic here
-            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + steps);
-            //refresh value on display
-            uint16_t newValue = pads.getScaledXY(lastTouchedPad, board.getPadY(lastTouchedPad), coordinateY, true);
-            newValue = curves.getCurveValue(pads.getCCcurve(lastTouchedPad, coordinateY), newValue, 0, 127);
-            //display.displayXYposition(newValue, coordinateY);
+            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + steps, true);
         }
         break;
 

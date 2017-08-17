@@ -68,15 +68,6 @@
 #define XY_SEND_TIMEOUT_STEP                        3
 
 ///
-/// \brief Offset values used to compensate slightly inaccurate calibration when calibrating X/Y coordinates.
-/// @{
-
-#define X_MIN_CALIBRATION_OFFSET                    10
-#define X_MAX_CALIBRATION_OFFSET                    -10
-
-/// @}
-
-///
 /// \brief Number of zones per pad on X-axis for which calibration data is stored.
 ///
 #define PRESSURE_CALIBRATION_X_ZONES                4

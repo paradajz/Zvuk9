@@ -108,73 +108,23 @@ bool deviceInfo(functionArgument argument)
 
 bool enableCalibration(functionArgument argument)
 {
-    display.clearLine(1);
-    display.clearLine(2);
-    display.clearLine(3);
+    if (pads.getNumberOfPressedPads())
+        return false;
 
-    switch(argument.argument1)
+    switch((padCoordinate_t)argument.argument1)
     {
         case coordinateX:
-        //disable y
-        pads.setMIDISendState(functionOnOffY, false);
-        leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
-        //disable aftertouch
-        pads.setMIDISendState(functionOnOffAftertouch, false);
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
-        //enable x
-        pads.setMIDISendState(functionOnOffX, true);
-        leds.setLEDstate(LED_ON_OFF_X, ledStateFull);
-        //set linear curve
-        pads.setCCcurve(coordinateX, curve_linear_up);
-
-        if (leds.getLEDstate(LED_TRANSPORT_RECORD))
-            display.displayScrollCalibrationStatus(true);
-        else
-            display.displayScrollCalibrationStatus(false);
-        break;
-
         case coordinateY:
-        //disable x
-        pads.setMIDISendState(functionOnOffX, false);
-        leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
-        //disable aftertouch
-        pads.setMIDISendState(functionOnOffAftertouch, false);
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
-        //enable y
-        pads.setMIDISendState(functionOnOffY, true);
-        leds.setLEDstate(LED_ON_OFF_Y, ledStateFull);
-        //set linear curve
-        pads.setCCcurve(coordinateY, curve_linear_up);
-
-        if (leds.getLEDstate(LED_TRANSPORT_RECORD))
-            display.displayScrollCalibrationStatus(true);
-        else
-            display.displayScrollCalibrationStatus(false);
-        break;
-
         case coordinateZ:
-        //disable x and y
-        pads.setMIDISendState(functionOnOffX, false);
-        leds.setLEDstate(LED_ON_OFF_X, ledStateOff);
-        pads.setMIDISendState(functionOnOffY, false);
-        leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
-        //disable aftertouch
-        pads.setMIDISendState(functionOnOffAftertouch, false);
-        leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
-        //set lowest level for pressure sensitivity
-        pads.setVelocitySensitivity(velocity_soft);
-        if (!leds.getLEDstate(LED_TRANSPORT_RECORD))
-            display.displayPressureCalibrationStatus(false);
-        else
-            display.displayPressureCalibrationStatus(true);
+        //this is fine
         break;
 
         default:
-        //wrong type
         return false;
     }
 
     pads.setCalibrationMode(true, (padCoordinate_t)argument.argument1);
+    display.setupCalibrationScreen((padCoordinate_t)argument.argument1, leds.getLEDstate(LED_TRANSPORT_RECORD));
     return true;
 }
 
