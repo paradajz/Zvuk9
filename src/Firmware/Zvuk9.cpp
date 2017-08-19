@@ -108,12 +108,11 @@ void startUpAnimation()
 
 int main()
 {
+    //do not change order of initialization!
+
     #ifdef DEBUG
     vserial.init();
     #endif
-
-    //do not change order of initialization!
-    database.init();
 
     #ifdef NDEBUG
     midi.init(dinInterface);
@@ -125,9 +124,21 @@ int main()
     #endif
 
     board.init();
-
     display.init();
-    menu.init();
+
+    database.init();
+
+    if (!database.signatureValid())
+    {
+        display.setDirectWriteState(true);
+        strcpy_P(stringBuffer, dbInit_string);
+        display.updateText(1, lcdtext_still, display.getTextCenter(ARRAY_SIZE(dbInit_string)));
+        strcpy_P(stringBuffer, pleaseWait_string);
+        display.updateText(2, lcdtext_still, display.getTextCenter(ARRAY_SIZE(pleaseWait_string)));
+        database.factoryReset(initWipe);
+        display.setDirectWriteState(false);
+    }
+
     leds.init();
     pads.init();
     encoders.init();

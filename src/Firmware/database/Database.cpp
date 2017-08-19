@@ -15,9 +15,6 @@ void Database::init()
 {
     createLayout();
     DBMS::commitLayout();
-
-    if (!signatureValid())
-        factoryReset(initWipe);
 }
 
 ///

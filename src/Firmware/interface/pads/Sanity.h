@@ -18,6 +18,8 @@
 #define PROGRAM_CHECK(program)          (((program < 0) || (program >= NUMBER_OF_PROGRAMS)) ? 0 : 1)
 #define OCTAVE_CHECK(octave)            (((octave < 0) || (octave >= MIDI_NOTES)) ? 0 : 1)
 #define RAW_ANALOG_VALUE_CHECK(value)   (((value < 0) || (value > 1023)) ? 0 : 1)
+#define XY_RAW_VALUE_CHECK(value)       (((value < 85) || (value > 950)) ? 0 : 1)
+#define PRESSURE_RAW_VALUE_CHECK(value) (((value < 0) || (value > 850)) ? 0 : 1)
 
 /// @}
 

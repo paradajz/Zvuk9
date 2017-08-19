@@ -34,24 +34,147 @@ void LCD::setupHomeScreen()
     size = 0;
     appendText("X | ", size);
     endLine(size);
-    updateDisplay(LCD_ROW_PRESS_INFO_X, text, LCD_POSITION_PRESS_INFO_X, size);
+    updateText(LCD_ROW_PRESS_INFO_X, lcdtext_still, LCD_POSITION_PRESS_INFO_X);
 
     startLine();
     size = 0;
     appendText("Y | ", size);
     endLine(size);
-    updateDisplay(LCD_ROW_PRESS_INFO_Y, text, LCD_POSITION_PRESS_INFO_Y, size);
+    updateText(LCD_ROW_PRESS_INFO_Y, lcdtext_still, LCD_POSITION_PRESS_INFO_Y);
 
     //delimiter between velocity and aftertouch
     startLine();
     size = 0;
     appendText("| ", size);
     endLine(size);
-    updateDisplay(LCD_ROW_PRESS_INFO_DELIMITER_1, text, LCD_POSITION_PRESS_INFO_DELIMITER_1, size);
+    updateText(LCD_ROW_PRESS_INFO_DELIMITER_1, lcdtext_still, LCD_POSITION_PRESS_INFO_DELIMITER_1);
 
     //delimiter between xy and message type
-    updateDisplay(LCD_ROW_PRESS_INFO_X, text, LCD_POSITION_PRESS_INFO_X_CC_POS_DELIMITER, size);
-    updateDisplay(LCD_ROW_PRESS_INFO_Y, text, LCD_POSITION_PRESS_INFO_Y_CC_POS_DELIMITER, size);
+    updateText(LCD_ROW_PRESS_INFO_X, lcdtext_still, LCD_POSITION_PRESS_INFO_X_CC_POS_DELIMITER);
+    updateText(LCD_ROW_PRESS_INFO_Y, lcdtext_still, LCD_POSITION_PRESS_INFO_Y_CC_POS_DELIMITER);
+}
+
+void LCD::setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh)
+{
+    uint8_t size;
+
+    if (forceRefresh)
+    {
+        clearAll();
+
+        strcpy_P(stringBuffer, assignedNotes_string);
+        size = ARRAY_SIZE_CHAR(assignedNotes_string);
+
+        updateText(LCD_ROW_PAD_EDIT_ASSIGNED_NOTES_INFO, lcdtext_still, getTextCenter(size));
+    }
+
+    strcpy_P(stringBuffer, padEditMode_string);
+    size = ARRAY_SIZE_CHAR(padEditMode_string);
+    appendText(" | pad ", size);
+    addNumberToCharArray(pad, size);
+    appendText(" | ", size);
+
+    uint8_t tempSize = 0;
+
+    strcpy_P(tempBuffer, padEditOctave_string);
+    tempSize = strlen(padEditOctave_string);
+    addNumberToCharArray(normalizeOctave(octave), tempSize, true);
+
+    strcat(stringBuffer, tempBuffer);
+    size += tempSize;
+
+    //make sure entire row is filled
+    while (size < LCD_WIDTH)
+        addSpaceToCharArray(1, size);
+
+    updateText(LCD_ROW_PAD_EDIT_PAD_NUMBER, lcdtext_still, getTextCenter(size));
+
+    displayActivePadNotes();
+}
+
+void LCD::setupCalibrationScreen(padCoordinate_t coordinate, bool scrollCalibration)
+{
+    clearRow(LCD_ROW_CALIBRATION_VALUES);
+    clearRow(LCD_ROW_CALIBRATION_SCROLL_INFO);
+    clearRow(LCD_ROW_PRESS_INFO_PAD_NUMBER);
+
+    displayPad();
+
+    strcpy_P(stringBuffer, calibration_rawValue_string);
+    updateText(LCD_ROW_CALIBRATION_VALUES, lcdtext_still, LCD_POSITION_CALIBRATION_RAW_VALUE_TEXT);
+
+    strcpy_P(stringBuffer, calibration_midiValue_string);
+    updateText(LCD_ROW_CALIBRATION_VALUES, lcdtext_still, LCD_POSITION_CALIBRATION_MIDI_VALUE_TEXT);
+
+    displayCalibrationStatus(coordinate, scrollCalibration);
+}
+
+void LCD::displayCalibrationStatus(padCoordinate_t coordinate, bool status)
+{
+    uint8_t size = 0;
+
+    switch(coordinate)
+    {
+        case coordinateX:
+        case coordinateY:
+        case coordinateZ:
+        //fine
+        break;
+
+        default:
+        return;
+    }
+
+    clearRow(LCD_ROW_CALIBRATION_SCROLL_INFO);
+
+    switch(status)
+    {
+        case true:
+        if (coordinate == coordinateZ)
+        {
+            size = ARRAY_SIZE_CHAR(pressureCalibrationHold_string);
+            strcpy_P(stringBuffer, pressureCalibrationHold_string);
+            addSpaceToCharArray(1, size);
+            addNumberToCharArray(PRESSURE_ZONE_CALIBRATION_TIMEOUT, size);
+            appendText(" seconds", size);
+        }
+        else
+        {
+            strcpy_P(stringBuffer, scrollCalibrationOn_string);
+            size = ARRAY_SIZE_CHAR(scrollCalibrationOn_string);
+        }
+        break;
+
+        case false:
+        strcpy_P(stringBuffer, scrollCalibrationOff_string);
+        size = ARRAY_SIZE_CHAR(scrollCalibrationOff_string);
+        break;
+    }
+
+    updateText(LCD_ROW_CALIBRATION_SCROLL_INFO, lcdtext_still, getTextCenter(size));
+}
+
+void LCD::displayPressureCalibrationTime(uint8_t seconds, uint8_t zone, bool done)
+{
+    uint8_t size;
+
+    clearRow(LCD_ROW_CALIBRATION_SCROLL_INFO);
+
+    if (!done)
+    {
+        size = ARRAY_SIZE_CHAR(pressureCalibrationInitiated_string);
+        strcpy_P(stringBuffer, pressureCalibrationInitiated_string);
+        addNumberToCharArray(zone, size);
+        appendText(" in ", size);
+        addNumberToCharArray(seconds, size);
+    }
+    else
+    {
+        size = ARRAY_SIZE_CHAR(pressureCalibrationDone_string);
+        strcpy_P(stringBuffer, pressureCalibrationDone_string);
+    }
+
+    updateText(LCD_ROW_CALIBRATION_SCROLL_INFO, lcdtext_still, getTextCenter(size));
 }
 
 void LCD::displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, int8_t scaleShift)
@@ -112,7 +235,7 @@ void LCD::displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, int8_
             addSpaceToCharArray(1, size);
     }
 
-    updateDisplay(LCD_ROW_PROGRAM_INFO_PROGRAM, text, LCD_POSITION_PROGRAM_INFO_PROGRAM, size);
+    updateText(LCD_ROW_PROGRAM_INFO_PROGRAM, lcdtext_still, LCD_POSITION_PROGRAM_INFO_PROGRAM);
 }
 
 void LCD::displayPad(uint8_t pad)
@@ -130,7 +253,7 @@ void LCD::displayPad(uint8_t pad)
         addSpaceToCharArray(2, size);
     }
 
-    updateDisplay(LCD_ROW_PRESS_INFO_PAD_NUMBER, text, LCD_POSITION_PRESS_INFO_PAD_NUMBER, size);
+    updateText(LCD_ROW_PRESS_INFO_PAD_NUMBER, lcdtext_still, LCD_POSITION_PRESS_INFO_PAD_NUMBER);
 }
 
 void LCD::displayActivePadNotes(bool showNotes)
@@ -149,7 +272,7 @@ void LCD::displayActivePadNotes(bool showNotes)
     if (showNotes)
     {
         if (padEditMode)
-            clearLine(LCD_ROW_PAD_EDIT_NOTES);
+            clearRow(LCD_ROW_PAD_EDIT_NOTES);
 
         for (int i=0; i<NOTES_PER_PAD; i++)
         {
@@ -189,7 +312,7 @@ void LCD::displayActivePadNotes(bool showNotes)
 
     if (padEditMode)
     {
-        updateDisplay(LCD_ROW_PAD_EDIT_NOTES, text, getTextCenter(size), size);
+        updateText(LCD_ROW_PAD_EDIT_NOTES, lcdtext_still, getTextCenter(size));
     }
     else
     {
@@ -200,7 +323,7 @@ void LCD::displayActivePadNotes(bool showNotes)
         //printf_P(PSTR("Notes string: <%s>\n"), stringBuffer);
         //#endif
 
-        updateDisplay(LCD_ROW_PRESS_INFO_NOTES, text, LCD_POSITION_PRESS_INFO_NOTES, size);
+        updateText(LCD_ROW_PRESS_INFO_NOTES, lcdtext_still, LCD_POSITION_PRESS_INFO_NOTES);
     }
 }
 
@@ -216,15 +339,17 @@ void LCD::displayVelocity(uint8_t midiVelocity, int16_t rawPressure)
             addNumberToCharArray(midiVelocity, size);
         addSpaceToCharArray(3-size, size);
 
-        updateDisplay(LCD_ROW_CALIBRATION_VALUES, text, LCD_POSITION_CALIBRATION_MIDI_VALUE_VALUE, size);
+        updateText(LCD_ROW_CALIBRATION_VALUES, lcdtext_still, LCD_POSITION_CALIBRATION_MIDI_VALUE_VALUE);
 
         startLine();
         size = 0;
+
         if (midiVelocity != 255)
             addNumberToCharArray(rawPressure, size);
+
         addSpaceToCharArray(4-size, size);
 
-        updateDisplay(LCD_ROW_CALIBRATION_VALUES, text, LCD_POSITION_CALIBRATION_RAW_VALUE_VALUE, size);
+        updateText(LCD_ROW_CALIBRATION_VALUES, lcdtext_still, LCD_POSITION_CALIBRATION_RAW_VALUE_VALUE);
     }
     else
     {
@@ -237,7 +362,7 @@ void LCD::displayVelocity(uint8_t midiVelocity, int16_t rawPressure)
         while (size < (ARRAY_SIZE_CHAR(velocity_string)+3))
             addSpaceToCharArray(1, size); //ensure three characters
 
-        updateDisplay(LCD_ROW_PRESS_INFO_VELOCITY, text, LCD_POSITION_PRESS_INFO_VELOCITY, size);
+        updateText(LCD_ROW_PRESS_INFO_VELOCITY, lcdtext_still, LCD_POSITION_PRESS_INFO_VELOCITY);
     }
 }
 
@@ -258,7 +383,7 @@ void LCD::displayAftertouch(uint8_t aftertouch)
         addSpaceToCharArray(3, size); //three spaces for max three-digit value
     }
 
-    updateDisplay(LCD_ROW_PRESS_INFO_ATOUCH, text, LCD_POSITION_PRESS_INFO_ATOUCH, size);
+    updateText(LCD_ROW_PRESS_INFO_ATOUCH, lcdtext_still, LCD_POSITION_PRESS_INFO_ATOUCH);
 }
 
 void LCD::displayXYvalue(padCoordinate_t type, midiMessageType_t messageType, int16_t value1, int16_t value2)
@@ -273,22 +398,26 @@ void LCD::displayXYvalue(padCoordinate_t type, midiMessageType_t messageType, in
         startLine();
         size = 0;
         lcdCoordinate = LCD_POSITION_CALIBRATION_RAW_VALUE_VALUE;
+
         if (value1 != 10000)
             addNumberToCharArray(value1, size);
+
         addSpaceToCharArray(4-size, size);
         endLine(size);
 
-        updateDisplay(lcdRow, text, lcdCoordinate, size);
+        updateText(lcdRow, lcdtext_still, lcdCoordinate);
 
         startLine();
         size = 0;
         lcdCoordinate = LCD_POSITION_CALIBRATION_MIDI_VALUE_VALUE;
+
         if (value1 != 10000)
             addNumberToCharArray(value2, size);
+
         addSpaceToCharArray(3-size, size);
         endLine(size);
 
-        updateDisplay(lcdRow, text, lcdCoordinate, size);
+        updateText(lcdRow, lcdtext_still, lcdCoordinate);
     }
     else
     {
@@ -333,20 +462,20 @@ void LCD::displayXYvalue(padCoordinate_t type, midiMessageType_t messageType, in
         }
 
         addSpaceToCharArray(LCD_WIDTH-lcdCoordinate-size, size);
-        updateDisplay(lcdRow, text, lcdCoordinate, size);
+        updateText(lcdRow, lcdtext_still, lcdCoordinate);
     }
 }
 
 void LCD::displayMIDIchannel(uint8_t channel)
 {
-    strcpy_P(stringBuffer, midiChannel_string);
-    uint8_t size = ARRAY_SIZE_CHAR(midiChannel_string);
+    strcpy_P(stringBuffer, function_midiChannel);
+    uint8_t size = ARRAY_SIZE_CHAR(function_midiChannel);
 
     if (channel != 255)
     {
         addNumberToCharArray(channel, size);
 
-        while (size < (ARRAY_SIZE_CHAR(midiChannel_string)+2))
+        while (size < (ARRAY_SIZE_CHAR(function_midiChannel)+2))
             addSpaceToCharArray(1, size); //ensure two characters
     }
     else
@@ -354,16 +483,12 @@ void LCD::displayMIDIchannel(uint8_t channel)
         addSpaceToCharArray(2, size); //two spaces for max two-digit velocity value
     }
 
-    updateDisplay(LCD_ROW_PRESS_INFO_MIDI_CHANNEL, text, LCD_POSITION_PRESS_INFO_MIDI_CHANNEL, size);
+    updateText(LCD_ROW_PRESS_INFO_MIDI_CHANNEL, lcdtext_still, LCD_POSITION_PRESS_INFO_MIDI_CHANNEL);
 }
 
 void LCD::clearPadPressData()
 {
-    if (pads.isCalibrationEnabled())
-    {
-        
-    }
-    else
+    if (!pads.isCalibrationEnabled())
     {
         displayActivePadNotes(false);
         displayAftertouch();
@@ -376,100 +501,22 @@ void LCD::clearPadPressData()
     displayXYvalue(coordinateY);
 }
 
-void LCD::clearLine(uint8_t row, bool writeToDisplay)
+void LCD::clearRow(uint8_t row)
 {
     startLine();
     uint8_t size = 0;
     addSpaceToCharArray(LCD_WIDTH, size);
-
-    if (writeToDisplay)
-        updateDisplay(row, text, 0, size);
+    endLine(size);
+    updateText(row, lcdtext_still, 0);
 }
 
 void LCD::clearAll()
 {
     //clear entire display
     for (int i=0; i<LCD_HEIGHT; i++)
-        clearLine(i);
+        clearRow(i);
 }
 
-void LCD::setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh)
-{
-    uint8_t size;
-
-    if (forceRefresh)
-    {
-        clearAll();
-
-        strcpy_P(stringBuffer, assignedNotes_string);
-        size = ARRAY_SIZE_CHAR(assignedNotes_string);
-
-        updateDisplay(LCD_ROW_PAD_EDIT_ASSIGNED_NOTES_INFO, text, getTextCenter(size), size);
-    }
-
-    strcpy_P(stringBuffer, padEditMode_string);
-    size = ARRAY_SIZE_CHAR(padEditMode_string);
-    appendText(" | pad ", size);
-    addNumberToCharArray(pad, size);
-    appendText(" | ", size);
-
-    uint8_t tempSize = 0;
-
-    strcpy_P(tempBuffer, padEditOctave_string);
-    tempSize = strlen(padEditOctave_string);
-    addNumberToCharArray(normalizeOctave(octave), tempSize, true);
-
-    strcat(stringBuffer, tempBuffer);
-    size += tempSize;
-
-    //make sure entire row is filled
-    while (size < LCD_WIDTH)
-        addSpaceToCharArray(1, size);
-
-    updateDisplay(LCD_ROW_PAD_EDIT_PAD_NUMBER, text, getTextCenter(size), size);
-
-    displayActivePadNotes();
-}
-
-void LCD::setupCalibrationScreen(padCoordinate_t coordinate, bool scrollCalibration)
-{
-    clearLine(LCD_ROW_CALIBRATION_VALUES, true);
-    clearLine(LCD_ROW_CALIBRATION_SCROLL_INFO, true);
-    clearLine(LCD_ROW_PRESS_INFO_PAD_NUMBER, true);
-
-    displayPad();
-
-    uint8_t size;
-
-    strcpy_P(stringBuffer, calibration_rawValue_string);
-    size = ARRAY_SIZE_CHAR(calibration_rawValue_string);
-
-    updateDisplay(LCD_ROW_CALIBRATION_VALUES, text, LCD_POSITION_CALIBRATION_RAW_VALUE_TEXT, size);
-
-    strcpy_P(stringBuffer, calibration_midiValue_string);
-    size = ARRAY_SIZE_CHAR(calibration_midiValue_string);
-
-    updateDisplay(LCD_ROW_CALIBRATION_VALUES, text, LCD_POSITION_CALIBRATION_MIDI_VALUE_TEXT, size);
-
-    switch(scrollCalibration)
-    {
-        case true:
-        strcpy_P(stringBuffer, scrollCalibrationOn_string);
-        size = ARRAY_SIZE_CHAR(scrollCalibrationOn_string);
-        break;
-
-        case false:
-        strcpy_P(stringBuffer, scrollCalibrationOff_string);
-        size = ARRAY_SIZE_CHAR(scrollCalibrationOff_string);
-        break;
-    }
-
-    uint8_t location = getTextCenter(size);
-
-    updateDisplay(LCD_ROW_CALIBRATION_SCROLL_INFO, text, location, size);
-}
-
-//menu
 void LCD::displayDeviceInfo()
 {
     uint8_t size = 0;
@@ -481,7 +528,7 @@ void LCD::displayDeviceInfo()
     appendText(".", size);
     addNumberToCharArray(getSWversion(swVersion_revision), size);
 
-    updateDisplay(LCD_ROW_MENU_DEVICE_INFO_1, text, LCD_POSITION_MENU_DEVICE_INFO_1, size);
+    updateText(LCD_ROW_MENU_DEVICE_INFO_1, lcdtext_still, LCD_POSITION_MENU_DEVICE_INFO_1);
 
     size = 0;
     strcpy_P(stringBuffer, deviceInfo_hwVersion_string);
@@ -491,7 +538,7 @@ void LCD::displayDeviceInfo()
     addNumberToCharArray(HARDWARE_VERSION_MINOR, size);
     appendText(".", size);
     addNumberToCharArray(HARDWARE_VERSION_REVISION, size);
-    updateDisplay(LCD_ROW_MENU_DEVICE_INFO_2, text, LCD_POSITION_MENU_DEVICE_INFO_2, size);
+    updateText(LCD_ROW_MENU_DEVICE_INFO_2, lcdtext_still, LCD_POSITION_MENU_DEVICE_INFO_2);
 }
 
 void LCD::displayFactoryResetConfirm()
@@ -502,22 +549,22 @@ void LCD::displayFactoryResetConfirm()
     strcpy_P(stringBuffer, menuOption_factoryReset_title_string);
     size = ARRAY_SIZE_CHAR(menuOption_factoryReset_title_string);
     location = getTextCenter(size);
-    updateDisplay(LCD_ROW_FACTORY_RESET_TITLE, text, location, size);
+    updateText(LCD_ROW_FACTORY_RESET_TITLE, lcdtext_still, location);
 
     strcpy_P(stringBuffer, factory_reset_info_confirm_string);
     size = ARRAY_SIZE_CHAR(factory_reset_info_confirm_string);
     location = getTextCenter(size);
-    updateDisplay(LCD_ROW_FACTORY_RESET_INFO_CONFIRM, text, location, size);
+    updateText(LCD_ROW_FACTORY_RESET_INFO_CONFIRM, lcdtext_still, location);
 
     strcpy_P(stringBuffer, factory_reset_pads_string);
     size = ARRAY_SIZE_CHAR(factory_reset_pads_string);
     location = getTextCenter(size);
-    updateDisplay(LCD_ROW_FACTORY_RESET_PADS, text, location, size);
+    updateText(LCD_ROW_FACTORY_RESET_PADS, lcdtext_still, location);
 
     strcpy_P(stringBuffer, factory_reset_info_cancel_string);
     size = ARRAY_SIZE_CHAR(factory_reset_info_cancel_string);
     location = getTextCenter(size);
-    updateDisplay(LCD_ROW_FACTORY_RESET_INFO_CANCEL, text, location, size);
+    updateText(LCD_ROW_FACTORY_RESET_INFO_CANCEL, lcdtext_still, location);
 }
 
 void LCD::displayFactoryResetStart()
@@ -528,12 +575,12 @@ void LCD::displayFactoryResetStart()
     strcpy_P(stringBuffer, factory_reset_start_1_string);
     size = ARRAY_SIZE_CHAR(factory_reset_start_1_string);
     location = getTextCenter(size);
-    updateDisplay(LCD_ROW_FACTORY_RESET_PROGRESS_1, text, location, size);
+    updateText(LCD_ROW_FACTORY_RESET_PROGRESS_1, lcdtext_still, location);
 
     strcpy_P(stringBuffer, factory_reset_start_2_string);
     size = ARRAY_SIZE_CHAR(factory_reset_start_2_string);
     location = getTextCenter(size);
-    updateDisplay(LCD_ROW_FACTORY_RESET_PROGRESS_2, text, location, size);
+    updateText(LCD_ROW_FACTORY_RESET_PROGRESS_2, lcdtext_still, location);
 }
 
 void LCD::displayFactoryResetEnd()
@@ -544,89 +591,10 @@ void LCD::displayFactoryResetEnd()
     strcpy_P(stringBuffer, factory_reset_end_1_string);
     size = ARRAY_SIZE_CHAR(factory_reset_end_1_string);
     location = getTextCenter(size);
-    updateDisplay(LCD_ROW_FACTORY_RESET_PROGRESS_1, text, location, size);
+    updateText(LCD_ROW_FACTORY_RESET_PROGRESS_1, lcdtext_still, location);
 
     strcpy_P(stringBuffer, factory_reset_end_2_string);
     size = ARRAY_SIZE_CHAR(factory_reset_end_2_string);
     location = getTextCenter(size);
-    updateDisplay(LCD_ROW_FACTORY_RESET_PROGRESS_2, text, location, size);
-}
-
-void LCD::displayPressureCalibrationTime(uint8_t seconds, uint8_t pressureZone, bool done)
-{
-    uint8_t size;
-
-    if (!done)
-    {
-        size = ARRAY_SIZE_CHAR(pressureCalibrationInitiated_string);
-        strcpy_P(stringBuffer, pressureCalibrationInitiated_string);
-        addSpaceToCharArray(1, size);
-        addNumberToCharArray(pressureZone, size);
-        appendText(" in ", size);
-        addNumberToCharArray(seconds, size);
-    }
-    else
-    {
-        size = ARRAY_SIZE_CHAR(pressureCalibrationDone1_string);
-        strcpy_P(stringBuffer, pressureCalibrationDone1_string);
-        addSpaceToCharArray(1, size);
-        addNumberToCharArray(pressureZone, size);
-        addSpaceToCharArray(1, size);
-        size += ARRAY_SIZE_CHAR(pressureCalibrationDone2_string);
-        strcpy_P(tempBuffer, pressureCalibrationDone2_string);
-        strcat(stringBuffer, tempBuffer);
-    }
-
-    uint8_t location = getTextCenter(size);
-
-    updateDisplay(LCD_HEIGHT-1, text, location, size);
-}
-
-void LCD::displayPressureCalibrationStatus(bool status)
-{
-    uint8_t size = 0;
-
-    if (status)
-    {
-        size = ARRAY_SIZE_CHAR(pressureCalibrationHold_string);
-        strcpy_P(stringBuffer, pressureCalibrationHold_string);
-        addSpaceToCharArray(1, size);
-        addNumberToCharArray(PRESSURE_ZONE_CALIBRATION_TIMEOUT, size);
-        appendText(" seconds", size);
-    }
-    else
-    {
-        
-    }
-
-    uint8_t location = getTextCenter(size);
-
-    updateDisplay(LCD_HEIGHT-1, text, location, size);
-}
-
-//lcd update
-
-void LCD::updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, uint8_t size)
-{
-    stringBuffer[size] = '\0'; //just a precaution
-
-    switch(type)
-    {
-        case text:
-        if (directWrite)
-            u8x8.drawString(startIndex, rowMap[row], stringBuffer);
-        else
-            display.displayText(row, stringBuffer, startIndex);
-        break;
-
-        case message:
-        if (directWrite)
-            u8x8.drawString(startIndex, rowMap[row], stringBuffer);
-        else
-            display.displayMessage(row, stringBuffer, startIndex);
-        break;
-
-        default:
-        break;
-    }
+    updateText(LCD_ROW_FACTORY_RESET_PROGRESS_2, lcdtext_still, location);
 }

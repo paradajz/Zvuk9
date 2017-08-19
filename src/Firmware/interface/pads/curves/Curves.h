@@ -7,7 +7,7 @@
 ///
 /// \brief Class responsible for curve arithmetic.
 /// @{
-///
+
 class Curves
 {
     public:
@@ -23,4 +23,5 @@ class Curves
 };
 
 extern Curves curves;
+
 /// @}

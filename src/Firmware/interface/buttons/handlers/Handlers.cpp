@@ -159,6 +159,8 @@ void handleTransportControl(uint8_t id, bool state)
     if (state)
         return;
 
+    bool recordOff = false;
+
     switch(id)
     {
         case BUTTON_TRANSPORT_PLAY:
@@ -187,8 +189,8 @@ void handleTransportControl(uint8_t id, bool state)
 
         case BUTTON_TRANSPORT_STOP:
         function = functionStop;
+        recordOff = leds.getLEDstate(LED_TRANSPORT_RECORD);
         #ifdef NDEBUG
-        bool recordOff = leds.getLEDstate(LED_TRANSPORT_RECORD);
         switch(buttons.getTransportControlType())
         {
             case transportCC:
@@ -200,6 +202,7 @@ void handleTransportControl(uint8_t id, bool state)
             case transportMMC:
             sysExArray[4] = 0x01;
             midi.sendSysEx(6, sysExArray, true);
+
             if (recordOff)
             {
                 sysExArray[4] = 0x07;
@@ -318,7 +321,7 @@ void handleTransportControl(uint8_t id, bool state)
         return;
     }
 
-    //value is used only for record control
+    //only record can have on/off state, ignore for other controls
     display.displayChangeResult(function, leds.getLEDstate(LED_TRANSPORT_RECORD), globalSetting);
 }
 
@@ -523,7 +526,7 @@ void handleProgramEncButton(uint8_t id, bool state)
         {
             menu.show(userMenu);
             #ifdef DEBUG
-            printf_P(PSTR("Entering user menu\n"));
+            printf_P(PSTR("Entering user menu.\n"));
             #endif
         }
     }
@@ -555,7 +558,6 @@ void handlePresetEncButton(uint8_t id, bool state)
     {
         //midi channel change mode, display on lcd
         display.displayChangeResult(functionChannel, pads.getMIDIchannel(pads.getLastTouchedPad()), pads.getSplitState() ? singlePadSetting : globalSetting);
-        display.setMessageTime(INFINITE_MESSAGE_TIME);
     }
     else
     {

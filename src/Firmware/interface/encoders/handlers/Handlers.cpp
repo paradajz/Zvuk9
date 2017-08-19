@@ -189,8 +189,8 @@ void handleLimit(uint8_t id, int8_t steps)
 
         if (pads.isCalibrationEnabled() && (pads.getCalibrationMode() == coordinateY))
         {
-            steps = steps > 0 ? 1 : -1;
-            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + steps, true);
+            steps = steps > 0 ? -1 : 1;
+            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + steps, true);
         }
         break;
 
@@ -201,8 +201,8 @@ void handleLimit(uint8_t id, int8_t steps)
 
         if (pads.isCalibrationEnabled() && (pads.getCalibrationMode() == coordinateY))
         {
-            steps = steps > 0 ? 1 : -1;
-            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMin, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMin) + steps, true);
+            steps = steps > 0 ? -1 : 1;
+            pads.calibrateXY(lastTouchedPad, coordinateY, limitTypeMax, pads.getCalibrationLimit(lastTouchedPad, coordinateY, limitTypeMax) + steps, true);
         }
         break;
 

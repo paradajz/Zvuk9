@@ -5,16 +5,7 @@
 
 Menu::Menu()
 {
-    //default constructor
     activeMenu = noMenu;
-    activeOption = 0;
-    menuHierarchyPosition = 0;
-    functionRunning = false;
-}
-
-void Menu::init()
-{
-    
 }
 
 void Menu::show(menuType_t type)
@@ -51,11 +42,10 @@ void Menu::show(menuType_t type)
 
 void Menu::setMenuTitle(bool rootTitle)
 {
-    uint8_t size = 0;
     uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
 
     //make sure to clear the first line before setting new title
-    clearLine(rowMap[0], true);
+    display.clearRow(0);
 
     //set menu title, but only if current level isn't 1 (root)
     if (!rootTitle)
@@ -64,9 +54,7 @@ void Menu::setMenuTitle(bool rootTitle)
         stringBuffer[1] = '\0';
         strcpy_P(tempBuffer, menuItem[indexes[currentOptionIndex]].stringPointer);
         strcat(stringBuffer, tempBuffer);
-        size = strlen_P(menuItem[indexes[currentOptionIndex]].stringPointer) + 1;
-
-        updateDisplay(0, text, 0, size);
+        display.updateText(0, lcdtext_still, 0);
     }
     else
     {
@@ -74,15 +62,12 @@ void Menu::setMenuTitle(bool rootTitle)
         {
             case userMenu:
             strcpy_P(stringBuffer, menuType_user_string);
-            size = ARRAY_SIZE_CHAR(menuType_user_string);
-            updateDisplay(0, text, 0, size);
-            break;
+            display.updateText(0, lcdtext_still, 0);
             break;
 
             case serviceMenu:
             strcpy_P(stringBuffer, menuType_service_string);
-            size = ARRAY_SIZE_CHAR(menuType_service_string);
-            updateDisplay(0, text, 0, size);
+            display.updateText(0, lcdtext_still, 0);
             break;
 
             default:
@@ -152,7 +137,7 @@ void Menu::updateMenuScreen()
     for (int i=0; i<itemsIterate; i++)
     {
         //clear line first
-        clearLine(i+1, true);
+        display.clearRow(i+1);
 
         //skipping first row since it's reserved for the menu title
         if (i == markerOption)
@@ -181,7 +166,7 @@ void Menu::updateMenuScreen()
             strcat(stringBuffer, tempBuffer);
         }
 
-        updateDisplay(i+1, text, 0, size);
+        display.updateText(i+1, lcdtext_still, 0);
     }
 }
 
@@ -258,7 +243,7 @@ void Menu::confirmOption(bool confirm)
 
     //clear all lines except for the first one
     for (int i=1; i<LCD_HEIGHT; i++)
-        clearLine(i);
+        display.clearRow(i);
 
     if (confirm)
     {

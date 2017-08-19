@@ -5,11 +5,9 @@
 
 bool factoryReset(functionArgument argument)
 {
-    //clear title
-    display.clearLine(0);
+    display.setDirectWriteState(true);
+    display.clearAll();
     display.displayFactoryResetConfirm();
-
-    while (!display.update());
 
     uint16_t padsPressed = 0;
 
@@ -26,6 +24,7 @@ bool factoryReset(functionArgument argument)
                 {
                     //flush all accumulated encoder output if there were any movements
                     encoders.flush();
+                    display.setDirectWriteState(false);
                     return false;
                 }
 
@@ -82,20 +81,21 @@ bool factoryReset(functionArgument argument)
         if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))
         {
             wait_ms(1000);
-            display.setDirectWriteState(true);
-            u8x8.clear();
+            display.clearAll();
             leds.setFadeSpeed(2);
             display.displayFactoryResetStart();
             //now, turn all leds off
             leds.setAllOff();
             wait_ms(2000);
             database.factoryReset((initType_t)argument.argument1);
-            u8x8.clear();
+            display.clearAll();
             display.displayFactoryResetEnd();
             wait_ms(2000);
             board.reboot(rebootApp);
         }
     }
+
+    display.setDirectWriteState(false);
 
     return true;
 }
@@ -109,7 +109,7 @@ bool deviceInfo(functionArgument argument)
 bool enableCalibration(functionArgument argument)
 {
     if (pads.getNumberOfPressedPads())
-        return false;
+    return false;
 
     switch((padCoordinate_t)argument.argument1)
     {

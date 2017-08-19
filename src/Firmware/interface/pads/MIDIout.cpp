@@ -12,7 +12,7 @@
 
 ///
 /// \brief Sends MIDI CC message on X coordinate for requested pad.
-/// @param [in] pad Pad for which MIDI CC value on X coordinate is being sent.
+/// @param [in] pad     Pad for which MIDI CC value on X coordinate is being sent.
 ///
 void Pads::sendX(int8_t pad)
 {
@@ -29,7 +29,7 @@ void Pads::sendX(int8_t pad)
 
 ///
 /// \brief Sends MIDI CC message on Y coordinate for requested pad.
-/// @param [in] pad Pad for which MIDI CC value on Y coordinate is being sent.
+/// @param [in] pad     Pad for which MIDI CC value on Y coordinate is being sent.
 ///
 void Pads::sendY(int8_t pad)
 {
@@ -46,9 +46,9 @@ void Pads::sendY(int8_t pad)
 
 ///
 /// \brief Sends MIDI notes for requested pad.
-/// @param [in] pad Pad for which MIDI notes are being sent.
-/// @param [in] velocity MIDI velocity value for sent pad notes.
-/// @param [in] state State of MIDI notes (true/on, false/off).
+/// @param [in] pad         Pad for which MIDI notes are being sent.
+/// @param [in] velocity    MIDI velocity value for sent pad notes.
+/// @param [in] state       State of MIDI notes (true/on, false/off).
 ///
 void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
 {
@@ -138,7 +138,7 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
 
 ///
 /// \brief Sends MIDI aftertouch for requested pad.
-/// @param [in] pad Pad for which MIDI aftertouch is being sent.
+/// @param [in] pad     Pad for which MIDI aftertouch is being sent.
 ///
 void Pads::sendAftertouch(int8_t pad)
 {

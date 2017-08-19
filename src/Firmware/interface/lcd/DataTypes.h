@@ -2,24 +2,16 @@
 
 typedef enum
 {
-    noMessage,
-    showMessage,
-    messageDisplayed,
-    clearMessage
-} messageStatus_t;
-
-typedef enum
-{
+    noMenu,
     userMenu,
     serviceMenu,
-    noMenu
 } menuType_t;
 
 typedef enum
 {
-    text,
-    message
-} lcdTextType;
+    lcdtext_still,
+    lcdText_temp
+} lcdTextType_t;
 
 typedef enum
 {
@@ -27,10 +19,3 @@ typedef enum
     singlePadSetting,
     allPadsSetting
 } settingType_t;
-
-typedef enum
-{
-    screenHome,
-    screenPadEdit,
-    screenCalibration
-} screen_t;

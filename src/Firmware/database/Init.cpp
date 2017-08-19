@@ -7,7 +7,6 @@ void Database::writeCustomValues()
     //we need to init each block and section with data
     initProgramSettings();
     initScales();
-    initPadCalibration();
     initGlobalSettings();
 }
 
@@ -65,20 +64,6 @@ void Database::initScales()
                 database.update(DB_BLOCK_SCALE, scaleUserSection, (NOTES_PER_PAD*j+k) + (NOTES_PER_PAD*NUMBER_OF_PADS*i), BLANK_NOTE);
         }
     }
-}
-
-void Database::initPadCalibration()
-{
-    //init pressure limits
-    for (int i=0; i<PRESSURE_CALIBRATION_ZONES; i++)
-    {
-        for (int j=0; j<NUMBER_OF_PADS; j++)
-        {
-            database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+i, j, DEFAULT_PAD_PRESSURE_LIMIT_UPPER);
-        }
-    }
-
-    //x/y limits are already init (specified in db layout)
 }
 
 void Database::initGlobalSettings()

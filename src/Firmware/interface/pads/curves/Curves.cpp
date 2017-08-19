@@ -44,7 +44,7 @@ void Curves::init()
 /// @param [in] in_max  Largest possible input value.
 /// @param [in] out_min Lowest possible output value.
 /// @param [in] out_max Largest possible output value.
-/// \return Mapped value (uint32_t).
+/// \returns Mapped value (uint32_t).
 ///
 uint32_t Curves::map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)
 {
@@ -56,7 +56,7 @@ uint32_t Curves::map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_
 /// @param [in] value   Input value.
 /// @param [in] min     Lowest possible input value.
 /// @param [in] max     Largest possible input value.
-/// \return Inverted value.
+/// \returns Inverted value.
 ///
 uint32_t Curves::invertRange(uint32_t value, uint32_t min, uint32_t max)
 {
@@ -69,7 +69,7 @@ uint32_t Curves::invertRange(uint32_t value, uint32_t min, uint32_t max)
 /// @param [in] value   Wanted curve index.
 /// @param [in] min     Lowest possible output value.
 /// @param [in] max     Largest possible output value.
-/// \return Curve value.
+/// \returns Curve value.
 ///
 uint8_t Curves::getCurveValue(curve_t curve, uint8_t value, uint8_t min, uint8_t max)
 {

@@ -49,7 +49,7 @@ class Pads
     uint16_t getCalibrationLimit(int8_t pad, padCoordinate_t coordinate, limitType_t limitType);
     int8_t getPredefinedScaleNotes(int8_t scale);
     note_t getScaleNote(int8_t scale, int8_t index);
-    uint8_t getScaledPressure(int8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type);
+    uint8_t getScaledPressure(int8_t pad, uint16_t pressure, pressureType_t type);
     uint16_t getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale);
     pitchBendType_t getPitchBendType();
     bool getPitchBendState(int8_t pad, padCoordinate_t coordinate);
@@ -68,7 +68,7 @@ class Pads
     changeResult_t setCCvalue(padCoordinate_t coordinate, int16_t cc);
     changeResult_t setCClimit(padCoordinate_t coordinate, limitType_t limitType, int16_t value);
     void setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
-    changeResult_t calibratePressure(int8_t pad, uint8_t pressureZone, int16_t limit, bool updateMIDIvalue = false);
+    changeResult_t calibratePressure(int8_t pad, int16_t limit, bool updateMIDIvalue = false);
     changeResult_t calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit, bool updateMIDIvalue = false);
     changeResult_t setPadNote(int8_t pad, note_t note);
     changeResult_t setOctave(int8_t shift, bool padEditMode = false);
@@ -116,8 +116,9 @@ class Pads
 
     uint8_t                 lastXMIDIvalue[NUMBER_OF_PADS],
                             lastYMIDIvalue[NUMBER_OF_PADS],
-                            lastVelocityValue[NUMBER_OF_PADS],
                             lastAftertouchValue[NUMBER_OF_PADS];
+
+    int16_t                 lastVelocityValue[NUMBER_OF_PADS];
 
     /// @}
 
@@ -175,21 +176,21 @@ class Pads
     /// @}
 
     ///
-    /// \brief Array holding upper limits (raw values, 0-1023) for pressure (used to scale velocity to MIDI value) for each pressure zone on every pad.
+    /// \brief Array holding upper limits (raw values, 0-1023) for pressure (used to scale velocity to MIDI value) on all pads.
     ///
-    uint16_t                padPressureLimitUpper[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES];
+    uint16_t                padPressureLimitUpper[NUMBER_OF_PADS];
 
     ///
-    /// \brief Arrays holding lower and upper limits (raw values, 0-1023) for pressure (used to scale aftertouch to MIDI value) for each pressure zone on every pad.
+    /// \brief Arrays holding lower and upper limits (raw values, 0-1023) for pressure (used to scale aftertouch to MIDI value) for all pads.
     /// @{
 
-    uint16_t                padAftertouchLimitLower[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES],
-                            padAftertouchLimitUpper[NUMBER_OF_PADS][PRESSURE_CALIBRATION_ZONES];
+    uint16_t                padAftertouchLimitLower[NUMBER_OF_PADS],
+                            padAftertouchLimitUpper[NUMBER_OF_PADS];
 
     /// @}
 
     ///
-    /// \brief Arrays holding lower and upper limits (raw values, 0-1023) for X and Y coordinates (used to scale X and Y values to MIDI values) for each pressure zone on every pad.
+    /// \brief Arrays holding lower and upper limits (raw values, 0-1023) for X and Y coordinates (used to scale X and Y values to MIDI values) for all pads.
     /// @{
 
     uint16_t                padXLimitLower[NUMBER_OF_PADS],
@@ -309,7 +310,6 @@ class Pads
     /// @{
 
     uint8_t                 pad_buffer[PAD_NOTE_BUFFER_SIZE];
-    uint32_t                pad_note_timer_buffer[PAD_NOTE_BUFFER_SIZE];
     uint8_t                 note_buffer_head;
     uint8_t                 note_buffer_tail;
 
@@ -327,13 +327,18 @@ class Pads
     padCoordinate_t         activeCalibration;
 
     ///
-    /// \brief Variables used for measuring time in seconds after which last read pressure value on certain pressure zone is considered calibrated value in calibration mode.
+    /// \brief Variables used for measuring time in seconds after which last read pressure value is considered calibrated value in calibration mode.
     /// @{
 
     uint8_t                 pressureCalibrationTime;
     uint32_t                pressureCalibrationLastChange;
 
     /// @}
+
+    ///
+    /// \brief Array holding last time index pad has been pressed.
+    ///
+    uint32_t                lastPadPressTime[NUMBER_OF_PADS];
 
     ///
     /// \brif Holds currently active pitch bend type.

@@ -14,14 +14,13 @@ class Database : public DBMS
     Database();
     void init();
     void factoryReset(initType_t type);
+    bool signatureValid();
 
     private:
-    bool signatureValid();
     void createLayout();
     void writeCustomValues();
     void initProgramSettings();
     void initScales();
-    void initPadCalibration();
     void initGlobalSettings();
 };
 

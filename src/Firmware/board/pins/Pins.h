@@ -2,17 +2,31 @@
 
 //mux
 //common
+//original
+//#define MUX_COMMON_PIN_0_PORT       PORTF
+//#define MUX_COMMON_PIN_0_PIN        7
+//
+//#define MUX_COMMON_PIN_1_PORT       PORTF
+//#define MUX_COMMON_PIN_1_PIN        5
+//
+//#define MUX_COMMON_PIN_2_PORT       PORTF
+//#define MUX_COMMON_PIN_2_PIN        6
+//
+//#define MUX_COMMON_PIN_3_PORT       PORTF
+//#define MUX_COMMON_PIN_3_PIN        4
+
+//problem moves to upper left
 #define MUX_COMMON_PIN_0_PORT       PORTF
-#define MUX_COMMON_PIN_0_PIN        7
+#define MUX_COMMON_PIN_0_PIN        4
 
 #define MUX_COMMON_PIN_1_PORT       PORTF
-#define MUX_COMMON_PIN_1_PIN        5
+#define MUX_COMMON_PIN_1_PIN        6
 
 #define MUX_COMMON_PIN_2_PORT       PORTF
-#define MUX_COMMON_PIN_2_PIN        6
+#define MUX_COMMON_PIN_2_PIN        5
 
 #define MUX_COMMON_PIN_3_PORT       PORTF
-#define MUX_COMMON_PIN_3_PIN        4
+#define MUX_COMMON_PIN_3_PIN        7
 
 //select
 #define MUX_SELECT_PIN_0_PORT       PORTF

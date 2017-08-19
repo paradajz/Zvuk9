@@ -3,7 +3,7 @@
 ///
 /// \brief Various arithmetic functions.
 /// @{
-///
+
 const uint8_t linear_up_values[] PROGMEM =
 {
     0,

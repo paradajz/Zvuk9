@@ -18,7 +18,7 @@ uint8_t Pads::getLastTouchedPad()
 
 ///
 /// \brief Checks if requested pad is currently pressed.
-/// @param [in] pad Pad which is being checked.
+/// @param [in] pad     Pad which is being checked.
 /// \returns True if requested pad is pressed, false otherwise,
 ///
 bool Pads::isPadPressed(int8_t pad)
@@ -70,7 +70,7 @@ uint8_t Pads::getScale()
 
 ///
 /// \brief Checks if requested scale is user scale.
-/// @param [in] scale Scale which is being checked.
+/// @param [in] scale   Scale which is being checked.
 /// \returns True if requested scale is user scale, false otherwise (predefined scale).
 ///
 bool Pads::isUserScale(int8_t scale)
@@ -82,7 +82,7 @@ bool Pads::isUserScale(int8_t scale)
 
 ///
 /// \brief Checks if requested scale is predefined scale.
-/// @param [in] scale Scale which is being checked.
+/// @param [in] scale   Scale which is being checked.
 /// \returns True if requested scale is predefined scale, false otherwise (user scale).
 ///
 bool Pads::isPredefinedScale(int8_t scale)
@@ -130,8 +130,8 @@ note_t Pads::getTonic()
 
 ///
 /// \brief Checks for currently active octave.
-/// @param [in] padEditMode If set to true, active octave used in pad edit mode is returned.
-/// Otherwise, calculated octave is returned based on active pad notes.
+/// @param [in] padEditMode     If set to true, active octave used in pad edit mode is returned.
+///                             Otherwise, calculated octave is returned based on active pad notes.
 /// \returns Currently active octave (0 - MIDI_NOTES-1).
 ///
 uint8_t Pads::getOctave(bool padEditMode)
@@ -230,7 +230,7 @@ uint8_t Pads::getPadNote(int8_t pad, int8_t noteIndex)
 
 ///
 /// \brief Checks if requested note is assigned to any pad.
-/// @param [in] note Note which is being checked.
+/// @param [in] note    Note which is being checked.
 /// \returns True if note is assigned to any pad, false otherwise.
 ///
 bool Pads::isNoteAssigned(note_t note)
@@ -345,9 +345,9 @@ uint8_t Pads::getCClimit(int8_t pad, padCoordinate_t type, limitType_t limitType
 
 ///
 /// \brief Checks for CC curve on requested coordinate and pad.
-/// @param [in] pad         Pad which is being checked.
-/// @param [in] type        Coordinate on which CC curve is being checked (enumerated type) - only X or Y
-///                         coordinates are allowed. See padCoordinate_t enumeration.
+/// @param [in] pad     Pad which is being checked.
+/// @param [in] type    Coordinate on which CC curve is being checked (enumerated type) - only X or Y
+///                     coordinates are allowed. See padCoordinate_t enumeration.
 ///
 curve_t Pads::getCCcurve(int8_t pad, padCoordinate_t coordinate)
 {
@@ -387,7 +387,7 @@ curve_t Pads::getVelocityCurve()
 
 ///
 /// \brief Checks currently assigned MIDI channel on requested pad.
-/// @param [in] pad Pad which is being checked.
+/// @param [in] pad     Pad which is being checked.
 /// \returns MIDI channel on requested pad (1-16).
 ///
 uint8_t Pads::getMIDIchannel(int8_t pad)
@@ -442,7 +442,7 @@ uint16_t Pads::getCalibrationLimit(int8_t pad, padCoordinate_t coordinate, limit
 
 ///
 /// \brief Checks if aftertouch is activated on requested pad.
-/// @param [in] pad Pad which is being checked.
+/// @param [in] pad     Pad which is being checked.
 /// \returns True if aftertouch is activated on requested pad, false otherwise.
 ///
 bool Pads::isAftertouchActivated(int8_t pad)
@@ -454,7 +454,7 @@ bool Pads::isAftertouchActivated(int8_t pad)
 
 ///
 /// \brief Checks for currently active pressure zone on requested pad.
-/// @param [in] pad Pad which is being checked.
+/// @param [in] pad     Pad which is being checked.
 /// \returns Currently active pressure zone (16 zones in total).
 ///
 padCalibrationSection Pads::getPressureZone(int8_t pad)
@@ -462,9 +462,12 @@ padCalibrationSection Pads::getPressureZone(int8_t pad)
     assert(PAD_CHECK(pad));
 
     //find out pressure zone
-    uint8_t row = PRESSURE_CALIBRATION_Y_ZONES - 1 - (getScaledXY(pad, board.getPadY(pad), coordinateY, false) / PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE);
+    int16_t scaledX = getScaledXY(pad, board.getPadX(pad), coordinateX, false);
+    int16_t scaledY = getScaledXY(pad, board.getPadY(pad), coordinateY, false);
+
+    uint8_t row = PRESSURE_CALIBRATION_Y_ZONES - 1 - (scaledY / PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE);
     //invert
-    uint8_t column = getScaledXY(pad, board.getPadX(pad), coordinateX, false) / PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE;
+    uint8_t column = scaledX / PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE;
 
     return (padCalibrationSection)(column + row*PRESSURE_CALIBRATION_X_ZONES);
 }
@@ -743,17 +746,14 @@ void Pads::getPressureLimits()
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
-        for (int j=0; j<PRESSURE_CALIBRATION_ZONES; j++)
-        {
-            padPressureLimitUpper[i][j] = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+j, i);
+        padPressureLimitUpper[i] = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
 
-            if (percentageIncrease)
-                padPressureLimitUpper[i][j] = padPressureLimitUpper[i][j] + (int32_t)((padPressureLimitUpper[i][j] * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
+        if (percentageIncrease)
+            padPressureLimitUpper[i] = padPressureLimitUpper[i] + (int32_t)((padPressureLimitUpper[i] * (int32_t)100) * (uint32_t)percentageIncrease) / 10000;
 
-            #ifdef DEBUG
-            printf_P(PSTR("Upper pressure limit for pad %d, pressure zone %d: %d\n"), i, j, padPressureLimitUpper[i][j]);
-            #endif
-        }
+        #ifdef DEBUG
+        printf_P(PSTR("Upper pressure limit for pad %d: %d\n"), i, padPressureLimitUpper[i]);
+        #endif
     }
 }
 
@@ -763,26 +763,23 @@ void Pads::getPressureLimits()
 void Pads::getAftertouchLimits()
 {
     #ifdef DEBUG
-    printf_P(PSTR("Printing out aftertouch limits for pads on "));
+    printf_P(PSTR("Printing out aftertouch limits for pads."));
     #endif
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
-        for (int j=0; j<PRESSURE_CALIBRATION_ZONES; j++)
-        {
-            uint16_t upperPressure_limit = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+j, i);
+        uint16_t upperPressure_limit = padPressureLimitUpper[i];
 
-            int32_t lowerLimit = upperPressure_limit + (int32_t)((upperPressure_limit * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
-            int32_t upperLimit = lowerLimit + (int32_t)((lowerLimit * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_UPPER) / 10000;
+        int32_t lowerLimit = upperPressure_limit + (int32_t)((upperPressure_limit * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
+        int32_t upperLimit = lowerLimit + (int32_t)((lowerLimit * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_UPPER) / 10000;
 
-            padAftertouchLimitLower[i][j] = lowerLimit;
-            padAftertouchLimitUpper[i][j] = upperLimit;
+        padAftertouchLimitLower[i] = lowerLimit;
+        padAftertouchLimitUpper[i] = upperLimit;
 
-            #ifdef DEBUG
-            printf_P(PSTR("Lower aftertouch limit for pad %d, pressure zone %d: %d\n"), i, j, padAftertouchLimitLower[i][j]);
-            printf_P(PSTR("Upper aftertouch limit for pad %d, pressure zone %d: %d\n"), i, j, padAftertouchLimitUpper[i][j]);
-            #endif
-        }
+        #ifdef DEBUG
+        printf_P(PSTR("Lower aftertouch limit for pad %d: %d\n"), i, padAftertouchLimitLower[i]);
+        printf_P(PSTR("Upper aftertouch limit for pad %d: %d\n"), i, padAftertouchLimitUpper[i]);
+        #endif
     }
 }
 
@@ -838,7 +835,7 @@ void Pads::getYLimits()
 
 ///
 /// \brief Checks how many notes there are in requested predefined scale.
-/// @param [in] scale Scale which is being checked.
+/// @param [in] scale   Scale which is being checked.
 /// \returns Number of notes in requested scale. If user scale is requested, -1 is returned.
 ///
 int8_t Pads::getPredefinedScaleNotes(int8_t scale)
@@ -854,8 +851,8 @@ int8_t Pads::getPredefinedScaleNotes(int8_t scale)
 
 ///
 /// \brief Returns specific note from specified scale.
-/// @param [in] scale Scale which is being checked.
-/// @param [in] index Note index which is being checked.
+/// @param [in] scale   Scale which is being checked.
+/// @param [in] index   Note index which is being checked.
 /// \returns Note at specified index from requested scale (enumerated type). See note_t enumeration.
 ///
 note_t Pads::getScaleNote(int8_t scale, int8_t index)
@@ -881,24 +878,23 @@ note_t Pads::getScaleNote(int8_t scale, int8_t index)
 
 ///
 /// \brief Calculates scaled pressure value (0-127) from raw reading (0-1023) on specified pad.
-/// @param [in] pad Pad which is being checked.
-/// @param [in] pressure Raw pressure reading (0-1023).
-/// @param [in] pressureZone Pressure zone which is being checked. Different zones on pad have different calibration data.
-/// @param [in] type Pressure type (velocity or aftertouch). Enumerated type. See pressureType_t enumeration.
+/// @param [in] pad             Pad which is being checked.
+/// @param [in] pressure        Raw pressure reading (0-1023).
+/// @param [in] type            Pressure type (velocity or aftertouch). Enumerated type. See pressureType_t enumeration.
 /// \returns Scaled pressure value.
 ///
-uint8_t Pads::getScaledPressure(int8_t pad, uint16_t pressure, padCalibrationSection pressureZone, pressureType_t type)
+uint8_t Pads::getScaledPressure(int8_t pad, uint16_t pressure, pressureType_t type)
 {
     assert(PAD_CHECK(pad));
 
     switch(type)
     {
         case pressureAftertouch:
-        return curves.map(constrain(pressure, padAftertouchLimitLower[pad][pressureZone], padAftertouchLimitUpper[pad][pressureZone]), padAftertouchLimitLower[pad][pressureZone], padAftertouchLimitUpper[pad][pressureZone], 0, 127);
+        return curves.map(constrain(pressure, padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad]), padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad], 0, 127);
         break;
 
         case pressureVelocity:
-        return curves.map(constrain(pressure, DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad][pressureZone]), DEFAULT_PAD_PRESSURE_LIMIT_LOWER, padPressureLimitUpper[pad][pressureZone], 0, 127);
+        return curves.map(constrain(pressure, 0, padPressureLimitUpper[pad]), 0, padPressureLimitUpper[pad], 0, 127);
         break;
     }
 
@@ -907,10 +903,10 @@ uint8_t Pads::getScaledPressure(int8_t pad, uint16_t pressure, padCalibrationSec
 
 ///
 /// \brief Calculates scaled X or Y value from raw reading (0-1023) on specified pad.
-/// @param [in] pad Pad which is being checked.
-/// @param [in] xyValue Raw X or Y value (0-1023).
-/// @param [in] type Coordinate which is being checked (X or Y). Enumerated type. See padCoordinate_t enumeration.
-/// @param [in] midiScale If set to true, requested value will be scaled to MIDI range (0-127), otherwise, value will be scaled to raw range (0-1023).
+/// @param [in] pad         Pad which is being checked.
+/// @param [in] xyValue     Raw X or Y value (0-1023).
+/// @param [in] type        Coordinate which is being checked (X or Y). Enumerated type. See padCoordinate_t enumeration.
+/// @param [in] midiScale   If set to true, requested value will be scaled to MIDI range (0-127), otherwise, value will be scaled to raw range (0-1023).
 /// Scaling to raw range is useful in certain scenarios since lowest and largest X or Y values are never 0 and 1023 but some values in between.
 ///
 uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale)
@@ -923,7 +919,7 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, b
         return curves.map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, midiScale ? 127 : 1023);
 
         case coordinateY:
-        return curves.invertRange(curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, midiScale ? 127 : 1023), 0, midiScale ? 127 : 1023);
+        return curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, midiScale ? 127 : 1023);
 
         default:
         return 0;
@@ -941,7 +937,7 @@ pitchBendType_t Pads::getPitchBendType()
 
 ///
 /// \brief Checks if pitch bend is enabled on requested pad.
-/// @param [in] Pad which is being checked.
+/// @param [in]     Pad which is being checked.
 /// \returns True if pitch bend is enabled on requested pad, false otherwise.
 ///
 bool Pads::getPitchBendState(int8_t pad, padCoordinate_t coordinate)

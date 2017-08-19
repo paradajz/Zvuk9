@@ -15,11 +15,10 @@ typedef struct
     uint8_t argument2;
 } functionArgument;
 
-class Menu : LCD
+class Menu
 {
     public:
     Menu();
-    void init();
     void exitMenu();
     void show(menuType_t type);
     bool isMenuDisplayed();

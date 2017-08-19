@@ -9,7 +9,7 @@
 
 ///
 /// \brief Changes active program.
-/// @param [in] program New program which is being set.
+/// @param [in] program     New program which is being set.
 /// \returns Result of changing program (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setProgram(int8_t program)
@@ -36,7 +36,7 @@ changeResult_t Pads::setProgram(int8_t program)
 
 ///
 /// \brief Changes active scale.
-/// @param [in] scale New scale which is being set.
+/// @param [in] scale   New scale which is being set.
 /// \returns Result of changing scale (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setScale(int8_t scale)
@@ -65,9 +65,9 @@ changeResult_t Pads::setScale(int8_t scale)
 
 ///
 /// \brief Changes active tonic.
-/// @param [in] newTonic Tonic to be set.
+/// @param [in] newTonic        Tonic to be set.
 /// @param [in] internalChange  If set to true, function is called from within Pads class and certain values are set differently.
-/// This should never be called with true value outside of Pads class (set to false by default).
+///                             This should never be called with true value outside of Pads class (set to false by default).
 /// \returns Result of changing tonic (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setTonic(note_t newTonic, bool internalChange)
@@ -201,8 +201,8 @@ changeResult_t Pads::setTonic(note_t newTonic, bool internalChange)
 
 ///
 /// \brief Enables or disables pad edit mode.
-/// @param [in] state Pad edit state. Enabled if set to true, false otherwise.
-/// @param [in] pad Pad which is being configured in pad edit mode. This parameter isn't required if edit mode is being disabled.
+/// @param [in] state   Pad edit state. Enabled if set to true, false otherwise.
+/// @param [in] pad     Pad which is being configured in pad edit mode. This parameter isn't required if edit mode is being disabled.
 /// \returns Result of setting up pad edit mode (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setEditModeState(bool state, int8_t pad)
@@ -241,7 +241,7 @@ changeResult_t Pads::setEditModeState(bool state, int8_t pad)
 
 ///
 /// \brief Enables or disables split mode.
-/// @param [in] state Split state. Enabled if set to true, false otherwise.
+/// @param [in] state   Split state. Enabled if set to true, false otherwise.
 /// \returns Result of setting up split mode (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setSplitState(bool state)
@@ -267,8 +267,8 @@ changeResult_t Pads::setSplitState(bool state)
 
 ///
 /// \brief Enables or disables sending of requested MIDI message.
-/// @param [in] type MIDI message for which sending is being enabled or disabled. Enumerated type. See function_t enumeration.
-/// @param [in] state If set to true, sending of requested MIDI message will be enabled. If set to false, sending will be disabled.
+/// @param [in] type    MIDI message for which sending is being enabled or disabled. Enumerated type. See function_t enumeration.
+/// @param [in] state   If set to true, sending of requested MIDI message will be enabled. If set to false, sending will be disabled.
 /// \returns Result of changing MIDI send state (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setMIDISendState(function_t type, bool state)
@@ -373,7 +373,7 @@ changeResult_t Pads::setMIDISendState(function_t type, bool state)
 
 ///
 /// \brief Changes aftertouch type.
-/// @param [in] type New aftertouch type to be set (enumerated type). See aftertouchType_t enumeration.
+/// @param [in] type    New aftertouch type to be set (enumerated type). See aftertouchType_t enumeration.
 /// \returns Result of changing aftertouch type (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setAftertouchType(aftertouchType_t type)
@@ -424,8 +424,8 @@ changeResult_t Pads::setAftertouchType(aftertouchType_t type)
 
 ///
 /// \brief Changes MIDI channel on requested pad.
-/// @param [in] pad Pad on which MIDI channel is being changed.
-/// @param [in] channel Channel which is being applied to requested pad.
+/// @param [in] pad         Pad on which MIDI channel is being changed.
+/// @param [in] channel     Channel which is being applied to requested pad.
 /// \returns Result of changing MIDI channel (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setMIDIchannel(int8_t pad, int8_t channel)
@@ -466,7 +466,7 @@ changeResult_t Pads::setMIDIchannel(int8_t pad, int8_t channel)
 
 ///
 /// \brief Changes velocity sensitivity.
-/// @param [in] type Velocity sensitivity (enumerated type). See velocitySensitivity_t enumeration.
+/// @param [in] type    Velocity sensitivity (enumerated type). See velocitySensitivity_t enumeration.
 /// \returns Result of changing velocity sensitivity (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setVelocitySensitivity(velocitySensitivity_t sensitivity)
@@ -489,7 +489,7 @@ changeResult_t Pads::setVelocitySensitivity(velocitySensitivity_t sensitivity)
 
 ///
 /// \brief Changes velocity curve.
-/// @param [in] curve Velocity curve (enumerated type). See curve_t enumeration.
+/// @param [in] curve   Velocity curve (enumerated type). See curve_t enumeration.
 /// \note Only Linear up, Log Up 1 and Exponential curves are allowed.
 /// \returns Result of changing velocity curve (enumerated type). See changeResult_t enumeration.
 ///
@@ -521,9 +521,9 @@ changeResult_t Pads::setVelocityCurve(curve_t curve)
 
 ///
 /// \brief Changes curve for CC MIDI messages on requested coordinate.
-/// @param [in] coordinate Coordinate on which curve is being changed (enumerated type). See padCoordinate_t enumeration.
-/// Only X and Y coordinates are allowed.
-/// @param [in] curve Curve which is being applied to requested coordinate (enumerated type). See curve_t enumeration.
+/// @param [in] coordinate  Coordinate on which curve is being changed (enumerated type). See padCoordinate_t enumeration.
+///                         Only X and Y coordinates are allowed.
+/// @param [in] curve       Curve which is being applied to requested coordinate (enumerated type). See curve_t enumeration.
 /// \returns Result of changing CC curve (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setCCcurve(padCoordinate_t coordinate, int16_t curve)
@@ -678,10 +678,10 @@ changeResult_t Pads::setCCvalue(padCoordinate_t coordinate, int16_t cc)
 
 ///
 /// \brief Changes CC limit value (minimum or maximum) on requested coordinate and specified pad.
-/// @param [in] coordinate Coordinate on which CC limit value is being changed (enumerated type). See padCoordinate_t enumeration.
-/// Only X and Y coordinates are allowed.
-/// @param [in] limitType CC limit type - minimum or maximum. Enumerated type. See limitType_t enumeration.
-/// @param [in] value CC limit value which is being applied to requested coordinate (enumerated type). See curve_t enumeration.
+/// @param [in] coordinate  Coordinate on which CC limit value is being changed (enumerated type). See padCoordinate_t enumeration.
+///                         Only X and Y coordinates are allowed.
+/// @param [in] limitType   CC limit type - minimum or maximum. Enumerated type. See limitType_t enumeration.
+/// @param [in] value       CC limit value which is being applied to requested coordinate (enumerated type). See curve_t enumeration.
 /// \returns True on success, false otherwise.
 ///
 changeResult_t Pads::setCClimit(padCoordinate_t coordinate, limitType_t limitType, int16_t value)
@@ -788,8 +788,8 @@ changeResult_t Pads::setCClimit(padCoordinate_t coordinate, limitType_t limitTyp
 
 ///
 /// \brief Enables or disables calibration mode for requested coordinate.
-/// @param [in] state Calibration is enabled if set to true, disabled otherwise.
-/// @param [in] type Coordinate on which calibration is being enabled or disabled.
+/// @param [in] state   Calibration is enabled if set to true, disabled otherwise.
+/// @param [in] type    Coordinate on which calibration is being enabled or disabled.
 ///
 void Pads::setCalibrationMode(bool state, padCoordinate_t type)
 {
@@ -854,24 +854,23 @@ void Pads::setCalibrationMode(bool state, padCoordinate_t type)
 
 ///
 /// \brief Writes new upper calibration value for pressure on specified pad pressure zone.
-/// @param [in] pad Pad for which new calibration value is being written.
-/// @param [in] pressureZone Pressure zone which is being updated.
-/// @param [in] limit New calibration value (0-1023).
-/// @param [in] updateMIDIvalue If set to true, last MIDI velocity and aftertouch values will be updated.
+/// @param [in] pad                 Pad for which new calibration value is being written.
+/// @param [in] limit               New calibration value (0-1023).
+/// @param [in] updateMIDIvalue     If set to true, last MIDI velocity and aftertouch values will be updated.
 /// \returns Result of changing calibration value (enumerated type). See changeResult_t enumeration.
 ///
-changeResult_t Pads::calibratePressure(int8_t pad, uint8_t pressureZone, int16_t limit, bool updateMIDIvalue)
+changeResult_t Pads::calibratePressure(int8_t pad, int16_t limit, bool updateMIDIvalue)
 {
     assert(RAW_ANALOG_VALUE_CHECK(limit));
     assert(PAD_CHECK(pad));
 
-    if (database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+pressureZone, pad) != limit)
+    if (database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, pad) != limit)
     {
         #ifdef DEBUG
-        printf_P(PSTR("Calibrating pressure for pad %d on zone %d. New value: %d\n"), pad, pressureZone, limit);
+        printf_P(PSTR("Calibrating pressure for pad %d. New value: %d\n"), pad, limit);
         #endif
 
-        database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection0+pressureZone, pad, limit);
+        database.update(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, pad, limit);
         getPressureLimits();
         getAftertouchLimits();
         return valueChanged;
@@ -884,11 +883,11 @@ changeResult_t Pads::calibratePressure(int8_t pad, uint8_t pressureZone, int16_t
 
 ///
 /// \brief Writes new lower or upper calibration value for X or Y coordinate on specified pad.
-/// @param [in] pad Pad for which new calibration value is being written.
-/// @param [in] type Pad coordinate (X or Y). Enumerated type. See padCoordinate_t enumeration.
-/// @param [in] limitType Lower or upper calibration value (enumerated type). See limitType_t enumeration.
-/// @param [in] limit New calibration value (0-1023).
-/// @param [in] updateMIDIvalue If set to true, last MIDI X or Y value will be updated.
+/// @param [in] pad                 Pad for which new calibration value is being written.
+/// @param [in] type                Pad coordinate (X or Y). Enumerated type. See padCoordinate_t enumeration.
+/// @param [in] limitType           Lower or upper calibration value (enumerated type). See limitType_t enumeration.
+/// @param [in] limit               New calibration value (0-1023).
+/// @param [in] updateMIDIvalue     If set to true, last MIDI X or Y value will be updated.
 /// \returns Result of changing calibration value (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit, bool updateMIDIvalue)
@@ -959,9 +958,6 @@ changeResult_t Pads::calibrateXY(int8_t pad, padCoordinate_t type, limitType_t l
                 lastYMIDIvalue[getLastTouchedPad()] = getScaledXY(getLastTouchedPad(), board.getPadY(getLastTouchedPad()), coordinateY, true);
         }
 
-        #ifdef DEBUG
-        printf_P(PSTR("changing calibration value\n"));
-        #endif
         return valueChanged;
     }
 
@@ -970,8 +966,8 @@ changeResult_t Pads::calibrateXY(int8_t pad, padCoordinate_t type, limitType_t l
 
 ///
 /// \brief Adds or removes note to requested pad.
-/// @param [in] pad Pad to which note is being added.
-/// @param [in] note MIDI note to add (enumerated type). See note_t enumeration.
+/// @param [in] pad     Pad to which note is being added.
+/// @param [in] note    MIDI note to add (enumerated type). See note_t enumeration.
 /// \returns Result of adding note to pad (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setPadNote(int8_t pad, note_t note)
@@ -1061,9 +1057,9 @@ changeResult_t Pads::setPadNote(int8_t pad, note_t note)
 
 ///
 /// \brief Shifts scale up or down by requested number of octaves or changes active octave during pad edit mode.
-/// @param [in] octave New octave which is being applied to current scale.
-/// @param [in] padEditMode If set to true, active octave will be changed, but actual notes won't be changed at all.
-/// This is used during pad edit mode to change the octave of notes which are being added or removed from pad.
+/// @param [in] octave          New octave which is being applied to current scale.
+/// @param [in] padEditMode     If set to true, active octave will be changed, but actual notes won't be changed at all.
+///                             This is used during pad edit mode to change the octave of notes which are being added or removed from pad.
 /// \returns Result of changing octave (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setOctave(int8_t octave, bool padEditMode)
@@ -1208,9 +1204,9 @@ changeResult_t Pads::setOctave(int8_t octave, bool padEditMode)
 
 ///
 /// \brief Shift entire predefined scale up or down without changing tonic (root note).
-/// @param [in] shiftLevel Scale shift level (can be positive or negative).
+/// @param [in] shiftLevel      Scale shift level (can be positive or negative).
 /// @param [in] internalChange  If set to true, function is called from within Pads class and certain values are set differently.
-/// This should never be called with true value outside of Pads class (set to false by default).
+///                             This should never be called with true value outside of Pads class (set to false by default).
 /// \returns Result of shifting scale (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
@@ -1309,8 +1305,8 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
 
 ///
 /// \brief Updates state of pad (pressed or released)
-/// @param [in] pad Pad for which press state is being changed.
-/// @param [in] state New pad press state (pressed if true, false otherwise).
+/// @param [in] pad     Pad for which press state is being changed.
+/// @param [in] state   New pad press state (pressed if true, false otherwise).
 ///
 void Pads::setPadPressState(int8_t pad, bool state)
 {
@@ -1324,7 +1320,7 @@ void Pads::setPadPressState(int8_t pad, bool state)
 
 ///
 /// \brief Sets correct state on function LEDs if split mode is enabled.
-/// @param [in] pad Pad for which functions should be checked.
+/// @param [in] pad     Pad for which functions should be checked.
 /// \returns Result of updating function LEDs (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::updateFunctionLEDs(int8_t pad)
@@ -1352,8 +1348,8 @@ changeResult_t Pads::updateFunctionLEDs(int8_t pad)
 ///
 /// \brief Sets correct state on note LEDs.
 /// Used only when pad state has been changed.
-/// @param [in] pad Pad for which state should be checked.
-/// @param [in] state State of pad (true if pressed, false if released).
+/// @param [in] pad     Pad for which state should be checked.
+/// @param [in] state   State of pad (true if pressed, false if released).
 ///
 void Pads::updateNoteLEDs(int8_t pad, bool state)
 {
@@ -1418,8 +1414,8 @@ void Pads::updateNoteLEDs(int8_t pad, bool state)
 
 ///
 /// \brief Updates press state for requested pad.
-/// @param [in] pad Pad for which press state is being updated.
-/// @param [in] state New pad state.
+/// @param [in] pad     Pad for which press state is being updated.
+/// @param [in] state   New pad state.
 ///
 void Pads::updateLastPressedPad(int8_t pad, bool state)
 {
@@ -1505,7 +1501,7 @@ void Pads::updateLastPressedPad(int8_t pad, bool state)
 
 ///
 /// \brief Saves current time into buffer so that notes for requested pad are sent after defined amount of time.
-/// @param [in] pad Pad for which a note send event is being created.
+/// @param [in] pad     Pad for which a note send event is being created.
 ///
 void Pads::storeNotes(int8_t pad)
 {
@@ -1527,7 +1523,6 @@ void Pads::storeNotes(int8_t pad)
     }
 
     pad_buffer[i] = pad;
-    pad_note_timer_buffer[i] = rTimeMs();
     note_buffer_head = i;
 }
 

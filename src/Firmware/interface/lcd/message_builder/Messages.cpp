@@ -6,7 +6,7 @@ void LCD::displayFirmwareUpdated()
 {
     strcpy_P(stringBuffer, firmware_updated);
     uint8_t size = ARRAY_SIZE_CHAR(firmware_updated);
-    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
+    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(size));
 
     size = 0;
     strcpy_P(stringBuffer, deviceInfo_swVersion_string);
@@ -17,7 +17,7 @@ void LCD::displayFirmwareUpdated()
     appendText(".", size);
     addNumberToCharArray(getSWversion(swVersion_revision), size);
 
-    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
+    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(size));
 }
 
 void LCD::displayWelcomeMessage()
@@ -45,11 +45,11 @@ void LCD::displayError(function_t function, changeResult_t result)
 
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(functionErrorArray[function])));
     size = pgm_read_byte(&functionErrorArray_sizes[function]);
-    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
+    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(size));
 
     strcpy_P(stringBuffer, (char*)pgm_read_word(&(changeResultArray[result])));
     size = pgm_read_byte(&changeResultArray_sizes[result]);
-    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
+    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(size));
 }
 
 void LCD::displayChangeResult(function_t function, int16_t value, settingType_t type)
@@ -103,12 +103,12 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         break;
     }
 
-    updateDisplay(LCD_ROW_MESSAGE_1, message, getTextCenter(size), size);
+    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(size));
 
     switch(type)
     {
         case globalSetting:
-        clearLine(LCD_ROW_MESSAGE_2, false);
+        clearRow(LCD_ROW_MESSAGE_2);
         break;
 
         case singlePadSetting:
@@ -123,5 +123,5 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         break;
     }
 
-    updateDisplay(LCD_ROW_MESSAGE_2, message, getTextCenter(size), size);
+    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(size));
 }

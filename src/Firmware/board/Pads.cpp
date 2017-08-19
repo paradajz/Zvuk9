@@ -16,14 +16,14 @@ const uint8_t       padIDArray[] =
 
 const uint8_t             adcPinReadOrder_board[] =
 {
-    MUX_COMMON_PIN_2_PIN, //pressure, first reading
-    MUX_COMMON_PIN_0_PIN, //pressure, second reading
-    MUX_COMMON_PIN_2_PIN, //x coordinate
-    MUX_COMMON_PIN_0_PIN  //y coordinate
+    MUX_COMMON_PIN_0_PIN, //pressure, first reading
+    MUX_COMMON_PIN_1_PIN, //pressure, second reading
+    MUX_COMMON_PIN_0_PIN, //x coordinate
+    MUX_COMMON_PIN_2_PIN  //y coordinate
 };
 
 volatile uint16_t   coordinateSamples[3];
-volatile uint16_t   pressureReading[2];
+volatile uint16_t   pressureReading;
 
 uint8_t             sampleCounter;
 
@@ -43,60 +43,99 @@ inline void setMuxInput(uint8_t muxInput)
     bitRead(muxInput, 3) ? setHigh(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN) : setLow(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN);
 }
 
-void setupPressure()
+//void setupPressure1()
+//{
+    ////To read force (Z-axis), apply a voltage a voltage from one X conductor to one Y conductor, then read voltages at the other X and Y conductors
+    //setInput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);      //X+
+    //setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);     //X-
+    //setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);      //Y+
+    //setOutput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);     //Y-
+//
+    //setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);        //X+
+    //setLow(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);        //X-
+    //setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);        //Y+
+    //setHigh(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);       //Y-
+//}
+//
+//void setupPressure2()
+//{
+    ////To read force (Z-axis), apply a voltage a voltage from one X conductor to one Y conductor, then read voltages at the other X and Y conductors
+    //setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);      //X+
+    //setInput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);     //X-
+    //setOutput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);      //Y+
+    //setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);     //Y-
+//
+    //setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);        //X+
+    //setLow(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);        //X-
+    //setHigh(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);        //Y+
+    //setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);       //Y-
+//}
+
+void setupPressure1()
 {
-    //pressure is read from x+/y+
-    //set 0/5V across x-/y-
+    //To read force (Z-axis), apply a voltage a voltage from one X conductor to one Y conductor, then read voltages at the other X and Y conductors
+    setInput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);      //X+
+    setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);     //X-
+    setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);      //Y+
+    setOutput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);     //Y-
+
+    setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);        //X+
+    setLow(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);        //X-
+    setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);        //Y+
+    setHigh(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);       //Y-
+}
+
+void setupPressure2()
+{
+    //To read force (Z-axis), apply a voltage a voltage from one X conductor to one Y conductor, then read voltages at the other X and Y conductors
+    setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);     //X+
+    setInput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);      //X-
+    setOutput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);     //Y+
+    setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);      //Y-
+
+    setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);        //X+
+    setLow(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);        //X-
+    setHigh(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);       //Y+
+    setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);        //Y-
+}
+
+void setupX()
+{
+    //To read X position, apply a voltage across the X-plane, and read the voltage from either Y conductor.
     setInput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
-    setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
-    setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
+    setInput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
+    setOutput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
     setOutput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 
     setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
-    setHigh(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
-    setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
+    setLow(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
+    setHigh(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
     setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 }
 
 void setupY()
 {
-    //x is read from y+
-    //set 0/5V across x+/x-
-    setInput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN); //read this
-    setInput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN); //output!
-    setOutput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
-    setOutput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
-
-    setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN); //read this
-    setLow(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
-    setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
-    setHigh(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
-}
-
-void setupX()
-{
-    //y is read from x+
-    //set 0/5V across y+/y-
+    //To read Y position, apply a voltage across the Y-plane, and read the voltage from either X conductor.
     setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
     setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
-    setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN); //read this
+    setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
     setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 
     setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);
     setHigh(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);
-    setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN); //read this
+    setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);
     setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 }
 
 void Board::initPads()
 {
-    setupPressure();
+    setupPressure1();
     setADCchannel(adcPinReadOrder_board[0]);
     setMuxInput(0);
 
     //place setup z/x/y in function pointer for simpler access in isr
-    valueSetup[readPressure0] = setupPressure;
-    valueSetup[readPressure1] = setupPressure;
+    valueSetup[readPressure0] = setupPressure1;
+    valueSetup[readPressure1] = setupPressure2;
     valueSetup[readX] = setupX;
     valueSetup[readY] = setupY;
 
@@ -120,7 +159,10 @@ uint16_t Board::getPadPressure(uint8_t pad)
         returnValue = extractedSamples[coordinateZ][pad];
     }
 
-    return returnValue;
+    if (returnValue == -1)
+        return 0;
+
+    return pgm_read_word(&pressure_correction[returnValue]);
 }
 
 int16_t Board::getPadX(uint8_t pad)
@@ -167,11 +209,11 @@ ISR(ADC_vect)
 {
     if (padReadingIndex < readX)
     {
-        pressureReading[padReadingIndex] = ADC;
+        pressureReading += ADC;
 
-        if (padReadingIndex == readPressure1)
+        if (padReadingIndex == 1)
         {
-            coordinateSamples[sampleCounter] = (1023 - (pressureReading[readPressure1] - pressureReading[readPressure0]));
+            coordinateSamples[sampleCounter] = pressureReading >> 1;
 
             sampleCounter++;
 
@@ -195,7 +237,6 @@ ISR(ADC_vect)
                         activePad = 0;
 
                     setMuxInput(activePad);
-
                     padReadingIndex = 0;
                 }
 
@@ -207,6 +248,9 @@ ISR(ADC_vect)
                 //just reset read index back to zero, don't switch pad yet
                 padReadingIndex = 0;
             }
+
+            //make sure to reset pressure samples
+            pressureReading = 0;
         }
         else
         {
@@ -248,6 +292,7 @@ ISR(ADC_vect)
 
             //everything is read, skip to next pad and start over
             padReadingIndex = 0;
+            pressureReading = 0;
 
             activePad++;
 

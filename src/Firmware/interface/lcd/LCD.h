@@ -9,7 +9,11 @@
 #include "Macros.h"
 #include "strings/Strings.h"
 
-extern U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
+///
+/// \brief LCD control.
+/// \defgroup interfaceLCD LCD
+/// \ingroup interface
+/// @{
 
 class LCD
 {
@@ -18,9 +22,9 @@ class LCD
     void init();
     bool update();
 
-    void setDirectWriteState(bool state);
-
     void displayWelcomeMessage();
+
+    void setDirectWriteState(bool state);
 
     void setupHomeScreen();
     void setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh = false);
@@ -34,66 +38,94 @@ class LCD
     void displayXYvalue(padCoordinate_t type, midiMessageType_t messageType = midiMessageInvalidType, int16_t value1 = 10000, int16_t value2 = 10000);
     void displayMIDIchannel(uint8_t channel = 255);
     void clearPadPressData();
+    void displayDeviceInfo();
 
     void displayChangeResult(function_t function, int16_t value, settingType_t type);
     void displayError(function_t function, changeResult_t result);
-
-    void clearAll();
-    void clearLine(uint8_t row, bool writeToDisplay = true);
 
     void displayFirmwareUpdated();
     void displayFactoryResetConfirm();
     void displayFactoryResetStart();
     void displayFactoryResetEnd();
 
-    void displayPressureCalibrationTime(uint8_t seconds, uint8_t pressureZone, bool done);
-    void displayPressureCalibrationStatus(bool status);
+    void displayCalibrationStatus(padCoordinate_t coordinate, bool status);
+    void displayPressureCalibrationTime(uint8_t seconds, uint8_t zone, bool done);
 
-    void setMessageTime(int32_t msgTime);
-    //menu functions
-    void displayDeviceInfo();
+    void clearAll();
+    void clearRow(uint8_t row);
 
-    inline uint8_t getNumberOfDigits(int32_t number)
-    {
-        if (number < 10)            return 1;
-        if (number < 100)           return 2;
-        if (number < 1000)          return 3;
-        if (number < 10000)         return 4;
-        if (number < 100000)        return 5;
-        if (number < 1000000)       return 6;
-        if (number < 10000000)      return 7;
-        if (number < 100000000)     return 8;
-        if (number < 1000000000)    return 9;
-
-        return 10; //max size
-    }
-
-    protected:
-    void updateDisplay(uint8_t row, lcdTextType type, uint8_t startIndex, uint8_t size);
-
-    private:
-    messageStatus_t getMessageStatus();
-    void displayText(uint8_t row, const char *text, uint8_t startIndex);
-    void displayMessage(uint8_t row, const char *message, uint8_t startIndex);
-    void removeMessage();
+    void updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex);
     uint8_t getTextCenter(uint8_t textSize);
 
-    uint32_t messageDisplayTime;
-    uint32_t lastLCDupdateTime;
+    private:
 
-    bool directWrite;
+    ///
+    /// \brief Holds time index LCD message was shown.
+    ///
+    uint32_t        messageDisplayTime;
 
-    bool displayMessage_var;
-    bool messageActivated;
+    ///
+    /// \brief Holds last time LCD was updated.
+    /// LCD isn't updated in real-time but after defined amount of time (see LCD_REFRESH_TIME).
+    ///
+    uint32_t        lastLCDupdateTime;
 
-    char lcdLine[LCD_HEIGHT][MAX_TEXT_SIZE+1];
-    char lcdLineMessage[LCD_HEIGHT][MAX_TEXT_SIZE+1];
-    //warning! this assumes that max text length is max 32 characters
-    uint32_t charChange[LCD_HEIGHT];
+    ///
+    /// \brief Holds active text type on display.
+    /// Enumerated type (see lcdTextType_t enumeration).
+    ///
+    lcdTextType_t   activeTextType;
 
-    int32_t messageTime;
+    ///
+    /// \brief Array holding still LCD text for each LCD row.
+    ///
+    char            lcdRowStillText[LCD_HEIGHT][MAX_TEXT_SIZE+1];
 
-    screen_t activeScreen;
+    ///
+    /// \brief Array holding temp LCD text for each LCD row.
+    ///
+    char            lcdRowTempText[LCD_HEIGHT][MAX_TEXT_SIZE+1];
+
+    ///
+    /// \brief Array holding true of false value representing the change of character at specific location on LCD row.
+    /// \warning This variables assume there can be no more than 32 characters per LCD row.
+    ///
+    uint32_t        charChange[LCD_HEIGHT];
+
+    ///
+    /// \brief Variable holding scrolling state for all LCD rows.
+    /// \warning This variable assumes there can be no more than 8 rows on LCD.
+    ///
+    uint8_t         scrollEnabled;
+
+    ///
+    /// \brief Variable holding scrolling direction for all LCD rows.
+    /// \warning This variable assumes there can be no more than 8 rows on LCD.
+    ///
+    uint8_t         scrollDirection;
+
+    ///
+    /// \brief Array holding starting scroll index for each LCD row.
+    ///
+    uint8_t         scrollStartIndex[LCD_HEIGHT];
+
+    ///
+    /// \brief Array holding current scroll index for each LCD row.
+    ///
+    uint8_t         currentScrollIndex[LCD_HEIGHT];
+
+    ///
+    /// \brief Holds last time text has been scrolled on display.
+    ///
+    uint32_t        lastScrollTime;
+
+    ///
+    /// \brief Holds state of direct LCD writing (true/enabled, false/disabled).
+    ///
+    bool            directWriteState;
 };
 
 extern LCD display;
+extern U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
+
+/// @}

@@ -5,9 +5,15 @@
 /// @{
 
 ///
+/// \brief Time in milliseconds after which X/Y values are being read after pad has been pressed.
+/// Initial X/Y values tend to be unstable.
+///
+#define XY_READ_DELAY                               3
+
+///
 /// \brief Time in milliseconds after which notes from pad are sent once X and Y MIDI messages have been sent.
 ///
-#define PAD_NOTE_SEND_DELAY                         3
+#define PAD_NOTE_SEND_DELAY                         (XY_READ_DELAY+3)
 
 ///
 /// \brief Size of pad note buffer in bytes.
@@ -70,7 +76,7 @@
 ///
 /// \brief Number of zones per pad on X-axis for which calibration data is stored.
 ///
-#define PRESSURE_CALIBRATION_X_ZONES                4
+#define PRESSURE_CALIBRATION_X_ZONES                5
 
 ///
 /// \brief Range of values in single pressure zone on X axis.
@@ -80,7 +86,7 @@
 ///
 /// \brief Number of zones per pad on Y-axis for which calibration data is stored.
 ///
-#define PRESSURE_CALIBRATION_Y_ZONES                4
+#define PRESSURE_CALIBRATION_Y_ZONES                5
 
 ///
 /// \brief Range of values in single pressure zone on Y axis.
@@ -95,6 +101,6 @@
 ///
 /// \brief Time in seconds after which last read pressure value on certain pressure zone is considered calibrated value in calibration mode.
 ///
-#define PRESSURE_ZONE_CALIBRATION_TIMEOUT           3
+#define PRESSURE_ZONE_CALIBRATION_TIMEOUT           5
 
 /// @}
