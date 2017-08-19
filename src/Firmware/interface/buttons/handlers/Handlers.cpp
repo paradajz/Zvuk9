@@ -172,11 +172,13 @@ void handleTransportControl(uint8_t id, bool state)
 
             case transportMMC:
             sysExArray[4] = 0x02;
+            midi.sendSysEx(6, sysExArray, true);
             break;
 
             case transportMMC_CC:
             midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_PLAY, 127, 1);
             sysExArray[4] = 0x02;
+            midi.sendSysEx(6, sysExArray, true);
             break;
         }
         #endif
@@ -186,24 +188,44 @@ void handleTransportControl(uint8_t id, bool state)
         case BUTTON_TRANSPORT_STOP:
         function = functionStop;
         #ifdef NDEBUG
+        bool recordOff = leds.getLEDstate(LED_TRANSPORT_RECORD);
         switch(buttons.getTransportControlType())
         {
             case transportCC:
             midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_STOP, 127, 1);
+            if (recordOff)
+                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
             break;
 
             case transportMMC:
             sysExArray[4] = 0x01;
+            midi.sendSysEx(6, sysExArray, true);
+            if (recordOff)
+            {
+                sysExArray[4] = 0x07;
+                midi.sendSysEx(6, sysExArray, true);
+            }
             break;
 
             case transportMMC_CC:
             midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_STOP, 127, 1);
             sysExArray[4] = 0x01;
+            midi.sendSysEx(6, sysExArray, true);
+
+            if (recordOff)
+            {
+                midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
+                sysExArray[4] = 0x07;
+                midi.sendSysEx(6, sysExArray, true);
+            }
             break;
         }
         #endif
         leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateOff);
         leds.setLEDstate(LED_TRANSPORT_STOP, ledStateOff);
+
+        if (recordOff)
+            leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
         break;
 
         case BUTTON_TRANSPORT_RECORD:
@@ -230,13 +252,13 @@ void handleTransportControl(uint8_t id, bool state)
                 if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
                 {
                     leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
-                    display.displayPressureCalibrationStatus(false);
+                    display.displayCalibrationStatus(pads.getCalibrationMode(), false);
                     return;
                 }
                 else
                 {
                     leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
-                    display.displayPressureCalibrationStatus(true);
+                    display.displayCalibrationStatus(pads.getCalibrationMode(), true);
                     return;
                 }
             }
@@ -255,11 +277,13 @@ void handleTransportControl(uint8_t id, bool state)
 
                     case transportMMC:
                     sysExArray[4] = 0x07;
+                    midi.sendSysEx(6, sysExArray, true);
                     break;
 
                     case transportMMC_CC:
                     midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
                     sysExArray[4] = 0x07;
+                    midi.sendSysEx(6, sysExArray, true);
                     break;
                 }
                 #endif
@@ -276,11 +300,13 @@ void handleTransportControl(uint8_t id, bool state)
 
                     case transportMMC:
                     sysExArray[4] = 0x06;
+                    midi.sendSysEx(6, sysExArray, true);
                     break;
 
                     case transportMMC_CC:
                     midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 127, 1);
                     sysExArray[4] = 0x06;
+                    midi.sendSysEx(6, sysExArray, true);
                     break;
                 }
                 #endif
@@ -291,11 +317,6 @@ void handleTransportControl(uint8_t id, bool state)
         default:
         return;
     }
-
-    #ifdef NDEBUG
-    if ((buttons.getTransportControlType() == transportMMC) || (buttons.getTransportControlType() == transportMMC_CC))
-        midi.sendSysEx(6, sysExArray, true);
-    #endif
 
     //value is used only for record control
     display.displayChangeResult(function, leds.getLEDstate(LED_TRANSPORT_RECORD), globalSetting);
