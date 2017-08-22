@@ -568,9 +568,6 @@ bool Pads::checkY(int8_t pad)
     if (yChanged)
     {
         lastYMIDIvalue[pad] = yValue;
-        #ifdef DEBUG
-        printf_P(PSTR("Updating Y: %d\nRaw: %d\n\n"), lastYMIDIvalue[pad], value);
-        #endif
         ySendTimer[pad] = 0;
         return true;
     }
