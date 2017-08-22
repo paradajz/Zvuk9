@@ -108,7 +108,9 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
     switch(type)
     {
         case globalSetting:
-        clearRow(LCD_ROW_MESSAGE_2);
+        startLine();
+        addSpaceToCharArray(LCD_WIDTH, size);
+        endLine(size);
         break;
 
         case singlePadSetting:
