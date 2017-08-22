@@ -3,8 +3,8 @@
 #include "../../../versioning/src/avr/Version.h"
 #include "../../../database/blocks/Scales.h"
 
-char stringBuffer[MAX_TEXT_SIZE+1];
-char tempBuffer[MAX_TEXT_SIZE+1];
+char stringBuffer[STRING_BUFFER_SIZE];
+char tempBuffer[STRING_BUFFER_SIZE];
 
 void LCD::setupHomeScreen()
 {
@@ -271,9 +271,6 @@ void LCD::displayActivePadNotes(bool showNotes)
 
     if (showNotes)
     {
-        if (padEditMode)
-            clearRow(LCD_ROW_PAD_EDIT_NOTES);
-
         for (int i=0; i<NOTES_PER_PAD; i++)
         {
             note = pads.getPadNote(pad, i);
@@ -296,6 +293,10 @@ void LCD::displayActivePadNotes(bool showNotes)
             {
                 strcpy(stringBuffer, tempBuffer);
                 size = pgm_read_byte(&noteNameArray_sizes[tonic]);
+
+                #ifdef DEBUG
+                printf_P(PSTR("notes string1: <%s>\n"), stringBuffer);
+                #endif
             }
 
             addNumberToCharArray(octave, size);
@@ -310,21 +311,11 @@ void LCD::displayActivePadNotes(bool showNotes)
         }
     }
 
-    if (padEditMode)
-    {
-        updateText(LCD_ROW_PAD_EDIT_NOTES, lcdtext_still, getTextCenter(size));
-    }
-    else
-    {
-        while ((size+LCD_POSITION_PRESS_INFO_NOTES) < (MAX_TEXT_SIZE-1))
-            addSpaceToCharArray(1, size);
+    //string for notes can be long - make sure entire buffer is filled
+    if ((size+LCD_POSITION_PRESS_INFO_NOTES) < (STRING_BUFFER_SIZE-2))
+        addSpaceToCharArray(STRING_BUFFER_SIZE-2-LCD_POSITION_PRESS_INFO_NOTES-size, size);
 
-        //#ifdef DEBUG
-        //printf_P(PSTR("Notes string: <%s>\n"), stringBuffer);
-        //#endif
-
-        updateText(LCD_ROW_PRESS_INFO_NOTES, lcdtext_still, LCD_POSITION_PRESS_INFO_NOTES);
-    }
+    padEditMode ? updateText(LCD_ROW_PAD_EDIT_NOTES, lcdtext_still, LCD_POSITION_PAD_EDIT_NOTES) : updateText(LCD_ROW_PRESS_INFO_NOTES, lcdtext_still, LCD_POSITION_PRESS_INFO_NOTES);
 }
 
 void LCD::displayVelocity(uint8_t midiVelocity, int16_t rawPressure)
