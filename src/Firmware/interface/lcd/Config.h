@@ -6,7 +6,7 @@
 
 #define LCD_REFRESH_TIME                    PAD_NOTE_SEND_DELAY
 
-#define LCD_SCROLL_TIME                     300
+#define LCD_SCROLL_TIME                     1000
 
 #define LCD_PAD_DATA_CLEAR_DELAY            300
 

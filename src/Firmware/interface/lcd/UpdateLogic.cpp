@@ -25,14 +25,20 @@ void LCD::init()
     //init char arrays
     for (int i=0; i<LCD_HEIGHT; i++)
     {
-        for (int j=0; j<MAX_TEXT_SIZE-2; j++)
+        for (int j=0; j<STRING_BUFFER_SIZE-2; j++)
         {
             lcdRowStillText[i][j] = ' ';
             lcdRowTempText[i][j] = ' ';
         }
 
-        lcdRowStillText[i][MAX_TEXT_SIZE-1] = '\0';
-        lcdRowTempText[i][MAX_TEXT_SIZE-1] = '\0';
+        lcdRowStillText[i][STRING_BUFFER_SIZE-1] = '\0';
+        lcdRowTempText[i][STRING_BUFFER_SIZE-1] = '\0';
+
+        scrollEvent[i].enabled = 0;
+        scrollEvent[i].size = 0;
+        scrollEvent[i].startIndex = 0;
+        scrollEvent[i].currentIndex = 0;
+        scrollEvent[i].direction = scroll_ltr;
     }
 }
 
@@ -47,46 +53,61 @@ bool LCD::update()
     //use char pointer to point to line we're going to print
     char *charPointer;
 
+    //check message status
+    if (activeTextType == lcdText_temp)
+    {
+        //temp text - check if temp text should be removed
+        if ((rTimeMs() - messageDisplayTime) > LCD_MESSAGE_DURATION)
+        {
+            activeTextType = lcdtext_still;
+
+            //make sure all characters are updated once temp text is removed
+            for (int j=0; j<LCD_HEIGHT; j++)
+                charChange[j] = (uint32_t)0xFFFFFFFF;
+        }
+    }
+
     for (int i=0; i<LCD_HEIGHT; i++)
     {
         if (activeTextType == lcdtext_still)
         {
+            //scrolling is possible only with still text
+            checkScroll(i);
             charPointer = lcdRowStillText[i];
         }
         else
         {
-            //temp text - check if temp text should be removed
-            if ((rTimeMs() - messageDisplayTime) < LCD_MESSAGE_DURATION)
-            {
-                charPointer = lcdRowTempText[i];
-            }
-            else
-            {
-                charPointer = lcdRowStillText[i];
-                activeTextType = lcdtext_still;
-
-                //make sure all characters are updated once temp text is removed
-                for (int j=0; j<LCD_HEIGHT; j++)
-                    charChange[j] = (uint32_t)0xFFFFFFFF;
-            }
-
-            #ifdef DEBUG
-            printf_P(PSTR("message!!\n"));
-            #endif
+            charPointer = lcdRowTempText[i];
         }
 
         if (!charChange[i])
             continue;
 
-        for (int j=0; j<(int)strlen(charPointer); j++)
+        int8_t string_len = strlen(charPointer) > LCD_WIDTH ? LCD_WIDTH : strlen(charPointer);
+
+        for (int j=0; j<string_len; j++)
         {
             if (bitRead(charChange[i], j))
-                u8x8.drawGlyph(j, rowMap[i], charPointer[j]);
+            {
+                u8x8.drawGlyph(j, rowMap[i], charPointer[j+scrollEvent[i].currentIndex]);
+                if (scrollEvent[i].enabled)
+                    printf_P(PSTR("char: %c\n"), charPointer[j+scrollEvent[i].currentIndex]);
+            }
         }
 
         //now fill remaining columns with spaces
-        for (int j=strlen(charPointer); j<LCD_WIDTH; j++)
+        for (int j=string_len; j<LCD_WIDTH; j++)
             u8x8.drawGlyph(j, rowMap[i], ' ');
+
+        //for (int j=0; j<(int)strlen(charPointer); j++)
+        //{
+            //if (bitRead(charChange[i], j))
+                //u8x8.drawGlyph(j, rowMap[i], charPointer[j]);
+        //}
+//
+        ////now fill remaining columns with spaces
+        //for (int j=strlen(charPointer); j<LCD_WIDTH; j++)
+            //u8x8.drawGlyph(j, rowMap[i], ' ');
 
         charChange[i] = 0;
     }
@@ -107,6 +128,10 @@ bool LCD::update()
 void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
 {
     uint8_t size = strlen(stringBuffer);
+    uint8_t scrollSize = 0;
+
+    if (size+startIndex >= STRING_BUFFER_SIZE-2)
+        size = STRING_BUFFER_SIZE-2-startIndex; //trim string
 
     if (directWriteState)
     {
@@ -115,6 +140,8 @@ void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
     }
     else
     {
+        bool scrollingEnabled = false;
+
         switch(textType)
         {
             case lcdtext_still:
@@ -124,15 +151,34 @@ void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
                 bitWrite(charChange[row], startIndex+i, 1);
             }
 
-            if ((startIndex+size) >= LCD_WIDTH)
+            //scrolling is enabled only if some characters are found after LCD_WIDTH-1 index
+            for (int i=LCD_WIDTH; i<STRING_BUFFER_SIZE-1; i++)
+            {
+                if ((lcdRowStillText[row][i] != ' ') && (lcdRowStillText[row][i] != '\0'))
+                {
+                    scrollingEnabled = true;
+                    scrollSize++;
+                }
+            }
+
+            if (scrollingEnabled && !scrollEvent[row].enabled)
             {
                 //enable scrolling
-                bitWrite(scrollEnabled, row, true);
-                scrollStartIndex[row] = startIndex;
+                scrollEvent[row].enabled = true;
+                scrollEvent[row].size = scrollSize;
+                scrollEvent[row].startIndex = startIndex;
+                scrollEvent[row].currentIndex = 0;
+                scrollEvent[row].direction = scroll_ltr;
+
+                lastScrollTime = rTimeMs();
             }
-            else
+            else if (!scrollingEnabled && scrollEvent[row].enabled)
             {
-                bitWrite(scrollEnabled, row, false);
+                scrollEvent[row].enabled = false;
+                scrollEvent[row].size = 0;
+                scrollEvent[row].startIndex = 0;
+                scrollEvent[row].currentIndex = 0;
+                scrollEvent[row].direction = scroll_ltr;
             }
             break;
 
@@ -183,42 +229,43 @@ uint8_t LCD::getTextCenter(uint8_t textSize)
     return LCD_WIDTH/2 - (textSize/2);
 }
 
-//void LCD::checkScroll(uint8_t row)
-//{
-    //if (!bitRead(scrollEnabled, row))
-        //return;
-//
-    //if ((rTimeMs() - lastScrollTime) < LCD_SCROLL_TIME)
-        //return;
-//
-    //////copy string up to scrollStartIndex
-    ////for (int i=0; i<scrollStartIndex[row]; i++)
-        ////lcdLineScroll[row][i] = lcdLine[row][i];
-////
-    //////scrollIndex is validated below
-    ////for (int i=scrollStartIndex[row]; i<NUMBER_OF_LCD_COLUMNS; i++)
-    ////lcdLineScroll[row][i] = lcdLine[row][i+scrollIndex[row]];
-////
-    ////if (scrollDirection[row])
-    ////{
-        ////if (((int8_t)strlen(lcdLine[row]) - 1 - scrollStartIndex[row] - scrollIndex[row]) > (NUMBER_OF_LCD_COLUMNS - scrollStartIndex[row] - 1))
-        ////scrollIndex[row]++;
-        ////else
-        ////scrollDirection[row] = false;
-    ////}
-    ////else
-    ////{
-        ////scrollIndex[row]--;
-////
-        ////if (scrollIndex[row] < 0)
-        ////{
-            ////scrollDirection[row] = true;
-            ////scrollIndex[row] = 0;
-        ////}
-    ////}
-////
-    ////lineChange[row] = true;
-    ////lastScrollTime = rTimeMillis();
-//}
+void LCD::checkScroll(uint8_t row)
+{
+    if (!scrollEvent[row].enabled)
+        return;
+
+    if ((rTimeMs() - lastScrollTime) < LCD_SCROLL_TIME)
+        return;
+
+    switch(scrollEvent[row].direction)
+    {
+        case scroll_ltr:
+        //left to right
+        scrollEvent[row].currentIndex++;
+
+        if (scrollEvent[row].currentIndex == scrollEvent[row].size)
+        {
+            //switch direction
+            scrollEvent[row].direction = scroll_rtl;
+        }
+        break;
+
+        case scroll_rtl:
+        //right to left
+        scrollEvent[row].currentIndex--;
+
+        if (scrollEvent[row].currentIndex == 0)
+        {
+            //switch direction
+            scrollEvent[row].direction = scroll_ltr;
+        }
+        break;
+    }
+
+    for (int i=scrollEvent[row].startIndex; i<LCD_WIDTH; i++)
+        bitWrite(charChange[row], i, 1);
+
+    lastScrollTime = rTimeMs();
+}
 
 LCD display;

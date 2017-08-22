@@ -58,6 +58,7 @@ class LCD
     uint8_t getTextCenter(uint8_t textSize);
 
     private:
+    void checkScroll(uint8_t row);
 
     ///
     /// \brief Holds time index LCD message was shown.
@@ -79,12 +80,12 @@ class LCD
     ///
     /// \brief Array holding still LCD text for each LCD row.
     ///
-    char            lcdRowStillText[LCD_HEIGHT][MAX_TEXT_SIZE+1];
+    char            lcdRowStillText[LCD_HEIGHT][STRING_BUFFER_SIZE];
 
     ///
     /// \brief Array holding temp LCD text for each LCD row.
     ///
-    char            lcdRowTempText[LCD_HEIGHT][MAX_TEXT_SIZE+1];
+    char            lcdRowTempText[LCD_HEIGHT][STRING_BUFFER_SIZE];
 
     ///
     /// \brief Array holding true of false value representing the change of character at specific location on LCD row.
@@ -92,27 +93,7 @@ class LCD
     ///
     uint32_t        charChange[LCD_HEIGHT];
 
-    ///
-    /// \brief Variable holding scrolling state for all LCD rows.
-    /// \warning This variable assumes there can be no more than 8 rows on LCD.
-    ///
-    uint8_t         scrollEnabled;
-
-    ///
-    /// \brief Variable holding scrolling direction for all LCD rows.
-    /// \warning This variable assumes there can be no more than 8 rows on LCD.
-    ///
-    uint8_t         scrollDirection;
-
-    ///
-    /// \brief Array holding starting scroll index for each LCD row.
-    ///
-    uint8_t         scrollStartIndex[LCD_HEIGHT];
-
-    ///
-    /// \brief Array holding current scroll index for each LCD row.
-    ///
-    uint8_t         currentScrollIndex[LCD_HEIGHT];
+    scrollEvent_t   scrollEvent[LCD_HEIGHT];
 
     ///
     /// \brief Holds last time text has been scrolled on display.

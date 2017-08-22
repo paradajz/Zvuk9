@@ -19,3 +19,18 @@ typedef enum
     singlePadSetting,
     allPadsSetting
 } settingType_t;
+
+typedef enum
+{
+    scroll_ltr,
+    scroll_rtl
+} scrollDirection_t;
+
+typedef struct
+{
+    bool enabled;
+    uint8_t size;
+    uint8_t startIndex;
+    int8_t currentIndex;
+    scrollDirection_t direction;
+} scrollEvent_t;
