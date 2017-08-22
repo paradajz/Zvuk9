@@ -22,9 +22,7 @@ const uint8_t             adcPinReadOrder_board[] =
     MUX_COMMON_PIN_2_PIN  //y coordinate
 };
 
-volatile uint16_t   coordinateSamples[3];
-volatile uint16_t   pressureReading;
-
+volatile uint16_t   coordinateSamples;
 uint8_t             sampleCounter;
 
 //three coordinates
@@ -42,34 +40,6 @@ inline void setMuxInput(uint8_t muxInput)
     bitRead(muxInput, 2) ? setHigh(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN) : setLow(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN);
     bitRead(muxInput, 3) ? setHigh(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN) : setLow(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN);
 }
-
-//void setupPressure1()
-//{
-    ////To read force (Z-axis), apply a voltage a voltage from one X conductor to one Y conductor, then read voltages at the other X and Y conductors
-    //setInput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);      //X+
-    //setOutput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);     //X-
-    //setInput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);      //Y+
-    //setOutput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);     //Y-
-//
-    //setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);        //X+
-    //setLow(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);        //X-
-    //setLow(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);        //Y+
-    //setHigh(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);       //Y-
-//}
-//
-//void setupPressure2()
-//{
-    ////To read force (Z-axis), apply a voltage a voltage from one X conductor to one Y conductor, then read voltages at the other X and Y conductors
-    //setOutput(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);      //X+
-    //setInput(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);     //X-
-    //setOutput(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);      //Y+
-    //setInput(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);     //Y-
-//
-    //setLow(MUX_COMMON_PIN_0_PORT, MUX_COMMON_PIN_0_PIN);        //X+
-    //setLow(MUX_COMMON_PIN_1_PORT, MUX_COMMON_PIN_1_PIN);        //X-
-    //setHigh(MUX_COMMON_PIN_2_PORT, MUX_COMMON_PIN_2_PIN);        //Y+
-    //setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);       //Y-
-//}
 
 void setupPressure1()
 {
@@ -189,68 +159,38 @@ int16_t Board::getPadY(uint8_t pad)
     return returnValue;
 }
 
-inline void storeMedianValue(padCoordinate_t coordinate)
-{
-    if ((coordinateSamples[0] <= coordinateSamples[1]) && (coordinateSamples[0] <= coordinateSamples[2]))
-    {
-        extractedSamples[coordinate][activePad] = (coordinateSamples[1] <= coordinateSamples[2]) ? coordinateSamples[1] : coordinateSamples[2];
-    }
-    else if ((coordinateSamples[1] <= coordinateSamples[0]) && (coordinateSamples[1] <= coordinateSamples[2]))
-    {
-        extractedSamples[coordinate][activePad] = (coordinateSamples[0] <= coordinateSamples[2]) ? coordinateSamples[0] : coordinateSamples[2];
-    }
-    else
-    {
-        extractedSamples[coordinate][activePad] = (coordinateSamples[0] <= coordinateSamples[1]) ? coordinateSamples[0] : coordinateSamples[1];
-    }
-}
-
 ISR(ADC_vect)
 {
     if (padReadingIndex < readX)
     {
-        pressureReading += ADC;
+        coordinateSamples += ADC;
 
         if (padReadingIndex == 1)
         {
-            coordinateSamples[sampleCounter] = pressureReading >> 1;
+            //read pressure from two sensor plates and then get an average reading
+            extractedSamples[coordinateZ][activePad] = coordinateSamples >> 1;
 
-            sampleCounter++;
-
-            if (sampleCounter == 3)
+            //switch to x/y reading only if pad is pressed
+            if (bitRead(padPressed, activePad))
             {
-                //store median pressure value
-                storeMedianValue(coordinateZ);
-
-                //switch to x/y reading only if pad is pressed
-                if (bitRead(padPressed, activePad))
-                {
-                    //start reading x/y coordinates
-                    padReadingIndex++;
-                }
-                else
-                {
-                    //switch to another pad
-                    activePad++;
-
-                    if (activePad == NUMBER_OF_PADS)
-                        activePad = 0;
-
-                    setMuxInput(activePad);
-                    padReadingIndex = 0;
-                }
-
-                //reset pressure count
-                sampleCounter = 0;
+                //start reading x/y coordinates
+                padReadingIndex++;
             }
             else
             {
-                //just reset read index back to zero, don't switch pad yet
+                //switch to another pad
+                activePad++;
+
+                if (activePad == NUMBER_OF_PADS)
+                    activePad = 0;
+
+                setMuxInput(activePad);
                 padReadingIndex = 0;
             }
 
-            //make sure to reset pressure samples
-            pressureReading = 0;
+            //reset samples count
+            sampleCounter = 0;
+            coordinateSamples = 0;
         }
         else
         {
@@ -261,16 +201,15 @@ ISR(ADC_vect)
     else if (padReadingIndex == readX)
     {
         //read x
-        coordinateSamples[sampleCounter] = ADC;
+        coordinateSamples += ADC;
         sampleCounter++;
 
-        if (sampleCounter == 3)
+        if (sampleCounter == 2)
         {
-            //store median value
-            storeMedianValue(coordinateX);
+            extractedSamples[coordinateX][activePad] = coordinateSamples >> 1;
 
-            //reset pressure count
             sampleCounter = 0;
+            coordinateSamples = 0;
 
             //start sampling y
             padReadingIndex++;
@@ -279,20 +218,18 @@ ISR(ADC_vect)
     else if (padReadingIndex == readY)
     {
         //read y
-        coordinateSamples[sampleCounter] = ADC;
+        coordinateSamples += ADC;
         sampleCounter++;
 
-        if (sampleCounter == 3)
+        if (sampleCounter == 2)
         {
-            //store median value
-            storeMedianValue(coordinateY);
+            extractedSamples[coordinateY][activePad] = coordinateSamples >> 1;
 
-            //reset pressure count
             sampleCounter = 0;
+            coordinateSamples = 0;
 
             //everything is read, skip to next pad and start over
             padReadingIndex = 0;
-            pressureReading = 0;
 
             activePad++;
 
