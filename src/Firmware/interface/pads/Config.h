@@ -13,7 +13,7 @@
 ///
 /// \brief Time in milliseconds after which notes from pad are sent once X and Y MIDI messages have been sent.
 ///
-#define PAD_NOTE_SEND_DELAY                         (XY_READ_DELAY+3)
+#define PAD_NOTE_SEND_DELAY                         (XY_READ_DELAY+1)
 
 ///
 /// \brief Size of pad note buffer in bytes.
