@@ -58,7 +58,8 @@ class LCD
     uint8_t getTextCenter(uint8_t textSize);
 
     private:
-    void checkScroll(uint8_t row);
+    void updateScrollStatus(uint8_t row);
+    void updateTempTextStatus();
 
     ///
     /// \brief Holds time index LCD message was shown.

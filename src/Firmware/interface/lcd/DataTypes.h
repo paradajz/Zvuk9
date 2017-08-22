@@ -28,7 +28,6 @@ typedef enum
 
 typedef struct
 {
-    bool enabled;
     uint8_t size;
     uint8_t startIndex;
     int8_t currentIndex;

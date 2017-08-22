@@ -34,7 +34,6 @@ void LCD::init()
         lcdRowStillText[i][STRING_BUFFER_SIZE-1] = '\0';
         lcdRowTempText[i][STRING_BUFFER_SIZE-1] = '\0';
 
-        scrollEvent[i].enabled = 0;
         scrollEvent[i].size = 0;
         scrollEvent[i].startIndex = 0;
         scrollEvent[i].currentIndex = 0;
@@ -53,26 +52,14 @@ bool LCD::update()
     //use char pointer to point to line we're going to print
     char *charPointer;
 
-    //check message status
-    if (activeTextType == lcdText_temp)
-    {
-        //temp text - check if temp text should be removed
-        if ((rTimeMs() - messageDisplayTime) > LCD_MESSAGE_DURATION)
-        {
-            activeTextType = lcdtext_still;
-
-            //make sure all characters are updated once temp text is removed
-            for (int j=0; j<LCD_HEIGHT; j++)
-                charChange[j] = (uint32_t)0xFFFFFFFF;
-        }
-    }
+    updateTempTextStatus();
 
     for (int i=0; i<LCD_HEIGHT; i++)
     {
         if (activeTextType == lcdtext_still)
         {
             //scrolling is possible only with still text
-            checkScroll(i);
+            updateScrollStatus(i);
             charPointer = lcdRowStillText[i];
         }
         else
@@ -90,24 +77,12 @@ bool LCD::update()
             if (bitRead(charChange[i], j))
             {
                 u8x8.drawGlyph(j, rowMap[i], charPointer[j+scrollEvent[i].currentIndex]);
-                if (scrollEvent[i].enabled)
-                    printf_P(PSTR("char: %c\n"), charPointer[j+scrollEvent[i].currentIndex]);
             }
         }
 
         //now fill remaining columns with spaces
         for (int j=string_len; j<LCD_WIDTH; j++)
             u8x8.drawGlyph(j, rowMap[i], ' ');
-
-        //for (int j=0; j<(int)strlen(charPointer); j++)
-        //{
-            //if (bitRead(charChange[i], j))
-                //u8x8.drawGlyph(j, rowMap[i], charPointer[j]);
-        //}
-//
-        ////now fill remaining columns with spaces
-        //for (int j=strlen(charPointer); j<LCD_WIDTH; j++)
-            //u8x8.drawGlyph(j, rowMap[i], ' ');
 
         charChange[i] = 0;
     }
@@ -161,10 +136,9 @@ void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
                 }
             }
 
-            if (scrollingEnabled && !scrollEvent[row].enabled)
+            if (scrollingEnabled && !scrollEvent[row].size)
             {
                 //enable scrolling
-                scrollEvent[row].enabled = true;
                 scrollEvent[row].size = scrollSize;
                 scrollEvent[row].startIndex = startIndex;
                 scrollEvent[row].currentIndex = 0;
@@ -172,9 +146,8 @@ void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
 
                 lastScrollTime = rTimeMs();
             }
-            else if (!scrollingEnabled && scrollEvent[row].enabled)
+            else if (!scrollingEnabled && scrollEvent[row].size)
             {
-                scrollEvent[row].enabled = false;
                 scrollEvent[row].size = 0;
                 scrollEvent[row].startIndex = 0;
                 scrollEvent[row].currentIndex = 0;
@@ -229,9 +202,32 @@ uint8_t LCD::getTextCenter(uint8_t textSize)
     return LCD_WIDTH/2 - (textSize/2);
 }
 
-void LCD::checkScroll(uint8_t row)
+///
+/// \brief Updates status of temp text on display.
+///
+void LCD::updateTempTextStatus()
 {
-    if (!scrollEvent[row].enabled)
+    if (activeTextType == lcdText_temp)
+    {
+        //temp text - check if temp text should be removed
+        if ((rTimeMs() - messageDisplayTime) > LCD_MESSAGE_DURATION)
+        {
+            activeTextType = lcdtext_still;
+
+            //make sure all characters are updated once temp text is removed
+            for (int j=0; j<LCD_HEIGHT; j++)
+            charChange[j] = (uint32_t)0xFFFFFFFF;
+        }
+    }
+}
+
+///
+/// \brief Updates status of scrolling text on display.
+/// @param [in] row     Row which is being checked.
+///
+void LCD::updateScrollStatus(uint8_t row)
+{
+    if (!scrollEvent[row].size)
         return;
 
     if ((rTimeMs() - lastScrollTime) < LCD_SCROLL_TIME)
