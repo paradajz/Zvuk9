@@ -799,6 +799,12 @@ void Pads::setCalibrationMode(bool state, padCoordinate_t type)
     if (state)
     {
         //ensure proper setup when going to calibration mode
+
+        //make sure split is disabled
+        setSplitState(false);
+        leds.setBlinkState(LED_ON_OFF_SPLIT, false);
+        leds.setLEDstate(LED_ON_OFF_SPLIT, (ledState_t)(pads.getSplitState()*2));
+
         switch(type)
         {
             case coordinateX:
