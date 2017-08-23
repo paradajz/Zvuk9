@@ -75,9 +75,7 @@ bool LCD::update()
         for (int j=0; j<string_len; j++)
         {
             if (bitRead(charChange[i], j))
-            {
                 u8x8.drawGlyph(j, rowMap[i], charPointer[j+scrollEvent[i].currentIndex]);
-            }
         }
 
         //now fill remaining columns with spaces
@@ -216,7 +214,7 @@ void LCD::updateTempTextStatus()
 
             //make sure all characters are updated once temp text is removed
             for (int j=0; j<LCD_HEIGHT; j++)
-            charChange[j] = (uint32_t)0xFFFFFFFF;
+                charChange[j] = (uint32_t)0xFFFFFFFF;
         }
     }
 }
@@ -262,6 +260,15 @@ void LCD::updateScrollStatus(uint8_t row)
         bitWrite(charChange[row], i, 1);
 
     lastScrollTime = rTimeMs();
+}
+
+///
+/// \brief Checks for currently active text type on display.
+/// \returns Active text type (enumerated type). See lcdTextType_t enumeration.
+///
+lcdTextType_t LCD::getActiveTextType()
+{
+    return activeTextType;
 }
 
 LCD display;

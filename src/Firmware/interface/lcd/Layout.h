@@ -1,6 +1,11 @@
 #pragma once
 
-#define LCD_ROW_WELCOME_MESSAGE                         1
+///
+/// \brief Positions of various items on LCD
+/// @{
+
+#define LCD_ROW_DEVICE_NAME_MESSAGE                     1
+#define LCD_ROW_WELCOME_MESSAGE                         2
 
 #define LCD_ROW_PROGRAM_INFO_PROGRAM                    0
 #define LCD_POSITION_PROGRAM_INFO_PROGRAM               0
@@ -92,3 +97,5 @@
 
 #define LCD_ROW_FACTORY_RESET_PROGRESS_1                1
 #define LCD_ROW_FACTORY_RESET_PROGRESS_2                2
+
+/// @}

@@ -57,6 +57,8 @@ class LCD
     void updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex);
     uint8_t getTextCenter(uint8_t textSize);
 
+    lcdTextType_t getActiveTextType();
+
     private:
     void updateScrollStatus(uint8_t row);
     void updateTempTextStatus();
@@ -94,6 +96,9 @@ class LCD
     ///
     uint32_t        charChange[LCD_HEIGHT];
 
+    ///
+    /// \brief Structure array holding scrolling information for all LCD rows.
+    ///
     scrollEvent_t   scrollEvent[LCD_HEIGHT];
 
     ///
