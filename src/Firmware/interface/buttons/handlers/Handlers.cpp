@@ -566,10 +566,6 @@ void handlePresetEncButton(uint8_t id, bool state)
     if (!state)
         return;
 
-    #ifdef DEBUG
-    printf_P(PSTR("here\n"));
-    #endif
-
     if (pads.getEditModeState())
         return;
 
