@@ -1,6 +1,6 @@
 #pragma once
 
-#define PAD_PRESSURE_UPPER_DEFAULT      120
+#define PAD_PRESSURE_UPPER_DEFAULT      110
 
 typedef enum
 {
