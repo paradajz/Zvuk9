@@ -22,10 +22,24 @@ void LCD::displayFirmwareUpdated()
 
 void LCD::displayWelcomeMessage()
 {
-    strcpy_P(stringBuffer, welcome_string);
+    uint8_t charIndex;
+    uint8_t location;
 
-    uint8_t charIndex = 0;
-    uint8_t location = getTextCenter(ARRAY_SIZE_CHAR(welcome_string));
+    strcpy_P(stringBuffer, deviceName_string);
+    location = getTextCenter(ARRAY_SIZE_CHAR(deviceName_string));
+    charIndex = 0;
+
+    while (stringBuffer[charIndex] != '\0')
+    {
+        u8x8.drawGlyph(location+charIndex, rowMap[LCD_ROW_DEVICE_NAME_MESSAGE], stringBuffer[charIndex]);
+        charIndex++;
+    }
+
+    wait_ms(1500);
+
+    strcpy_P(stringBuffer, welcome_string);
+    location = getTextCenter(ARRAY_SIZE_CHAR(welcome_string));
+    charIndex = 0;
 
     while (stringBuffer[charIndex] != '\0')
     {
@@ -109,6 +123,7 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
     {
         case globalSetting:
         startLine();
+        size = 0;
         addSpaceToCharArray(LCD_WIDTH, size);
         endLine(size);
         break;
