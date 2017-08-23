@@ -132,7 +132,9 @@ uint16_t Board::getPadPressure(uint8_t pad)
     if (returnValue == -1)
         return 0;
 
-    return pgm_read_word(&pressure_correction[returnValue]);
+    returnValue = pgm_read_word(&pressure_correction[returnValue]);
+
+    return returnValue > MIN_PAD_PRESSURE ? returnValue : 0;
 }
 
 int16_t Board::getPadX(uint8_t pad)
@@ -164,38 +166,49 @@ ISR(ADC_vect)
     if (padReadingIndex < readX)
     {
         coordinateSamples += ADC;
+        sampleCounter++;
 
         if (padReadingIndex == 1)
         {
-            //read pressure from two sensor plates and then get an average reading
-            extractedSamples[coordinateZ][activePad] = coordinateSamples >> 1;
+            sampleCounter++;
 
-            //switch to x/y reading only if pad is pressed
-            if (bitRead(padPressed, activePad))
+            if (sampleCounter == 2)
             {
-                //start reading x/y coordinates
-                padReadingIndex++;
-            }
-            else
-            {
-                //switch to another pad
-                activePad++;
+                //read pressure from two sensor plates and then get an average reading
+                extractedSamples[coordinateZ][activePad] = coordinateSamples >> 2;
 
-                if (activePad == NUMBER_OF_PADS)
+                //switch to x/y reading only if pad is pressed
+                if (bitRead(padPressed, activePad))
+                {
+                    //start reading x/y coordinates
+                    padReadingIndex++;
+                }
+                else
+                {
+                    //switch to another pad
+                    activePad++;
+
+                    if (activePad == NUMBER_OF_PADS)
                     activePad = 0;
 
-                setMuxInput(activePad);
-                padReadingIndex = 0;
-            }
+                    setMuxInput(activePad);
+                    padReadingIndex = 0;
+                }
 
-            //reset samples count
-            sampleCounter = 0;
-            coordinateSamples = 0;
+                //reset samples count
+                sampleCounter = 0;
+                coordinateSamples = 0;
+            }
         }
         else
         {
-            //next pressure reading
-            padReadingIndex++;
+            sampleCounter++;
+            if (sampleCounter == 2)
+            {
+                sampleCounter = 0;
+                //next pressure reading
+                padReadingIndex++;
+            }
         }
     }
     else if (padReadingIndex == readX)
