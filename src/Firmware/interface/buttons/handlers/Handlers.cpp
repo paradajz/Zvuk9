@@ -16,6 +16,9 @@ void handleOnOff(uint8_t id, bool state)
     if (pads.getEditModeState())
         return;
 
+    if (menu.isMenuDisplayed())
+        return;
+
     if (!buttons.getButtonEnableState(id))
     {
         //button disabled
@@ -149,6 +152,20 @@ void handleTransportControl(uint8_t id, bool state)
 {
     if (pads.getEditModeState())
         return;
+
+    if (menu.isMenuDisplayed())
+    {
+        //when in menu, allow record button only during calibration
+        if (pads.isCalibrationEnabled())
+        {
+            if (id != BUTTON_TRANSPORT_RECORD)
+                return;
+        }
+        else
+        {
+            return;
+        }
+    }
 
     #ifdef NDEBUG
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
@@ -330,6 +347,9 @@ void handleUpDown(uint8_t id, bool state)
     if (!buttons.getButtonEnableState(id))
         return;
 
+    if (menu.isMenuDisplayed())
+        return;
+
     uint8_t lastTouchedPad = pads.getLastTouchedPad();
     bool direction = false;
 
@@ -447,6 +467,7 @@ void handleUpDown(uint8_t id, bool state)
 
                         default:
                         display.displayError(functionNoteShift, result);
+                        break;
                     }
                 }
                 else
@@ -465,6 +486,9 @@ void handleTonic(uint8_t id, bool state)
         return;
 
     if (!buttons.getButtonEnableState(id))
+        return;
+
+    if (menu.isMenuDisplayed())
         return;
 
     note_t note = buttons.getTonicFromButton(id);
@@ -542,6 +566,10 @@ void handlePresetEncButton(uint8_t id, bool state)
     if (!state)
         return;
 
+    #ifdef DEBUG
+    printf_P(PSTR("here\n"));
+    #endif
+
     if (pads.getEditModeState())
         return;
 
@@ -549,19 +577,13 @@ void handlePresetEncButton(uint8_t id, bool state)
     {
         //return
         menu.confirmOption(false);
+        //always disable calibration on return
+        if (pads.isCalibrationEnabled())
+            pads.setCalibrationMode(false);
         return;
     }
 
-    buttons.setModifierState(!buttons.getModifierState());
-
-    if (buttons.getModifierState())
-    {
-        //midi channel change mode, display on lcd
-        display.displayChangeResult(functionChannel, pads.getMIDIchannel(pads.getLastTouchedPad()), pads.getSplitState() ? singlePadSetting : globalSetting);
-    }
-    else
-    {
-        //return
-        display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
-    }
+    buttons.setMIDIchannelEnc(true);
+    //midi channel change mode, display on lcd
+    display.displayChangeResult(functionChannel, pads.getMIDIchannel(pads.getLastTouchedPad()), pads.getSplitState() ? singlePadSetting : globalSetting);
 }

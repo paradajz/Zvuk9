@@ -110,6 +110,9 @@ void Buttons::update()
         buttonState = board.getButtonState(i);
         processButton(i, buttonState);
     }
+
+    if (getMIDIchannelEnc() && (display.getActiveTextType() == lcdtext_still))
+        setMIDIchannelEnc(false);
 }
 
 bool Buttons::buttonDebounced(uint8_t buttonID, uint8_t state)
@@ -176,14 +179,14 @@ uint8_t Buttons::getLastPressedButton()
     return lastPressedButton;
 }
 
-void Buttons::setModifierState(bool state)
+void Buttons::setMIDIchannelEnc(bool state)
 {
-    modifierActive = state;
+    midiChannelEncState = state;
 }
 
-bool Buttons::getModifierState()
+bool Buttons::getMIDIchannelEnc()
 {
-    return modifierActive;
+    return midiChannelEncState;
 }
 
 Buttons buttons;

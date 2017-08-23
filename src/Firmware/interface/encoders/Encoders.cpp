@@ -67,10 +67,6 @@ void Encoders::update(bool process)
 
         if (encoderHandler[i] != NULL)
         {
-            //cancel preset button modifier with any other encoder
-            if ((i != PRESET_ENCODER) && buttons.getModifierState())
-                buttons.setModifierState(false);
-
             (*encoderHandler[i])(i, steps);
             lastStepTime[i] = 0;
         }

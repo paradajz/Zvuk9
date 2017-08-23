@@ -24,8 +24,8 @@ class Buttons
     bool getButtonState(uint8_t buttonID);
 
     void setButtonState(uint8_t buttonID, bool state);
-    void setModifierState(bool state);
-    bool getModifierState();
+    void setMIDIchannelEnc(bool state);
+    bool getMIDIchannelEnc();
 
     private:
     void handleTransportControlEvent(uint8_t buttonNumber, bool state);
@@ -48,7 +48,7 @@ class Buttons
     uint8_t                 buttonToNoteArray[MAX_NUMBER_OF_BUTTONS];
     uint8_t                 lastPressedButton;
     uint8_t                 buttonPressed[MAX_NUMBER_OF_BUTTONS/8+1];
-    bool                    modifierActive;
+    bool                    midiChannelEncState;
 };
 
 extern Buttons buttons;

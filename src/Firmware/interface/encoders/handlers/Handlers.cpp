@@ -54,7 +54,7 @@ void handleScale(uint8_t id, int8_t steps)
     //allow only 1 step change
     steps = steps > 0 ? 1 : -1;
 
-    if (buttons.getModifierState())
+    if (buttons.getMIDIchannelEnc())
     {
         //change midi channel
         buttons.disable(BUTTON_ON_OFF_SPLIT);
