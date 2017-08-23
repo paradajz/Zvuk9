@@ -293,10 +293,6 @@ void LCD::displayActivePadNotes(bool showNotes)
             {
                 strcpy(stringBuffer, tempBuffer);
                 size = pgm_read_byte(&noteNameArray_sizes[tonic]);
-
-                #ifdef DEBUG
-                printf_P(PSTR("notes string1: <%s>\n"), stringBuffer);
-                #endif
             }
 
             addNumberToCharArray(octave, size);
