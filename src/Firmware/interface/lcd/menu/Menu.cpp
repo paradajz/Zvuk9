@@ -203,10 +203,10 @@ void Menu::exitMenu()
     printf_P(PSTR("Exiting menu\n"));
     #endif
 
-    //exit menu and restore initial state
-    display.setupHomeScreen();
     //disable calibration if active
     pads.setCalibrationMode(false);
+    //exit menu and restore initial state
+    display.setupHomeScreen();
     //re-enable buttons
     buttons.enable();
     activeMenu = noMenu;
@@ -252,9 +252,11 @@ void Menu::confirmOption(bool confirm)
         //check if level has assigned function
         if (menuItem[indexes[currentOptionIndex]].function != NULL)
         {
-            if (menuItem[indexes[currentOptionIndex]].conditionCheck)
+            if (menuItem[indexes[currentOptionIndex]].checkable)
             {
-                //run function without setting any flag or menu title
+                //set second argument to "true" value to switch to new option
+                menuItem[indexes[currentOptionIndex]].argument.argument2 = true;
+                //menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
                 if (menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument))
                 {
                     //do nothing
@@ -264,12 +266,6 @@ void Menu::confirmOption(bool confirm)
                     //function returned false
                     return;
                 }
-            }
-            else if (menuItem[indexes[currentOptionIndex]].checkable)
-            {
-                //set second argument to "true" value to switch to new option
-                menuItem[indexes[currentOptionIndex]].argument.argument2 = true;
-                menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
 
                 //reset switch argument
                 menuItem[indexes[currentOptionIndex]].argument.argument2 = false;

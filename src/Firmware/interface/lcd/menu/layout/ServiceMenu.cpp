@@ -8,8 +8,7 @@ void Menu::createServiceMenuLayout()
 {
     menuItem[serviceMenuItem_calibration].stringPointer = menuOption_padCalibration_string;
     menuItem[serviceMenuItem_calibration].level = 1;
-    menuItem[serviceMenuItem_calibration].function = checkCalibration;
-    menuItem[serviceMenuItem_calibration].conditionCheck = true;
+    menuItem[serviceMenuItem_calibration].function = NULL;
 
         {
 

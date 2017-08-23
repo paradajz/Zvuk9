@@ -53,7 +53,6 @@ class Menu
         actionPointer function;
         //pointer to string to show item name
         const char *stringPointer;
-        bool conditionCheck;
         bool checkable;
         functionArgument argument;
     } menuItem_t;

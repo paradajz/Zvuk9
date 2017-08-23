@@ -109,7 +109,7 @@ bool deviceInfo(functionArgument argument)
 bool enableCalibration(functionArgument argument)
 {
     if (pads.getNumberOfPressedPads())
-    return false;
+         return false;
 
     switch((padCoordinate_t)argument.argument1)
     {
@@ -125,18 +125,6 @@ bool enableCalibration(functionArgument argument)
 
     pads.setCalibrationMode(true, (padCoordinate_t)argument.argument1);
     display.setupCalibrationScreen((padCoordinate_t)argument.argument1, leds.getLEDstate(LED_TRANSPORT_RECORD));
-    return true;
-}
-
-bool checkCalibration(functionArgument argument)
-{
-    if (pads.getNumberOfPressedPads())
-    {
-        //release pads error
-        menu.stopFunction();
-        return false;
-    }
-
     return true;
 }
 

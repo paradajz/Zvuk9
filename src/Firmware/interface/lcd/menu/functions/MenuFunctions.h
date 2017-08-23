@@ -46,9 +46,6 @@ bool deviceInfo(functionArgument argument);
 
 bool enableCalibration(functionArgument argument);
 
-//check functions
-bool checkCalibration(functionArgument argument);
-
 //checkable items functions
 bool checkRunningStatus(functionArgument argument);
 
