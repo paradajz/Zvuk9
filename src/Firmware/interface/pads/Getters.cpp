@@ -768,7 +768,7 @@ void Pads::getAftertouchLimits()
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
-        uint16_t upperPressure_limit = padPressureLimitUpper[i];
+        uint16_t upperPressure_limit = database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, i);
 
         int32_t lowerLimit = upperPressure_limit + (int32_t)((upperPressure_limit * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_LOWER) / 10000;
         int32_t upperLimit = lowerLimit + (int32_t)((lowerLimit * (int32_t)100) * (uint32_t)AFTERTOUCH_PRESSURE_RATIO_UPPER) / 10000;
