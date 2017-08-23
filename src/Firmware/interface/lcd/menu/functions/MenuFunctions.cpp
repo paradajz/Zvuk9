@@ -174,7 +174,6 @@ bool checkRunningStatus(functionArgument argument)
         return (midi.runningStatusEnabled() == (bool)argument.argument1);
         #endif
         break;
-
     }
 
     return false;
@@ -182,10 +181,10 @@ bool checkRunningStatus(functionArgument argument)
 
 bool checkNoteOffStatus(functionArgument argument)
 {
-    switch(argument.argument1)
+    switch((noteOffType_t)argument.argument1)
     {
-        case 0: //noteOffType_noteOnZeroVel:
-        case 1: //noteOffType_standardNoteOff:
+        case noteOffType_noteOnZeroVel:
+        case noteOffType_offChannel:
         //nothing
         break;
 
@@ -200,16 +199,12 @@ bool checkNoteOffStatus(functionArgument argument)
         //switch option
         #ifdef NDEBUG
         midi.setNoteOffMode((noteOffType_t)argument.argument1);
-        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
         #endif
+        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
         return true;
 
         case false:
-        #ifdef NDEBUG
-        return (midi.getNoteOffMode() == (noteOffType_t)argument.argument1);
-        #else
-        return false;
-        #endif
+        return (database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID) == (noteOffType_t)argument.argument1);
     }
 
     return false;
