@@ -22,8 +22,9 @@ const uint8_t             adcPinReadOrder_board[] =
     MUX_COMMON_PIN_2_PIN  //y coordinate
 };
 
-volatile uint16_t   coordinateSamples;
+volatile uint16_t   coordinateSamples[3];
 uint8_t             sampleCounter;
+int16_t             pressureMedian;
 
 //three coordinates
 volatile int16_t    extractedSamples[3][NUMBER_OF_PADS];
@@ -161,21 +162,53 @@ int16_t Board::getPadY(uint8_t pad)
     return returnValue;
 }
 
+inline void storeMedianValue(padCoordinate_t coordinate, bool firstPressure = true)
+{
+    int16_t value;
+
+    if ((coordinateSamples[0] <= coordinateSamples[1]) && (coordinateSamples[0] <= coordinateSamples[2]))
+    {
+        value = (coordinateSamples[1] <= coordinateSamples[2]) ? coordinateSamples[1] : coordinateSamples[2];
+    }
+    else if ((coordinateSamples[1] <= coordinateSamples[0]) && (coordinateSamples[1] <= coordinateSamples[2]))
+    {
+        value = (coordinateSamples[0] <= coordinateSamples[2]) ? coordinateSamples[0] : coordinateSamples[2];
+    }
+    else
+    {
+        value = (coordinateSamples[0] <= coordinateSamples[1]) ? coordinateSamples[0] : coordinateSamples[1];
+    }
+
+    if (coordinate == coordinateZ)
+    {
+        //special checks here due to two needed median values for two sensor plates
+        if (firstPressure)
+        {
+            pressureMedian = value;
+        }
+        else
+        {
+            extractedSamples[coordinate][activePad] = (pressureMedian + value) >> 1;
+        }
+    }
+    else
+    {
+        extractedSamples[coordinate][activePad] = value;
+    }
+}
+
 ISR(ADC_vect)
 {
     if (padReadingIndex < readX)
     {
-        coordinateSamples += ADC;
+        coordinateSamples[sampleCounter] = ADC;
         sampleCounter++;
 
         if (padReadingIndex == 1)
         {
-            sampleCounter++;
-
-            if (sampleCounter == 2)
+            if (sampleCounter == 3)
             {
-                //read pressure from two sensor plates and then get an average reading
-                extractedSamples[coordinateZ][activePad] = coordinateSamples >> 2;
+                storeMedianValue(coordinateZ, false);
 
                 //switch to x/y reading only if pad is pressed
                 if (bitRead(padPressed, activePad))
@@ -189,7 +222,7 @@ ISR(ADC_vect)
                     activePad++;
 
                     if (activePad == NUMBER_OF_PADS)
-                    activePad = 0;
+                        activePad = 0;
 
                     setMuxInput(activePad);
                     padReadingIndex = 0;
@@ -197,15 +230,16 @@ ISR(ADC_vect)
 
                 //reset samples count
                 sampleCounter = 0;
-                coordinateSamples = 0;
             }
         }
         else
         {
-            sampleCounter++;
-            if (sampleCounter == 2)
+            if (sampleCounter == 3)
             {
                 sampleCounter = 0;
+
+                storeMedianValue(coordinateZ, true);
+
                 //next pressure reading
                 padReadingIndex++;
             }
@@ -214,15 +248,15 @@ ISR(ADC_vect)
     else if (padReadingIndex == readX)
     {
         //read x
-        coordinateSamples += ADC;
+        coordinateSamples[0] += ADC;
         sampleCounter++;
 
         if (sampleCounter == 2)
         {
-            extractedSamples[coordinateX][activePad] = coordinateSamples >> 1;
+            extractedSamples[coordinateX][activePad] = coordinateSamples[0] >> 1;
 
             sampleCounter = 0;
-            coordinateSamples = 0;
+            coordinateSamples[0] = 0;
 
             //start sampling y
             padReadingIndex++;
@@ -231,15 +265,15 @@ ISR(ADC_vect)
     else if (padReadingIndex == readY)
     {
         //read y
-        coordinateSamples += ADC;
+        coordinateSamples[0] += ADC;
         sampleCounter++;
 
         if (sampleCounter == 2)
         {
-            extractedSamples[coordinateY][activePad] = coordinateSamples >> 1;
+            extractedSamples[coordinateY][activePad] = coordinateSamples[0] >> 1;
 
             sampleCounter = 0;
-            coordinateSamples = 0;
+            coordinateSamples[0] = 0;
 
             //everything is read, skip to next pad and start over
             padReadingIndex = 0;
