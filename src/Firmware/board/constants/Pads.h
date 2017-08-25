@@ -4,7 +4,7 @@
 #include "Hardware.h"
 #include "../DataTypes.h"
 
-#define MIN_PAD_PRESSURE    5
+#define MIN_PAD_PRESSURE    15
 
 ///
 /// \brief Curve used to achieve linear and smoother response from pads.
