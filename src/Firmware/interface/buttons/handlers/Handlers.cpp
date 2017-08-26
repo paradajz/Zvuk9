@@ -182,7 +182,7 @@ void handleTransportControl(uint8_t id, bool state)
     {
         case BUTTON_TRANSPORT_PLAY:
         function = functionPlay;
-        #ifdef NDEBUG
+        #ifdef USE_USB_MIDI
         switch(buttons.getTransportControlType())
         {
             case transportCC:
@@ -207,7 +207,7 @@ void handleTransportControl(uint8_t id, bool state)
         case BUTTON_TRANSPORT_STOP:
         function = functionStop;
         recordOff = leds.getLEDstate(LED_TRANSPORT_RECORD);
-        #ifdef NDEBUG
+        #ifdef USE_USB_MIDI
         switch(buttons.getTransportControlType())
         {
             case transportCC:
@@ -288,7 +288,7 @@ void handleTransportControl(uint8_t id, bool state)
             if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
             {
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
-                #ifdef NDEBUG
+                #ifdef USE_USB_MIDI
                 switch(buttons.getTransportControlType())
                 {
                     case transportCC:
@@ -311,7 +311,7 @@ void handleTransportControl(uint8_t id, bool state)
             else
             {
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
-                #ifdef NDEBUG
+                #ifdef USE_USB_MIDI
                 switch(buttons.getTransportControlType())
                 {
                     case transportCC:

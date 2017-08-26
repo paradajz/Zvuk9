@@ -114,7 +114,7 @@ int main()
     vserial.init();
     #endif
 
-    #ifdef NDEBUG
+    #ifdef USE_USB_MIDI
     midi.init(dinInterface);
     midi.init(usbInterface);
     midi.setInputChannel(1);

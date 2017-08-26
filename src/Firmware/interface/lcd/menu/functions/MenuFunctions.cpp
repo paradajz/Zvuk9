@@ -163,14 +163,14 @@ bool checkRunningStatus(functionArgument argument)
     {
         case true:
         //switch option
-        #ifdef NDEBUG
+        #ifdef USE_USB_MIDI
         (bool)argument.argument1 ? midi.enableRunningStatus() : midi.disableRunningStatus();
         database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument.argument1);
         #endif
         return true;
 
         case false:
-        #ifdef NDEBUG
+        #ifdef USE_USB_MIDI
         return (midi.runningStatusEnabled() == (bool)argument.argument1);
         #endif
         break;
@@ -197,7 +197,7 @@ bool checkNoteOffStatus(functionArgument argument)
     {
         case true:
         //switch option
-        #ifdef NDEBUG
+        #ifdef USE_USB_MIDI
         midi.setNoteOffMode((noteOffType_t)argument.argument1);
         #endif
         database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
