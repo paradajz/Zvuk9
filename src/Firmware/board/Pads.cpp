@@ -156,7 +156,24 @@ uint16_t Board::getPadPressure(uint8_t pad)
 
     returnValue_pressure = pgm_read_word(&pressure_correction[returnValue_pressure]);
 
-    return returnValue_pressure > MIN_PAD_PRESSURE ? returnValue_pressure : 0;
+    if (returnValue_pressure > PAD_PRESS_PRESSURE)
+    {
+        return returnValue_pressure;
+    }
+    else
+    {
+        if (bitRead(padPressed, pad))
+        {
+            if (returnValue_pressure < PAD_RELEASE_PRESSURE)
+                return 0;
+            else
+                return returnValue_pressure;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 }
 
 int16_t Board::getPadX(uint8_t pad)
@@ -246,7 +263,7 @@ ISR(ADC_vect)
                 else
                 {
                     //first valid touch has been registered
-                    if ((extractedSamples[coordinateZ][activePad] > MIN_PAD_PRESSURE) && !velocityReadout[activePad])
+                    if ((extractedSamples[coordinateZ][activePad] > PAD_PRESS_PRESSURE) && !velocityReadout[activePad])
                     {
                         extractedSamples[coordinateZ][activePad] = -1;
                         velocityReadout[activePad] = true;
@@ -254,7 +271,7 @@ ISR(ADC_vect)
                         pressureSamples[activePad] = 3;
                     }
                     //store this value as velocity - very important not to overwrite it!
-                    else if ((extractedSamples[coordinateZ][activePad] > MIN_PAD_PRESSURE) && velocityReadout[activePad])
+                    else if ((extractedSamples[coordinateZ][activePad] > PAD_PRESS_PRESSURE) && velocityReadout[activePad])
                     {
                         velocity[activePad] = extractedSamples[coordinateZ][activePad];
                     }

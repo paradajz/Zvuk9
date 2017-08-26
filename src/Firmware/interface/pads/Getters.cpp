@@ -895,7 +895,7 @@ uint8_t Pads::getScaledPressure(int8_t pad, uint16_t pressure, pressureType_t ty
         break;
 
         case pressureVelocity:
-        return curves.map(constrain(pressure, MIN_PAD_PRESSURE, padPressureLimitUpper[pad]), MIN_PAD_PRESSURE, padPressureLimitUpper[pad], 0, 127);
+        return curves.map(constrain(pressure, PAD_PRESS_PRESSURE, padPressureLimitUpper[pad]), PAD_PRESS_PRESSURE, padPressureLimitUpper[pad], 0, 127);
         break;
     }
 

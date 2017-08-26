@@ -4,7 +4,15 @@
 #include "Hardware.h"
 #include "../DataTypes.h"
 
-#define MIN_PAD_PRESSURE    15
+///
+/// \brief Value after which pad is considered pressed.
+///
+#define PAD_PRESS_PRESSURE          15
+
+///
+/// \brief Value below which pad is considered released if it was pressed previously.
+///
+#define PAD_RELEASE_PRESSURE        5
 
 ///
 /// \brief Curve used to achieve linear and smoother response from pads.
