@@ -959,9 +959,9 @@ changeResult_t Pads::calibrateXY(int8_t pad, padCoordinate_t type, limitType_t l
         if (updateMIDIvalue)
         {
             if (type == coordinateX)
-                lastXMIDIvalue[getLastTouchedPad()] = getScaledXY(getLastTouchedPad(), board.getPadX(getLastTouchedPad()), coordinateX, true);
+                lastXCCvalue[getLastTouchedPad()] = getScaledXY(getLastTouchedPad(), board.getPadX(getLastTouchedPad()), coordinateX, midiScale_7b);
             else
-                lastYMIDIvalue[getLastTouchedPad()] = getScaledXY(getLastTouchedPad(), board.getPadY(getLastTouchedPad()), coordinateY, true);
+                lastYCCvalue[getLastTouchedPad()] = getScaledXY(getLastTouchedPad(), board.getPadY(getLastTouchedPad()), coordinateY, midiScale_7b);
         }
 
         return valueChanged;
