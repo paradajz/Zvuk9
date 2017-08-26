@@ -114,15 +114,6 @@ int main()
     vserial.init();
     #endif
 
-    #ifdef USE_USB_MIDI
-    midi.init(dinInterface);
-    midi.init(usbInterface);
-    midi.setInputChannel(1);
-    midi.setNoteOffMode((noteOffType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
-    bool runningStatus = database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
-    runningStatus ? midi.enableRunningStatus() : midi.disableRunningStatus();
-    #endif
-
     board.init();
     display.init();
 
@@ -138,6 +129,15 @@ int main()
         database.factoryReset(initWipe);
         display.setDirectWriteState(false);
     }
+
+    #ifdef USE_USB_MIDI
+    midi.init(dinInterface);
+    midi.init(usbInterface);
+    midi.setInputChannel(1);
+    midi.setNoteOffMode((noteOffType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
+    bool runningStatus = database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
+    runningStatus ? midi.enableRunningStatus() : midi.disableRunningStatus();
+    #endif
 
     leds.init();
     pads.init();
