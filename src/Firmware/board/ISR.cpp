@@ -36,7 +36,7 @@ void Board::initTimers()
     TCCR3B |= (1 << CS31) | (1 << CS30);
 
     //set compare match register to desired timer count
-    OCR3A = 51; //0.2ms
+    OCR3A = 62; //0.25ms
 
     //enable CTC interrupt for timer3
     TIMSK3 |= (1<<OCIE3A);
@@ -299,7 +299,7 @@ ISR(TIMER3_COMPA_vect)
 
     updateStuff++;
 
-    if (updateStuff == 5)
+    if (updateStuff == 4)
     {
         //1ms
         ledRowsOff();

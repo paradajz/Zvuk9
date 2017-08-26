@@ -14,7 +14,7 @@ const uint8_t       padIDArray[] =
     PAD_8
 };
 
-const uint8_t             adcPinReadOrder_board[] =
+const uint8_t       adcPinReadOrder_board[] =
 {
     MUX_COMMON_PIN_0_PIN, //pressure, first reading
     MUX_COMMON_PIN_1_PIN, //pressure, second reading
@@ -24,7 +24,22 @@ const uint8_t             adcPinReadOrder_board[] =
 
 volatile uint16_t   coordinateSamples[3];
 uint8_t             sampleCounter;
-int16_t             pressureMedian;
+int16_t             pressurePlate1;
+int16_t             velocityReadout[NUMBER_OF_PADS];
+volatile int16_t    velocity[NUMBER_OF_PADS];
+
+uint8_t             pressureSamples[NUMBER_OF_PADS] =
+{
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+};
 
 //three coordinates
 volatile int16_t    extractedSamples[3][NUMBER_OF_PADS];
@@ -123,19 +138,25 @@ void Board::initPads()
 
 uint16_t Board::getPadPressure(uint8_t pad)
 {
-    int16_t returnValue;
+    int16_t returnValue_pressure;
+    int16_t returnValue_velocity;
 
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        returnValue = extractedSamples[coordinateZ][pad];
+        returnValue_pressure = extractedSamples[coordinateZ][pad];
+        returnValue_velocity = velocity[pad];
+        velocity[pad] = 0;
     }
 
-    if (returnValue == -1)
+    if (returnValue_velocity)
+        return returnValue_velocity;
+
+    if (returnValue_pressure == -1)
         return 0;
 
-    returnValue = pgm_read_word(&pressure_correction[returnValue]);
+    returnValue_pressure = pgm_read_word(&pressure_correction[returnValue_pressure]);
 
-    return returnValue > MIN_PAD_PRESSURE ? returnValue : 0;
+    return returnValue_pressure > MIN_PAD_PRESSURE ? returnValue_pressure : 0;
 }
 
 int16_t Board::getPadX(uint8_t pad)
@@ -162,38 +183,39 @@ int16_t Board::getPadY(uint8_t pad)
     return returnValue;
 }
 
-inline void storeMedianValue(padCoordinate_t coordinate, bool firstPressure = true)
+inline void storeMaxPressure(bool firstPressure)
 {
-    int16_t value;
+    //int16_t value;
 
-    if ((coordinateSamples[0] <= coordinateSamples[1]) && (coordinateSamples[0] <= coordinateSamples[2]))
+    //if ((coordinateSamples[0] <= coordinateSamples[1]) && (coordinateSamples[0] <= coordinateSamples[2]))
+    //{
+        //value = (coordinateSamples[1] <= coordinateSamples[2]) ? coordinateSamples[1] : coordinateSamples[2];
+    //}
+    //else if ((coordinateSamples[1] <= coordinateSamples[0]) && (coordinateSamples[1] <= coordinateSamples[2]))
+    //{
+        //value = (coordinateSamples[0] <= coordinateSamples[2]) ? coordinateSamples[0] : coordinateSamples[2];
+    //}
+    //else
+    //{
+        //value = (coordinateSamples[0] <= coordinateSamples[1]) ? coordinateSamples[0] : coordinateSamples[1];
+    //}
+
+    uint16_t max = coordinateSamples[0];
+
+    if (coordinateSamples[1] > max)
+        max = coordinateSamples[1];
+
+    if (coordinateSamples[2] > max)
+        max = coordinateSamples[2];
+
+    //special checks here due to two needed median values for two sensor plates
+    if (firstPressure)
     {
-        value = (coordinateSamples[1] <= coordinateSamples[2]) ? coordinateSamples[1] : coordinateSamples[2];
-    }
-    else if ((coordinateSamples[1] <= coordinateSamples[0]) && (coordinateSamples[1] <= coordinateSamples[2]))
-    {
-        value = (coordinateSamples[0] <= coordinateSamples[2]) ? coordinateSamples[0] : coordinateSamples[2];
+        pressurePlate1 = max;
     }
     else
     {
-        value = (coordinateSamples[0] <= coordinateSamples[1]) ? coordinateSamples[0] : coordinateSamples[1];
-    }
-
-    if (coordinate == coordinateZ)
-    {
-        //special checks here due to two needed median values for two sensor plates
-        if (firstPressure)
-        {
-            pressureMedian = value;
-        }
-        else
-        {
-            extractedSamples[coordinate][activePad] = (pressureMedian + value) >> 1;
-        }
-    }
-    else
-    {
-        extractedSamples[coordinate][activePad] = value;
+        extractedSamples[coordinateZ][activePad] = (pressurePlate1 + max) >> 1;
     }
 }
 
@@ -206,18 +228,37 @@ ISR(ADC_vect)
 
         if (padReadingIndex == 1)
         {
-            if (sampleCounter == 3)
+            if (sampleCounter == pressureSamples[activePad])
             {
-                storeMedianValue(coordinateZ, false);
+                storeMaxPressure(false);
 
                 //switch to x/y reading only if pad is pressed
                 if (bitRead(padPressed, activePad))
                 {
                     //start reading x/y coordinates
                     padReadingIndex++;
+                    velocityReadout[activePad] = false;
+                    pressureSamples[activePad] = 1;
+                    coordinateSamples[0] = 0;
+                    coordinateSamples[1] = 0;
+                    coordinateSamples[2] = 0;
                 }
                 else
                 {
+                    //first valid touch has been registered
+                    if ((extractedSamples[coordinateZ][activePad] > MIN_PAD_PRESSURE) && !velocityReadout[activePad])
+                    {
+                        extractedSamples[coordinateZ][activePad] = -1;
+                        velocityReadout[activePad] = true;
+                        //start taking three samples
+                        pressureSamples[activePad] = 3;
+                    }
+                    //store this value as velocity - very important not to overwrite it!
+                    else if ((extractedSamples[coordinateZ][activePad] > MIN_PAD_PRESSURE) && velocityReadout[activePad])
+                    {
+                        velocity[activePad] = extractedSamples[coordinateZ][activePad];
+                    }
+
                     //switch to another pad
                     activePad++;
 
@@ -234,11 +275,11 @@ ISR(ADC_vect)
         }
         else
         {
-            if (sampleCounter == 3)
+            if (sampleCounter == pressureSamples[activePad])
             {
                 sampleCounter = 0;
 
-                storeMedianValue(coordinateZ, true);
+                storeMaxPressure(true);
 
                 //next pressure reading
                 padReadingIndex++;
@@ -274,6 +315,8 @@ ISR(ADC_vect)
 
             sampleCounter = 0;
             coordinateSamples[0] = 0;
+            coordinateSamples[1] = 0;
+            coordinateSamples[2] = 0;
 
             //everything is read, skip to next pad and start over
             padReadingIndex = 0;
