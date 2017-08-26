@@ -28,6 +28,32 @@
 #define DEFAULT_XY_AT_VALUE                         255
 
 ///
+/// \brief Value used to reset last X and Y values for pitch bend so that new value can always differ from the last one.
+///
+#define DEFAULT_PITCH_BEND_VALUE                    16000
+
+///
+/// \brief Value used to reset last initial X and Y values so that new value can always differ from the last one.
+///
+#define DEFAULT_INITIAL_XY_VALUE                    16000
+
+///
+/// \brief When Pitch Bend Type 1 is used, pad areas from 25% to 75% are "dead", that is, they give PB value 0.
+/// \warning These values assume 10-bit ADC resolution. Please adjust the values according to ADC resolution.
+/// @{
+
+#define PITCH_BEND_1_DEAD_AREA_MIN                  154
+#define PITCH_BEND_1_DEAD_AREA_MAX                  870
+
+/// @}
+
+///
+/// \brief When Pitch Bend Type 2 is used, 7% of pad surface is used for full PB range in positive, and 7% in negative direction.
+/// \warning This value assume 10-bit ADC resolution. Please adjust the values according to ADC resolution.
+///
+#define PITCH_BEND_2_FULL_RANGE_AREA                71
+
+///
 ///\brief Percentage used to calculate upper pressure limit on medium pressure sensitivity to send velocity.
 /// Upper velocity value = Lower velocity value + (Lower velocity value * VELOCITY_PRESSURE_RATIO_UPPER_MEDIUM%)
 ///
@@ -43,13 +69,13 @@
 ///\brief Percentage used to calculate lower pressure limit to send aftertouch.
 /// Lower aftertouch value = Upper pressure (without sensitivity scaling) value + (Upper pressure (velocity) value * AFTERTOUCH_PRESSURE_RATIO_LOWER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_LOWER             35
+#define AFTERTOUCH_PRESSURE_RATIO_LOWER             40
 
 ///
 ///\brief Percentage used to calculate upper pressure limit to send aftertouch.
 /// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER             70
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER             65
 
 ///
 /// \brief Readings after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.
