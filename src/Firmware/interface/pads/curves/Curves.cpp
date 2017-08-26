@@ -46,7 +46,7 @@ void Curves::init()
 /// @param [in] out_max Largest possible output value.
 /// \returns Mapped value (uint32_t).
 ///
-uint32_t Curves::map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)
+int32_t Curves::map(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min, int32_t out_max)
 {
     return constrain((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min, out_min, out_max);
 }
