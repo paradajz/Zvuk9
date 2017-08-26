@@ -257,9 +257,6 @@ bool Pads::checkVelocity(int8_t pad)
             bitWrite(lastMIDInoteState, pad, true);
             lastPadPressTime[pad] = rTimeMs();
             returnValue = true;
-            #ifdef DEBUG
-            printf_P(PSTR("Stable press. Current time: %d\n"), rTimeMs());
-            #endif
         }
 
         //always update lastPressure value
@@ -288,10 +285,6 @@ bool Pads::checkVelocity(int8_t pad)
                 pressureCalibrationTime = 0;
                 pressureCalibrationLastChange = 0;
             }
-
-            #ifdef DEBUG
-            printf_P(PSTR("Stable release. Current time: %d\n"), rTimeMs());
-            #endif
         }
         break;
     }
