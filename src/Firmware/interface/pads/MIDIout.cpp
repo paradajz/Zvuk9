@@ -20,10 +20,13 @@ void Pads::sendX(int8_t pad)
 
     #ifdef DEBUG
     printf_P(PSTR("X for pad %d: "), pad);
-    printf_P(PSTR("%d\n"), lastXMIDIvalue[pad]);
+    printf_P(PSTR("%d\n"), lastXCCvalue[pad]);
     printf_P(PSTR("X CC: %d\n"), ccXPad[pad]);
     #else
-    midi.sendControlChange(ccXPad[pad], lastXMIDIvalue[pad], midiChannel[pad]);
+    if (getPitchBendState(pad, coordinateX))
+        midi.sendPitchBend(lastXPitchBendValue[pad], midiChannel[pad]);
+    else
+        midi.sendControlChange(ccXPad[pad], lastXCCvalue[pad], midiChannel[pad]);
     #endif
 }
 
@@ -37,10 +40,13 @@ void Pads::sendY(int8_t pad)
 
     #ifdef DEBUG
     printf_P(PSTR("Y for pad %d: "), pad);
-    printf_P(PSTR("%d\n"), lastYMIDIvalue[pad]);
+    printf_P(PSTR("%d\n"), lastYCCvalue[pad]);
     printf_P(PSTR("Y CC: %d\n"), ccYPad[pad]);
     #else
-    midi.sendControlChange(ccYPad[pad], lastYMIDIvalue[pad], midiChannel[pad]);
+    if (getPitchBendState(pad, coordinateY))
+        midi.sendPitchBend(lastYPitchBendValue[pad], midiChannel[pad]);
+    else
+        midi.sendControlChange(ccYPad[pad], lastYCCvalue[pad], midiChannel[pad]);
     #endif
 }
 

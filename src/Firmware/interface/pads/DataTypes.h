@@ -143,4 +143,14 @@ typedef enum
     pitchBend2
 } pitchBendType_t;
 
+///
+/// \brief List of all possible scaling types when scaling values read from sensors.
+///
+typedef enum
+{
+    rawScale,
+    midiScale_7b,
+    midiScale_14b
+} valueScaleType_t;
+
 /// @}

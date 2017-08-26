@@ -50,7 +50,7 @@ class Pads
     int8_t getPredefinedScaleNotes(int8_t scale);
     note_t getScaleNote(int8_t scale, int8_t index);
     uint8_t getScaledPressure(int8_t pad, uint16_t pressure, pressureType_t type);
-    uint16_t getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale);
+    uint16_t getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, valueScaleType_t scaleType);
     pitchBendType_t getPitchBendType();
     bool getPitchBendState(int8_t pad, padCoordinate_t coordinate);
 
@@ -114,11 +114,26 @@ class Pads
     /// \brief Arrays holding last MIDI values for X (CC), Y (CC) and Z (velocity and aftertouch) coordinates for each pad.
     /// @{
 
-    uint8_t                 lastXMIDIvalue[NUMBER_OF_PADS],
-                            lastYMIDIvalue[NUMBER_OF_PADS],
-                            lastAftertouchValue[NUMBER_OF_PADS];
+    uint8_t                 lastXCCvalue[NUMBER_OF_PADS],
+                            lastYCCvalue[NUMBER_OF_PADS],
+                            lastAftertouchValue[NUMBER_OF_PADS],
+                            lastVelocityValue[NUMBER_OF_PADS];
 
-    int16_t                 lastVelocityValue[NUMBER_OF_PADS];
+    /// @}
+
+    ///
+    /// \brief Initial X and Y positions once pad has been pressed for all pads.
+    /// Used for pitch bend type 2.
+    ///
+    uint16_t                initialXposition[NUMBER_OF_PADS],
+                            initialYposition[NUMBER_OF_PADS];
+
+    ///
+    /// \brief Arrays holding pitch bend X/Y value for all pads (raw value 0-1023).
+    /// @{
+
+    uint16_t                lastXPitchBendValue[NUMBER_OF_PADS],
+                            lastYPitchBendValue[NUMBER_OF_PADS];
 
     /// @}
 

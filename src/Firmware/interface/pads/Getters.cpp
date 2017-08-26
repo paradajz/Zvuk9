@@ -2,6 +2,7 @@
 #include "../leds/LEDs.h"
 #include "../../database/Database.h"
 #include "PredefinedScales.h"
+#include "../../midi/src/MIDI.h"
 
 ///
 /// \ingroup interfacePads
@@ -462,8 +463,8 @@ padCalibrationSection Pads::getPressureZone(int8_t pad)
     assert(PAD_CHECK(pad));
 
     //find out pressure zone
-    int16_t scaledX = getScaledXY(pad, board.getPadX(pad), coordinateX, false);
-    int16_t scaledY = getScaledXY(pad, board.getPadY(pad), coordinateY, false);
+    int16_t scaledX = getScaledXY(pad, board.getPadX(pad), coordinateX, rawScale);
+    int16_t scaledY = getScaledXY(pad, board.getPadY(pad), coordinateY, rawScale);
 
     uint8_t row = PRESSURE_CALIBRATION_Y_ZONES - 1 - (scaledY / PRESSURE_CALIBRATION_MAX_Y_ZONE_VALUE);
     //invert
@@ -909,20 +910,85 @@ uint8_t Pads::getScaledPressure(int8_t pad, uint16_t pressure, pressureType_t ty
 /// @param [in] midiScale   If set to true, requested value will be scaled to MIDI range (0-127), otherwise, value will be scaled to raw range (0-1023).
 /// Scaling to raw range is useful in certain scenarios since lowest and largest X or Y values are never 0 and 1023 but some values in between.
 ///
-uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, bool midiScale)
+uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, valueScaleType_t scaleType)
 {
     assert(PAD_CHECK(pad));
 
-    switch (type)
-    {
-        case coordinateX:
-        return curves.map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, midiScale ? 127 : 1023);
+    int16_t min, max;
 
-        case coordinateY:
-        return curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, midiScale ? 127 : 1023);
+    switch(scaleType)
+    {
+        case rawScale:
+        min = 0;
+        max = 1023;
+        break;
+
+        case midiScale_7b:
+        min = 0;
+        max = 127;
+        break;
+
+        case midiScale_14b:
+        min = MIDI_PITCHBEND_MIN;
+        max = MIDI_PITCHBEND_MAX;
+        break;
 
         default:
         return 0;
+    }
+
+    if (scaleType != midiScale_14b)
+    {
+        switch (type)
+        {
+            case coordinateX:
+            return curves.map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], min, max);
+
+            case coordinateY:
+            return curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], min, max);
+
+            default:
+            return 0;
+        }
+    }
+    else
+    {
+        int16_t value, initialPosition;
+
+        if (type == coordinateX)
+        {
+            value = curves.map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, 1023);
+            initialPosition = initialXposition[pad];
+        }
+        else
+        {
+            value = curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, 1023);
+            initialPosition = initialYposition[pad];
+        }
+
+        switch(getPitchBendType())
+        {
+            case pitchBend1:
+            if ((value >= PITCH_BEND_1_DEAD_AREA_MIN) && (value < PITCH_BEND_1_DEAD_AREA_MAX))
+            {
+                return 0;
+            }
+            else
+            {
+                value = value < PITCH_BEND_1_DEAD_AREA_MIN ? curves.map(value, 0, PITCH_BEND_1_DEAD_AREA_MIN, MIDI_PITCHBEND_MIN, 0) : curves.map(value, PITCH_BEND_1_DEAD_AREA_MAX, 1023, 0, MIDI_PITCHBEND_MAX);
+                return value;
+            }
+            break;
+
+            case pitchBend2:
+            min = initialPosition - PITCH_BEND_2_FULL_RANGE_AREA < 0 ? 0 : initialPosition - PITCH_BEND_2_FULL_RANGE_AREA;
+            max = initialPosition + PITCH_BEND_2_FULL_RANGE_AREA > 1023 ? 1023 : initialPosition + PITCH_BEND_2_FULL_RANGE_AREA;
+            value = curves.map(constrain(value, min, max), min, max, MIDI_PITCHBEND_MIN, MIDI_PITCHBEND_MAX);
+            return value;
+
+            default:
+            return 0;
+        }
     }
 }
 

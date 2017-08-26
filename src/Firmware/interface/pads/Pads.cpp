@@ -12,8 +12,13 @@ Pads::Pads()
 {
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
-        lastXMIDIvalue[i] = DEFAULT_XY_AT_VALUE;
-        lastYMIDIvalue[i] = DEFAULT_XY_AT_VALUE;
+        lastXCCvalue[i] = DEFAULT_XY_AT_VALUE;
+        lastYCCvalue[i] = DEFAULT_XY_AT_VALUE;
+        lastXPitchBendValue[i] = DEFAULT_PITCH_BEND_VALUE;
+        lastYPitchBendValue[i] = DEFAULT_PITCH_BEND_VALUE;
+        initialXposition[i] = DEFAULT_INITIAL_XY_VALUE;
+        initialYposition[i] = DEFAULT_INITIAL_XY_VALUE;
+
         lastAftertouchValue[i] = DEFAULT_XY_AT_VALUE;
 
         for (int j=0; j<NOTES_PER_PAD; j++)

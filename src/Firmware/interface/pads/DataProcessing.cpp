@@ -253,7 +253,7 @@ bool Pads::checkVelocity(int8_t pad)
             //sensor is really pressed
             setPadPressState(pad, true);
             //store raw value so that pressure zone can be determined more precisely once x and y are read
-            lastVelocityValue[pad] = value;
+            lastVelocityValue[pad] = getScaledPressure(pad, value, pressureVelocity);
             bitWrite(lastMIDInoteState, pad, true);
             lastPadPressTime[pad] = rTimeMs();
             returnValue = true;
@@ -268,11 +268,15 @@ bool Pads::checkVelocity(int8_t pad)
         {
             //pad is already pressed
             setPadPressState(pad, false);
-            lastVelocityValue[pad] = value;
+            lastVelocityValue[pad] = getScaledPressure(pad, value, pressureVelocity);
             bitWrite(lastMIDInoteState, pad, false);
             returnValue = true;
-            lastXMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
-            lastYMIDIvalue[pad] = DEFAULT_XY_AT_VALUE;
+            lastXCCvalue[pad] = DEFAULT_XY_AT_VALUE;
+            lastYCCvalue[pad] = DEFAULT_XY_AT_VALUE;
+            lastXPitchBendValue[pad] = DEFAULT_PITCH_BEND_VALUE;
+            lastYPitchBendValue[pad] = DEFAULT_PITCH_BEND_VALUE;
+            initialXposition[pad] = DEFAULT_INITIAL_XY_VALUE;
+            initialYposition[pad] = DEFAULT_INITIAL_XY_VALUE;
 
             if (isCalibrationEnabled() && (activeCalibration == coordinateZ))
             {
@@ -456,10 +460,6 @@ bool Pads::checkX(int8_t pad)
 
     if (calibrationEnabled && (activeCalibration == coordinateX) && (bool)leds.getLEDstate(LED_TRANSPORT_RECORD))
     {
-        #ifdef DEBUG
-        printf_P(PSTR("Received value for X: %d\nMin value for X: %d\n"), value, padXLimitLower[pad]);
-        #endif
-
         if ((uint16_t)value < padXLimitLower[pad])
         {
             #ifdef DEBUG
@@ -476,27 +476,51 @@ bool Pads::checkX(int8_t pad)
         }
     }
 
-    int16_t xValue = getScaledXY(pad, value, coordinateX, true);
-    xValue = curves.getCurveValue((curve_t)padCurveX[pad], xValue, ccXminPad[pad], ccXmaxPad[pad]);
+    if (initialXposition[pad] == DEFAULT_INITIAL_XY_VALUE)
+        initialXposition[pad] = getScaledXY(pad, value, coordinateX, rawScale);
 
     bool xChanged = false;
 
     if (xSendTimer[pad] < 255)
         xSendTimer[pad]++;
 
-    if (xSendTimer[pad] > XY_SEND_TIMEOUT)
+    if (getPitchBendState(pad, coordinateX))
     {
-        if (abs(xValue - lastXMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP)
+        value = getScaledXY(pad, value, coordinateX, midiScale_14b);
+
+        if (xSendTimer[pad] > XY_SEND_TIMEOUT)
+        {
+            if (abs(value - lastXPitchBendValue[pad]) > XY_SEND_TIMEOUT_STEP)
+                xChanged = true;
+        }
+        else if (value != (int16_t)lastXPitchBendValue[pad])
+        {
             xChanged = true;
+        }
     }
-    else if (xValue != lastXMIDIvalue[pad])
+    else
     {
-        xChanged = true;
+        value = getScaledXY(pad, value, coordinateX, midiScale_7b);
+        value = curves.getCurveValue((curve_t)padCurveX[pad], value, ccXminPad[pad], ccXmaxPad[pad]);
+
+        if (xSendTimer[pad] > XY_SEND_TIMEOUT)
+        {
+            if (abs(value - lastXCCvalue[pad]) > XY_SEND_TIMEOUT_STEP)
+                xChanged = true;
+        }
+        else if (value != lastXCCvalue[pad])
+        {
+            xChanged = true;
+        }
     }
 
     if (xChanged)
     {
-        lastXMIDIvalue[pad] = xValue;
+        if (getPitchBendState(pad, coordinateX))
+            lastXPitchBendValue[pad] = value;
+        else
+            lastXCCvalue[pad] = value;
+
         xSendTimer[pad] = 0;
         return true;
     }
@@ -542,32 +566,51 @@ bool Pads::checkY(int8_t pad)
         }
     }
 
-    #ifdef DEBUG
-    if (pad == 8)
-    printf_P(PSTR("y value: %d\n"), value);
-    #endif
-
-    int16_t yValue = getScaledXY(pad, value, coordinateY, true);
-    yValue = curves.getCurveValue((curve_t)padCurveY[pad], yValue, ccYminPad[pad], ccYmaxPad[pad]);
+    if (initialYposition[pad] == DEFAULT_INITIAL_XY_VALUE)
+        initialYposition[pad] = getScaledXY(pad, value, coordinateY, rawScale);
 
     bool yChanged = false;
 
     if (ySendTimer[pad] < 255)
         ySendTimer[pad]++;
 
-    if (ySendTimer[pad] > XY_SEND_TIMEOUT)
+    if (getPitchBendState(pad, coordinateY))
     {
-        if (abs(yValue - lastYMIDIvalue[pad]) > XY_SEND_TIMEOUT_STEP)
+        value = getScaledXY(pad, value, coordinateY, midiScale_14b);
+
+        if (ySendTimer[pad] > XY_SEND_TIMEOUT)
+        {
+            if (abs(value - lastYPitchBendValue[pad]) > XY_SEND_TIMEOUT_STEP)
+                yChanged = true;
+        }
+        else if (value != (int16_t)lastYPitchBendValue[pad])
+        {
             yChanged = true;
+        }
     }
-    else if (yValue != lastYMIDIvalue[pad])
+    else
     {
-        yChanged = true;
+        value = getScaledXY(pad, value, coordinateY, midiScale_7b);
+        value = curves.getCurveValue((curve_t)padCurveY[pad], value, ccYminPad[pad], ccYmaxPad[pad]);
+
+        if (ySendTimer[pad] > XY_SEND_TIMEOUT)
+        {
+            if (abs(value - lastYCCvalue[pad]) > XY_SEND_TIMEOUT_STEP)
+                yChanged = true;
+        }
+        else if (value != (int16_t)lastYCCvalue[pad])
+        {
+            yChanged = true;
+        }
     }
 
     if (yChanged)
     {
-        lastYMIDIvalue[pad] = yValue;
+        if (getPitchBendState(pad, coordinateY))
+            lastYPitchBendValue[pad] = value;
+        else
+            lastYCCvalue[pad] = value;
+
         ySendTimer[pad] = 0;
         return true;
     }
@@ -653,7 +696,7 @@ bool Pads::checkNoteBuffer()
     //make sure to check if pad is still pressed!
     if (bitRead(noteSendEnabled, pad_buffer[index]) && isPadPressed(pad_buffer[index]))
     {
-        sendNotes(pad_buffer[index], getScaledPressure(pad_buffer[index], lastVelocityValue[pad_buffer[index]], pressureVelocity), true);
+        sendNotes(pad_buffer[index], lastVelocityValue[pad_buffer[index]], true);
         #ifdef DEBUG
         printf_P(PSTR("Zone %d\n"), getPressureZone(pad_buffer[index]));
         #endif
@@ -689,15 +732,15 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
             {
                 if (isCalibrationEnabled())
                 {
-                    if (lastXMIDIvalue[pad] != DEFAULT_XY_AT_VALUE)
-                        display.displayXYvalue(coordinateX, midiMessageControlChange, board.getPadX(pad), lastXMIDIvalue[pad]);
+                    if (lastXCCvalue[pad] != DEFAULT_XY_AT_VALUE)
+                        display.displayXYvalue(coordinateX, midiMessageControlChange, board.getPadX(pad), lastXCCvalue[pad]);
                 }
                 else
                 {
                     if (getPitchBendState(pad, coordinateX))
-                        display.displayXYvalue(coordinateX, midiMessagePitchBend, 1000);
+                        display.displayXYvalue(coordinateX, midiMessagePitchBend, lastXPitchBendValue[pad]);
                     else
-                        display.displayXYvalue(coordinateX, midiMessageControlChange, ccXPad[pad], lastXMIDIvalue[pad]);
+                        display.displayXYvalue(coordinateX, midiMessageControlChange, ccXPad[pad], lastXCCvalue[pad]);
                 }
             }
             else
@@ -713,15 +756,15 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
             {
                 if (isCalibrationEnabled())
                 {
-                    if (lastYMIDIvalue[pad] != DEFAULT_XY_AT_VALUE)
-                        display.displayXYvalue(coordinateY, midiMessageControlChange, board.getPadY(pad), lastYMIDIvalue[pad]);
+                    if (lastYCCvalue[pad] != DEFAULT_XY_AT_VALUE)
+                        display.displayXYvalue(coordinateY, midiMessageControlChange, board.getPadY(pad), lastYCCvalue[pad]);
                 }
                 else
                 {
                     if (getPitchBendState(pad, coordinateY))
-                        display.displayXYvalue(coordinateY, midiMessagePitchBend, 1000);
+                        display.displayXYvalue(coordinateY, midiMessagePitchBend, lastYPitchBendValue[pad]);
                     else
-                        display.displayXYvalue(coordinateY, midiMessageControlChange, ccYPad[pad], lastYMIDIvalue[pad]);
+                        display.displayXYvalue(coordinateY, midiMessageControlChange, ccYPad[pad], lastYCCvalue[pad]);
                 }
             }
             else
@@ -754,7 +797,7 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
 
         if (velocityAvailable)
         {
-            isCalibrationEnabled() ? display.displayVelocity(getScaledPressure(pad, board.getPadPressure(pad), pressureAftertouch), board.getPadPressure(pad)) : display.displayVelocity(getScaledPressure(pad, lastVelocityValue[pad], pressureVelocity));
+            isCalibrationEnabled() ? display.displayVelocity(getScaledPressure(pad, board.getPadPressure(pad), pressureAftertouch), board.getPadPressure(pad)) : display.displayVelocity(getScaledPressure(pad, board.getPadPressure(pad), pressureVelocity));
 
             if (!isCalibrationEnabled())
             {
