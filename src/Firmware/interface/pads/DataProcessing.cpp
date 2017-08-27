@@ -797,7 +797,7 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
 
         if (velocityAvailable)
         {
-            isCalibrationEnabled() ? display.displayVelocity(getScaledPressure(pad, board.getPadPressure(pad), pressureAftertouch), board.getPadPressure(pad)) : display.displayVelocity(getScaledPressure(pad, board.getPadPressure(pad), pressureVelocity));
+            isCalibrationEnabled() ? display.displayVelocity(getScaledPressure(pad, board.getPadPressure(pad), pressureAftertouch), board.getPadPressure(pad)) : display.displayVelocity(lastVelocityValue[pad]);
 
             if (!isCalibrationEnabled())
             {
