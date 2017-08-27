@@ -1235,7 +1235,12 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
     int16_t tempNoteArray_2[NUMBER_OF_PADS];
 
     //new shift level is actually the difference between received argument and currently active shift level
-    int8_t difference = shiftLevel - noteShiftLevel;
+    int8_t difference;
+
+    if (internalChange)
+         difference = shiftLevel; //on internal change, current shift level is 0
+    else
+        difference = shiftLevel - noteShiftLevel;
 
     if (!difference)
     {
