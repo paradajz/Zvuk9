@@ -144,10 +144,10 @@ class Pads
     uint16_t                lastMIDInoteState;
 
     ///
-    /// \brief Array holding last pressure value for all pads (raw value 0-1023).
-    /// Used when aftertouch value is being calculated.
+    /// \brief Array holding initial pressure value for all pads (raw value 0-1023).
+    /// Used to detect whether pressure is increasing or decreasing.
     ///
-    int16_t                 lastPressureValue[NUMBER_OF_PADS];
+    //int16_t                 initialPressureValue[NUMBER_OF_PADS];
 
     ///
     /// \brief Array holding CC controller number for every pad on X and Y coordinates.
@@ -305,7 +305,7 @@ class Pads
     /// Once reduction has been detected, X and Y readings are ignored to avoid bouncing.
     /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
     ///
-    uint16_t                pressureReduction;
+    //uint16_t                pressureReduction;
 
     ///
     /// \brief Variables used to record pad press history.

@@ -233,10 +233,10 @@ bool Pads::checkVelocity(int8_t pad)
         return false;
 
     //detect if pressure is increasing or decreasing, but only if pad is pressed
-    if (isPadPressed(pad))
-        bitWrite(pressureReduction, pad, (uint16_t)value < (uint16_t)lastPressureValue[pad]);
-    else
-        bitWrite(pressureReduction, pad, 0);
+    //if (isPadPressed(pad))
+        //bitWrite(pressureReduction, pad, (uint16_t)value < (uint16_t)initialPressureValue[pad]);
+    //else
+        //bitWrite(pressureReduction, pad, 0);
 
     uint8_t calibratedPressure = getScaledPressure(pad, value, pressureVelocity);
     calibratedPressure = curves.getCurveValue(velocityCurve, calibratedPressure, 0, 127);
@@ -260,7 +260,7 @@ bool Pads::checkVelocity(int8_t pad)
         }
 
         //always update lastPressure value
-        lastPressureValue[pad] = value;
+        //initialPressureValue[pad] = value;
         break;
 
         case false:
@@ -308,7 +308,7 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable)
     //pad is pressed
     if (bitRead(lastMIDInoteState, pad))
     {
-        uint8_t calibratedPressureAfterTouch = getScaledPressure(pad, lastPressureValue[pad], pressureAftertouch);
+        uint8_t calibratedPressureAfterTouch = getScaledPressure(pad, board.getPadPressure(pad), pressureAftertouch);
 
         if (lastAftertouchUpdateTime[pad] < 255)
             lastAftertouchUpdateTime[pad]++;
@@ -450,8 +450,8 @@ bool Pads::checkX(int8_t pad)
     if ((rTimeMs() - lastPadPressTime[pad]) < XY_READ_DELAY)
         return false;
 
-    if (bitRead(pressureReduction, pad))
-        return false;
+    //if (bitRead(pressureReduction, pad))
+        //return false;
 
     int16_t value = board.getPadX(pad);
 
@@ -540,8 +540,8 @@ bool Pads::checkY(int8_t pad)
     if ((rTimeMs() - lastPadPressTime[pad]) < XY_READ_DELAY)
         return false;
 
-    if (bitRead(pressureReduction, pad))
-        return false;
+    //if (bitRead(pressureReduction, pad))
+        //return false;
 
     int16_t value = board.getPadY(pad);
 
