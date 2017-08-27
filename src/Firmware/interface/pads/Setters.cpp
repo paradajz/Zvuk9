@@ -1296,7 +1296,7 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
         }
 
         if (!internalChange)
-            database.update(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, noteShiftLevel);
+            database.update(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, shiftLevel);
 
         #ifdef DEBUG
         printf_P(PSTR("Notes shifted %s"), direction ? "up\n" : "down\n");
