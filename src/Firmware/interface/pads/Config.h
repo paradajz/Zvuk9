@@ -38,12 +38,16 @@
 #define DEFAULT_INITIAL_XY_VALUE                    16000
 
 ///
-/// \brief When Pitch Bend Type 1 is used, pad areas from 25% to 75% are "dead", that is, they give PB value 0.
+/// \brief Value range for pitch bend type 1.
+/// When Pitch Bend Type 1 is used, pad areas from 25% to 75% are "dead", that is, they give PB value 0.
 /// \warning These values assume 10-bit ADC resolution. Please adjust the values according to ADC resolution.
 /// @{
 
-#define PITCH_BEND_1_DEAD_AREA_MIN                  154
-#define PITCH_BEND_1_DEAD_AREA_MAX                  870
+#define PITCH_BEND_1_LOWER_MIN                  56
+#define PITCH_BEND_1_LOWER_MAX                  154
+
+#define PITCH_BEND_1_UPPER_MIN                  870
+#define PITCH_BEND_1_UPPER_MAX                  960
 
 /// @}
 

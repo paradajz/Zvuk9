@@ -969,13 +969,25 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, v
         switch(getPitchBendType())
         {
             case pitchBend1:
-            if ((value >= PITCH_BEND_1_DEAD_AREA_MIN) && (value < PITCH_BEND_1_DEAD_AREA_MAX))
+            if ((value >= PITCH_BEND_1_LOWER_MAX) && (value < PITCH_BEND_1_UPPER_MIN))
             {
                 return 0;
             }
             else
             {
-                value = value < PITCH_BEND_1_DEAD_AREA_MIN ? curves.map(value, 0, PITCH_BEND_1_DEAD_AREA_MIN, MIDI_PITCHBEND_MIN, 0) : curves.map(value, PITCH_BEND_1_DEAD_AREA_MAX, 1023, 0, MIDI_PITCHBEND_MAX);
+                if (value < PITCH_BEND_1_LOWER_MAX)
+                {
+                    min = PITCH_BEND_1_LOWER_MIN;
+                    max = PITCH_BEND_1_LOWER_MAX;
+                    value = curves.map(constrain(value, min, max), min, max, MIDI_PITCHBEND_MIN, 0);
+                }
+                else
+                {
+                    min = PITCH_BEND_1_UPPER_MIN;
+                    max = PITCH_BEND_1_UPPER_MAX;
+                    value = curves.map(constrain(value, min, max), min, max, 0, MIDI_PITCHBEND_MAX);
+                }
+
                 return value;
             }
             break;
