@@ -2,7 +2,7 @@
 #include "../leds/LEDs.h"
 #include "../lcd/LCD.h"
 #include "../../database/Database.h"
-#ifdef NDEBUG
+#ifdef USE_USB_MIDI
 #include "../../midi/src/MIDI.h"
 #endif
 
@@ -11,50 +11,66 @@
 /// @{
 
 ///
-/// \brief Sends MIDI CC message on X coordinate for requested pad.
+/// \brief Sends MIDI CC or Pitch Bend message on X coordinate for requested pad.
 /// @param [in] pad     Pad for which MIDI CC value on X coordinate is being sent.
 ///
 void Pads::sendX(int8_t pad)
 {
     assert(PAD_CHECK(pad));
 
-    #ifdef DEBUG
-    printf_P(PSTR("X for pad %d: "), pad);
-    printf_P(PSTR("%d\n"), lastXCCvalue[pad]);
-    printf_P(PSTR("X CC: %d\n"), ccXPad[pad]);
-    #else
     if (getPitchBendState(pad, coordinateX))
+    {
+        #ifdef USE_USB_MIDI
         midi.sendPitchBend(lastXPitchBendValue[pad], midiChannel[pad]);
+        #endif
+        #ifdef DEBUG
+        printf_P(PSTR("X for pad %d: %d\n"), pad, lastXPitchBendValue[pad]);
+        #endif
+    }
     else
+    {
+        #ifdef USE_USB_MIDI
         midi.sendControlChange(ccXPad[pad], lastXCCvalue[pad], midiChannel[pad]);
-    #endif
+        #endif
+        #ifdef DEBUG
+        printf_P(PSTR("X for pad %d: %d, CC %d\n"), pad, lastXCCvalue[pad], ccXPad[pad]);
+        #endif
+    }
 }
 
 ///
-/// \brief Sends MIDI CC message on Y coordinate for requested pad.
+/// \brief Sends MIDI CC or Pitch Bend message on Y coordinate for requested pad.
 /// @param [in] pad     Pad for which MIDI CC value on Y coordinate is being sent.
 ///
 void Pads::sendY(int8_t pad)
 {
     assert(PAD_CHECK(pad));
 
-    #ifdef DEBUG
-    printf_P(PSTR("Y for pad %d: "), pad);
-    printf_P(PSTR("%d\n"), lastYCCvalue[pad]);
-    printf_P(PSTR("Y CC: %d\n"), ccYPad[pad]);
-    #else
     if (getPitchBendState(pad, coordinateY))
+    {
+        #ifdef USE_USB_MIDI
         midi.sendPitchBend(lastYPitchBendValue[pad], midiChannel[pad]);
+        #endif
+        #ifdef DEBUG
+        printf_P(PSTR("Y for pad %d: %d\n"), pad, lastYPitchBendValue[pad]);
+        #endif
+    }
     else
+    {
+        #ifdef USE_USB_MIDI
         midi.sendControlChange(ccYPad[pad], lastYCCvalue[pad], midiChannel[pad]);
-    #endif
+        #endif
+        #ifdef DEBUG
+        printf_P(PSTR("Y for pad %d: %d, CC %d\n"), pad, lastYCCvalue[pad], ccYPad[pad]);
+        #endif
+    }
 }
 
 ///
-/// \brief Sends MIDI notes for requested pad.
-/// @param [in] pad         Pad for which MIDI notes are being sent.
+/// \brief Sends MIDI notes (or Pitch Bend 0 on release) for requested pad.
+/// @param [in] pad         Pad for which MIDI notes or PB0 are being sent.
 /// @param [in] velocity    MIDI velocity value for sent pad notes.
-/// @param [in] state       State of MIDI notes (true/on, false/off).
+/// @param [in] state       State of MIDI notes (true/on, false/off+PB0).
 ///
 void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
 {
@@ -79,7 +95,9 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
 
             #ifdef DEBUG
             printf_P(PSTR("%d\n"), padNote[pad][i]);
-            #else
+            #endif
+
+            #ifdef USE_USB_MIDI
             midi.sendNoteOn(padNote[pad][i], velocity, midiChannel[pad]);
             #endif
         }
@@ -197,7 +215,7 @@ void Pads::sendAftertouch(int8_t pad)
 {
     assert(PAD_CHECK(pad));
 
-    #ifdef NDEBUG
+    #ifdef USE_USB_MIDI
     uint8_t aftertouchValue = bitRead(lastMIDInoteState, pad) ? lastAftertouchValue[pad] : 0;
     #endif
 
@@ -206,7 +224,9 @@ void Pads::sendAftertouch(int8_t pad)
         case aftertouchPoly:
         #ifdef DEBUG
         printf_P(PSTR("Sending key aftertouch, pad %d: %d\n"), pad, lastAftertouchValue[pad]);
-        #else
+        #endif
+
+        #ifdef USE_USB_MIDI
         for (int i=0; i<NOTES_PER_PAD; i++)
         {
             if (padNote[pad][i] != BLANK_NOTE)
@@ -218,7 +238,9 @@ void Pads::sendAftertouch(int8_t pad)
         case aftertouchChannel:
         #ifdef DEBUG
         printf_P(PSTR("Sending channel aftertouch: %d\n"), maxAftertouchValue);
-        #else
+        #endif
+
+        #ifdef USE_USB_MIDI
         midi.sendAfterTouch(maxAftertouchValue, midiChannel[pad]);
         #endif
         break;

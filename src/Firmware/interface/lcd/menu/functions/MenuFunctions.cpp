@@ -229,15 +229,11 @@ bool checkTransportCC(functionArgument argument)
     {
         case true:
         //switch option
-        #ifdef NDEBUG
         buttons.setTransportControlType((transportControlType_t)argument.argument1);
-        #endif
         return true;
 
         case false:
-        #ifdef NDEBUG
         return (buttons.getTransportControlType() == (transportControlType_t)argument.argument1);
-        #endif
         break;
 
     }

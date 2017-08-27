@@ -7,7 +7,7 @@
 #include "../../lcd/LCD.h"
 #include "../../lcd/menu/Menu.h"
 #include "../../../database/blocks/GlobalSettings.h"
-#ifdef NDEBUG
+#ifdef USE_USB_MIDI
 #include "../../../midi/src/MIDI.h"
 #endif
 
@@ -167,7 +167,7 @@ void handleTransportControl(uint8_t id, bool state)
         }
     }
 
-    #ifdef NDEBUG
+    #ifdef USE_USB_MIDI
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
     #endif
 

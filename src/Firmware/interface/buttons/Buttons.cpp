@@ -3,7 +3,7 @@
 #include "Config.h"
 #include "../lcd/menu/Menu.h"
 #include "../../database/Database.h"
-#ifdef NDEBUG
+#ifdef USE_USB_MIDI
 #include "../../midi/src/MIDI.h"
 #endif
 #include "../lcd/LCD.h"
