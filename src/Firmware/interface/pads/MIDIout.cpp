@@ -140,7 +140,7 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
         }
 
         //now perform same check for pitch bend if pitch bend is active on current pad
-        if ((getMIDISendState(pad, functionXPitchBend) && getPitchBendState(pad, coordinateX)) || (getMIDISendState(pad, functionYPitchBend) && getPitchBendState(pad, coordinateY)))
+        if (getMIDISendState(pad, functionXPitchBend) || getMIDISendState(pad, functionYPitchBend))
         {
             sendOff = true;
 
@@ -155,8 +155,8 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
                     continue;
 
                 //check both coordinates but don't check the pad if pitch bend isn't active on any coordinate
-                if (!(getPitchBendState(i, coordinateX) && getMIDISendState(i, functionXPitchBend)) && !(getPitchBendState(i, coordinateY) && getMIDISendState(i, functionYPitchBend)))
-                continue;
+                if (!getMIDISendState(i, functionXPitchBend) && !getMIDISendState(i, functionYPitchBend))
+                    continue;
 
                 //by this point, we have found pad with active pitch bend on x or y coordinates (or both)
                 //if midi channels are the same, don't send pitch bend 0

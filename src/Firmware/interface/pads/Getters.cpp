@@ -196,12 +196,16 @@ bool Pads::getMIDISendState(int8_t pad, function_t type)
         return bitRead(noteSendEnabled, pad);
 
         case functionOnOffX:
-        case functionXPitchBend:
         return bitRead(xSendEnabled, pad);
 
         case functionOnOffY:
-        case functionYPitchBend:
         return bitRead(ySendEnabled, pad);
+
+        case functionXPitchBend:
+        return bitRead(xSendEnabled, pad) && getPitchBendState(pad, coordinateX);
+
+        case functionYPitchBend:
+        return bitRead(ySendEnabled, pad) && getPitchBendState(pad, coordinateY);
 
         default:
         return false;
