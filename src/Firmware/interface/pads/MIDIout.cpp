@@ -92,7 +92,7 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
         #ifdef DEBUG
         printf_P(PSTR("Pad %d released. Notes: \n"), pad);
         #endif
-        //some special considerations here
+        //some special considerations here - don't send note off if same note is active on some other pad
         for (int i=0; i<NOTES_PER_PAD; i++)
         {
             sendOff = true;
@@ -130,9 +130,51 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
             {
                 #ifdef DEBUG
                 printf_P(PSTR("%d\n"), padNote[pad][i]);
-                #else
+                #endif
+
+                #ifdef USE_USB_MIDI
                 uint8_t velocity_ = 0;
                 midi.sendNoteOff(padNote[pad][i], velocity_, midiChannel[pad]);
+                #endif
+            }
+        }
+
+        //now perform same check for pitch bend if pitch bend is active on current pad
+        if ((getMIDISendState(pad, functionXPitchBend) && getPitchBendState(pad, coordinateX)) || (getMIDISendState(pad, functionYPitchBend) && getPitchBendState(pad, coordinateY)))
+        {
+            sendOff = true;
+
+            for (int i=0; i<NUMBER_OF_PADS; i++)
+            {
+                //don't check current pad
+                if (i == pad)
+                continue;
+
+                //don't check released pads
+                if (!isPadPressed(i))
+                    continue;
+
+                //check both coordinates but don't check the pad if pitch bend isn't active on any coordinate
+                if (!(getPitchBendState(i, coordinateX) && getMIDISendState(i, functionXPitchBend)) && !(getPitchBendState(i, coordinateY) && getMIDISendState(i, functionYPitchBend)))
+                continue;
+
+                //by this point, we have found pad with active pitch bend on x or y coordinates (or both)
+                //if midi channels are the same, don't send pitch bend 0
+                if (getMIDIchannel(i) == getMIDIchannel(pad))
+                {
+                    sendOff = false;
+                    break;
+                }
+            }
+
+            if (sendOff)
+            {
+                #ifdef DEBUG
+                printf_P(PSTR("Sending pitch bend 0 for current pad.\n"));
+                #endif
+
+                #ifdef USE_USB_MIDI
+                midi.sendPitchBend(0, midiChannel[pad]);
                 #endif
             }
         }
