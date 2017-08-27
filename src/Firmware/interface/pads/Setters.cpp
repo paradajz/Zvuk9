@@ -1223,7 +1223,7 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
     if (isUserScale(activeScale))
         return notPredefinedScale;
 
-    if (pads.getNumberOfPressedPads())
+    if (pads.getNumberOfPressedPads() && !internalChange)
         return releasePads;
 
     #ifdef DEBUG
