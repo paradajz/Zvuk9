@@ -235,7 +235,6 @@ bool checkTransportCC(functionArgument argument)
         case false:
         return (buttons.getTransportControlType() == (transportControlType_t)argument.argument1);
         break;
-
     }
 
     return false;
