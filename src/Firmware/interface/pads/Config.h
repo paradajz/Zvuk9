@@ -80,13 +80,13 @@
 /// \brief Percentage used to calculate lower pressure limit to send aftertouch.
 /// Lower aftertouch value = Upper pressure (without sensitivity scaling) value + (Upper pressure (velocity) value * AFTERTOUCH_PRESSURE_RATIO_LOWER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_LOWER             45
+#define AFTERTOUCH_PRESSURE_RATIO_LOWER             47
 
 ///
 /// \brief Percentage used to calculate upper pressure limit to send aftertouch.
 /// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER             12
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER             27
 
 ///
 /// \brief Readings after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.
