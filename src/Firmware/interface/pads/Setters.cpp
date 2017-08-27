@@ -54,7 +54,7 @@ changeResult_t Pads::setScale(int8_t scale)
         scale = (PREDEFINED_SCALES+NUMBER_OF_USER_SCALES) - 1;
 
     if (activeScale != scale)
-    {
+    {   
         database.update(DB_BLOCK_PROGRAM, programLastActiveScaleSection, (uint16_t)activeProgram, scale);
         getScaleParameters();
         return valueChanged;
