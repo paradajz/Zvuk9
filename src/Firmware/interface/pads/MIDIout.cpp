@@ -66,6 +66,8 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
     {
         case true:
         //note on
+        if (!getMIDISendState(pad, functionNotes))
+            return;
         #ifdef DEBUG
         printf_P(PSTR("Pad %d pressed. Notes:\n"), pad);
         #endif
@@ -89,53 +91,56 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
 
         case false:
         //note off
-        #ifdef DEBUG
-        printf_P(PSTR("Pad %d released. Notes: \n"), pad);
-        #endif
-        //some special considerations here - don't send note off if same note is active on some other pad
-        for (int i=0; i<NOTES_PER_PAD; i++)
+        if (getMIDISendState(pad, functionNotes))
         {
-            sendOff = true;
+            #ifdef DEBUG
+            printf_P(PSTR("Pad %d released. Notes: \n"), pad);
+            #endif
+            //some special considerations here - don't send note off if same note is active on some other pad
+            for (int i=0; i<NOTES_PER_PAD; i++)
+            {
+                sendOff = true;
 
-            if (padNote[pad][i] == BLANK_NOTE)
+                if (padNote[pad][i] == BLANK_NOTE)
                 continue;
 
-            for (int j=0; j<NUMBER_OF_PADS; j++)
-            {
-                //don't check current pad
-                if (j == pad)
-                    continue;
-
-                //don't check released pads
-                if (!isPadPressed(j))
-                    continue;
-
-                //don't check pad if noteSend is disabled
-                if (!bitRead(noteSendEnabled, j))
-                    continue;
-
-                //only send note off if the same note isn't active on some other pad already
-                if (padNote[j][i] == padNote[pad][i])
+                for (int j=0; j<NUMBER_OF_PADS; j++)
                 {
-                    //extra check here - check if midi channels differ
-                    if (midiChannel[j] == midiChannel[pad])
+                    //don't check current pad
+                    if (j == pad)
+                        continue;
+
+                    //don't check released pads
+                    if (!isPadPressed(j))
+                        continue;
+
+                    //don't check pad if noteSend is disabled
+                    if (!bitRead(noteSendEnabled, j))
+                        continue;
+
+                    //only send note off if the same note isn't active on some other pad already
+                    if (padNote[j][i] == padNote[pad][i])
                     {
-                        sendOff = false;
-                        break; //no need to check further
+                        //extra check here - check if midi channels differ
+                        if (midiChannel[j] == midiChannel[pad])
+                        {
+                            sendOff = false;
+                            break; //no need to check further
+                        }
                     }
                 }
-            }
 
-            if (sendOff)
-            {
-                #ifdef DEBUG
-                printf_P(PSTR("%d\n"), padNote[pad][i]);
-                #endif
+                if (sendOff)
+                {
+                    #ifdef DEBUG
+                    printf_P(PSTR("%d\n"), padNote[pad][i]);
+                    #endif
 
-                #ifdef USE_USB_MIDI
-                uint8_t velocity_ = 0;
-                midi.sendNoteOff(padNote[pad][i], velocity_, midiChannel[pad]);
-                #endif
+                    #ifdef USE_USB_MIDI
+                    uint8_t velocity_ = 0;
+                    midi.sendNoteOff(padNote[pad][i], velocity_, midiChannel[pad]);
+                    #endif
+                }
             }
         }
 

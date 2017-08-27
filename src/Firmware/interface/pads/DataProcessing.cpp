@@ -646,13 +646,14 @@ void Pads::checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvai
             bitWrite(aftertouchActivated, pad, 0);
     }
 
-    if (velocityAvailable && bitRead(noteSendEnabled, pad))
+    if (velocityAvailable)
     {
         switch(bitRead(lastMIDInoteState, pad))
         {
             case true:
             //if note on event happened, store notes in buffer first
-            storeNotes(pad);
+            if (getMIDISendState(pad, functionNotes))
+                storeNotes(pad);
             break;
 
             case false:
@@ -694,13 +695,8 @@ bool Pads::checkNoteBuffer()
 
     //send
     //make sure to check if pad is still pressed!
-    if (bitRead(noteSendEnabled, pad_buffer[index]) && isPadPressed(pad_buffer[index]))
-    {
+    if (isPadPressed(pad_buffer[index]))
         sendNotes(pad_buffer[index], lastVelocityValue[pad_buffer[index]], true);
-        #ifdef DEBUG
-        printf_P(PSTR("Zone %d\n"), getPressureZone(pad_buffer[index]));
-        #endif
-    }
 
     note_buffer_tail = index;
 
