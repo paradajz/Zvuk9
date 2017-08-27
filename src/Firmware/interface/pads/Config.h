@@ -58,6 +58,13 @@
 #define PITCH_BEND_2_FULL_RANGE_AREA                71
 
 ///
+/// \brief Area where pitch bend type 2 is zero (5% of surface).
+/// This value is added to initial position (max value for dead area) and subtracted as well (min value for dead area).
+/// \warning This value assume 10-bit ADC resolution. Please adjust the values according to ADC resolution.
+///
+#define PITCH_BEND_2_DEAD_AREA                      51
+
+///
 ///\brief Percentage used to calculate upper pressure limit on medium pressure sensitivity to send velocity.
 /// Upper velocity value = Lower velocity value + (Lower velocity value * VELOCITY_PRESSURE_RATIO_UPPER_MEDIUM%)
 ///

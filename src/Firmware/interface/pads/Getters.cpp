@@ -196,9 +196,11 @@ bool Pads::getMIDISendState(int8_t pad, function_t type)
         return bitRead(noteSendEnabled, pad);
 
         case functionOnOffX:
+        case functionXPitchBend:
         return bitRead(xSendEnabled, pad);
 
         case functionOnOffY:
+        case functionYPitchBend:
         return bitRead(ySendEnabled, pad);
 
         default:
@@ -993,9 +995,16 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, v
             break;
 
             case pitchBend2:
-            min = initialPosition - PITCH_BEND_2_FULL_RANGE_AREA < 0 ? 0 : initialPosition - PITCH_BEND_2_FULL_RANGE_AREA;
-            max = initialPosition + PITCH_BEND_2_FULL_RANGE_AREA > 1023 ? 1023 : initialPosition + PITCH_BEND_2_FULL_RANGE_AREA;
-            value = curves.map(constrain(value, min, max), min, max, MIDI_PITCHBEND_MIN, MIDI_PITCHBEND_MAX);
+            if ((value >= (initialPosition-PITCH_BEND_2_DEAD_AREA)) && (value < (initialPosition+PITCH_BEND_2_DEAD_AREA)))
+            {
+                return 0;
+            }
+            else
+            {
+                min = initialPosition - PITCH_BEND_2_FULL_RANGE_AREA - PITCH_BEND_2_DEAD_AREA < 0 ? 0 : initialPosition - PITCH_BEND_2_FULL_RANGE_AREA - PITCH_BEND_2_DEAD_AREA;
+                max = initialPosition + PITCH_BEND_2_FULL_RANGE_AREA + PITCH_BEND_2_DEAD_AREA > 1023 ? 1023 : initialPosition + PITCH_BEND_2_FULL_RANGE_AREA + PITCH_BEND_2_DEAD_AREA;
+                value = curves.map(constrain(value, min, max), min, max, MIDI_PITCHBEND_MIN, MIDI_PITCHBEND_MAX);
+            }
             return value;
 
             default:
