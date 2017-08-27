@@ -240,7 +240,7 @@ void LEDs::displayActiveNoteLEDs(bool padEditMode, uint8_t pad)
         //set full led state for assigned notes on current pad if note matches current octave
         for (int i=0; i<noteCounter; i++)
         {
-            if (octaveArray[i] == pads.getOctave())
+            if (octaveArray[i] == pads.getOctave(true))
                 setNoteLEDstate((note_t)tonicArray[i], ledStateFull);
         }
         break;
