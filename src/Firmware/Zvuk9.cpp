@@ -2,8 +2,7 @@
 
     Zvuk9 MIDI controller firmware
     Author: Igor Petrovic
-    Ad Bit LLC 2014-2017
-
+    Company: Zvuk Machines
 */
 
 #define FIRMWARE_VERSION_STRING     0x56
