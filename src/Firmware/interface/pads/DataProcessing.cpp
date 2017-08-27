@@ -27,8 +27,10 @@ void Pads::update()
         bool xAvailable = false;
         bool yAvailable = false;
 
+        uint16_t pressure = board.getPadPressure(i);
+
         //all needed pressure samples are obtained
-        velocityAvailable = checkVelocity(i);
+        velocityAvailable = checkVelocity(i, pressure);
 
         //only check x/y and aftertouch if pad is pressed
         if (isPadPressed(i))
@@ -36,7 +38,7 @@ void Pads::update()
             xAvailable = checkX(i);
             yAvailable = checkY(i);
 
-            aftertouchAvailable = checkAftertouch(i, velocityAvailable);
+            aftertouchAvailable = checkAftertouch(i, velocityAvailable, pressure);
 
             if (calibrationEnabled && (activeCalibration == coordinateZ) && (pressureCalibrationTime != PRESSURE_ZONE_CALIBRATION_TIMEOUT) && (bool)leds.getLEDstate(LED_TRANSPORT_RECORD))
             {
@@ -221,13 +223,12 @@ void Pads::update()
 ///
 /// \brief Checks if velocity data is available on requested pad.
 /// @param [in] pad     Pad which is being checked.
+/// @param [in] value   Pad pressure.
 /// \returns True if data is available, false otherwise.
 ///
-bool Pads::checkVelocity(int8_t pad)
+bool Pads::checkVelocity(int8_t pad, uint16_t value)
 {
     assert(PAD_CHECK(pad));
-
-    int16_t value = board.getPadPressure(pad);
 
     if (PRESSURE_RAW_VALUE_CHECK(value) == 0)
         return false;
@@ -299,16 +300,17 @@ bool Pads::checkVelocity(int8_t pad)
 ///
 /// \brief Checks if aftertouch data is available on requested pad.
 /// @param [in] pad     Pad which is being checked.
+/// @param [in] value   Pad pressure.
 /// \returns True if data is available, false otherwise.
 ///
-bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable)
+bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)
 {
     assert(PAD_CHECK(pad));
 
     //pad is pressed
     if (bitRead(lastMIDInoteState, pad))
     {
-        uint8_t calibratedPressureAfterTouch = getScaledPressure(pad, board.getPadPressure(pad), pressureAftertouch);
+        uint8_t calibratedPressureAfterTouch = getScaledPressure(pad, value, pressureAftertouch);
 
         if (lastAftertouchUpdateTime[pad] < 255)
             lastAftertouchUpdateTime[pad]++;

@@ -94,9 +94,9 @@ class Pads
     void updateLastPressedPad(int8_t pad, bool state);
 
     void checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
-    bool checkVelocity(int8_t pad);
+    bool checkVelocity(int8_t pad, uint16_t value);
     bool checkNoteBuffer();
-    bool checkAftertouch(int8_t pad, bool velocityAvailable);
+    bool checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value);
     bool checkX(int8_t pad);
     bool checkY(int8_t pad);
     void checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
