@@ -728,6 +728,7 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
 
         if (xAvailable)
         {
+            //check enable state manually since it holds send state for both cc and pitch bend
             if (bitRead(xSendEnabled, pad))
             {
                 if (isCalibrationEnabled())
