@@ -148,14 +148,14 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
             {
                 //don't check current pad
                 if (i == pad)
-                continue;
+                    continue;
 
                 //don't check released pads
                 if (!isPadPressed(i))
                     continue;
 
                 //check both coordinates but don't check the pad if pitch bend isn't active on any coordinate
-                if (!getMIDISendState(i, functionXPitchBend) && !getMIDISendState(i, functionYPitchBend))
+                if (!(getMIDISendState(i, functionXPitchBend) || getMIDISendState(i, functionYPitchBend)))
                     continue;
 
                 //by this point, we have found pad with active pitch bend on x or y coordinates (or both)
