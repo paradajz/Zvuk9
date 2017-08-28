@@ -82,7 +82,7 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
     {
         case true:
         //note on
-        if (!getMIDISendState(pad, functionNotes))
+        if (!getMIDISendState(pad, functionOnOffNotes))
             return;
         #ifdef DEBUG
         printf_P(PSTR("Pad %d pressed. Notes:\n"), pad);
@@ -109,7 +109,7 @@ void Pads::sendNotes(int8_t pad, uint8_t velocity, bool state)
 
         case false:
         //note off
-        if (getMIDISendState(pad, functionNotes))
+        if (getMIDISendState(pad, functionOnOffNotes))
         {
             #ifdef DEBUG
             printf_P(PSTR("Pad %d released. Notes: \n"), pad);
