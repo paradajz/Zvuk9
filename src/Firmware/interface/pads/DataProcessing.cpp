@@ -654,8 +654,10 @@ void Pads::checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvai
         {
             case true:
             //if note on event happened, store notes in buffer first
-            if (getMIDISendState(pad, functionNotes))
+            if (getMIDISendState(pad, functionOnOffNotes))
+            {
                 storeNotes(pad);
+            }
             break;
 
             case false:
