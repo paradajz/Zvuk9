@@ -9,4 +9,4 @@
 ///
 /// \brief Time threshold (in milliseconds, approximately) between two encoder steps used to detect fast movement.
 ///
-#define SPEED_TIMEOUT                   20
+#define SPEED_TIMEOUT                   40
