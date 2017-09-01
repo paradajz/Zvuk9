@@ -11,6 +11,12 @@
 #define XY_READ_DELAY                               3
 
 ///
+/// \brief Time in milliseconds during which aftertouch reading is ignored after pad has been pressed.
+/// Used to avoid incorrect aftertouch activation on initial press.
+///
+#define AFTERTOUCH_READ_DELAY                       200
+
+///
 /// \brief Time in milliseconds after which notes from pad are sent once X and Y MIDI messages have been sent.
 ///
 #define PAD_NOTE_SEND_DELAY                         (XY_READ_DELAY+1)
@@ -80,13 +86,13 @@
 /// \brief Percentage used to calculate lower pressure limit to send aftertouch.
 /// Lower aftertouch value = Upper pressure (without sensitivity scaling) value + (Upper pressure (velocity) value * AFTERTOUCH_PRESSURE_RATIO_LOWER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_LOWER             50
+#define AFTERTOUCH_PRESSURE_RATIO_LOWER             73
 
 ///
 /// \brief Percentage used to calculate upper pressure limit to send aftertouch.
 /// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER             27
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER             20
 
 ///
 /// \brief Readings after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.

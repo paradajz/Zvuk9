@@ -307,6 +307,9 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)
 {
     assert(PAD_CHECK(pad));
 
+    if ((rTimeMs() -  lastPadPressTime[pad]) < AFTERTOUCH_READ_DELAY)
+        return false;
+
     //pad is pressed
     if (bitRead(lastMIDInoteState, pad))
     {
