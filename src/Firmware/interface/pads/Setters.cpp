@@ -1226,23 +1226,52 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
     if (pads.getNumberOfPressedPads() && !internalChange)
         return releasePads;
 
+    //no scale should have more notes than number of pads
+    //how to handle this?
+    assert(getPredefinedScaleNotes(activeScale) < NUMBER_OF_PADS);
+
+    int8_t scaleNotes = getPredefinedScaleNotes(activeScale);
+    int8_t octaveShift = 0;
+    int8_t currentShiftLevel = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+
+    //overflow check
+    if (shiftLevel < 0)
+    {
+        while (shiftLevel <= -scaleNotes)
+        {
+            shiftLevel += scaleNotes;
+            octaveShift--;
+        }
+    }
+    else
+    {
+        while (shiftLevel >= scaleNotes)
+        {
+            shiftLevel -= scaleNotes;
+            octaveShift++;
+        }
+    }
+
     #ifdef DEBUG
-    printf_P(PSTR("Trying to set note shift level %d\n"), shiftLevel);
+    printf_P(PSTR("Trying to set note shift level %d, octave shift: %d\n"), shiftLevel, octaveShift);
     #endif
 
-    uint8_t scaleNotes = getPredefinedScaleNotes(activeScale);
-    int16_t tempNoteArray_1[NUMBER_OF_PADS];
-    int16_t tempNoteArray_2[NUMBER_OF_PADS];
+    #ifdef DEBUG
+    for (int i=0; i<NUMBER_OF_PADS; i++)
+    {
+        printf_P(PSTR("current note %d: %d\n"), i, padNote[i][0]);
+    }
+    #endif
 
     //new shift level is actually the difference between received argument and currently active shift level
     int8_t difference;
 
     if (internalChange)
-         difference = shiftLevel; //on internal change, current shift level is 0
+        difference = shiftLevel; //on internal change, current shift level is 0
     else
-        difference = shiftLevel - noteShiftLevel;
+        difference = shiftLevel - currentShiftLevel;
 
-    if (!difference)
+    if (!difference && !octaveShift)
     {
         //no change
         #ifdef DEBUG
@@ -1252,63 +1281,63 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
     }
     else
     {
-        bool direction = difference > 0;
+        #ifdef DEBUG
+        printf_P(PSTR("Shift level difference: %d\n"), difference);
+        #endif
 
-        for (int i=0; i<NUMBER_OF_PADS; i++)
-            tempNoteArray_2[i] = padNote[i][0];
+        int16_t tempArray[NUMBER_OF_PADS];
+        uint8_t index = 0;
+
+        bool direction = difference > 0;
+        difference = abs(difference);
 
         if (direction)
         {
-            //up
-            //last note gets increased, other notes get shifted down
-            tempNoteArray_1[NUMBER_OF_PADS-1] = tempNoteArray_2[NUMBER_OF_PADS-scaleNotes] + MIDI_NOTES*abs(difference);
+            //up - left shift
+            for (int i=0; i<=(NUMBER_OF_PADS-difference); i++)
+                tempArray[i] = padNote[difference+i][0];
 
-            if (tempNoteArray_1[NUMBER_OF_PADS-1] > 127)
-                return outOfRange;
+            for (int i=NUMBER_OF_PADS-difference; i<NUMBER_OF_PADS; i++)
+            {
+                tempArray[i] = padNote[NUMBER_OF_PADS-scaleNotes+index][0] + MIDI_NOTES;
 
-            for (int j=0; j<NUMBER_OF_PADS-1; j++)
-                tempNoteArray_1[j] = tempNoteArray_2[j+1];
+                if (tempArray[i] > 127)
+                    return outOfRange;
 
-            if (!internalChange)
-                noteShiftLevel++;
-
-            for (int j=0; j<NUMBER_OF_PADS; j++)
-                tempNoteArray_2[j] = tempNoteArray_1[j];
+                index++;
+            }
         }
         else
         {
-            //down
-            //first note gets decreased, other notes get shifted up
-            tempNoteArray_1[0] = tempNoteArray_2[scaleNotes-1] - MIDI_NOTES*abs(difference);
+            //down - right shift
+            for (int i=difference; i<NUMBER_OF_PADS; i++)
+            {
+                tempArray[i] = padNote[index][0];
+                index++;
+            }
 
-            if (tempNoteArray_1[0] < 0)
-                return outOfRange;
+            for (int i=0; i<difference; i++)
+            {
+                tempArray[i] = padNote[scaleNotes-difference+i][0] - MIDI_NOTES;
 
-            for (int j=0; j<NUMBER_OF_PADS-1; j++)
-                tempNoteArray_1[j+1] = tempNoteArray_2[j];
-
-            if (!internalChange)
-                noteShiftLevel--;
-
-            for (int j=0; j<NUMBER_OF_PADS; j++)
-                tempNoteArray_2[j] = tempNoteArray_1[j];
-        }
-
-        if (!internalChange)
-        {
-            if (abs(noteShiftLevel) == scaleNotes)
-                noteShiftLevel = 0;
+                if (tempArray[i] < 0)
+                    return outOfRange;
+            }
         }
 
         if (!internalChange)
             database.update(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale, shiftLevel);
 
+        for (int i=0; i<NUMBER_OF_PADS; i++)
+            padNote[i][0] = tempArray[i];
+
         #ifdef DEBUG
         printf_P(PSTR("Notes shifted %s"), direction ? "up\n" : "down\n");
-        #endif
-
         for (int i=0; i<NUMBER_OF_PADS; i++)
-            padNote[i][0] = tempNoteArray_1[i];
+        {
+            printf_P(PSTR("Note %d: %d\n"), i, padNote[i][0]);
+        }
+        #endif
 
         return valueChanged;
     }
