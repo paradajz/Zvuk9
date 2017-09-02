@@ -244,11 +244,6 @@ class Pads
     bool                    splitEnabled;
 
     ///
-    /// \brief Holds current shift level for active predefined scale.
-    ///
-    int8_t                  noteShiftLevel;
-
-    ///
     /// \brief Holds active scale.
     ///
     int8_t                  activeScale;
