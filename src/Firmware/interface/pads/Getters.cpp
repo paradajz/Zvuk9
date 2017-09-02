@@ -290,7 +290,7 @@ uint8_t Pads::getOctaveFromNote(int8_t note)
 ///
 int8_t Pads::getScaleShiftLevel()
 {
-    return noteShiftLevel;
+    return database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
 }
 
 ///
@@ -644,7 +644,7 @@ void Pads::getScaleParameters()
         //predefined scale
         uint8_t octave = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_OCTAVE_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
         note_t tonic = (note_t)database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_TONIC_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
-        noteShiftLevel = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
+        int8_t noteShiftLevel = database.read(DB_BLOCK_SCALE, scalePredefinedSection, PREDEFINED_SCALE_SHIFT_ID+((PREDEFINED_SCALE_PARAMETERS*PREDEFINED_SCALES)*(uint16_t)activeProgram)+PREDEFINED_SCALE_PARAMETERS*(uint16_t)activeScale);
 
         #ifdef DEBUG
         printf_P(PSTR("Octave: %d\n"), octave);
@@ -692,11 +692,8 @@ void Pads::getScaleParameters()
         //internal change, do not write anything to eeprom
         setTonic((note_t)tonic, true);
 
-        if (noteShiftLevel)
-        {
-            //finally, apply note shift
-            setScaleShiftLevel(noteShiftLevel, true);
-        }
+        //finally, apply note shift
+        setScaleShiftLevel(noteShiftLevel, true);
     }
     else
     {
@@ -1031,8 +1028,8 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, v
 
                     value = curves.map(constrain(value, min, max), min, max, MIDI_PITCHBEND_MIN, 0);
                 }
-
             }
+
             return value;
 
             default:
