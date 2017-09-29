@@ -1331,6 +1331,9 @@ changeResult_t Pads::setScaleShiftLevel(int8_t shiftLevel, bool internalChange)
         for (int i=0; i<NUMBER_OF_PADS; i++)
             padNote[i][0] = tempArray[i];
 
+        if (octaveShift)
+            setOctave(getOctave() + octaveShift, false);
+
         #ifdef DEBUG
         printf_P(PSTR("Notes shifted %s"), direction ? "up\n" : "down\n");
         for (int i=0; i<NUMBER_OF_PADS; i++)
