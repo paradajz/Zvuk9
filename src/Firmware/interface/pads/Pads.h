@@ -290,6 +290,11 @@ class Pads
     /// @}
 
     ///
+    /// \brief Holds last time when either X or Y coordinates have changed value.
+    ///
+    uint32_t                lastXYchangeTime;
+
+    ///
     /// \brief Array holding last time in milliseconds aftertouch values have been changed for each pad.
     /// Used to detect value bounce.
     ///

@@ -17,9 +17,14 @@
 #define AFTERTOUCH_READ_DELAY                       200
 
 ///
+/// \brief Time in milliseconds during which pressure reading is ignored after X or Y has changed value.
+///
+#define PRESSURE_IGNORE_XY_CHANGE                   10
+
+///
 /// \brief Time in milliseconds after which notes from pad are sent once X and Y MIDI messages have been sent.
 ///
-#define PAD_NOTE_SEND_DELAY                         (XY_READ_DELAY+1)
+#define PAD_NOTE_SEND_DELAY                         (XY_READ_DELAY+3)
 
 ///
 /// \brief Size of pad note buffer in bytes.

@@ -230,7 +230,7 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
 {
     assert(PAD_CHECK(pad));
 
-    if (PRESSURE_RAW_VALUE_CHECK(value) == 0)
+    if (!PRESSURE_RAW_VALUE_CHECK(value))
         return false;
 
     //detect if pressure is increasing or decreasing, but only if pad is pressed
@@ -243,6 +243,21 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
     calibratedPressure = curves.getCurveValue(velocityCurve, calibratedPressure, 0, 127);
 
     bool pressDetected = (calibratedPressure > 0);
+
+    if (!pressDetected)
+    {
+        if (!lastXYchangeTime)
+        {
+            lastXYchangeTime = rTimeMs();
+            return false;
+        }
+        else
+        {
+            if ((rTimeMs() - lastXYchangeTime) < PRESSURE_IGNORE_XY_CHANGE)
+                return false;
+        }
+    }
+
     bool returnValue = false;
 
     switch (pressDetected)
@@ -278,6 +293,7 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
             lastYPitchBendValue[pad] = DEFAULT_PITCH_BEND_VALUE;
             initialXposition[pad] = DEFAULT_INITIAL_XY_VALUE;
             initialYposition[pad] = DEFAULT_INITIAL_XY_VALUE;
+            lastXYchangeTime = 0;
 
             if (isCalibrationEnabled() && (activeCalibration == coordinateZ))
             {
@@ -527,6 +543,7 @@ bool Pads::checkX(int8_t pad)
             lastXCCvalue[pad] = value;
 
         xSendTimer[pad] = 0;
+        lastXYchangeTime = 0;
         return true;
     }
 
@@ -617,6 +634,7 @@ bool Pads::checkY(int8_t pad)
             lastYCCvalue[pad] = value;
 
         ySendTimer[pad] = 0;
+        lastXYchangeTime = 0;
         return true;
     }
 
