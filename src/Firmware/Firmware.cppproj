@@ -206,17 +206,11 @@ REM back to bin dir
 call cd $(SolutionDir)
 call cd ..\bin\
 
-REM encrypt
-call Encrypt.exe
+REM convert back to hex since HID bootloader doesn't like bin
+call C:\Windows\Sysnative\bash.exe -c "avr-objcopy -I binary -O ihex FLASH.bin FLASH.hex"
 
 REM now remove original .bin
-call del FLASH.bin
-
-REM convert back to hex since HID bootloader doesn't like bin
-call C:\Windows\Sysnative\bash.exe -c "avr-objcopy -I binary -O ihex FLASH_ENC.bin FLASH.hex"
-
-REM finally, remove encrypted bin
-call del FLASH_ENC.bin</PostBuildEvent>
+call del FLASH.bin</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -360,17 +354,11 @@ REM back to bin dir
 call cd $(SolutionDir)
 call cd ..\bin\
 
-REM encrypt
-call Encrypt.exe
+REM convert back to hex since HID bootloader doesn't like bin
+call C:\Windows\Sysnative\bash.exe -c "avr-objcopy -I binary -O ihex FLASH.bin FLASH.hex"
 
 REM now remove original .bin
-call del FLASH.bin
-
-REM convert back to hex since HID bootloader doesn't like bin
-call C:\Windows\Sysnative\bash.exe -c "avr-objcopy -I binary -O ihex FLASH_ENC.bin FLASH.hex"
-
-REM finally, remove encrypted bin
-call del FLASH_ENC.bin</PostBuildEvent>
+call del FLASH.bin</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="board\Board.cpp">
