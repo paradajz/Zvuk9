@@ -7,12 +7,12 @@
 ///
 /// \brief Value after which pad is considered pressed.
 ///
-#define PAD_PRESS_PRESSURE          15
+#define PAD_PRESS_PRESSURE          5
 
 ///
 /// \brief Value below which pad is considered released if it was pressed previously.
 ///
-#define PAD_RELEASE_PRESSURE        1
+#define PAD_RELEASE_PRESSURE        3
 
 ///
 /// \brief Curve used to achieve linear and smoother response from pads.

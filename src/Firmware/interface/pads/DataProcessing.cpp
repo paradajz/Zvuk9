@@ -8,7 +8,7 @@
 
 ///
 /// \brief Holds press states for all pads.
-/// Implementation of Board variable.
+/// Implementation of Board class variable.
 ///
 volatile uint16_t   padPressed;
 
@@ -233,12 +233,6 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
     if (!PRESSURE_RAW_VALUE_CHECK(value))
         return false;
 
-    //detect if pressure is increasing or decreasing, but only if pad is pressed
-    //if (isPadPressed(pad))
-        //bitWrite(pressureReduction, pad, (uint16_t)value < (uint16_t)initialPressureValue[pad]);
-    //else
-        //bitWrite(pressureReduction, pad, 0);
-
     uint8_t calibratedPressure = getScaledPressure(pad, value, pressureVelocity);
     calibratedPressure = curves.getCurveValue(velocityCurve, calibratedPressure, 0, 127);
 
@@ -246,16 +240,13 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
 
     if (!pressDetected)
     {
-        if (!lastXYchangeTime)
-        {
-            lastXYchangeTime = rTimeMs();
+        if ((rTimeMs() - lastXYchangeTime) < PRESSURE_IGNORE_XY_CHANGE)
             return false;
-        }
-        else
-        {
-            if ((rTimeMs() - lastXYchangeTime) < PRESSURE_IGNORE_XY_CHANGE)
-                return false;
-        }
+
+        #ifdef DEBUG
+        if ((pad == 6) && isPadPressed(pad))
+        printf_P(PSTR("Pad off, current time: %d\n"), rTimeMs());
+        #endif
     }
 
     bool returnValue = false;
@@ -471,13 +462,16 @@ bool Pads::checkX(int8_t pad)
     if ((rTimeMs() - lastPadPressTime[pad]) < XY_READ_DELAY)
         return false;
 
-    //if (bitRead(pressureReduction, pad))
-        //return false;
-
     int16_t value = board.getPadX(pad);
 
     if (!XY_RAW_VALUE_CHECK(value))
         return false;
+
+    if (value != lastRawXValue[pad])
+    {
+        lastRawXValue[pad] = value;
+        lastXYchangeTime = rTimeMs();
+    }
 
     if (calibrationEnabled && (activeCalibration == coordinateX) && (bool)leds.getLEDstate(LED_TRANSPORT_RECORD))
     {
@@ -543,7 +537,6 @@ bool Pads::checkX(int8_t pad)
             lastXCCvalue[pad] = value;
 
         xSendTimer[pad] = 0;
-        lastXYchangeTime = 0;
         return true;
     }
 
@@ -562,13 +555,16 @@ bool Pads::checkY(int8_t pad)
     if ((rTimeMs() - lastPadPressTime[pad]) < XY_READ_DELAY)
         return false;
 
-    //if (bitRead(pressureReduction, pad))
-        //return false;
-
     int16_t value = board.getPadY(pad);
 
     if (!XY_RAW_VALUE_CHECK(value))
         return false;
+
+    if (value != lastRawYValue[pad])
+    {
+        lastRawYValue[pad] = value;
+        lastXYchangeTime = rTimeMs();
+    }
 
     if (calibrationEnabled && (activeCalibration == coordinateY) && (bool)leds.getLEDstate(LED_TRANSPORT_RECORD))
     {
@@ -634,7 +630,6 @@ bool Pads::checkY(int8_t pad)
             lastYCCvalue[pad] = value;
 
         ySendTimer[pad] = 0;
-        lastXYchangeTime = 0;
         return true;
     }
 
