@@ -1325,9 +1325,9 @@ call del FLASH_ENC.bin</PostBuildEvent>
   <ItemGroup>
     <Folder Include="board\constants\" />
     <Folder Include="board\lcd\" />
-    <Folder Include="board\lcd\U8g2\" />
-    <Folder Include="board\lcd\U8g2\src\" />
-    <Folder Include="board\lcd\U8g2\src\clib\" />
+    <Folder Include="board\lcd\U8g2" />
+    <Folder Include="board\lcd\U8g2\src" />
+    <Folder Include="board\lcd\U8g2\src\clib" />
     <Folder Include="board\map\" />
     <Folder Include="board\pins\" />
     <Folder Include="core\src\" />
