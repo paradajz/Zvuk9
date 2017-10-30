@@ -697,10 +697,7 @@ call del FLASH.bin</PostBuildEvent>
     <Compile Include="core\src\timing\Wait.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="core\src\uart\RingBuffer\Config.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="core\src\uart\RingBuffer\RingBuffer.h">
+    <Compile Include="core\src\uart\RingBuffer.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="core\src\uart\UART.cpp">
@@ -1325,7 +1322,6 @@ call del FLASH.bin</PostBuildEvent>
     <Folder Include="core\src\spi\" />
     <Folder Include="core\src\timing\" />
     <Folder Include="core\src\uart\" />
-    <Folder Include="core\src\uart\RingBuffer\" />
     <Folder Include="database" />
     <Folder Include="core" />
     <Folder Include="database\blocks" />
