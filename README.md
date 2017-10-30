@@ -19,13 +19,17 @@ Requirements:
 - Windows 10 with Linux subsytem (Ubuntu) (optional)
 - Binary utilities: avr-objcopy, srec_cat (optional)
 
+# Bootloader
+
+Zvuk9 uses LUFA HID bootloader for firmware updating. To upload compiled .hex file, use hid_bootloader_loader.exe found under /bin directory.
+
 # Licencing
 
 Zvuk9 uses various modules which are licenced under different licenses. 
 
 - LUFA is licenced under modified MIT licence.
 - MIDI module is licenced under MIT.
-- U8G2 is licenced under Two-clause BSD licence.
+- U8G2 is licenced under Two-clause BSD licence. This project uses modified content which is available under same terms.
 - AVR-Core, AVR-Versioning, AVR-DB and strings modules are available under MIT licence.
 
 This project is available under GNU GPLv3 licence. For commerical uses commercial licence is available on demand.
