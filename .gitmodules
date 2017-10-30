@@ -13,3 +13,6 @@
 [submodule "src/Firmware/versioning"]
 	path = src/Firmware/versioning
 	url = https://github.com/paradajz/AVR-versioning.git
+[submodule "src/Firmware/strings"]
+	path = src/Firmware/strings
+	url = https://github.com/paradajz/strings.git
