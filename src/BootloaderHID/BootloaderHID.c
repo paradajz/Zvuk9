@@ -35,7 +35,6 @@
 
 #include "BootloaderHID.h"
 #include "PinManipulation.h"
-#include "XOR.h"
 
 /** Flag to indicate if the bootloader should be running, or should exit and allow the application code to run
  *  via a soft reset. When cleared, the bootloader will abort, the USB interface will shut down and the application
@@ -144,98 +143,71 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
-{
-	/* Ignore any requests that aren't directed to the HID interface */
-	if ((USB_ControlRequest.bmRequestType & (CONTROL_REQTYPE_TYPE | CONTROL_REQTYPE_RECIPIENT)) !=
-	    (REQTYPE_CLASS | REQREC_INTERFACE))
-	{
-		return;
-	}
+ void EVENT_USB_Device_ControlRequest(void)
+ {
+     /* Ignore any requests that aren't directed to the HID interface */
+     if ((USB_ControlRequest.bmRequestType & (CONTROL_REQTYPE_TYPE | CONTROL_REQTYPE_RECIPIENT)) !=
+     (REQTYPE_CLASS | REQREC_INTERFACE))
+     {
+         return;
+     }
 
-	/* Process HID specific control requests */
-	switch (USB_ControlRequest.bRequest)
-	{
-		case HID_REQ_SetReport:
-			Endpoint_ClearSETUP();
+     /* Process HID specific control requests */
+     switch (USB_ControlRequest.bRequest)
+     {
+         case HID_REQ_SetReport:
+         Endpoint_ClearSETUP();
 
-			/* Wait until the command has been sent by the host */
-			while (!(Endpoint_IsOUTReceived()));
+         /* Wait until the command has been sent by the host */
+         while (!(Endpoint_IsOUTReceived()));
 
-			/* Read in the write destination address */
-			#if (FLASHEND > 0xFFFF)
-			uint32_t PageAddress = ((uint32_t)Endpoint_Read_16_LE() << 8);
-			#else
-			uint16_t PageAddress = Endpoint_Read_16_LE();
-			#endif
+         /* Read in the write destination address */
+         #if (FLASHEND > 0xFFFF)
+         uint32_t PageAddress = ((uint32_t)Endpoint_Read_16_LE() << 8);
+         #else
+         uint16_t PageAddress = Endpoint_Read_16_LE();
+         #endif
 
-			/* Check if the command is a program page command, or a start application command */
-			#if (FLASHEND > 0xFFFF)
-			if ((uint16_t)(PageAddress >> 8) == COMMAND_STARTAPPLICATION)
-			#else
-			if (PageAddress == COMMAND_STARTAPPLICATION)
-			#endif
-			{
-				RunBootloader = false;
-			}
-			else
-			{
-				/* Erase the given FLASH page, ready to be programmed */
-				boot_page_erase(PageAddress);
-				boot_spm_busy_wait();
+         /* Check if the command is a program page command, or a start application command */
+         #if (FLASHEND > 0xFFFF)
+         if ((uint16_t)(PageAddress >> 8) == COMMAND_STARTAPPLICATION)
+         #else
+         if (PageAddress == COMMAND_STARTAPPLICATION)
+         #endif
+         {
+             RunBootloader = false;
+         }
+         else if (PageAddress < BOOT_START_ADDR)
+         {
+             /* Erase the given FLASH page, ready to be programmed */
+             boot_page_erase(PageAddress);
+             boot_spm_busy_wait();
 
-                //read 2 words into buffer and then decode it
-                bool shiftIn = false;
-                uint32_t buffer = 0;
-                uint8_t keyCounter = 0;
+             /* Write each of the FLASH page's bytes in sequence */
+             for (uint8_t PageWord = 0; PageWord < (SPM_PAGESIZE / 2); PageWord++)
+             {
+                 /* Check if endpoint is empty - if so clear it and wait until ready for next packet */
+                 if (!(Endpoint_BytesInEndpoint()))
+                 {
+                     Endpoint_ClearOUT();
+                     while (!(Endpoint_IsOUTReceived()));
+                 }
 
-				/* Write each of the FLASH page's bytes in sequence */
-				for (uint8_t PageWord = 0; PageWord < (SPM_PAGESIZE / 2); PageWord++)
-				{
-					/* Check if endpoint is empty - if so clear it and wait until ready for next packet */
-					if (!(Endpoint_BytesInEndpoint()))
-					{
-						Endpoint_ClearOUT();
-						while (!(Endpoint_IsOUTReceived()));
-					}
+                 /* Write the next data word to the FLASH page */
+                 boot_page_fill(PageAddress + ((uint16_t)PageWord << 1), Endpoint_Read_16_LE());
+             }
 
-                    uint32_t value = Endpoint_Read_16_LE();
-                    value = value << 16*shiftIn;
-                    buffer |= value;
+             /* Write the filled FLASH page to memory */
+             boot_page_write(PageAddress);
+             boot_spm_busy_wait();
 
-                    if (shiftIn)
-                    {
-                        buffer ^= keys[keyCounter];
-                        //write two decoded words
-                        //boot_page_fill(PageAddress + ((uint16_t)(PageWord) << 1), Endpoint_Read_16_LE() ^ 0x8472);
-                        boot_page_fill(PageAddress + ((uint16_t)(PageWord-1) << 1), buffer & (uint32_t)0xFFFF);
-                        boot_page_fill(PageAddress + ((uint16_t)PageWord << 1), buffer >> 16);
-                        shiftIn = false;
-                        buffer = 0;
+             /* Re-enable RWW section */
+             boot_rww_enable();
+         }
 
-                        keyCounter++;
+         Endpoint_ClearOUT();
 
-                        if (keyCounter == 8)
-                            keyCounter = 0;
-                    }
-                    else
-                    {
-                        shiftIn = true;
-                    }
-				}
-
-				/* Write the filled FLASH page to memory */
-				boot_page_write(PageAddress);
-				boot_spm_busy_wait();
-
-				/* Re-enable RWW section */
-				boot_rww_enable();
-			}
-
-			Endpoint_ClearOUT();
-
-			Endpoint_ClearStatusStage();
-			break;
-	}
-}
-
+         Endpoint_ClearStatusStage();
+         break;
+     }
+ }

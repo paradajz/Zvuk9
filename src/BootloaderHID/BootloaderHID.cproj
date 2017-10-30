@@ -334,9 +334,6 @@
     <Compile Include="PinManipulation.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="XOR.h">
-      <SubType>compile</SubType>
-    </Compile>
     <None Include="src\asf.h">
       <SubType>compile</SubType>
     </None>
