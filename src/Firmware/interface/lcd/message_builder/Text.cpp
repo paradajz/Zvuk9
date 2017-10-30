@@ -4,7 +4,7 @@
 #include "../../../database/blocks/Scales.h"
 
 char stringBuffer[STRING_BUFFER_SIZE];
-char tempBuffer[STRING_BUFFER_SIZE];
+char tempBuffer[STRING_BUFFER_SIZE_TEMP];
 
 void LCD::setupHomeScreen()
 {
