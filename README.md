@@ -13,6 +13,12 @@ Note, aftertouch, x and y sending can be disabled each independently. X and Y ha
 
 In order to compile Zvuk9, Atmel Studio 7 is needed. Debug and Release configurations are available. Debug configuration uses LUFA virtual Serial mode to print various messages during Zvuk9 usage, while Release configuration compiles with USB MIDI support.
 
+Requirements:
+
+- Atmel Studio 7
+- Windows 10 with Linux subsytem (Ubuntu) (optional)
+- Binary utilities: avr-objcopy, srec_cat (optional)
+
 # Licencing
 
 Zvuk9 uses various modules which are licenced under different licenses. 
