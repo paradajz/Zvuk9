@@ -121,6 +121,9 @@ class Pads
 
     /// @}
 
+    int16_t                 lastRawXValue[NUMBER_OF_PADS],
+                            lastRawYValue[NUMBER_OF_PADS];
+
     ///
     /// \brief Initial X and Y positions once pad has been pressed for all pads.
     /// Used for pitch bend type 2.
@@ -129,7 +132,7 @@ class Pads
                             initialYposition[NUMBER_OF_PADS];
 
     ///
-    /// \brief Arrays holding pitch bend X/Y value for all pads (raw value 0-1023).
+    /// \brief Arrays holding pitch bend X/Y value for all pads.
     /// @{
 
     uint16_t                lastXPitchBendValue[NUMBER_OF_PADS],
