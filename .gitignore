@@ -1,6 +1,6 @@
 src/Firmware/Debug/
 src/Firmware/Release/
-src/Bootloader/Debug/
-src/Bootloader/Release/
+src/BootloaderHID/Debug/
+src/BootloaderHID/Release/
 bin/FLASH.hex
 Documentation/
