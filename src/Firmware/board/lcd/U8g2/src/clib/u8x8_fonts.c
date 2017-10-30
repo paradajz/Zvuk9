@@ -1,4 +1,29 @@
 /*
+    Zvuk9 MIDI controller
+    Copyright (C) 2014-2017 Ad Bit LLC
+    Author: Igor PetroviÄ‡
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    You may ONLY use this file:
+    1) if you have a valid commercial Ad Bit LLC license and then in accordance with
+    the terms contained in the written license agreement between you and Ad Bit LLC,
+    or alternatively
+    2) if you follow the terms found in GNU General Public License version 3 as
+    published by the Free Software Foundation here
+    <https://www.gnu.org/licenses/gpl-3.0.txt>
+*/
+
+/*
   u8x8_fonts.c
 */
 #include "u8x8.h"
@@ -947,7 +972,7 @@ const uint8_t u8x8_font_pressstart2p_u[514] U8X8_FONT_SECTION("u8x8_font_pressst
   "\200";
 /*
   Fontname: -FreeType-PC Senior-Medium-R-Normal--8-80-72-72-P-48-ISO10646-1
-  Copyright: TrueType conversion © 2001 codeman38.
+  Copyright: TrueType conversion ï¿½ 2001 codeman38.
   Glyphs: 192/260
   BBX Build Mode: 3
 */
@@ -1011,7 +1036,7 @@ const uint8_t u8x8_font_pcsenior_f[1794] U8X8_FONT_SECTION("u8x8_font_pcsenior_f
   "\0";
 /*
   Fontname: -FreeType-PC Senior-Medium-R-Normal--8-80-72-72-P-48-ISO10646-1
-  Copyright: TrueType conversion © 2001 codeman38.
+  Copyright: TrueType conversion ï¿½ 2001 codeman38.
   Glyphs: 96/260
   BBX Build Mode: 3
 */
@@ -1043,7 +1068,7 @@ const uint8_t u8x8_font_pcsenior_r[770] U8X8_FONT_SECTION("u8x8_font_pcsenior_r"
   "p";
 /*
   Fontname: -FreeType-PC Senior-Medium-R-Normal--8-80-72-72-P-48-ISO10646-1
-  Copyright: TrueType conversion © 2001 codeman38.
+  Copyright: TrueType conversion ï¿½ 2001 codeman38.
   Glyphs: 18/260
   BBX Build Mode: 3
 */
@@ -1057,7 +1082,7 @@ const uint8_t u8x8_font_pcsenior_n[218] U8X8_FONT_SECTION("u8x8_font_pcsenior_n"
   "\0\0\66II\66\0\0\6OIi?\36\0\0\0\0ff\0\0\0";
 /*
   Fontname: -FreeType-PC Senior-Medium-R-Normal--8-80-72-72-P-48-ISO10646-1
-  Copyright: TrueType conversion © 2001 codeman38.
+  Copyright: TrueType conversion ï¿½ 2001 codeman38.
   Glyphs: 64/260
   BBX Build Mode: 3
 */
