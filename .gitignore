@@ -1,16 +1,6 @@
 src/Firmware/Debug/
 src/Firmware/Release/
-src/Firmware/__vm/
-.vs/
-src/Firmware/Firmware.componentinfo.xml
-src/Bootloader/Bootloader.componentinfo.xml
 src/Bootloader/Debug/
 src/Bootloader/Release/
-src/Bootloader/doxyfile
-tools/tmp/*
-w.zip
-w/*
-tools/MAJOR
-tools/MINOR
-tools/REVISION
+bin/FLASH.hex
 Documentation/
