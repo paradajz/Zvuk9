@@ -54,11 +54,11 @@
 /// \warning These values assume 10-bit ADC resolution. Please adjust the values according to ADC resolution.
 /// @{
 
-#define PITCH_BEND_1_LOWER_MIN                  56
-#define PITCH_BEND_1_LOWER_MAX                  154
+#define PITCH_BEND_1_LOWER_MIN                      56
+#define PITCH_BEND_1_LOWER_MAX                      154
 
-#define PITCH_BEND_1_UPPER_MIN                  870
-#define PITCH_BEND_1_UPPER_MAX                  960
+#define PITCH_BEND_1_UPPER_MIN                      870
+#define PITCH_BEND_1_UPPER_MAX                      960
 
 /// @}
 
