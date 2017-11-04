@@ -11,7 +11,7 @@ Note, aftertouch, x and y sending can be disabled each independently. X and Y ha
 
 # Compiling
 
-In order to compile Zvuk9, Atmel Studio 7 is needed. `Debug` and `Release` configurations are available. Debug configuration uses LUFA virtual serial mode to print various messages during Zvuk9 usage, while `Release` configuration compiles with USB MIDI support.
+In order to compile Zvuk9, Atmel Studio 7 is needed. `Debug` and `Release` configurations are available. `Debug` configuration uses LUFA virtual serial mode to print various messages during Zvuk9 usage, while `Release` configuration compiles with USB MIDI support.
 
 Requirements:
 
@@ -23,7 +23,7 @@ _Note: While asterisk marked components are optional for compiling, they are nee
 
 # Bootloader
 
-Zvuk9 uses LUFA HID bootloader for firmware updating. Bootloader can be programmed either via Atmel Studio or `avrdude`. Using Atmel Sutdio, set correct fuse settings:
+Zvuk9 uses LUFA HID bootloader for firmware updating. Bootloader can be programmed either via Atmel Studio or `avrdude`. Using Atmel Studio, set correct fuse settings:
 
 * Low fuse: `0xFF`
 * High fuse: `0xD2`
@@ -31,13 +31,13 @@ Zvuk9 uses LUFA HID bootloader for firmware updating. Bootloader can be programm
 
 After that, select `BootloaderHID.hex` under `Release` directory (`src/BootloaderHID/Release`) or under `/bin` directory and program it.
 
-Alternatively, bootloader can be programmed using `avrdude` using `usbasp` programmer with following command (assuming it's being run from `/bin` or `src/BootloaderHID/Release` directory):
+Alternatively, bootloader can be programmed using `avrdude` and `usbasp` programmer with following command (assuming it's being run from `/bin` or `src/BootloaderHID/Release` directory):
 
 `avrdude -p usb1286  -c usbasp -U lfuse:w:0xff:m -U hfuse:w:0xd2:m -U efuse:w:0xf8:m -Uflash:w:BootloaderHID.hex:i`
 
 # Firmware upload
 
-To upload compiled firmware .hex file, use `hid_bootloader_loader.exe` found under `/bin` directory.
+Before uploading Zvuk9 firmware, controller must be put into firmware update mode. To do this, unplug controller from USB, press and hold small button located next to MIDI connector and connect USB cable to PC. After that, PC will recognize Zvuk9 as HID device. Once the bootloader is active, run `hid_bootloader_loader.exe` found under `/bin` directory. This tool will automatically write firwmare to Zvuk9. Make sure `FLASH.hex` is present in directory. Controller will automatically load new firmware once updating is finished.
 
 # Licencing
 
