@@ -5,9 +5,9 @@ USB MIDI controller with 9 force and position sensing pads used to play melodic 
 - note
 - note velocity
 - note aftertouch
-- 2 control changes through x and y coordinates (touch position) or pitch bend
+- 2 control changes or pitch bend through X and Y coordinates (touch position)
 
-Note, aftertouch, x and y sending can be disabled each independently. X and Y have configurable min and max values, curve and MIDI controller that is being sent. All nine pads can use the same X,Y cc/max/min/curve values (useful for melodic instruments) or could be set uniquely (useful for playing drums, samples). Pads are set up to play one of the predetermined scales. Alternatively, they can be set to play custom scale or chords through user defined presets. Controller is capable of sending MIDI messages via USB or via MIDI Out port.
+Note, aftertouch, X and Y sending can be disabled each independently. X and Y have configurable min and max values, curve and MIDI controller or pitch bend type that is being sent. All nine pads can use the same X, Y CC/PB/max/min/curve values (useful for melodic instruments) or could be set uniquely (useful for playing drums, samples). Pads are set up to play one of the predetermined scales. Alternatively, they can be set to play custom scale or chords through user defined presets. Controller is capable of sending MIDI messages via USB or via MIDI Out port.
 
 # Compiling
 
