@@ -1,13 +1,31 @@
 # Zvuk9
 
-USB MIDI controller with 9 force and position sensing pads used to play melodic instruments or drums / samples. Pads are sending:
+Zvuk9 is an expressive USB MIDI controller used to play melodic instruments or drums / samples.
 
-- note
-- note velocity
-- note aftertouch
-- 2 control changes or pitch bend through X and Y coordinates (touch position)
+Zvuk9 features:
 
-Note, aftertouch, X and Y sending can be disabled each independently. X and Y have configurable min and max values, curve and MIDI controller or pitch bend type that is being sent. All nine pads can use the same X, Y CC/PB/max/min/curve values (useful for melodic instruments) or could be set uniquely (useful for playing drums or samples). Pads are set up to play one of the predetermined scales. Alternatively, they can be set to play custom scale or chords through user defined presets. Controller is capable of sending MIDI messages via USB or via MIDI Out port.
+- 9 pressure and position sensitive pads
+- Velocity sensitivity (3 levels of sensitivity and 3 velocity response curves)
+- X and Y MIDI assignable to CC (CCs can be the same for all pads or unique per pad)
+- X or Y can be set to send pitch bend instead of CC
+- Aftertouch (channel or polyphonic)
+- 15 programs for storing settings (scale, tonic, split status, X & Y controls, on/off status for notes, aftertouch, and X and Y)
+- 7 predefined scales available: natural minor, harmonic minor, melodic minor, major, harmonic major, pentatonic minor, and pentatonic major
+- 10 user scales available so you can set which pad will play which note or notes
+- Chords can be assigned through user scales, a maximum of 7 notes can be assigned to a pad
+- Tonic can be set with Notes buttons
+- Notes buttons are illuminated, showing which notes are currently available and which note is currently playing
+- By default, tonic goes on Pad1; by using Notes up/down function, all notes can be moved
+- Encoder controls for X & Y: CC/Pitch bend, min, max, curve
+- Total of 13 response curves available for X and Y
+- 4 on/off buttons: notes, X, Y, and aftertouch
+- In Split mode, all controls for X and Y, state of 4 on/off buttons, and MIDI channel are unique per pad
+- Transport controls: play, stop, and record can be set to MCC, CC, or MCC+CC
+- Note off type choice (off channel, on channel/0 velocity)
+- All settings saved during reboot
+- MIDI over USB and MIDI through 3.5mm mini jack out (cable mini jack to MIDI DIN included)
+- Configurable MIDI running status for DIN MIDI
+- OLED display
 
 # Compiling
 
