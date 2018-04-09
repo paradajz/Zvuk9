@@ -35,6 +35,8 @@
 #include "vserial/Serial.h"
 #endif
 
+MIDI midi;
+
 void startUpAnimation()
 {
     //slow down fading for effect
