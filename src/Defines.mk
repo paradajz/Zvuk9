@@ -1,6 +1,5 @@
 #common defines
 DEFINES := \
-NDEBUG \
 ARCH=ARCH_AVR8 \
 F_CPU=16000000UL \
 F_USB=16000000UL \
@@ -31,6 +30,14 @@ else
     INTERRUPT_CONTROL_ENDPOINT \
     MIDI_SYSEX_ARRAY_SIZE=45 \
     RING_BUFFER_SIZE=50
+endif
+
+ifeq ($(findstring debug,$(MAKECMDGOALS)), debug)
+    DEFINES += \
+    DEBUG
+else
+    DEFINES += \
+    NDEBUG
 endif
 
 #board specific

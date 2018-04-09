@@ -19,21 +19,6 @@ modules/lufa/LUFA/Drivers/USB/Core/DeviceStandardReq.c \
 modules/lufa/LUFA/Drivers/USB/Core/Events.c \
 modules/lufa/LUFA/Drivers/USB/Core/USBTask.c
 
-#additional sources differ for firmware and bootloader
-ifeq ($(findstring boot,$(MAKECMDGOALS)), boot)
-    #bootloader
-    SOURCES += \
-    bootloader/hid/BootloaderHID.c \
-    bootloader/hid/Descriptors.c \
-    modules/lufa/LUFA/Drivers/USB/Class/Common/HIDParser.c \
-    modules/lufa/LUFA/Drivers/USB/Class/Device/HIDClassDevice.c
-else
-    #firmware
-    SOURCES += \
-    modules/lufa/LUFA/Drivers/USB/Class/Device/AudioClassDevice.c \
-    modules/lufa/LUFA/Drivers/USB/Class/Device/MIDIClassDevice.c
-endif
-
 #only for firmware
 ifneq ($(findstring boot,$(MAKECMDGOALS)), boot)
 
@@ -46,6 +31,28 @@ ifneq ($(findstring boot,$(MAKECMDGOALS)), boot)
     SOURCES += $(shell find modules/core -name "*.cpp")
 
     SOURCES += application/Zvuk9.cpp
+
+    ifeq ($(findstring rls,$(MAKECMDGOALS)), rls)
+        SOURCES += \
+        modules/lufa/LUFA/Drivers/USB/Class/Device/AudioClassDevice.c \
+        modules/lufa/LUFA/Drivers/USB/Class/Device/MIDIClassDevice.c
+    else
+        SOURCES += \
+        modules/lufa/LUFA/Drivers/USB/Class/Device/CDCClassDevice.c
+
+        SOURCES += $(shell find application/vserial -name "*.cpp")
+        SOURCES += $(shell find application/vserial -name "*.c")
+
+        #filter out usb midi here, cdc is used instead in debug
+        SOURCES := $(filter-out %usb/Descriptors.c %USB_MIDI.cpp,$(SOURCES))
+    endif
+else
+    #bootloader
+    SOURCES += \
+    bootloader/hid/BootloaderHID.c \
+    bootloader/hid/Descriptors.c \
+    modules/lufa/LUFA/Drivers/USB/Class/Common/HIDParser.c \
+    modules/lufa/LUFA/Drivers/USB/Class/Device/HIDClassDevice.c
 endif
 
 #some modules contain Tests.cpp which should not be compiled
