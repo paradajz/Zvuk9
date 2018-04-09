@@ -1,7 +1,4 @@
-src/Firmware/Debug/
-src/Firmware/Release/
-src/BootloaderHID/Debug/
-src/BootloaderHID/Release/
+src/build
 bin/FLASH.hex
 Documentation/
 hw/Zvuk9_R2.sch
