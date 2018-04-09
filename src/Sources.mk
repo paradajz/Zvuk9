@@ -49,8 +49,8 @@ ifneq ($(findstring boot,$(MAKECMDGOALS)), boot)
 else
     #bootloader
     SOURCES += \
-    bootloader/hid/BootloaderHID.c \
-    bootloader/hid/Descriptors.c \
+    bootloader/BootloaderHID.c \
+    bootloader/Descriptors.c \
     modules/lufa/LUFA/Drivers/USB/Class/Common/HIDParser.c \
     modules/lufa/LUFA/Drivers/USB/Class/Device/HIDClassDevice.c
 endif
