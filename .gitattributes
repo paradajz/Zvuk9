@@ -1,0 +1,25 @@
+#text files
+*.md    text
+*.x     text
+*.mk    text
+*.json  text
+*.c     text
+*.cpp   text
+*.h     text
+*.txt   text
+*.map   text
+*.py    text
+*.tsi   text eol=crlf
+*.bat   text eol=crlf
+*.sh    text eol=lf
+
+#binary files
+*.bin   binary
+*.elf   binary
+*.hex   binary
+*.o     binary
+*.jpg   binary
+*.png   binary
+*.bmp   binary
+*.pdf   binary
+*.cdr   binary
