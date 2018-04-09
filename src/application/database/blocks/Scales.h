@@ -32,7 +32,7 @@ typedef enum
     scalePredefinedSection,
     scaleUserSection,
     SCALE_SECTIONS
-} userScaleSection;
+} dbSection_userScale_t;
 
 #define NUMBER_OF_USER_SCALES                       10
 

@@ -488,7 +488,7 @@ bool Pads::isAftertouchActivated(int8_t pad)
 /// @param [in] pad     Pad which is being checked.
 /// \returns Currently active pressure zone (16 zones in total).
 ///
-padCalibrationSection Pads::getPressureZone(int8_t pad)
+dbSection_padCalibration_t Pads::getPressureZone(int8_t pad)
 {
     assert(PAD_CHECK(pad));
 
@@ -500,7 +500,7 @@ padCalibrationSection Pads::getPressureZone(int8_t pad)
     //invert
     uint8_t column = scaledX / PRESSURE_CALIBRATION_MAX_X_ZONE_VALUE;
 
-    return (padCalibrationSection)(column + row*PRESSURE_CALIBRATION_X_ZONES);
+    return (dbSection_padCalibration_t)(column + row*PRESSURE_CALIBRATION_X_ZONES);
 }
 
 ///

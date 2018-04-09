@@ -35,4 +35,4 @@ typedef enum
     padCalibrationYlowerSection,
     padCalibrationYupperSection,
     PAD_CALIBRATION_SECTIONS
-} padCalibrationSection;
+} dbSection_padCalibration_t;

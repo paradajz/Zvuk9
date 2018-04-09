@@ -34,7 +34,7 @@ typedef enum
     globalSettingsMIDI,
     globalSettingsVelocitySensitivity,
     GLOBAL_SETTINGS_SECTIONS
-} globalSettingsSection;
+} dbSection_global_t;
 
 #define MIDI_SETTING_AFTERTOUCH_TYPE                aftertouchChannel
 #define MIDI_SETTING_RUNNING_STATUS                 0 //disabled

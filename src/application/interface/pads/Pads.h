@@ -112,7 +112,7 @@ class Pads
     void getAftertouchLimits();
     void getPadParameters();
     bool isAftertouchActivated(int8_t pad);
-    padCalibrationSection getPressureZone(int8_t pad);
+    dbSection_padCalibration_t getPressureZone(int8_t pad);
 
     void setPadPressState(int8_t pad, bool state);
     void updateNoteLEDs(int8_t pad, bool state);

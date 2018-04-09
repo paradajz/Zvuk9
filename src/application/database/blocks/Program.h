@@ -38,7 +38,7 @@ typedef enum
     programGlobalSettingsSection,
     programLocalSettingsSection,
     PROGRAM_SECTIONS
-} programSections;
+} dbSection_program_t;
 
 //define default global program settings
 #define GLOBAL_PROGRAM_SETTING_SPLIT_STATE          0x00

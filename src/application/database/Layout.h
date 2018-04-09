@@ -26,7 +26,7 @@
 #include "Database.h"
 #include "../interface/pads/Pads.h"
 
-static dbSection_t programSections_[PROGRAM_SECTIONS] =
+static dbSection_t programSections[PROGRAM_SECTIONS] =
 {
     //programLastActiveProgramSection
     {
@@ -186,7 +186,7 @@ dbBlock_t dbLayout[DB_BLOCKS] =
     {
         .address = 0,
         .numberOfSections = PROGRAM_SECTIONS,
-        .section = programSections_,
+        .section = programSections,
     },
 
     //scale block
