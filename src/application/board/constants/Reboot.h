@@ -25,6 +25,17 @@
 
 #pragma once
 
-#define REBOOT_VALUE_EEPROM_LOCATION    EEPROM_SIZE-1
 #define BTLDR_REBOOT_VALUE              0x47
 #define APP_REBOOT_VALUE                0xFF
+
+///
+/// \brief Location at which reboot type is written in EEPROM when initiating software reset.
+/// See Reboot.h
+///
+#define REBOOT_VALUE_EEPROM_LOCATION    (EEPROM_SIZE - 1)
+
+///
+/// \brief Location at which compiled binary CRC is written in EEPROM.
+/// CRC takes two bytes.
+///
+#define SW_CRC_LOCATION_EEPROM          (EEPROM_SIZE - 3)

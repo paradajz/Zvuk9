@@ -174,9 +174,9 @@ void Pads::update()
 
             //if pad is pressed, update last pressed pad
             //if it's released clear it from history
-            updateLastPressedPad(i, bitRead(lastMIDInoteState, i));
+            updateLastPressedPad(i, BIT_READ(lastMIDInoteState, i));
 
-            if (!bitRead(lastMIDInoteState, i))
+            if (!BIT_READ(lastMIDInoteState, i))
             {
                 //lcd restore detection
                 //display data from last touched pad if current pad is released
@@ -186,7 +186,7 @@ void Pads::update()
 
             if (!getEditModeState())
             {
-                if (bitRead(lastMIDInoteState, i) && splitEnabled)
+                if (BIT_READ(lastMIDInoteState, i) && splitEnabled)
                 {
                     //update function leds only once, on press
                     //don't update if split is disabled (no need)
@@ -196,7 +196,7 @@ void Pads::update()
             else
             {
                 //setup pad edit mode on press for current pad
-                if (bitRead(lastMIDInoteState, i))
+                if (BIT_READ(lastMIDInoteState, i))
                     setEditModeState(true, i);
             }
         }
@@ -286,7 +286,7 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
             setPadPressState(pad, true);
             //store raw value so that pressure zone can be determined more precisely once x and y are read
             lastVelocityValue[pad] = getScaledPressure(pad, value, pressureVelocity);
-            bitWrite(lastMIDInoteState, pad, true);
+            BIT_WRITE(lastMIDInoteState, pad, true);
             lastPadPressTime[pad] = rTimeMs();
             returnValue = true;
         }
@@ -301,7 +301,7 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
             //pad is already pressed
             setPadPressState(pad, false);
             lastVelocityValue[pad] = getScaledPressure(pad, value, pressureVelocity);
-            bitWrite(lastMIDInoteState, pad, false);
+            BIT_WRITE(lastMIDInoteState, pad, false);
             returnValue = true;
             lastXCCvalue[pad] = DEFAULT_XY_AT_VALUE;
             lastYCCvalue[pad] = DEFAULT_XY_AT_VALUE;
@@ -343,7 +343,7 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)
         return false;
 
     //pad is pressed
-    if (bitRead(lastMIDInoteState, pad))
+    if (BIT_READ(lastMIDInoteState, pad))
     {
         uint8_t calibratedPressureAfterTouch = getScaledPressure(pad, value, pressureAftertouch);
 
@@ -372,8 +372,8 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)
             lastAftertouchValue[pad] = calibratedPressureAfterTouch;
             lastAftertouchUpdateTime[pad] = 0;
 
-            if (!bitRead(aftertouchActivated, pad) && calibratedPressureAfterTouch)
-                bitWrite(aftertouchActivated, pad, true);
+            if (!BIT_READ(aftertouchActivated, pad) && calibratedPressureAfterTouch)
+                BIT_WRITE(aftertouchActivated, pad, true);
 
             uint8_t padsPressed = 0;
 
@@ -387,7 +387,7 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)
                 case aftertouchChannel:
                 for (int i=0; i<NUMBER_OF_PADS; i++)
                 {
-                    if (isPadPressed(i) && bitRead(aftertouchActivated, i))
+                    if (isPadPressed(i) && BIT_READ(aftertouchActivated, i))
                         padsPressed++;
                 }
 
@@ -406,10 +406,10 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)
                         if (!isPadPressed(i))
                             continue;
 
-                        if (!bitRead(aftertouchActivated, i))
+                        if (!BIT_READ(aftertouchActivated, i))
                             continue;
 
-                        if (!bitRead(aftertouchSendEnabled, i))
+                        if (!BIT_READ(aftertouchSendEnabled, i))
                             continue;
 
                         if (lastAftertouchValue[i] > tempMaxValue)
@@ -439,7 +439,7 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)
     {
         //pad is released
         //make sure to send aftertouch with pressure 0 on note off under certain conditions
-        if (velocityAvailable && bitRead(aftertouchActivated, pad))
+        if (velocityAvailable && BIT_READ(aftertouchActivated, pad))
         {
             uint8_t pressedPadCounter = 0;
             lastAftertouchValue[pad] = 0;
@@ -453,7 +453,7 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)
                 for (int i=0; i<NUMBER_OF_PADS; i++)
                 {
                     //count how many pads are pressed with activated aftertouch
-                    if (bitRead(aftertouchActivated, i) && isPadPressed(i) && bitRead(aftertouchSendEnabled, i))
+                    if (BIT_READ(aftertouchActivated, i) && isPadPressed(i) && BIT_READ(aftertouchSendEnabled, i))
                         pressedPadCounter++;
                 }
 
@@ -674,24 +674,24 @@ void Pads::checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvai
     assert(PAD_CHECK(pad));
 
     //send X/Y immediately
-    if (xAvailable && bitRead(xSendEnabled, pad))
+    if (xAvailable && BIT_READ(xSendEnabled, pad))
         sendX(pad);
 
-    if (yAvailable && bitRead(ySendEnabled, pad))
+    if (yAvailable && BIT_READ(ySendEnabled, pad))
         sendY(pad);
 
     //send aftertouch immediately
-    if (aftertouchAvailable && bitRead(aftertouchSendEnabled, pad))
+    if (aftertouchAvailable && BIT_READ(aftertouchSendEnabled, pad))
     {
         sendAftertouch(pad);
 
         if (isAftertouchActivated(pad) && !lastAftertouchValue[pad])
-            bitWrite(aftertouchActivated, pad, 0);
+            BIT_WRITE(aftertouchActivated, pad, 0);
     }
 
     if (velocityAvailable)
     {
-        switch(bitRead(lastMIDInoteState, pad))
+        switch(BIT_READ(lastMIDInoteState, pad))
         {
             case true:
             //if note on event happened, store notes in buffer first
@@ -770,7 +770,7 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
         if (xAvailable)
         {
             //check enable state manually since it holds send state for both cc and pitch bend
-            if (bitRead(xSendEnabled, pad))
+            if (BIT_READ(xSendEnabled, pad))
             {
                 if (isCalibrationEnabled())
                 {
@@ -794,7 +794,7 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
 
         if (yAvailable)
         {
-            if (bitRead(ySendEnabled, pad))
+            if (BIT_READ(ySendEnabled, pad))
             {
                 if (isCalibrationEnabled())
                 {
@@ -817,7 +817,7 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
 
         if (aftertouchAvailable)
         {
-            if (getMIDISendState(pad, functionOnOffAftertouch) && bitRead(aftertouchActivated, pad))
+            if (getMIDISendState(pad, functionOnOffAftertouch) && BIT_READ(aftertouchActivated, pad))
             {
                 switch(aftertouchType)
                 {

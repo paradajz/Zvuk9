@@ -26,7 +26,6 @@
 #include "MenuFunctions.h"
 #include "../../../leds/LEDs.h"
 #include "../../../../database/Database.h"
-#include "../../../../midi/src/DataTypes.h"
 
 bool factoryReset(functionArgument argument)
 {
@@ -53,9 +52,9 @@ bool factoryReset(functionArgument argument)
                     return false;
                 }
 
-                if (!bitRead(padsPressed, i))
+                if (!BIT_READ(padsPressed, i))
                 {
-                    bitWrite(padsPressed, i, 1);
+                    BIT_WRITE(padsPressed, i, 1);
 
                     switch(i)
                     {
@@ -78,9 +77,9 @@ bool factoryReset(functionArgument argument)
             }
             else
             {
-                if (bitRead(padsPressed, i))
+                if (BIT_READ(padsPressed, i))
                 {
-                    bitWrite(padsPressed, i, 0);
+                    BIT_WRITE(padsPressed, i, 0);
 
                     switch(i)
                     {
@@ -103,7 +102,7 @@ bool factoryReset(functionArgument argument)
             }
         }
 
-        if (bitRead(padsPressed, 0) && bitRead(padsPressed, 6) && bitRead(padsPressed, 8))
+        if (BIT_READ(padsPressed, 0) && BIT_READ(padsPressed, 6) && BIT_READ(padsPressed, 8))
         {
             wait_ms(1000);
             display.clearAll();
@@ -188,16 +187,12 @@ bool checkRunningStatus(functionArgument argument)
     {
         case true:
         //switch option
-        #ifdef USE_USB_MIDI
-        (bool)argument.argument1 ? midi.enableRunningStatus() : midi.disableRunningStatus();
+        midi.setRunningStatusState((bool)argument.argument1);
         database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument.argument1);
-        #endif
         return true;
 
         case false:
-        #ifdef USE_USB_MIDI
-        return (midi.runningStatusEnabled() == (bool)argument.argument1);
-        #endif
+        return (midi.getRunningStatusState() == (bool)argument.argument1);
         break;
     }
 
@@ -209,7 +204,7 @@ bool checkNoteOffStatus(functionArgument argument)
     switch((noteOffType_t)argument.argument1)
     {
         case noteOffType_noteOnZeroVel:
-        case noteOffType_offChannel:
+        case noteOffType_standardNoteOff:
         //nothing
         break;
 
@@ -222,9 +217,7 @@ bool checkNoteOffStatus(functionArgument argument)
     {
         case true:
         //switch option
-        #ifdef USE_USB_MIDI
         midi.setNoteOffMode((noteOffType_t)argument.argument1);
-        #endif
         database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
         return true;
 

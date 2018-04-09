@@ -32,9 +32,6 @@
 #include "../../lcd/LCD.h"
 #include "../../lcd/menu/Menu.h"
 #include "../../../database/blocks/GlobalSettings.h"
-#ifdef USE_USB_MIDI
-#include "../../../midi/src/MIDI.h"
-#endif
 
 void handleOnOff(uint8_t id, bool state)
 {
@@ -192,9 +189,7 @@ void handleTransportControl(uint8_t id, bool state)
         }
     }
 
-    #ifdef USE_USB_MIDI
     uint8_t sysExArray[] =  { 0xF0, 0x7F, 0x7F, 0x06, 0x00, 0xF7 }; //based on MIDI spec for transport control
-    #endif
 
     function_t function;
 
@@ -207,7 +202,6 @@ void handleTransportControl(uint8_t id, bool state)
     {
         case BUTTON_TRANSPORT_PLAY:
         function = functionPlay;
-        #ifdef USE_USB_MIDI
         switch(buttons.getTransportControlType())
         {
             case transportCC:
@@ -225,14 +219,12 @@ void handleTransportControl(uint8_t id, bool state)
             midi.sendSysEx(6, sysExArray, true);
             break;
         }
-        #endif
         leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateFull);
         break;
 
         case BUTTON_TRANSPORT_STOP:
         function = functionStop;
         recordOff = leds.getLEDstate(LED_TRANSPORT_RECORD);
-        #ifdef USE_USB_MIDI
         switch(buttons.getTransportControlType())
         {
             case transportCC:
@@ -265,7 +257,6 @@ void handleTransportControl(uint8_t id, bool state)
             }
             break;
         }
-        #endif
         leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateOff);
         leds.setLEDstate(LED_TRANSPORT_STOP, ledStateOff);
 
@@ -313,7 +304,6 @@ void handleTransportControl(uint8_t id, bool state)
             if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
             {
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
-                #ifdef USE_USB_MIDI
                 switch(buttons.getTransportControlType())
                 {
                     case transportCC:
@@ -331,12 +321,10 @@ void handleTransportControl(uint8_t id, bool state)
                     midi.sendSysEx(6, sysExArray, true);
                     break;
                 }
-                #endif
             }
             else
             {
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
-                #ifdef USE_USB_MIDI
                 switch(buttons.getTransportControlType())
                 {
                     case transportCC:
@@ -354,7 +342,6 @@ void handleTransportControl(uint8_t id, bool state)
                     midi.sendSysEx(6, sysExArray, true);
                     break;
                 }
-                #endif
             }
         }
         break;

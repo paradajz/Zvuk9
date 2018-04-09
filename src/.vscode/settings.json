@@ -1,0 +1,18 @@
+// Workspace settings
+{
+    "files.exclude": {
+        "src/build/": true,
+        "bin/": true
+    },
+    "C_Cpp.intelliSenseEngine": "Tag Parser",
+    "C_Cpp.intelliSenseEngineFallback": "Disabled",
+    "editor.renderWhitespace": "all",
+    "files.associations": {
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "xmemory0": "cpp",
+        "xtr1common": "cpp",
+        "xutility": "cpp",
+        "iosfwd": "cpp"
+    },
+}

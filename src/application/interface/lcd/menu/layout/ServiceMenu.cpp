@@ -61,5 +61,5 @@ void Menu::createServiceMenuLayout()
     menuItem[serviceMenuItem_factoryReset].stringPointer = menuOption_factoryReset_string;
     menuItem[serviceMenuItem_factoryReset].level = 3;
     menuItem[serviceMenuItem_factoryReset].function = factoryReset;
-    menuItem[serviceMenuItem_factoryReset].argument.argument1 = (uint8_t)initWipe;
+    menuItem[serviceMenuItem_factoryReset].argument.argument1 = (uint8_t)initFull;
 }

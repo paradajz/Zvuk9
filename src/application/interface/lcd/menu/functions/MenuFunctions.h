@@ -26,7 +26,6 @@
 #include "../../LCD.h"
 #include "../../../pads/Pads.h"
 #include "../../../encoders/Encoders.h"
-#include "../../../../midi/src/MIDI.h"
 #include "../Menu.h"
 #include <avr/boot.h>
 

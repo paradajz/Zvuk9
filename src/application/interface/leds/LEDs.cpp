@@ -80,18 +80,18 @@ void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state)
 
             case ledStateDim:
             //clear intensity bit
-            bitClear(ledState[ledNumber], LED_INTENSITY_BIT);
+            BIT_CLEAR(ledState[ledNumber], LED_INTENSITY_BIT);
             //set active and constant on bit
-            bitSet(ledState[ledNumber], LED_ACTIVE_BIT);
-            bitSet(ledState[ledNumber], LED_CONSTANT_ON_BIT);
+            BIT_SET(ledState[ledNumber], LED_ACTIVE_BIT);
+            BIT_SET(ledState[ledNumber], LED_CONSTANT_ON_BIT);
             break;
 
             case ledStateFull:
             //set full intensity bit
-            bitSet(ledState[ledNumber], LED_INTENSITY_BIT);
+            BIT_SET(ledState[ledNumber], LED_INTENSITY_BIT);
             //set active and constant on bit
-            bitSet(ledState[ledNumber], LED_ACTIVE_BIT);
-            bitSet(ledState[ledNumber], LED_CONSTANT_ON_BIT);
+            BIT_SET(ledState[ledNumber], LED_ACTIVE_BIT);
+            BIT_SET(ledState[ledNumber], LED_CONSTANT_ON_BIT);
             break;
 
             default:
@@ -109,19 +109,19 @@ void LEDs::setBlinkState(uint8_t ledID, bool state, bool forceOn)
         switch(state)
         {
             case true:
-            bitSet(ledState[ledID], LED_BLINK_STATE_BIT);
-            bitSet(ledState[ledID], LED_BLINK_ON_BIT);
+            BIT_SET(ledState[ledID], LED_BLINK_STATE_BIT);
+            BIT_SET(ledState[ledID], LED_BLINK_ON_BIT);
             break;
 
             case false:
-            bitClear(ledState[ledID], LED_BLINK_STATE_BIT);
-            bitClear(ledState[ledID], LED_BLINK_ON_BIT);
+            BIT_CLEAR(ledState[ledID], LED_BLINK_STATE_BIT);
+            BIT_CLEAR(ledState[ledID], LED_BLINK_ON_BIT);
             break;
         }
 
         if (forceOn)
         {
-            bitWrite(ledState[ledID], LED_ACTIVE_BIT, forceOn);
+            BIT_WRITE(ledState[ledID], LED_ACTIVE_BIT, forceOn);
         }
     }
 
@@ -134,7 +134,7 @@ bool LEDs::getBlinkState(uint8_t ledID)
 
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        value = bitRead(ledState[ledID], LED_BLINK_ON_BIT);
+        value = BIT_READ(ledState[ledID], LED_BLINK_ON_BIT);
     }
 
     return value;
@@ -154,7 +154,7 @@ void LEDs::checkBlinkLEDs()
     for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
     {
         ledState = getState(i);
-        if (bitRead(ledState, LED_BLINK_ON_BIT) && bitRead(ledState, LED_ACTIVE_BIT))
+        if (BIT_READ(ledState, LED_BLINK_ON_BIT) && BIT_READ(ledState, LED_ACTIVE_BIT))
         {
             _blinkEnabled = true;
             break;
@@ -190,9 +190,9 @@ uint8_t LEDs::getLEDnumberFromTonic(note_t note)
 
 ledState_t LEDs::getLEDstate(uint8_t ledNumber)
 {
-    if (!bitRead(ledState[ledNumber], LED_CONSTANT_ON_BIT))
+    if (!BIT_READ(ledState[ledNumber], LED_CONSTANT_ON_BIT))
         return ledStateOff;
-    else if (bitRead(ledState[ledNumber], LED_INTENSITY_BIT))
+    else if (BIT_READ(ledState[ledNumber], LED_INTENSITY_BIT))
         return ledStateFull;
     else
         return ledStateDim;

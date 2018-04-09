@@ -26,7 +26,6 @@
 #include "../Menu.h"
 #include "../items/UserMenu.h"
 #include "../../../../database/Database.h"
-#include "../../../../midi/src/DataTypes.h"
 #include "../functions/MenuFunctions.h"
 
 void Menu::createUserMenuLayout()
@@ -135,7 +134,7 @@ void Menu::createUserMenuLayout()
                 menuItem[userMenuItem_midiSettings_noteOff_channel].level = 231;
                 menuItem[userMenuItem_midiSettings_noteOff_channel].checkable = true;
                 menuItem[userMenuItem_midiSettings_noteOff_channel].function = checkNoteOffStatus;
-                menuItem[userMenuItem_midiSettings_noteOff_channel].argument.argument1 = noteOffType_offChannel;
+                menuItem[userMenuItem_midiSettings_noteOff_channel].argument.argument1 = noteOffType_standardNoteOff;
 
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].stringPointer = noteOff_zeroVel_string;
                 menuItem[userMenuItem_midiSettings_noteOff_zero_vel].level = 232;

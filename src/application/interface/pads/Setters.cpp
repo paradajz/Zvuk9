@@ -200,7 +200,7 @@ changeResult_t Pads::setTonic(note_t newTonic, bool internalChange)
                     if (isUserScale(activeScale) && !internalChange)
                     {
                         //async write
-                        database.update(DB_BLOCK_SCALE, scaleUserSection, noteID+j+(NOTES_PER_PAD*i), newNote, true);
+                        database.update(DB_BLOCK_SCALE, scaleUserSection, noteID+j+(NOTES_PER_PAD*i), newNote);
                     }
 
                     padNote[i][j] = newNote;
@@ -352,7 +352,7 @@ changeResult_t Pads::setMIDISendState(function_t type, bool state)
         {
             database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
             for (int i=0; i<NUMBER_OF_PADS; i++)
-                bitWrite(*variablePointer, i, state);
+                BIT_WRITE(*variablePointer, i, state);
         }
         else
         {
@@ -368,7 +368,7 @@ changeResult_t Pads::setMIDISendState(function_t type, bool state)
         if (database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)lastTouchedPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)) != state)
         {
             database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)lastTouchedPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
-            bitWrite(*variablePointer, lastTouchedPad, state);
+            BIT_WRITE(*variablePointer, lastTouchedPad, state);
         }
         else
         {
@@ -1211,7 +1211,7 @@ changeResult_t Pads::setOctave(int8_t octave, bool padEditMode)
                             if (padNote[i][j] != BLANK_NOTE)
                             {
                                 newNote = padNote[i][j] + MIDI_NOTES*difference;
-                                database.update(DB_BLOCK_SCALE, scaleUserSection, noteID+j+(NOTES_PER_PAD*i), newNote, true);
+                                database.update(DB_BLOCK_SCALE, scaleUserSection, noteID+j+(NOTES_PER_PAD*i), newNote);
 
                                 #ifdef DEBUG
                                 printf_P(PSTR("%d "), newNote);
@@ -1382,7 +1382,7 @@ void Pads::setPadPressState(int8_t pad, bool state)
 
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        bitWrite(padPressed, pad, state);
+        BIT_WRITE(padPressed, pad, state);
     }
 }
 
@@ -1647,7 +1647,7 @@ changeResult_t Pads::setPitchBendState(bool state, padCoordinate_t coordinate)
         if (database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)lastTouchedPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)) != state)
         {
             database.update(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*(uint16_t)lastTouchedPad+configurationID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram), state);
-            bitWrite(*variablePointer, lastTouchedPad, state);
+            BIT_WRITE(*variablePointer, lastTouchedPad, state);
             #ifdef DEBUG
             printf_P(PSTR("Pitch bend on %s for pad %d %s\n"), coordinate == coordinateX ? "X" : "Y", lastTouchedPad, state ? "enabled" : "disabled");
             #endif
@@ -1664,7 +1664,7 @@ changeResult_t Pads::setPitchBendState(bool state, padCoordinate_t coordinate)
         {
             database.update(DB_BLOCK_PROGRAM, programGlobalSettingsSection, configurationID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram), state);
             for (int i=0; i<NUMBER_OF_PADS; i++)
-                bitWrite(*variablePointer, i, state);
+                BIT_WRITE(*variablePointer, i, state);
             #ifdef DEBUG
             printf_P(PSTR("Pitch bend on %s for all pads %s\n"), coordinate == coordinateX ? "X" : "Y", state ? "enabled" : "disabled");
             #endif

@@ -27,7 +27,7 @@
 
 #include "Variables.h"
 #include "map/Map.h"
-#include "lcd/lcd.h"
+#include "lcd/LCD.h"
 #include "pins/Pins.h"
 #include "Import.h"
 #include "DataTypes.h"
@@ -64,8 +64,12 @@ class Board
     int16_t getPadX(uint8_t pad);
     int16_t getPadY(uint8_t pad);
     void reboot(rebootType_t type);
+    static bool checkNewRevision();
 
     private:
+    void initAnalog();
+    void initUSB_MIDI();
+    void initUART_MIDI(uint32_t baudRate, bool reInit);
     void initPins();
     void initTimers();
     void initPads();

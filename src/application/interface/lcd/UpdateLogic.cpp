@@ -27,6 +27,8 @@
 
 U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
 
+StringBuffer             stringBuffer;
+
 ///
 /// \brief Default constructor.
 ///
@@ -99,7 +101,7 @@ bool LCD::update()
 
         for (int j=0; j<string_len; j++)
         {
-            if (bitRead(charChange[i], j))
+            if (BIT_READ(charChange[i], j))
                 u8x8.drawGlyph(j, rowMap[i], charPointer[j+scrollEvent[i].currentIndex]);
         }
 
@@ -125,7 +127,7 @@ bool LCD::update()
 ///
 void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
 {
-    uint8_t size = strlen(stringBuffer);
+    uint8_t size = strlen(stringBuffer.buffer);
     uint8_t scrollSize = 0;
 
     if (size+startIndex >= STRING_BUFFER_SIZE-2)
@@ -134,7 +136,7 @@ void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
     if (directWriteState)
     {
         for (int j=0; j<size; j++)
-            u8x8.drawGlyph(j+startIndex, rowMap[row], stringBuffer[j]);
+            u8x8.drawGlyph(j+startIndex, rowMap[row], stringBuffer.buffer[j]);
     }
     else
     {
@@ -145,8 +147,8 @@ void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
             case lcdtext_still:
             for (int i=0; i<size; i++)
             {
-                lcdRowStillText[row][startIndex+i] = stringBuffer[i];
-                bitWrite(charChange[row], startIndex+i, 1);
+                lcdRowStillText[row][startIndex+i] = stringBuffer.buffer[i];
+                BIT_WRITE(charChange[row], startIndex+i, 1);
             }
 
             //scrolling is enabled only if some characters are found after LCD_WIDTH-1 index
@@ -186,7 +188,7 @@ void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
             lcdRowTempText[row][LCD_WIDTH-1] = '\0';
 
             for (int i=0; i<size; i++)
-                lcdRowTempText[row][startIndex+i] = stringBuffer[i];
+                lcdRowTempText[row][startIndex+i] = stringBuffer.buffer[i];
 
             //make sure message is properly EOL'ed
             lcdRowTempText[row][startIndex+size] = '\0';
@@ -282,7 +284,7 @@ void LCD::updateScrollStatus(uint8_t row)
     }
 
     for (int i=scrollEvent[row].startIndex; i<LCD_WIDTH; i++)
-        bitWrite(charChange[row], i, 1);
+        BIT_WRITE(charChange[row], i, 1);
 
     lastScrollTime = rTimeMs();
 }

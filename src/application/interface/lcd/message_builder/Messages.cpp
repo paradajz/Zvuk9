@@ -25,24 +25,25 @@
 
 #include "../LCD.h"
 #include "../../pads/Pads.h"
-#include "../../../versioning/src/avr/Version.h"
 
 void LCD::displayFirmwareUpdated()
 {
-    strcpy_P(stringBuffer, firmware_updated);
-    uint8_t size = ARRAY_SIZE_CHAR(firmware_updated);
-    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(size));
+    stringBuffer.startLine();
+    stringBuffer.appendText_P(firmware_updated);
+    stringBuffer.endLine();
 
-    size = 0;
-    strcpy_P(stringBuffer, deviceInfo_swVersion_string);
-    size += ARRAY_SIZE_CHAR(deviceInfo_swVersion_string);
-    addNumberToCharArray(getSWversion(swVersion_major), size);
-    appendText(".", size);
-    addNumberToCharArray(getSWversion(swVersion_minor), size);
-    appendText(".", size);
-    addNumberToCharArray(getSWversion(swVersion_revision), size);
+    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(stringBuffer.getSize()));
 
-    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(size));
+    stringBuffer.startLine();
+    stringBuffer.appendText_P(deviceInfo_swVersion_string);
+    stringBuffer.appendInt(2);
+    stringBuffer.appendText(".");
+    stringBuffer.appendInt(0);
+    stringBuffer.appendText(".");
+    stringBuffer.appendInt(0);
+    stringBuffer.endLine();
+
+    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(stringBuffer.getSize()));
 }
 
 void LCD::displayWelcomeMessage()
@@ -50,25 +51,29 @@ void LCD::displayWelcomeMessage()
     uint8_t charIndex;
     uint8_t location;
 
-    strcpy_P(stringBuffer, deviceName_string);
-    location = getTextCenter(ARRAY_SIZE_CHAR(deviceName_string));
+    stringBuffer.startLine();
+    stringBuffer.appendText_P(deviceName_string);
+    stringBuffer.endLine();
+    location = getTextCenter(stringBuffer.getSize());
     charIndex = 0;
 
-    while (stringBuffer[charIndex] != '\0')
+    while (stringBuffer.buffer[charIndex] != '\0')
     {
-        u8x8.drawGlyph(location+charIndex, rowMap[LCD_ROW_DEVICE_NAME_MESSAGE], stringBuffer[charIndex]);
+        u8x8.drawGlyph(location+charIndex, rowMap[LCD_ROW_DEVICE_NAME_MESSAGE], stringBuffer.buffer[charIndex]);
         charIndex++;
     }
 
     wait_ms(1500);
 
-    strcpy_P(stringBuffer, welcome_string);
-    location = getTextCenter(ARRAY_SIZE_CHAR(welcome_string));
+    stringBuffer.startLine();
+    stringBuffer.appendText_P(welcome_string);
+    stringBuffer.endLine();
+    location = getTextCenter(stringBuffer.getSize());
     charIndex = 0;
 
-    while (stringBuffer[charIndex] != '\0')
+    while (stringBuffer.buffer[charIndex] != '\0')
     {
-        u8x8.drawGlyph(location+charIndex, rowMap[LCD_ROW_WELCOME_MESSAGE], stringBuffer[charIndex]);
+        u8x8.drawGlyph(location+charIndex, rowMap[LCD_ROW_WELCOME_MESSAGE], stringBuffer.buffer[charIndex]);
         wait_ms(50);
         charIndex++;
     }
@@ -80,23 +85,23 @@ void LCD::displayWelcomeMessage()
 
 void LCD::displayError(function_t function, changeResult_t result)
 {
-    uint8_t size;
+    stringBuffer.startLine();
+    stringBuffer.appendText_P((char*)pgm_read_word(&(functionErrorArray[function])));
+    stringBuffer.endLine();
 
-    strcpy_P(stringBuffer, (char*)pgm_read_word(&(functionErrorArray[function])));
-    size = pgm_read_byte(&functionErrorArray_sizes[function]);
-    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(size));
+    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(stringBuffer.getSize()));
 
-    strcpy_P(stringBuffer, (char*)pgm_read_word(&(changeResultArray[result])));
-    size = pgm_read_byte(&changeResultArray_sizes[result]);
-    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(size));
+    stringBuffer.startLine();
+    stringBuffer.appendText_P((char*)pgm_read_word(&(changeResultArray[result])));
+    stringBuffer.endLine();
+
+    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(stringBuffer.getSize()));
 }
 
 void LCD::displayChangeResult(function_t function, int16_t value, settingType_t type)
 {
-    uint8_t size;
-
-    strcpy_P(stringBuffer, (char*)pgm_read_word(&(functionArray[function])));
-    size = pgm_read_byte(&functionArray_sizes[function]);
+    stringBuffer.startLine();
+    stringBuffer.appendText_P((char*)pgm_read_word(&(functionArray[function])));
 
     //special cases
     switch(function)
@@ -109,17 +114,15 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         case functionXMaxLimit:
         case functionYMinLimit:
         case functionYMaxLimit:
-        addNumberToCharArray(value, size);
+        stringBuffer.appendInt(value);
         break;
 
         case functionOctave:
-        addNumberToCharArray(normalizeOctave(value), size);
+        stringBuffer.appendInt(normalizeOctave(value));
         break;
 
         case functionNotes:
-        strcpy_P(tempBuffer, (char*)pgm_read_word(&(noteNameArray[value])));
-        strcat(stringBuffer, tempBuffer);
-        size += strlen(tempBuffer);
+        stringBuffer.appendText_P((char*)pgm_read_word(&(noteNameArray[value])));
         break;
 
         case functionOnOffNotes:
@@ -128,42 +131,41 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
         case functionOnOffY:
         case functionOnOffSplit:
         case functionRecord:
-        value > 0 ? appendText("on", size) : appendText("off", size);
+        value > 0 ? stringBuffer.appendText("on") : stringBuffer.appendText("off");
         break;
 
         case functionXCurve:
         case functionYCurve:
-        strcpy_P(tempBuffer, (char*)pgm_read_word(&(curveNameArray[value])));
-        strcat(stringBuffer, tempBuffer);
-        size += strlen(tempBuffer);
+        stringBuffer.appendText_P((char*)pgm_read_word(&(curveNameArray[value])));
         break;
 
         default:
         break;
     }
 
-    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(size));
+    stringBuffer.endLine();
+
+    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(stringBuffer.getSize()));
+
+    stringBuffer.startLine();
 
     switch(type)
     {
         case globalSetting:
-        startLine();
-        size = 0;
-        addSpaceToCharArray(LCD_WIDTH, size);
-        endLine(size);
+        stringBuffer.appendChar(' ', LCD_WIDTH);
         break;
 
         case singlePadSetting:
-        strcpy_P(stringBuffer, settinType_singlePad_string);
-        size = ARRAY_SIZE_CHAR(settinType_singlePad_string);
-        addNumberToCharArray(pads.getLastTouchedPad() + 1, size);
+        stringBuffer.appendText_P(settinType_singlePad_string);
+        stringBuffer.appendInt(pads.getLastTouchedPad() + 1);
         break;
 
         case allPadsSetting:
-        strcpy_P(stringBuffer, settinType_allPads_string);
-        size = ARRAY_SIZE_CHAR(settinType_allPads_string);
+        stringBuffer.appendText_P(settinType_allPads_string);
         break;
     }
 
-    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(size));
+    stringBuffer.endLine();
+
+    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(stringBuffer.getSize()));
 }

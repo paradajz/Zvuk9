@@ -34,9 +34,7 @@
 #include "interface/lcd/menu/Menu.h"
 #include "interface/leds/LEDs.h"
 #include "interface/pads/Pads.h"
-#include "versioning/src/avr/Version.h"
 #include "database/Database.h"
-#include "midi/src/MIDI.h"
 
 #ifdef DEBUG
 #include "vserial/Serial.h"
@@ -89,25 +87,21 @@ int main()
 
     database.init();
 
-    if (!database.signatureValid())
-    {
-        display.setDirectWriteState(true);
-        strcpy_P(stringBuffer, dbInit_string);
-        display.updateText(1, lcdtext_still, display.getTextCenter(ARRAY_SIZE(dbInit_string)));
-        strcpy_P(stringBuffer, pleaseWait_string);
-        display.updateText(2, lcdtext_still, display.getTextCenter(ARRAY_SIZE(pleaseWait_string)));
-        database.factoryReset(initWipe);
-        display.setDirectWriteState(false);
-    }
+    // if (!database.signatureValid())
+    // {
+    //     display.setDirectWriteState(true);
+    //     stringBuffer.appendText_P(dbInit_string);
+    //     display.updateText(1, lcdtext_still, display.getTextCenter(ARRAY_SIZE(dbInit_string)));
+    //     stringBuffer.appendText_P(pleaseWait_string);
+    //     display.updateText(2, lcdtext_still, display.getTextCenter(ARRAY_SIZE(pleaseWait_string)));
+    //     database.factoryReset(initFull);
+    //     display.setDirectWriteState(false);
+    // }
 
-    #ifdef USE_USB_MIDI
-    midi.init(dinInterface);
-    midi.init(usbInterface);
     midi.setInputChannel(1);
     midi.setNoteOffMode((noteOffType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
     bool runningStatus = database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
-    runningStatus ? midi.enableRunningStatus() : midi.disableRunningStatus();
-    #endif
+    midi.setRunningStatusState(runningStatus);
 
     leds.init();
     pads.init();
@@ -126,7 +120,7 @@ int main()
     buttons.init();
 
     #ifndef DEBUG
-    if (checkNewRevision())
+    if (board.checkNewRevision())
         display.displayFirmwareUpdated();
     #endif
 
@@ -142,12 +136,6 @@ int main()
 
         #ifdef DEBUG
         vserial.update();
-        #endif
-
-        #ifdef DBMS_ENABLE_ASYNC_UPDATE
-        //write to eeprom when all pads are released
-        if (!pads.getNumberOfPressedPads())
-            database.checkQueue();
         #endif
     }
 

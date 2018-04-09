@@ -108,12 +108,12 @@ inline void checkLEDs()
             //change blinkBit state and write it into ledState variable if LED is in blink state
             for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
             {
-                if (bitRead(ledState[i], LED_BLINK_ON_BIT))
+                if (BIT_READ(ledState[i], LED_BLINK_ON_BIT))
                 {
                     if (blinkState)
-                        bitSet(ledState[i], LED_BLINK_STATE_BIT);
+                        BIT_SET(ledState[i], LED_BLINK_STATE_BIT);
                     else
-                        bitClear(ledState[i], LED_BLINK_STATE_BIT);
+                        BIT_CLEAR(ledState[i], LED_BLINK_STATE_BIT);
                 }
             }
 
@@ -126,11 +126,11 @@ inline void checkLEDs()
     for (int i=0; i<NUMBER_OF_LED_ROWS; i++)
     {
         uint8_t ledNumber = activeLEDcolumn+i*NUMBER_OF_LED_COLUMNS;
-        uint8_t ledStateSingle = bitRead(ledState[ledNumber], LED_ACTIVE_BIT) && (bitRead(ledState[ledNumber], LED_BLINK_ON_BIT) == bitRead(ledState[ledNumber], LED_BLINK_STATE_BIT));
+        uint8_t ledStateSingle = BIT_READ(ledState[ledNumber], LED_ACTIVE_BIT) && (BIT_READ(ledState[ledNumber], LED_BLINK_ON_BIT) == BIT_READ(ledState[ledNumber], LED_BLINK_STATE_BIT));
 
         if (ledStateSingle)
         {
-            if (bitRead(ledState[ledNumber], LED_INTENSITY_BIT))
+            if (BIT_READ(ledState[ledNumber], LED_INTENSITY_BIT))
                 ledStateSingle = LED_FULL_INTENSITY;
             else
                 ledStateSingle = LED_HALF_INTENSITY;
@@ -282,7 +282,7 @@ inline void storeDigitalIn(uint8_t column)
             //instead of multiplying row by four, simply right shift row by two places
             encoderNumber = (row << 2) + column;
             //get last encoder direction
-            bool lastDirection = bitRead(encoderState[encoderNumber], 7);
+            bool lastDirection = BIT_READ(encoderState[encoderNumber], 7);
 
             //shift in new encoder readings
             encoderState[encoderNumber] <<= 2;
@@ -291,7 +291,7 @@ inline void storeDigitalIn(uint8_t column)
             encoderState[encoderNumber] &= 0x8F;
 
             //update new encoder direction
-            bitWrite(encoderState[encoderNumber], 7, lastDirection);
+            BIT_WRITE(encoderState[encoderNumber], 7, lastDirection);
 
             int8_t newPulse = encoderLookUpTable[encoderState[encoderNumber] & 0x0F];
 
@@ -304,7 +304,7 @@ inline void storeDigitalIn(uint8_t column)
             encPulses_x4[encoderNumber] += newPulse;
 
             //update new direction
-            bitWrite(encoderState[encoderNumber], 7, newDirection);
+            BIT_WRITE(encoderState[encoderNumber], 7, newDirection);
 
             if (lastDirection != newDirection)
                 continue;

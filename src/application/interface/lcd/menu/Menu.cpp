@@ -75,10 +75,10 @@ void Menu::setMenuTitle(bool rootTitle)
     //set menu title, but only if current level isn't 1 (root)
     if (!rootTitle)
     {
-        stringBuffer[0] = '<';
-        stringBuffer[1] = '\0';
-        strcpy_P(tempBuffer, menuItem[indexes[currentOptionIndex]].stringPointer);
-        strcat(stringBuffer, tempBuffer);
+        stringBuffer.startLine();
+        stringBuffer.appendChar('<', 1);
+        stringBuffer.appendText_P(menuItem[indexes[currentOptionIndex]].stringPointer);
+        stringBuffer.endLine();
         display.updateText(0, lcdtext_still, 0);
     }
     else
@@ -86,12 +86,12 @@ void Menu::setMenuTitle(bool rootTitle)
         switch(activeMenu)
         {
             case userMenu:
-            strcpy_P(stringBuffer, menuType_user_string);
+            stringBuffer.appendText_P(menuType_user_string);
             display.updateText(0, lcdtext_still, 0);
             break;
 
             case serviceMenu:
-            strcpy_P(stringBuffer, menuType_service_string);
+            stringBuffer.appendText_P(menuType_service_string);
             display.updateText(0, lcdtext_still, 0);
             break;
 
@@ -148,8 +148,6 @@ void Menu::getMenuItems()
 
 void Menu::updateMenuScreen()
 {
-    uint8_t size;
-
     uint8_t currentOption = menuHierarchyPosition % 10;
 
     //we can display up to three options/suboptions at the time
@@ -164,32 +162,29 @@ void Menu::updateMenuScreen()
         //clear line first
         display.clearRow(i+1);
 
+        stringBuffer.startLine();
+
         //skipping first row since it's reserved for the menu title
         if (i == markerOption)
-            stringBuffer[0] = '>';
+            stringBuffer.appendChar('>', 1);
         else
-            stringBuffer[0] = ' ';
+            stringBuffer.appendChar(' ', 1);
 
-        size = 1;
-
-        stringBuffer[1] = '\0';
-        strcpy_P(tempBuffer, menuItem[indexes[i+startPosition]].stringPointer);
-        size += strlen(tempBuffer);
-        strcat(stringBuffer, tempBuffer);
+        stringBuffer.appendText_P(menuItem[indexes[i+startPosition]].stringPointer);
 
         //check for checkable items
         if (menuItem[indexes[i+startPosition]].checkable && menuItem[indexes[i+startPosition]].function != NULL)
         {
             //checked and unchecked strings have the same size
             uint8_t checkMarkerSize = ARRAY_SIZE_CHAR(checked_string);
-            uint8_t spaceFill = LCD_WIDTH - size - checkMarkerSize;
-            addSpaceToCharArray(spaceFill, size);
-            size += checkMarkerSize;
+            uint8_t spaceFill = LCD_WIDTH - stringBuffer.getSize() - checkMarkerSize;
+            stringBuffer.appendChar(' ', spaceFill);
 
             //place checked/unchecked characters at the end of the screen line
-            (menuItem[indexes[i+startPosition]].function(menuItem[indexes[i+startPosition]].argument)) ? strcpy_P(tempBuffer, checked_string) : strcpy_P(tempBuffer, unchecked_string);
-            strcat(stringBuffer, tempBuffer);
+            (menuItem[indexes[i+startPosition]].function(menuItem[indexes[i+startPosition]].argument)) ? stringBuffer.appendText_P(checked_string) : stringBuffer.appendText_P(unchecked_string);
         }
+
+        stringBuffer.endLine();
 
         display.updateText(i+1, lcdtext_still, 0);
     }

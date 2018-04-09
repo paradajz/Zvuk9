@@ -34,6 +34,8 @@
 #include "Macros.h"
 #include "strings/Strings.h"
 
+extern StringBuffer             stringBuffer;
+
 ///
 /// \brief LCD control.
 /// \defgroup interfaceLCD LCD

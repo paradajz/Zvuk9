@@ -26,7 +26,6 @@
 #pragma once
 
 #include "../../interface/pads/curves/Curves.h"
-#include "../../midi/src/DataTypes.h"
 #include "../../interface/pads/DataTypes.h"
 #include "../../interface/buttons/DataTypes.h"
 
@@ -39,7 +38,7 @@ typedef enum
 
 #define MIDI_SETTING_AFTERTOUCH_TYPE                aftertouchChannel
 #define MIDI_SETTING_RUNNING_STATUS                 0 //disabled
-#define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_offChannel
+#define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_standardNoteOff
 #define MIDI_SETTING_TRANSPORT_CC                   transportMMC
 #define MIDI_SETTING_PITCH_BEND_TYPE                pitchBend1
 

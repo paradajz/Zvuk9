@@ -29,13 +29,14 @@
 #include "Scales.h"
 #include "PadCalibration.h"
 #include "GlobalSettings.h"
+#include "ID.h"
 
-typedef enum
+enum dbBlocks
 {
-    DB_BLOCK_PROGRAM,
-    DB_BLOCK_SCALE,
-    DB_BLOCK_PAD_CALIBRATION,
-    DB_BLOCK_GLOBAL_SETTINGS,
-    DB_BLOCK_ID,
+    DB_BLOCK_PROGRAM,           //0
+    DB_BLOCK_SCALE,             //1
+    DB_BLOCK_PAD_CALIBRATION,   //2
+    DB_BLOCK_GLOBAL_SETTINGS,   //3
+    DB_BLOCK_ID,                //4
     DB_BLOCKS
-} dbBlocks;
+};

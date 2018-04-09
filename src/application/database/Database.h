@@ -27,7 +27,6 @@
 
 #include "../dbms/src/DBMS.h"
 #include "blocks/Blocks.h"
-#include "Config.h"
 
 ///
 /// \addtogroup eeprom
@@ -37,17 +36,18 @@ class Database : public DBMS
 {
     public:
     Database();
-    void init();
-    void factoryReset(initType_t type);
-    bool signatureValid();
+    static void init();
+    static void factoryReset(initType_t type);
+    static bool signatureValid();
 
     private:
-    void createLayout();
-    void writeCustomValues();
-    void initProgramSettings();
-    void initScales();
-    void initGlobalSettings();
+    static void createLayout();
+    static void writeCustomValues();
+    static void initProgramSettings();
+    static void initScales();
+    static void initGlobalSettings();
 };
 
 extern Database database;
+
 /// @}

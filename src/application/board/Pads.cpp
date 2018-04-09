@@ -76,10 +76,10 @@ void                (*valueSetup[PAD_READINGS]) (void);
 
 inline void setMuxInput(uint8_t muxInput)
 {
-    bitRead(muxInput, 0) ? setHigh(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN) : setLow(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN);
-    bitRead(muxInput, 1) ? setHigh(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN) : setLow(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN);
-    bitRead(muxInput, 2) ? setHigh(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN) : setLow(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN);
-    bitRead(muxInput, 3) ? setHigh(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN) : setLow(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN);
+    BIT_READ(muxInput, 0) ? setHigh(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN) : setLow(MUX_SELECT_PIN_0_PORT, MUX_SELECT_PIN_0_PIN);
+    BIT_READ(muxInput, 1) ? setHigh(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN) : setLow(MUX_SELECT_PIN_1_PORT, MUX_SELECT_PIN_1_PIN);
+    BIT_READ(muxInput, 2) ? setHigh(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN) : setLow(MUX_SELECT_PIN_2_PORT, MUX_SELECT_PIN_2_PIN);
+    BIT_READ(muxInput, 3) ? setHigh(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN) : setLow(MUX_SELECT_PIN_3_PORT, MUX_SELECT_PIN_3_PIN);
 }
 
 void setupPressure1()
@@ -138,6 +138,21 @@ void setupY()
     setLow(MUX_COMMON_PIN_3_PORT, MUX_COMMON_PIN_3_PIN);
 }
 
+void Board::initAnalog()
+{
+    adcConf adcConfiguration;
+
+    adcConfiguration.prescaler = ADC_PRESCALER_128;
+    adcConfiguration.vref = ADC_VREF_AVCC;
+
+    setUpADC(adcConfiguration);
+
+    _delay_ms(2);
+
+    for (int i=0; i<5; i++)
+        getADCvalue();  //few dummy reads to init ADC
+}
+
 void Board::initPads()
 {
     setupPressure1();
@@ -172,7 +187,7 @@ uint16_t Board::getPadPressure(uint8_t pad)
         returnValue_pressure = extractedSamples[coordinateZ][pad];
         returnValue_velocity = velocity[pad];
         velocity[pad] = 0;
-        pressed = bitRead(padPressed, pad);
+        pressed = BIT_READ(padPressed, pad);
     }
 
     if (returnValue_velocity)
@@ -255,7 +270,7 @@ ISR(ADC_vect)
                 storeMaxPressure();
 
                 //switch to x/y reading only if pad is pressed
-                if (bitRead(padPressed, activePad))
+                if (BIT_READ(padPressed, activePad))
                 {
                     //start reading x/y coordinates
                     padReadingIndex = readX;

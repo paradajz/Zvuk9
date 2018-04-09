@@ -29,6 +29,6 @@ void Board::init()
 {
     initPins();
     initTimers();
-    setUpADC();
+    initAnalog();
     initPads();
 };

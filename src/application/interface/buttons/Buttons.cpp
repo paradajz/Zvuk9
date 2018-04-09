@@ -28,9 +28,6 @@
 #include "Config.h"
 #include "../lcd/menu/Menu.h"
 #include "../../database/Database.h"
-#ifdef USE_USB_MIDI
-#include "../../midi/src/MIDI.h"
-#endif
 #include "../lcd/LCD.h"
 #include "../lcd/menu/Menu.h"
 #include "handlers/Handlers.h"
@@ -83,7 +80,7 @@ bool Buttons::getButtonState(uint8_t buttonID)
     uint8_t arrayIndex = buttonID/8;
     uint8_t buttonIndex = buttonID - 8*arrayIndex;
 
-    return bitRead(buttonPressed[arrayIndex], buttonIndex);
+    return BIT_READ(buttonPressed[arrayIndex], buttonIndex);
 }
 
 void Buttons::setButtonState(uint8_t buttonID, bool state)
@@ -91,7 +88,7 @@ void Buttons::setButtonState(uint8_t buttonID, bool state)
     uint8_t arrayIndex = buttonID/8;
     uint8_t buttonIndex = buttonID - 8*arrayIndex;
 
-    bitWrite(buttonPressed[arrayIndex], buttonIndex, state);
+    BIT_WRITE(buttonPressed[arrayIndex], buttonIndex, state);
 }
 
 void Buttons::processButton(uint8_t buttonID, uint8_t state)
@@ -156,7 +153,7 @@ void Buttons::enable(int8_t buttonID)
         uint8_t arrayIndex = buttonID/8;
         uint8_t buttonIndex = buttonID - 8*arrayIndex;
 
-        bitWrite(buttonEnabled[arrayIndex], buttonIndex, true);
+        BIT_WRITE(buttonEnabled[arrayIndex], buttonIndex, true);
     }
 }
 
@@ -171,7 +168,7 @@ void Buttons::disable(int8_t buttonID)
         uint8_t arrayIndex = buttonID/8;
         uint8_t buttonIndex = buttonID - 8*arrayIndex;
 
-        bitWrite(buttonEnabled[arrayIndex], buttonIndex, false);
+        BIT_WRITE(buttonEnabled[arrayIndex], buttonIndex, false);
     }
 }
 
@@ -180,7 +177,7 @@ bool Buttons::getButtonEnableState(uint8_t buttonID)
     uint8_t arrayIndex = buttonID/8;
     uint8_t buttonIndex = buttonID - 8*arrayIndex;
 
-    return bitRead(buttonEnabled[arrayIndex], buttonIndex);
+    return BIT_READ(buttonEnabled[arrayIndex], buttonIndex);
 }
 
 note_t Buttons::getTonicFromButton(uint8_t buttonNumber)

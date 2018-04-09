@@ -27,7 +27,6 @@
 #include "../leds/LEDs.h"
 #include "../../database/Database.h"
 #include "PredefinedScales.h"
-#include "../../midi/src/MIDI.h"
 
 ///
 /// \ingroup interfacePads
@@ -55,7 +54,7 @@ bool Pads::isPadPressed(int8_t pad)
 
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        value = bitRead(padPressed, pad);
+        value = BIT_READ(padPressed, pad);
     }
 
     return value;
@@ -215,22 +214,22 @@ bool Pads::getMIDISendState(int8_t pad, function_t type)
     switch(type)
     {
         case functionOnOffAftertouch:
-        return bitRead(aftertouchSendEnabled, pad);
+        return BIT_READ(aftertouchSendEnabled, pad);
 
         case functionOnOffNotes:
-        return bitRead(noteSendEnabled, pad);
+        return BIT_READ(noteSendEnabled, pad);
 
         case functionOnOffX:
-        return bitRead(xSendEnabled, pad);
+        return BIT_READ(xSendEnabled, pad);
 
         case functionOnOffY:
-        return bitRead(ySendEnabled, pad);
+        return BIT_READ(ySendEnabled, pad);
 
         case functionXPitchBend:
-        return bitRead(xSendEnabled, pad) && getPitchBendState(pad, coordinateX);
+        return BIT_READ(xSendEnabled, pad) && getPitchBendState(pad, coordinateX);
 
         case functionYPitchBend:
-        return bitRead(ySendEnabled, pad) && getPitchBendState(pad, coordinateY);
+        return BIT_READ(ySendEnabled, pad) && getPitchBendState(pad, coordinateY);
 
         default:
         return false;
@@ -481,7 +480,7 @@ bool Pads::isAftertouchActivated(int8_t pad)
 {
     assert(PAD_CHECK(pad));
 
-    return bitRead(aftertouchActivated, pad);
+    return BIT_READ(aftertouchActivated, pad);
 }
 
 ///
@@ -561,12 +560,12 @@ void Pads::getPadParameters()
 
         for (int i=0; i<NUMBER_OF_PADS; i++)
         {
-            bitWrite(xSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
-            bitWrite(ySendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
-            bitWrite(noteSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
-            bitWrite(aftertouchSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
-            bitWrite(pitchBendEnabledX, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
-            bitWrite(pitchBendEnabledY, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
+            BIT_WRITE(xSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
+            BIT_WRITE(ySendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
+            BIT_WRITE(noteSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_NOTE_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
+            BIT_WRITE(aftertouchSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
+            BIT_WRITE(pitchBendEnabledX, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
+            BIT_WRITE(pitchBendEnabledY, i, database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram)));
             ccXPad[i]                       = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_X_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccYPad[i]                       = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_CC_Y_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
             ccXminPad[i]                    = database.read(DB_BLOCK_PROGRAM, programGlobalSettingsSection, GLOBAL_PROGRAM_SETTING_X_MIN_ID+(GLOBAL_PROGRAM_SETTINGS*(uint16_t)activeProgram));
@@ -579,12 +578,12 @@ void Pads::getPadParameters()
         }
 
         #ifdef DEBUG
-        printf_P(PSTR("X send %s\n"), bitRead(xSendEnabled, 0) ? "enabled" : "disabled");
-        printf_P(PSTR("Y send %s\n"), bitRead(ySendEnabled, 0) ? "enabled" : "disabled");
-        printf_P(PSTR("Note send %s\n"), bitRead(noteSendEnabled, 0) ? "enabled" : "disabled");
-        printf_P(PSTR("Aftertouch send %s\n"), bitRead(aftertouchSendEnabled, 0) ? "enabled" : "disabled");
-        printf_P(PSTR("Pitch bend X send %s\n"), bitRead(pitchBendEnabledX, 0) ? "enabled" : "disabled");
-        printf_P(PSTR("Pitch bend Y send %s\n"), bitRead(pitchBendEnabledY, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("X send %s\n"), BIT_READ(xSendEnabled, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Y send %s\n"), BIT_READ(ySendEnabled, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Note send %s\n"), BIT_READ(noteSendEnabled, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Aftertouch send %s\n"), BIT_READ(aftertouchSendEnabled, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Pitch bend X send %s\n"), BIT_READ(pitchBendEnabledX, 0) ? "enabled" : "disabled");
+        printf_P(PSTR("Pitch bend Y send %s\n"), BIT_READ(pitchBendEnabledY, 0) ? "enabled" : "disabled");
         printf_P(PSTR("CC X MIDI ID: %d\n"), ccXPad[0]);
         printf_P(PSTR("CC Y MIDI ID: %d\n"), ccYPad[0]);
         printf_P(PSTR("CC X lower limit: %d\n"), ccXminPad[0]);
@@ -606,12 +605,12 @@ void Pads::getPadParameters()
         //pads have individual settings
         for (int i=0; i<NUMBER_OF_PADS; i++)
         {
-            bitWrite(xSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
-            bitWrite(ySendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
-            bitWrite(noteSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
-            bitWrite(aftertouchSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
-            bitWrite(pitchBendEnabledX, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
-            bitWrite(pitchBendEnabledY, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
+            BIT_WRITE(xSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
+            BIT_WRITE(ySendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
+            BIT_WRITE(noteSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_NOTE_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
+            BIT_WRITE(aftertouchSendEnabled, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
+            BIT_WRITE(pitchBendEnabledX, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
+            BIT_WRITE(pitchBendEnabledY, i, database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram)));
             ccXPad[i]                   = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_X_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
             ccYPad[i]                   = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_CC_Y_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
             ccXminPad[i]                = database.read(DB_BLOCK_PROGRAM, programLocalSettingsSection, (LOCAL_PROGRAM_SETTINGS*i+LOCAL_PROGRAM_SETTING_X_MIN_ID)+(LOCAL_PROGRAM_SETTINGS*NUMBER_OF_PADS*(uint16_t)activeProgram));
@@ -624,10 +623,10 @@ void Pads::getPadParameters()
 
             #ifdef DEBUG
             printf_P(PSTR("----------------------\nPad %d\n----------------------\n"), i+1);
-            printf_P(PSTR("X send enabled: %d\n"), bitRead(xSendEnabled, i));
-            printf_P(PSTR("Y send enabled: %d\n"), bitRead(ySendEnabled, i));
-            printf_P(PSTR("Note send enabled: %d\n"), bitRead(noteSendEnabled, i));
-            printf_P(PSTR("Aftertouch send enabled: %d\n"), bitRead(aftertouchSendEnabled, i));
+            printf_P(PSTR("X send enabled: %d\n"), BIT_READ(xSendEnabled, i));
+            printf_P(PSTR("Y send enabled: %d\n"), BIT_READ(ySendEnabled, i));
+            printf_P(PSTR("Note send enabled: %d\n"), BIT_READ(noteSendEnabled, i));
+            printf_P(PSTR("Aftertouch send enabled: %d\n"), BIT_READ(aftertouchSendEnabled, i));
             printf_P(PSTR("CC X MIDI ID: %d\n"), ccXPad[i]);
             printf_P(PSTR("CC Y MIDI ID: %d\n"), ccYPad[i]);
             printf_P(PSTR("CC X lower limit: %d\n"), ccXminPad[i]);
@@ -919,11 +918,11 @@ uint8_t Pads::getScaledPressure(int8_t pad, uint16_t pressure, pressureType_t ty
     switch(type)
     {
         case pressureAftertouch:
-        return curves.map(constrain(pressure, padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad]), padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad], 0, 127);
+        return curves.map(CONSTRAIN(pressure, padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad]), padAftertouchLimitLower[pad], padAftertouchLimitUpper[pad], 0, 127);
         break;
 
         case pressureVelocity:
-        return curves.map(constrain(pressure, PAD_PRESS_PRESSURE, padPressureLimitUpper[pad]), PAD_PRESS_PRESSURE, padPressureLimitUpper[pad], 0, 127);
+        return curves.map(CONSTRAIN(pressure, PAD_PRESS_PRESSURE, padPressureLimitUpper[pad]), PAD_PRESS_PRESSURE, padPressureLimitUpper[pad], 0, 127);
         break;
     }
 
@@ -970,10 +969,10 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, v
         switch (type)
         {
             case coordinateX:
-            return curves.map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], min, max);
+            return curves.map(CONSTRAIN(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], min, max);
 
             case coordinateY:
-            return curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], min, max);
+            return curves.map(CONSTRAIN(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], min, max);
 
             default:
             return 0;
@@ -985,12 +984,12 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, v
 
         if (type == coordinateX)
         {
-            value = curves.map(constrain(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, 1023);
+            value = curves.map(CONSTRAIN(xyValue, padXLimitLower[pad], padXLimitUpper[pad]), padXLimitLower[pad], padXLimitUpper[pad], 0, 1023);
             initialPosition = initialXposition[pad];
         }
         else
         {
-            value = curves.map(constrain(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, 1023);
+            value = curves.map(CONSTRAIN(xyValue, padYLimitLower[pad], padYLimitUpper[pad]), padYLimitLower[pad], padYLimitUpper[pad], 0, 1023);
             initialPosition = initialYposition[pad];
         }
 
@@ -1007,13 +1006,13 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, v
                 {
                     min = PITCH_BEND_1_LOWER_MIN;
                     max = PITCH_BEND_1_LOWER_MAX;
-                    value = curves.map(constrain(value, min, max), min, max, MIDI_PITCHBEND_MIN, 0);
+                    value = curves.map(CONSTRAIN(value, min, max), min, max, MIDI_PITCHBEND_MIN, 0);
                 }
                 else
                 {
                     min = PITCH_BEND_1_UPPER_MIN;
                     max = PITCH_BEND_1_UPPER_MAX;
-                    value = curves.map(constrain(value, min, max), min, max, 0, MIDI_PITCHBEND_MAX);
+                    value = curves.map(CONSTRAIN(value, min, max), min, max, 0, MIDI_PITCHBEND_MAX);
                 }
 
                 return value;
@@ -1038,7 +1037,7 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, v
                     if (max > 1023)
                         max = 1023;
 
-                    value = curves.map(constrain(value, min, max), min, max, 0, MIDI_PITCHBEND_MAX);
+                    value = curves.map(CONSTRAIN(value, min, max), min, max, 0, MIDI_PITCHBEND_MAX);
                 }
                 else
                 {
@@ -1051,7 +1050,7 @@ uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, v
                     if (max < 0)
                         max = 0;
 
-                    value = curves.map(constrain(value, min, max), min, max, MIDI_PITCHBEND_MIN, 0);
+                    value = curves.map(CONSTRAIN(value, min, max), min, max, MIDI_PITCHBEND_MIN, 0);
                 }
             }
 
@@ -1084,10 +1083,10 @@ bool Pads::getPitchBendState(int8_t pad, padCoordinate_t coordinate)
     switch(coordinate)
     {
         case coordinateX:
-        return bitRead(pitchBendEnabledX, pad);
+        return BIT_READ(pitchBendEnabledX, pad);
 
         case coordinateY:
-        return bitRead(pitchBendEnabledY, pad);
+        return BIT_READ(pitchBendEnabledY, pad);
 
         default:
         return false;
