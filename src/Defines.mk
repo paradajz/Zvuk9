@@ -14,7 +14,6 @@ HID_PRODUCT_ID=0x8473 \
 MIDI_VENDOR_ID=0x1209 \
 MIDI_PRODUCT_ID=0x8472 \
 MIDI_BAUD_RATE_STD=31250 \
-MIDI_BAUD_RATE_OD=76800
 
 #flash type specific
 ifeq ($(findstring boot,$(MAKECMDGOALS)), boot)
@@ -46,7 +45,6 @@ ifeq ($(findstring upload,$(MAKECMDGOALS)), upload)
 else
     MCU := at90usb1286
     DEFINES += STRING_BUFFER_SIZE=40
-    DEFINES += DISPLAY_SUPPORTED
 endif
 
 #mcu specific

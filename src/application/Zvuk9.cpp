@@ -23,11 +23,6 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#define FIRMWARE_VERSION_STRING     0x56
-#define HARDWARE_VERSION_STRING     0x42
-#define REBOOT_STRING               0x7F
-#define FACTORY_RESET_STRING        0x44
-
 #include "interface/buttons/Buttons.h"
 #include "interface/encoders/Encoders.h"
 #include "interface/lcd/LCD.h"
