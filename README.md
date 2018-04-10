@@ -29,29 +29,21 @@ Zvuk9 features:
 
 # Compiling
 
-In order to compile Zvuk9, Atmel Studio 7 is needed. `Debug` and `Release` configurations are available. `Debug` configuration uses LUFA virtual serial mode to print various messages during Zvuk9 usage, while `Release` configuration compiles with USB MIDI support.
+Several compile options are available:
+
+ - Release - Standard firmware with USB MIDI support.
+    - Command: `make fw_rls`
+ - Debug - Uses LUFA virtual serial mode to print various messages during Zvuk9 usage (USB MIDI is disabled)
+    - Command: `make fw_debug`
+ - Bootloader - Used to compile bootloader which uses LUFA HID protocol
+     - Command: `make boot`
 
 Requirements:
 
-- Atmel Studio 7
-- Windows 10 with Linux subsytem (Ubuntu) *
-- Binary utilities: avr-objcopy, srec_cat *
-
-_Note: While asterisk marked components are optional for compiling, they are needed to correctly write firmware version and CRC to compiled binary._
-
-# Bootloader
-
-Zvuk9 uses LUFA HID bootloader for firmware updating. Bootloader can be programmed either via Atmel Studio or `avrdude`. Using Atmel Studio, set correct fuse settings:
-
-* Low fuse: `0xFF`
-* High fuse: `0xD2`
-* Extended fuse: `0xF8`
-
-After that, select `BootloaderHID.hex` under `Release` directory (`src/BootloaderHID/Release`) or under `/bin` directory and program it.
-
-Alternatively, bootloader can be programmed using `avrdude` and `usbasp` programmer with following command (assuming it's being run from `/bin` or `src/BootloaderHID/Release` directory):
-
-`avrdude -p usb1286  -c usbasp -U lfuse:w:0xff:m -U hfuse:w:0xd2:m -U efuse:w:0xf8:m -Uflash:w:BootloaderHID.hex:i`
+- Linux (tested on Ubuntu 16.04)
+- Make
+- AVR toolchain
+- srec_cat
 
 # Firmware upload
 
@@ -64,6 +56,6 @@ Zvuk9 uses various modules which are licenced under different licenses.
 - LUFA is licenced under modified MIT licence.
 - MIDI module is licenced under MIT.
 - U8G2 is licenced under Two-clause BSD licence. This project uses modified content which is available under same terms.
-- AVR-Core, AVR-Versioning, AVR-DB and strings modules are available under MIT licence.
+- Core and LESS-DB modules are available under MIT licence.
 
 This project is available under GNU GPLv3 licence. For commerical uses commercial licence is available on demand.
