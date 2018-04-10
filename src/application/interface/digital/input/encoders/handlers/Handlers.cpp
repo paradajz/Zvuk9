@@ -87,7 +87,7 @@ void handleScale(uint8_t id, int8_t steps)
     if (encoders.getMIDIchannelPresetEncMode())
     {
         //change midi channel
-        buttons.disable(BUTTON_ON_OFF_SPLIT);
+        buttons.setButtonEnableState(BUTTON_ON_OFF_SPLIT, false);
 
         int8_t newMIDIchannel = pads.getMIDIchannel(lastTouchedPad) + steps;
 

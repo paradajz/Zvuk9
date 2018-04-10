@@ -120,7 +120,7 @@ void Buttons::init()
     if (getButtonState(BUTTON_PROGRAM_ENC) && getButtonState(BUTTON_PRESET_ENC))
     {
         menu.show(serviceMenu);
-        disable();
+        processingEnabled = false;
     }
     else
     {
@@ -194,7 +194,7 @@ void Buttons::processButton(uint8_t buttonID, uint8_t state)
         //resume button processing
         if (!getButtonEnableState(buttonID) && !getButtonState(buttonID))
         {
-            enable(buttonID);
+            setButtonEnableState(buttonID, true);
         }
     }
 }

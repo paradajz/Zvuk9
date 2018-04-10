@@ -106,7 +106,7 @@ void Pads::update()
                 yAvailable = false;
                 aftertouchAvailable = false;
                 //disable x button temporarily on release
-                buttons.disable(BUTTON_ON_OFF_X);
+                buttons.setButtonEnableState(BUTTON_ON_OFF_X, false);
             }
             else if (buttons.getButtonState(BUTTON_ON_OFF_Y))
             {
@@ -114,7 +114,7 @@ void Pads::update()
                 xAvailable = false;
                 aftertouchAvailable = false;
                 //disable x button temporarily on release
-                buttons.disable(BUTTON_ON_OFF_Y);
+                buttons.setButtonEnableState(BUTTON_ON_OFF_Y, false);
             }
             else if (buttons.getButtonState(BUTTON_ON_OFF_NOTES))
             {
@@ -122,7 +122,7 @@ void Pads::update()
                 yAvailable = false;
                 aftertouchAvailable = false;
                 //disable x button temporarily on release
-                buttons.disable(BUTTON_ON_OFF_NOTES);
+                buttons.setButtonEnableState(BUTTON_ON_OFF_NOTES, false);
             }
             else if (buttons.getButtonState(BUTTON_ON_OFF_AFTERTOUCH))
             {
@@ -130,7 +130,7 @@ void Pads::update()
                 xAvailable = false;
                 yAvailable = false;
                 //disable x button temporarily on release
-                buttons.disable(BUTTON_ON_OFF_AFTERTOUCH);
+                buttons.setButtonEnableState(BUTTON_ON_OFF_AFTERTOUCH, false);
             }
         }
         else if (!isPadPressed(i) && velocityAvailable)
@@ -142,7 +142,7 @@ void Pads::update()
                 yAvailable = false;
                 aftertouchAvailable = false;
                 //disable x button temporarily on release
-                buttons.disable(BUTTON_ON_OFF_X);
+                buttons.setButtonEnableState(BUTTON_ON_OFF_X, false);
             }
             else if (buttons.getButtonState(BUTTON_ON_OFF_Y))
             {
@@ -150,7 +150,7 @@ void Pads::update()
                 xAvailable = false;
                 aftertouchAvailable = false;
                 //disable x button temporarily on release
-                buttons.disable(BUTTON_ON_OFF_Y);
+                buttons.setButtonEnableState(BUTTON_ON_OFF_Y, false);
             }
             else if (buttons.getButtonState(BUTTON_ON_OFF_NOTES))
             {
@@ -158,7 +158,7 @@ void Pads::update()
                 yAvailable = false;
                 aftertouchAvailable = false;
                 //disable x button temporarily on release
-                buttons.disable(BUTTON_ON_OFF_NOTES);
+                buttons.setButtonEnableState(BUTTON_ON_OFF_NOTES, false);
             }
             else if (buttons.getButtonState(BUTTON_ON_OFF_AFTERTOUCH))
             {
@@ -166,7 +166,7 @@ void Pads::update()
                 xAvailable = false;
                 yAvailable = false;
                 //disable x button temporarily on release
-                buttons.disable(BUTTON_ON_OFF_AFTERTOUCH);
+                buttons.setButtonEnableState(BUTTON_ON_OFF_AFTERTOUCH, false);
             }
         }
 

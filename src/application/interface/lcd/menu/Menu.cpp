@@ -234,7 +234,9 @@ void Menu::exitMenu()
     //exit menu and restore initial state
     display.setupHomeScreen();
     //re-enable buttons
-    buttons.enable();
+    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
+        buttons.setButtonEnableState(i, true);
+
     activeMenu = noMenu;
     functionRunning = false;
 }

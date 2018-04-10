@@ -415,8 +415,8 @@ void handleUpDown(uint8_t id, bool state)
         }
 
         //temporarily disable buttons
-        buttons.disable(BUTTON_OCTAVE_UP);
-        buttons.disable(BUTTON_OCTAVE_DOWN);
+        buttons.setButtonEnableState(BUTTON_OCTAVE_UP, false);
+        buttons.setButtonEnableState(BUTTON_OCTAVE_DOWN, false);
     }
     else
     {
@@ -481,7 +481,7 @@ void handleUpDown(uint8_t id, bool state)
                         case noChange:
                         case valueChanged:
                         direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOff) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOff);
-                        buttons.disable(BUTTON_ON_OFF_NOTES);
+                        buttons.setButtonEnableState(BUTTON_ON_OFF_NOTES, false);
 
                         //make sure scale shifting is updated on display after message is cleared
                         display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
