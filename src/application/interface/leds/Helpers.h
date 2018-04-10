@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include "Constants.h"
+
 ///
-/// \brief List of all possible LED states.
-///
-typedef enum
-{
-    ledStateOff,
-    ledStateDim,
-    ledStateFull
-} ledState_t;
+/// \brief Helper macros used to determine if LED is on or off.
+/// @{
+
+#define LED_ON_MASK     ((0x01 << LED_ACTIVE_BIT) | (0x01 << LED_STATE_BIT))
+#define LED_ON(state)   ((state & LED_ON_MASK) == LED_ON_MASK)
+
+/// @}

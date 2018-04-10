@@ -23,7 +23,6 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "interface/buttons/Buttons.h"
 #include "interface/encoders/Encoders.h"
 #include "interface/lcd/LCD.h"
 #include "interface/lcd/menu/Menu.h"
@@ -100,11 +99,10 @@ int main()
     bool runningStatus = database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
     midi.setRunningStatusState(runningStatus);
 
-    leds.init();
     pads.init();
     encoders.init();
 
-    leds.displayActiveNoteLEDs();
+    pads.setActiveNoteLEDs(false, 0);
 
     #ifdef START_UP_ANIMATION
     startUpAnimation();
@@ -130,6 +128,7 @@ int main()
         buttons.update();
         encoders.update();
         display.update();
+        leds.update();
 
         #ifdef DEBUG
         vserial.update();

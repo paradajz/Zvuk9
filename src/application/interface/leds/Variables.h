@@ -25,15 +25,14 @@
 
 #pragma once
 
-#include "../../board/Board.h"
+#include "../../board/constants/Hardware.h"
 
-extern volatile bool        blinkEnabled,
-                            blinkState;
+///
+/// \brief External variables used both in LEDs interface and by low-level control.
+/// @{
 
-extern volatile uint8_t     pwmSteps,
-                            ledState[MAX_NUMBER_OF_LEDS];
-
-extern volatile uint16_t    ledBlinkTime;
-
+extern volatile uint8_t     pwmSteps;
+extern uint8_t              ledState[MAX_NUMBER_OF_LEDS];
 extern volatile int8_t      transitionCounter[MAX_NUMBER_OF_LEDS];
-extern volatile uint32_t    blinkTimerCounter;
+
+/// @}

@@ -26,11 +26,26 @@
 #pragma once
 
 ///
-/// \brief List of all possible LED states.
+/// \brief LED blinking time in milliseconds.
 ///
-typedef enum
-{
-    ledStateOff,
-    ledStateDim,
-    ledStateFull
-} ledState_t;
+#define DEFAULT_BLINK_SPEED                 3000
+
+///
+/// \brief If set to 1, LED is active (either blinking or constantly on).
+///
+#define LED_ACTIVE_BIT                      0x00
+
+///
+/// \brief If set to 1, LED blinking is enabled.
+///
+#define LED_BLINK_ON_BIT                    0x01
+
+///
+/// \brief If set to 1, LED is currently on.
+///
+#define LED_STATE_BIT                       0x02
+
+///
+/// \brief If set to 1, LED is using full intensity.
+///
+#define LED_FULL_INTENSITY_BIT              0x03

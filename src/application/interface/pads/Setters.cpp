@@ -250,14 +250,14 @@ changeResult_t Pads::setEditModeState(bool state, int8_t pad)
         editModeState = true;
 
         display.setupPadEditScreen(pad+1, getOctave(true), true);
-        leds.displayActiveNoteLEDs(true, pad);
+        pads.setActiveNoteLEDs(true, pad);
         break;
 
         case false:
         editModeState = false;
         display.setupHomeScreen();
         //after exiting from pad edit mode, restore note led states
-        leds.displayActiveNoteLEDs();
+        pads.setActiveNoteLEDs(false, 0);
         break;
     }
 
@@ -1677,6 +1677,66 @@ changeResult_t Pads::setPitchBendState(bool state, padCoordinate_t coordinate)
     }
 
     return valueChanged;
+}
+
+///
+/// \brief Displays all currently active LEDs by checking pad notes.
+/// @param [in] padEditMode If set to true, only LEDs assigned to current pad will be on.
+///                         Otherwise, all active LEDs in current scale will be on.
+/// @param [in] pad         Pad index. Used only when checking notes in pad edit mode.
+///
+void Pads::setActiveNoteLEDs(bool padEditMode, uint8_t pad)
+{
+    uint8_t tonicArray[NOTES_PER_PAD],
+            octaveArray[NOTES_PER_PAD],
+            padNote,
+            noteCounter = 0;
+
+    switch(padEditMode)
+    {
+        case true:
+        //indicate assigned notes in pad edit mode using note leds
+        for (uint8_t i=0; i<NOTES_PER_PAD; i++)
+        {
+            padNote = getPadNote(pad, i);
+
+            if (padNote == BLANK_NOTE)
+                continue;
+
+            tonicArray[noteCounter] = getTonicFromNote(padNote);
+            octaveArray[noteCounter] = getOctaveFromNote(padNote);
+            noteCounter++;
+        }
+
+        //turn off all note LEDs
+        for (int i=0; i<MIDI_NOTES; i++)
+            leds.setNoteLEDstate((note_t)i, ledStateOff);
+
+        //set dim led state for assigned notes on current pad
+        for (int i=0; i<noteCounter; i++)
+            leds.setNoteLEDstate((note_t)tonicArray[i], ledStateDim);
+
+        //set full led state for assigned notes on current pad if note matches current octave
+        for (int i=0; i<noteCounter; i++)
+        {
+            if (octaveArray[i] == pads.getOctave(true))
+                leds.setNoteLEDstate((note_t)tonicArray[i], ledStateFull);
+        }
+        break;
+
+        case false:
+        //first, turn off all note LEDs
+        for (int i=0; i<MIDI_NOTES; i++)
+            leds.setNoteLEDstate((note_t)i, ledStateOff);
+
+        for (int i=0; i<MIDI_NOTES; i++)
+        {
+            //turn note LED on only if corresponding note is active
+            if (pads.isNoteAssigned((note_t)i))
+                leds.setNoteLEDstate((note_t)i, ledStateDim);
+        }
+        break;
+    }
 }
 
 /// @}

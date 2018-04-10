@@ -26,15 +26,7 @@
 #pragma once
 
 #define NUMBER_OF_LED_TRANSITIONS           120
-#define LED_ACTIVE_BIT                      0x00
-#define LED_CONSTANT_ON_BIT                 0x01
-#define LED_BLINK_ON_BIT                    0x02
-#define LED_BLINK_STATE_BIT                 0x03
-#define LED_INTENSITY_BIT                   0x04
-
 #define DEFAULT_FADE_SPEED                  6
-#define DEFAULT_BLINK_SPEED                 3
-
 #define LED_NO_INTENSITY                    0
 #define LED_FULL_INTENSITY                  NUMBER_OF_LED_TRANSITIONS-1
 #define LED_HALF_INTENSITY                  110

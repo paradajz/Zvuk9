@@ -29,33 +29,33 @@
 #include "../pads/DataTypes.h"
 #include "DataTypes.h"
 
+///
+/// \brief LED control.
+/// \defgroup interfaceLEDs LEDs
+/// \ingroup interface
+/// @{
+
 class LEDs
 {
     public:
     LEDs();
-    void init();
+    static void update();
 
-    void setAllOn();
-    void setAllOff();
+    static void setAllOn();
+    static void setAllOff();
 
-    void setBlinkState(uint8_t ledID, bool state, bool forceOn = false);
-    bool getBlinkState(uint8_t ledID);
-    void checkBlinkLEDs();
+    static void setBlinkState(uint8_t ledID, bool state);
+    static bool getBlinkState(uint8_t ledID);
 
-    void displayActiveNoteLEDs(bool padEditMode = false, uint8_t padNumber = 0);
+    static void setLEDstate(uint8_t ledID, ledState_t state);
+    static ledState_t getLEDstate(uint8_t ledID);
 
-    void setLEDstate(uint8_t ledID, ledState_t state);
-    ledState_t getLEDstate(uint8_t ledID);
-    void setFadeSpeed(uint8_t speed);
-    void setBlinkSpeed(uint16_t blinkTime);
+    static void setNoteLEDstate(note_t note, ledState_t state);
+    static ledState_t getNoteLEDstate(note_t note);
 
-    uint8_t getLEDnumberFromTonic(note_t note);
-    void tonicLEDsOff();
-    void setNoteLEDstate(note_t note, ledState_t state);
-    ledState_t getTonicLEDstate(note_t note);
-
-    private:
-    uint8_t getState(uint8_t ledID);
+    static void setFadeSpeed(uint8_t speed);
 };
 
 extern LEDs leds;
+
+/// @}

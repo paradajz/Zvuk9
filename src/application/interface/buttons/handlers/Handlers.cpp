@@ -76,12 +76,14 @@ void handleOnOff(uint8_t id, bool state)
     {
         if (id == BUTTON_ON_OFF_NOTES)
         {
-            leds.setBlinkState(LED_ON_OFF_NOTES, true, true);
+            leds.setLEDstate(LED_ON_OFF_NOTES, ledStateFull);
+            leds.setBlinkState(LED_ON_OFF_NOTES, true);
             return;
         }
         else if (id == BUTTON_ON_OFF_SPLIT)
         {
-            leds.setBlinkState(LED_ON_OFF_SPLIT, true, true);
+            leds.setLEDstate(LED_ON_OFF_SPLIT, ledStateFull);
+            leds.setBlinkState(LED_ON_OFF_SPLIT, true);
             return;
         }
         else
@@ -420,7 +422,7 @@ void handleUpDown(uint8_t id, bool state)
                 case false:
                 pads.setOctave(direction ? pads.getOctave(true)+1 : pads.getOctave(true)-1, true);
                 display.setupPadEditScreen(pads.getLastTouchedPad()+1, pads.getOctave(true));
-                leds.displayActiveNoteLEDs(true, lastTouchedPad);
+                pads.setActiveNoteLEDs(true, lastTouchedPad);
                 direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
                 break;
 
@@ -513,7 +515,7 @@ void handleTonic(uint8_t id, bool state)
         {
             case valueChanged:
             case noChange:
-            leds.displayActiveNoteLEDs();
+            pads.setActiveNoteLEDs(false, 0);
             //make sure tonic is updated on display after message is cleared
             display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
             display.displayChangeResult(functionNotes, pads.getTonic(), globalSetting);
@@ -535,7 +537,7 @@ void handleTonic(uint8_t id, bool state)
             case noChange:
             case valueChanged:
             display.displayActivePadNotes();
-            leds.displayActiveNoteLEDs(true, lastTouchedPad);
+            pads.setActiveNoteLEDs(true, lastTouchedPad);
             break;
 
             default:

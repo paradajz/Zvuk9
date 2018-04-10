@@ -61,7 +61,7 @@ void handleProgram(uint8_t id, int8_t steps)
         display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
 
         //scale is changed as well
-        leds.displayActiveNoteLEDs();
+        pads.setActiveNoteLEDs(false, 0);
     }
     else if (result != noChange)
     {
@@ -117,7 +117,7 @@ void handleScale(uint8_t id, int8_t steps)
 
         if (result == valueChanged)
         {
-            leds.displayActiveNoteLEDs();
+            pads.setActiveNoteLEDs(false, 0);
             //display scale on display
             display.displayProgramInfo(pads.getProgram()+1, pads.getScale(), pads.getTonic(), pads.getScaleShiftLevel());
         }

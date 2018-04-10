@@ -24,6 +24,7 @@
 */
 
 #include "Board.h"
+#include "../interface/leds/Helpers.h"
 
 volatile uint32_t   rTime_ms;
 volatile uint8_t    inputBuffer;
@@ -101,36 +102,16 @@ void Board::initTimers()
 
 inline void checkLEDs()
 {
-    if (blinkEnabled)
-    {
-        if (!blinkTimerCounter)
-        {
-            //change blinkBit state and write it into ledState variable if LED is in blink state
-            for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
-            {
-                if (BIT_READ(ledState[i], LED_BLINK_ON_BIT))
-                {
-                    if (blinkState)
-                        BIT_SET(ledState[i], LED_BLINK_STATE_BIT);
-                    else
-                        BIT_CLEAR(ledState[i], LED_BLINK_STATE_BIT);
-                }
-            }
-
-            blinkState = !blinkState;
-        }
-    }
-
     //if there is an active LED in current column, turn on LED row
     //do fancy transitions here
     for (int i=0; i<NUMBER_OF_LED_ROWS; i++)
     {
         uint8_t ledNumber = activeLEDcolumn+i*NUMBER_OF_LED_COLUMNS;
-        uint8_t ledStateSingle = BIT_READ(ledState[ledNumber], LED_ACTIVE_BIT) && (BIT_READ(ledState[ledNumber], LED_BLINK_ON_BIT) == BIT_READ(ledState[ledNumber], LED_BLINK_STATE_BIT));
+        uint8_t ledStateSingle = LED_ON(ledState[ledNumber]);
 
         if (ledStateSingle)
         {
-            if (BIT_READ(ledState[ledNumber], LED_INTENSITY_BIT))
+            if (BIT_READ(ledState[ledNumber], LED_FULL_INTENSITY_BIT))
                 ledStateSingle = LED_FULL_INTENSITY;
             else
                 ledStateSingle = LED_HALF_INTENSITY;
@@ -336,10 +317,6 @@ ISR(TIMER3_COMPA_vect)
         checkLEDs();
 
         activeLEDcolumn++;
-        blinkTimerCounter++;
-
-        if (blinkTimerCounter >= ledBlinkTime)
-            blinkTimerCounter = 0;
 
         //update run time
         rTime_ms++;

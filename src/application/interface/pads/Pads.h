@@ -100,6 +100,7 @@ class Pads
     changeResult_t setScaleShiftLevel(int8_t shiftLevel, bool internalChange = false);
     changeResult_t setPitchBendType(pitchBendType_t type);
     changeResult_t setPitchBendState(bool state, padCoordinate_t coordinate);
+    void setActiveNoteLEDs(bool padEditMode, uint8_t pad);
 
     private:
     void getConfiguration();
