@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "../../interface/pads/curves/Curves.h"
-#include "../../interface/pads/DataTypes.h"
-#include "../../interface/buttons/DataTypes.h"
+#include "../../interface/analog/pads/curves/Curves.h"
+#include "../../interface/analog/pads/DataTypes.h"
+#include "../../interface/digital/input/buttons/DataTypes.h"
 
 typedef enum
 {

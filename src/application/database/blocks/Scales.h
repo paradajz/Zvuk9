@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "../../interface/pads/DataTypes.h"
+#include "../../interface/analog/pads/DataTypes.h"
 
 typedef enum
 {

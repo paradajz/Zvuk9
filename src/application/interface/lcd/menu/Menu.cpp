@@ -25,8 +25,8 @@
 
 #include "Menu.h"
 #include "../strings/Strings.h"
-#include "../../pads/Pads.h"
-#include "../../buttons/Buttons.h"
+#include "../../analog/pads/Pads.h"
+#include "../../digital/input/buttons/Buttons.h"
 
 Menu::Menu()
 {

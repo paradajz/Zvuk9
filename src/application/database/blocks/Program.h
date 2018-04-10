@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "../../interface/pads/curves/Curves.h"
+#include "../../interface/analog/pads/curves/Curves.h"
 
 #define NUMBER_OF_PROGRAMS                          15
 #define DEFAULT_ACTIVE_PROGRAM                      0

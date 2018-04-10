@@ -24,10 +24,10 @@
 */
 
 #include "Pads.h"
-#include "../leds/LEDs.h"
-#include "../../database/Database.h"
+#include "../../digital/output/leds/LEDs.h"
+#include "../../../database/Database.h"
 #include "PredefinedScales.h"
-#include "../../board/Board.h"
+#include "../../../board/Board.h"
 
 ///
 /// \ingroup interfacePads

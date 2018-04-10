@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "../../board/constants/Hardware.h"
+#include "../../../../board/constants/Hardware.h"
 
 ///
 /// \brief External variables used both in LEDs interface and by low-level control.

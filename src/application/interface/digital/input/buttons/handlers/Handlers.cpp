@@ -24,13 +24,13 @@
 */
 
 #include "Handlers.h"
-#include "../../pads/Pads.h"
-#include "../../MIDIconf.h"
-#include "../../buttons/Buttons.h"
-#include "../../leds/LEDs.h"
-#include "../../lcd/LCD.h"
-#include "../../lcd/menu/Menu.h"
-#include "../../../database/blocks/GlobalSettings.h"
+#include "../../../../analog/pads/Pads.h"
+#include "../../../../MIDIconf.h"
+#include "../../../../digital/input/buttons/Buttons.h"
+#include "../../../../digital/output/leds/LEDs.h"
+#include "../../../../lcd/LCD.h"
+#include "../../../../lcd/menu/Menu.h"
+#include "../../../../../database/blocks/GlobalSettings.h"
 
 void handleOnOff(uint8_t id, bool state)
 {

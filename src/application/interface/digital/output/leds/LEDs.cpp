@@ -26,8 +26,8 @@
 #include "LEDs.h"
 #include "Variables.h"
 #include "Helpers.h"
-#include "../../board/map/LEDs.h"
-#include "../../board/constants/LEDs.h"
+#include "../../../../board/map/LEDs.h"
+#include "../../../../board/constants/LEDs.h"
 
 static bool         blinkState;
 volatile uint8_t    pwmSteps;

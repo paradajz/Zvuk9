@@ -23,28 +23,15 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "Handlers.h"
-#include "../../../board/constants/Hardware.h"
-#include "../../../board/map/Encoders.h"
+#pragma once
 
-void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
+///
+/// \brief Used to achieve linear encoder acceleration on fast movement.
+/// Every time fast movement is detected, amount of steps is increased by this value.
+///
+#define ENCODER_SPEED_CHANGE            3
 
-void initHandlers_encoders()
-{
-    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
-        encoderHandler[i] = NULL;
-
-    encoderHandler[PROGRAM_ENCODER] = handleProgram;
-    encoderHandler[PRESET_ENCODER] = handleScale;
-
-    encoderHandler[X_CC_ENCODER] = handleCC;
-    encoderHandler[Y_CC_ENCODER] = handleCC;
-
-    encoderHandler[X_MAX_ENCODER] = handleLimit;
-    encoderHandler[X_MIN_ENCODER] = handleLimit;
-    encoderHandler[Y_MAX_ENCODER] = handleLimit;
-    encoderHandler[Y_MIN_ENCODER] = handleLimit;
-
-    encoderHandler[X_CURVE_ENCODER] = handleCurve;
-    encoderHandler[Y_CURVE_ENCODER] = handleCurve;
-}
+///
+/// \brief Time threshold (in milliseconds, approximately) between two encoder steps used to detect fast movement.
+///
+#define SPEED_TIMEOUT                   40

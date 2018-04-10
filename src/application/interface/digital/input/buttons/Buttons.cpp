@@ -26,12 +26,13 @@
 #include "Buttons.h"
 
 #include "Config.h"
-#include "../lcd/menu/Menu.h"
-#include "../../database/Database.h"
-#include "../lcd/LCD.h"
-#include "../lcd/menu/Menu.h"
+#include "../../../../database/Database.h"
+#include "../../../lcd/LCD.h"
+#include "../../../lcd/menu/Menu.h"
 #include "handlers/Handlers.h"
 #include "../encoders/Encoders.h"
+#include "../../../analog/pads/Pads.h"
+#include "../../../digital/output/leds/LEDs.h"
 
 extern void (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (uint8_t data, bool state);
 
@@ -55,22 +56,22 @@ void Buttons::init()
     transportControlType = (transportControlType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_TRANSPORT_CC_ID);
 
     //read buttons for 0.1 seconds
-    do
-    {
-        //read all buttons without activating event handlers
-        update();
-    }
-    while ((rTimeMs() - currentTime) < 100);
+    // do
+    // {
+    //     //read all buttons without activating event handlers
+    //     update();
+    // }
+    // while ((rTimeMs() - currentTime) < 100);
 
-    if (getButtonState(BUTTON_PROGRAM_ENC) && getButtonState(BUTTON_PRESET_ENC))
-    {
-        menu.show(serviceMenu);
-        disable();
-    }
-    else
-    {
-        processingEnabled = true;
-    }
+    // if (getButtonState(BUTTON_PROGRAM_ENC) && getButtonState(BUTTON_PRESET_ENC))
+    // {
+    //     menu.show(serviceMenu);
+    //     disable();
+    // }
+    // else
+    // {
+    //     processingEnabled = true;
+    // }
 
     processingEnabled = true;
 }
@@ -93,29 +94,22 @@ void Buttons::setButtonState(uint8_t buttonID, bool state)
 
 void Buttons::processButton(uint8_t buttonID, uint8_t state)
 {
-    bool debounced = buttonDebounced(buttonID, state);
+    //if button state is same as last one, do nothing
+    //act on change only
+    if (state == getButtonState(buttonID))
+        return;
 
-    if (debounced)
+    //update previous button state with current one
+    setButtonState(buttonID, state);
+    lastPressedButton = buttonID;
+
+    if (processingEnabled)
     {
-        state = state == 0xFF;
-
-        //if button state is same as last one, do nothing
-        //act on change only
-        if (state == getButtonState(buttonID))
-            return;
-
-        //update previous button state with current one
-        setButtonState(buttonID, state);
-        lastPressedButton = buttonID;
-
-        if (processingEnabled)
+        (*buttonHandler[buttonID])(buttonID, state);
+        //resume button processing
+        if (!getButtonEnableState(buttonID) && !getButtonState(buttonID))
         {
-            (*buttonHandler[buttonID])(buttonID, state);
-            //resume button processing
-            if (!getButtonEnableState(buttonID) && !getButtonState(buttonID))
-            {
-                enable(buttonID);
-            }
+            enable(buttonID);
         }
     }
 }
@@ -130,16 +124,22 @@ void Buttons::update()
             continue;
 
         buttonState = board.getButtonState(i);
-        processButton(i, buttonState);
+
+        if (buttonDebounced(i, buttonState))
+            processButton(i, buttonState);
     }
 
     if (getMIDIchannelEnc() && (display.getActiveTextType() == lcdtext_still))
         setMIDIchannelEnc(false);
 }
 
-bool Buttons::buttonDebounced(uint8_t buttonID, uint8_t state)
+bool Buttons::buttonDebounced(uint8_t buttonID, bool buttonState)
 {
-    return ((state == 0xFF) || (state == BUTTON_DEBOUNCE_COMPARE));
+    //shift new button reading into previousButtonState
+    buttonDebounceCounter[buttonID] = (buttonDebounceCounter[buttonID] << (uint8_t)1) | (uint8_t)buttonState | BUTTON_DEBOUNCE_COMPARE;
+
+    //if button is debounced, return true
+    return ((buttonDebounceCounter[buttonID] == BUTTON_DEBOUNCE_COMPARE) || (buttonDebounceCounter[buttonID] == 0xFF));
 }
 
 void Buttons::enable(int8_t buttonID)

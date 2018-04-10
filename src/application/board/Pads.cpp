@@ -24,7 +24,7 @@
 */
 
 #include "Board.h"
-#include "../interface/pads/DataTypes.h"
+#include "../interface/analog/pads/DataTypes.h"
 
 const uint8_t       padIDArray[] =
 {

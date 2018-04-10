@@ -26,8 +26,7 @@
 #pragma once
 
 #include "../../board/Board.h"
-#include "../buttons/Buttons.h"
-#include "../pads/Pads.h"
+#include "../analog/pads/Pads.h"
 #include "Config.h"
 #include "DataTypes.h"
 #include "Layout.h"

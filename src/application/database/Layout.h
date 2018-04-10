@@ -24,7 +24,7 @@
 */
 
 #include "Database.h"
-#include "../interface/pads/Pads.h"
+#include "../interface/analog/pads/Pads.h"
 
 static dbSection_t programSections[PROGRAM_SECTIONS] =
 {

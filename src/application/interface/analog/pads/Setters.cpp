@@ -24,9 +24,9 @@
 */
 
 #include "Pads.h"
-#include "../leds/LEDs.h"
-#include "../lcd/LCD.h"
-#include "../../database/Database.h"
+#include "../../digital/output/leds/LEDs.h"
+#include "../../lcd/LCD.h"
+#include "../../../database/Database.h"
 
 ///
 /// \ingroup interfacePads

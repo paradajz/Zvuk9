@@ -25,7 +25,7 @@
 
 #include "Database.h"
 
-#include "../interface/pads/Pads.h"
+#include "../interface/analog/pads/Pads.h"
 
 void Database::writeCustomValues()
 {

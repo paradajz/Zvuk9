@@ -25,9 +25,10 @@
 
 #include "Handlers.h"
 
-#include "../../pads/Pads.h"
-#include "../../lcd/LCD.h"
-#include "../../lcd/menu/Menu.h"
+#include "../../../../analog/pads/Pads.h"
+#include "../../../../digital/input/buttons/Buttons.h"
+#include "../../../../lcd/LCD.h"
+#include "../../../../lcd/menu/Menu.h"
 
 void handleProgram(uint8_t id, int8_t steps)
 {

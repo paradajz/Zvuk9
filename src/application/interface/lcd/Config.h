@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "../pads/Config.h"
+#include "../analog/pads/Config.h"
 
 ///
 /// \brief Length of temporary (message) text on display in milliseconds.

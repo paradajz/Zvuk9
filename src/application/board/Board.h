@@ -30,26 +30,18 @@
 #include "lcd/LCD.h"
 #include "pins/Pins.h"
 #include "DataTypes.h"
-#include "../interface/leds/Variables.h"
+#include "../interface/digital/output/leds/Variables.h"
 
 ///
 /// \brief Hardcoded board revision.
 /// @{
 ///
+
 #define HARDWARE_VERSION_MAJOR      3
 #define HARDWARE_VERSION_MINOR      0
 #define HARDWARE_VERSION_REVISION   0
-/// @}
 
-//function prototypes
-inline void setAnalogPin(uint8_t muxNumber) __attribute__((always_inline));
-inline void nextMuxInput() __attribute__((always_inline));
-inline void ledRowsOff() __attribute__((always_inline));
-inline void ledRowOn(uint8_t rowNumber, uint8_t intensity) __attribute__((always_inline));
-inline void checkLEDs() __attribute__((always_inline));
-inline void activateInputColumn(uint8_t column) __attribute__((always_inline));
-inline void storeDigitalIn(uint8_t column) __attribute__((always_inline));
-inline void activateOutputColumn() __attribute__((always_inline));
+/// @}
 
 class Board
 {
@@ -57,22 +49,31 @@ class Board
     Board();
     void init();
     bool encoderEnabled(uint8_t encoderNumber);
-    int8_t getEncoderState(uint8_t encoderID);
-    uint8_t getButtonState(uint8_t buttonID);
-    uint8_t getEncoderPair(uint8_t buttonID);
     uint16_t getPadPressure(uint8_t pad);
     int16_t getPadX(uint8_t pad);
     int16_t getPadY(uint8_t pad);
     void reboot(rebootType_t type);
     static bool checkNewRevision();
 
+    //digital in
+    static bool digitalInputDataAvailable();
+    static void continueDigitalInReadout();
+
+    //buttons
+    static bool getButtonState(uint8_t buttonIndex);
+
+    //encoders
+    static int8_t getEncoderState(uint8_t encoderID);
+
     private:
-    void initAnalog();
-    void initUSB_MIDI();
-    void initUART_MIDI(uint32_t baudRate, bool reInit);
-    void initPins();
-    void initTimers();
-    void initPads();
+    static void initPins();
+    static void initAnalog();
+    static void initEncoders();
+    static void initUSB_MIDI();
+    static void initUART_MIDI(uint32_t baudRate, bool reInit);
+    static void initTimers();
+    static void initPads();
+    static int8_t readEncoder(uint8_t encoderID, uint8_t pairState);
 };
 
 extern Board board;

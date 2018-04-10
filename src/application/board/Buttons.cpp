@@ -25,9 +25,10 @@
 
 #include "Board.h"
 
-volatile uint8_t    buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
-
-uint8_t Board::getButtonState(uint8_t buttonIndex)
+bool Board::getButtonState(uint8_t buttonIndex)
 {
-    return buttonDebounceCounter[buttonIndex];
+    uint8_t row = buttonIndex/NUMBER_OF_BUTTON_COLUMNS;
+    uint8_t column = buttonIndex % NUMBER_OF_BUTTON_COLUMNS;
+
+    return BIT_READ(digitalInBuffer[column], row);
 }

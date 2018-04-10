@@ -24,8 +24,11 @@
 */
 
 #include "MenuFunctions.h"
-#include "../../../leds/LEDs.h"
 #include "../../../../database/Database.h"
+#include "../../../analog/pads/Pads.h"
+#include "../../../digital/input/encoders/Encoders.h"
+#include "../../../digital/input/buttons/Buttons.h"
+#include "../../../digital/output/leds/LEDs.h"
 
 bool factoryReset(functionArgument argument)
 {

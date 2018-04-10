@@ -24,7 +24,7 @@
 */
 
 #include "../LCD.h"
-#include "../../pads/Pads.h"
+#include "../../analog/pads/Pads.h"
 #include "../../../database/blocks/Scales.h"
 
 void LCD::setupHomeScreen()

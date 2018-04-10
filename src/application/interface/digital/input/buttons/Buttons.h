@@ -26,8 +26,7 @@
 #pragma once
 
 #include "DataTypes.h"
-#include "../pads/Pads.h"
-#include "../leds/LEDs.h"
+#include "../../../../board/constants/Hardware.h"
 
 class Buttons
 {
@@ -53,12 +52,10 @@ class Buttons
     bool getMIDIchannelEnc();
 
     private:
+    bool buttonDebounced(uint8_t buttonID, bool buttonState);
     void handleTransportControlEvent(uint8_t buttonNumber, bool state);
     void handleTonicEvent(note_t note, bool state);
     void handleOctaveEvent(bool direction, bool state);
-
-    //read/debounce handling
-    bool buttonDebounced(uint8_t buttonNumber, uint8_t state);
 
     //button-to-led mapping
     void mapButtonsToNotes();
@@ -74,6 +71,7 @@ class Buttons
     uint8_t                 lastPressedButton;
     uint8_t                 buttonPressed[MAX_NUMBER_OF_BUTTONS/8+1];
     bool                    midiChannelEncState;
+    uint8_t                 buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
 };
 
 extern Buttons buttons;

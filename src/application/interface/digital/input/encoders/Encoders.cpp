@@ -24,9 +24,9 @@
 */
 
 #include "Encoders.h"
-#include "../lcd/menu/Menu.h"
+#include "../../../lcd/menu/Menu.h"
 #include "handlers/Handlers.h"
-#include "../../board/Board.h"
+#include "../../../../board/Board.h"
 
 extern void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
 

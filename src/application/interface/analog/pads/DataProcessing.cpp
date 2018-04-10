@@ -24,8 +24,10 @@
 */
 
 #include "Pads.h"
-#include "../lcd/menu/Menu.h"
-#include "../../database/blocks/PadCalibration.h"
+#include "../../lcd/menu/Menu.h"
+#include "../../../database/blocks/PadCalibration.h"
+#include "../../digital/output/leds/LEDs.h"
+#include "../../digital/input/buttons/Buttons.h"
 
 ///
 /// \ingroup interfacePads

@@ -24,10 +24,9 @@
 */
 
 #include "Board.h"
-#include "../interface/leds/Helpers.h"
+#include "../interface/digital/output/leds/Helpers.h"
 
 volatile uint32_t   rTime_ms;
-volatile uint8_t    inputBuffer;
 
 const uint8_t       ledRowPinArray[] =
 {
@@ -100,56 +99,6 @@ void Board::initTimers()
     OCR0A = 0;
 }
 
-inline void checkLEDs()
-{
-    //if there is an active LED in current column, turn on LED row
-    //do fancy transitions here
-    for (int i=0; i<NUMBER_OF_LED_ROWS; i++)
-    {
-        uint8_t ledNumber = activeLEDcolumn+i*NUMBER_OF_LED_COLUMNS;
-        uint8_t ledStateSingle = LED_ON(ledState[ledNumber]);
-
-        if (ledStateSingle)
-        {
-            if (BIT_READ(ledState[ledNumber], LED_FULL_INTENSITY_BIT))
-                ledStateSingle = LED_FULL_INTENSITY;
-            else
-                ledStateSingle = LED_HALF_INTENSITY;
-        }
-
-        //don't bother with pwm if it's disabled
-        if (!pwmSteps && ledStateSingle)
-        {
-            ledRowOn(i, ledTransitionScale[ledStateSingle]);
-        }
-        else
-        {
-            if (ledTransitionScale[transitionCounter[ledNumber]])
-                ledRowOn(i, ledTransitionScale[transitionCounter[ledNumber]]);
-
-            if (transitionCounter[ledNumber] != ledStateSingle)
-            {
-                if (transitionCounter[ledNumber] < ledStateSingle)
-                {
-                    //fade up
-                    transitionCounter[ledNumber] += pwmSteps;
-
-                    if (transitionCounter[ledNumber] > ledStateSingle)
-                        transitionCounter[ledNumber] = ledStateSingle;
-                }
-                else
-                {
-                    //fade down
-                    transitionCounter[ledNumber] -= pwmSteps;
-
-                    if (transitionCounter[ledNumber] < 0)
-                        transitionCounter[ledNumber] = 0;
-                }
-            }
-        }
-    }
-}
-
 inline void ledRowOn(uint8_t rowNumber, uint8_t intensity)
 {
     if (intensity == 255)
@@ -218,84 +167,85 @@ inline void activateOutputColumn()
     DECODER_OUT_PORT |= decoderOutOrderArray[activeLEDcolumn];
 }
 
-inline void activateInputColumn(uint8_t column)
+inline void activateInputColumn()
 {
     //clear current decoder state
-    DECODER_IN_PORT &= DECODER_IN_CLEAR_MASK;
+    // DECODER_IN_PORT &= DECODER_IN_CLEAR_MASK;
 
-    //activate new column
-    DECODER_IN_PORT |= decoderInOrderArray[column];
+    // //activate new column
+    // DECODER_IN_PORT |= decoderInOrderArray[activeInColumn];
+
+    BIT_READ(activeInColumn, 0) ? setHigh(DECODER_IN_A0_PORT, DECODER_IN_A0_PIN) : setLow(DECODER_IN_A0_PORT, DECODER_IN_A0_PIN);
+    BIT_READ(activeInColumn, 1) ? setHigh(DECODER_IN_A1_PORT, DECODER_IN_A1_PIN) : setLow(DECODER_IN_A1_PORT, DECODER_IN_A1_PIN);
+    BIT_READ(activeInColumn, 2) ? setHigh(DECODER_IN_A2_PORT, DECODER_IN_A2_PIN) : setLow(DECODER_IN_A2_PORT, DECODER_IN_A2_PIN);
 }
 
-inline void storeDigitalIn(uint8_t column)
+inline void checkLEDs()
 {
-    uint8_t buttonNumber;
-    uint8_t encoderNumber;
-    bool state;
-    uint8_t row = NUMBER_OF_BUTTON_ROWS;
-    bool even = true;
-
-    //pulse latch pin
-    pulseLowToHigh(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
-
-    while (row--)
+    //if there is an active LED in current column, turn on LED row
+    //do fancy transitions here
+    for (int i=0; i<NUMBER_OF_LED_ROWS; i++)
     {
-        //invert row, starting from last one
-        buttonNumber = column + row*NUMBER_OF_BUTTON_COLUMNS;
-        state = !readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN);
-        inputBuffer <<= 1;
-        inputBuffer |= state;
-        inputBuffer &= 0x03;
-        //button readout
-        buttonDebounceCounter[buttonNumber] = (buttonDebounceCounter[buttonNumber] << 1) | state | BUTTON_DEBOUNCE_COMPARE;
-        //encoder readout - check even rows only
-        even = !even;
+        uint8_t ledNumber = activeLEDcolumn+i*NUMBER_OF_LED_COLUMNS;
+        uint8_t ledStateSingle = LED_ON(ledState[ledNumber]);
 
-        //pulse clock pin
-        pulseHighToLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
-
-        if (even)
+        if (ledStateSingle)
         {
-            //check only every second row
-            //get last encoder direction
-            //hardcoded! formula for getting encoder number is ACTIVE_ROW * (NUMBER_OF_COLUMNS/2) + COLUMN
-            //since we know there are 8 columns, half of that is 4
-            //instead of multiplying row by four, simply right shift row by two places
-            encoderNumber = (row << 2) + column;
-            //get last encoder direction
-            bool lastDirection = BIT_READ(encoderState[encoderNumber], 7);
-
-            //shift in new encoder readings
-            encoderState[encoderNumber] <<= 2;
-            encoderState[encoderNumber] |= inputBuffer;
-            //make sure not to reset last direction
-            encoderState[encoderNumber] &= 0x8F;
-
-            //update new encoder direction
-            BIT_WRITE(encoderState[encoderNumber], 7, lastDirection);
-
-            int8_t newPulse = encoderLookUpTable[encoderState[encoderNumber] & 0x0F];
-
-            if (!newPulse)
-                continue; //no movement
-
-            bool newDirection = newPulse > 0;
-
-            //add new pulse count
-            encPulses_x4[encoderNumber] += newPulse;
-
-            //update new direction
-            BIT_WRITE(encoderState[encoderNumber], 7, newDirection);
-
-            if (lastDirection != newDirection)
-                continue;
-
-            if (abs(encPulses_x4[encoderNumber]) < pulsesPerStep[encoderNumber])
-                continue;
-
-            encPulses[encoderNumber] += newDirection ? 1 : -1;
-            encPulses_x4[encoderNumber] = 0;
+            if (BIT_READ(ledState[ledNumber], LED_FULL_INTENSITY_BIT))
+                ledStateSingle = LED_FULL_INTENSITY;
+            else
+                ledStateSingle = LED_HALF_INTENSITY;
         }
+
+        //don't bother with pwm if it's disabled
+        if (!pwmSteps && ledStateSingle)
+        {
+            ledRowOn(i, ledTransitionScale[ledStateSingle]);
+        }
+        else
+        {
+            if (ledTransitionScale[transitionCounter[ledNumber]])
+                ledRowOn(i, ledTransitionScale[transitionCounter[ledNumber]]);
+
+            if (transitionCounter[ledNumber] != ledStateSingle)
+            {
+                if (transitionCounter[ledNumber] < ledStateSingle)
+                {
+                    //fade up
+                    transitionCounter[ledNumber] += pwmSteps;
+
+                    if (transitionCounter[ledNumber] > ledStateSingle)
+                        transitionCounter[ledNumber] = ledStateSingle;
+                }
+                else
+                {
+                    //fade down
+                    transitionCounter[ledNumber] -= pwmSteps;
+
+                    if (transitionCounter[ledNumber] < 0)
+                        transitionCounter[ledNumber] = 0;
+                }
+            }
+        }
+    }
+}
+
+inline void storeDigitalIn()
+{
+    setLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
+    setLow(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
+    _NOP();
+
+    digitalInBuffer[activeInColumn] = 0;
+
+    setHigh(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
+
+    for (int i=0; i<8; i++)
+    {
+        setLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
+        _NOP();
+        BIT_WRITE(digitalInBuffer[activeInColumn], 7-i, !readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN));
+        setHigh(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
     }
 }
 
@@ -321,10 +271,17 @@ ISR(TIMER3_COMPA_vect)
         //update run time
         rTime_ms++;
 
-        for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
+        //read input matrix
+        if (activeInColumn < NUMBER_OF_BUTTON_COLUMNS)
         {
-            activateInputColumn(i);
-            storeDigitalIn(i);
+            for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
+            {
+                activeInColumn = i;
+                activateInputColumn();
+                storeDigitalIn();
+            }
+
+            activeInColumn = NUMBER_OF_BUTTON_COLUMNS;
         }
 
         updateStuff = 0;

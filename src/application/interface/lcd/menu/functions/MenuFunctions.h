@@ -23,11 +23,9 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "../../LCD.h"
-#include "../../../pads/Pads.h"
-#include "../../../encoders/Encoders.h"
+#pragma once
+
 #include "../Menu.h"
-#include <avr/boot.h>
 
 //uint16_t dev_signature[20];
 //

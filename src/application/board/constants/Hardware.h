@@ -25,6 +25,8 @@
 
 #pragma once
 
+#define BUTTON_DEBOUNCE_COMPARE 0b11110000
+
 #define NUMBER_OF_PADS              9
 #define NUMBER_OF_LED_COLUMNS       8
 #define NUMBER_OF_LED_ROWS          3

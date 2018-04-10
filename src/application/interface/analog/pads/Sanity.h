@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "../../board/constants/Hardware.h"
-#include "../../database/blocks/Blocks.h"
+#include "../../../board/constants/Hardware.h"
+#include "../../../database/blocks/Blocks.h"
 
 ///
 /// \ingroup interfacePads

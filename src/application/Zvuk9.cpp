@@ -23,11 +23,11 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "interface/encoders/Encoders.h"
 #include "interface/lcd/LCD.h"
 #include "interface/lcd/menu/Menu.h"
-#include "interface/leds/LEDs.h"
-#include "interface/pads/Pads.h"
+#include "interface/digital/output/leds/LEDs.h"
+#include "interface/digital/input/DigitalInput.h"
+#include "interface/analog/pads/Pads.h"
 #include "database/Database.h"
 
 #ifdef DEBUG
@@ -124,9 +124,8 @@ int main()
 
     while (1)
     {
-        pads.update();
-        buttons.update();
-        encoders.update();
+        // pads.update();
+        digitalInput.update();
         display.update();
         leds.update();
 

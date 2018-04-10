@@ -25,33 +25,86 @@
 
 #include "Board.h"
 
-uint8_t             encoderState[MAX_NUMBER_OF_ENCODERS];
-volatile int8_t     encPulses[MAX_NUMBER_OF_ENCODERS];
-int8_t              encPulses_x4[MAX_NUMBER_OF_ENCODERS];
+bool                encodersProcessed;
+uint16_t            encoderData[MAX_NUMBER_OF_ENCODERS];
 
-int8_t Board::getEncoderState(uint8_t encoderNumber)
+void Board::initEncoders()
 {
-    int8_t pulses;
-
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+    for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
     {
-        pulses = encPulses[encoderNumber];
-        encPulses[encoderNumber] = 0;
+        encoderData[i] |= ((uint16_t)0 << 8);
+        encoderData[i] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);   //set number of pulses to 8
     }
+}
 
-    if (encInverted[encoderNumber])
-        return pulses*-1;
+int8_t Board::readEncoder(uint8_t encoderID, uint8_t pairState)
+{
+    //add new data
+    uint8_t newPairData = 0;
+    newPairData |= (((encoderData[encoderID] << 2) & 0x000F) | (uint16_t)pairState);
 
-    return pulses;
+    //remove old data
+    encoderData[encoderID] &= ENCODER_CLEAR_TEMP_STATE_MASK;
+
+    //shift in new data
+    encoderData[encoderID] |= (uint16_t)newPairData;
+
+    int8_t encRead = encoderLookUpTable[newPairData];
+
+    if (!encRead)
+        return 0;
+
+    bool newEncoderDirection = encRead > 0;
+    //get current number of pulses from encoderData
+    int8_t currentPulses = (encoderData[encoderID] >> 4) & 0x000F;
+    currentPulses += encRead;
+    //clear current pulses
+    encoderData[encoderID] &= ENCODER_CLEAR_PULSES_MASK;
+    //shift in new pulse count
+    encoderData[encoderID] |= (uint16_t)(currentPulses << 4);
+    //get last encoder direction
+    bool lastEncoderDirection = BIT_READ(encoderData[encoderID], ENCODER_DIRECTION_BIT);
+    //write new encoder direction
+    BIT_WRITE(encoderData[encoderID], ENCODER_DIRECTION_BIT, newEncoderDirection);
+
+    if (lastEncoderDirection != newEncoderDirection)
+        return 0;
+
+    if (currentPulses % pulsesPerStep[encoderID])
+        return 0;
+
+    //clear current pulses
+    encoderData[encoderID] &= ENCODER_CLEAR_PULSES_MASK;
+
+    //set default pulse count
+    encoderData[encoderID] |= ((uint16_t)ENCODER_DEFAULT_PULSE_COUNT_STATE << 4);
+
+    if (!encInverted[encoderID])
+    {
+        if (newEncoderDirection)
+            return 1;
+        else
+            return -1;
+    }
+    else
+    {
+        if (newEncoderDirection)
+            return -1;
+        else
+            return 1;
+    }
+}
+
+int8_t Board::getEncoderState(uint8_t encoderID)
+{
+    uint8_t column = encoderID % NUMBER_OF_BUTTON_COLUMNS;
+    uint8_t row  = (encoderID/NUMBER_OF_BUTTON_COLUMNS)*2;
+    uint8_t pairState = (digitalInBuffer[column] >> row) & 0x03;
+
+    return readEncoder(encoderID, pairState);
 }
 
 bool Board::encoderEnabled(uint8_t encoderNumber)
 {
-    for (int i=0; i<(int)sizeof(encoderMap); i++)
-    {
-        if (encoderMap[i] == encoderNumber)
-            return true;
-    }
-
-    return false;
+    return encoderEnabledMap[encoderNumber];
 }
