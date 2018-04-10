@@ -24,8 +24,8 @@
 */
 
 #include "Handlers.h"
-
-#include "../../../board/Board.h"
+#include "../../../board/constants/Hardware.h"
+#include "../../../board/map/Encoders.h"
 
 void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
 

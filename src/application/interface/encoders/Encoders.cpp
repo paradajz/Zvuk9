@@ -24,13 +24,14 @@
 */
 
 #include "Encoders.h"
-#include "../pads/Pads.h"
-#include "../buttons/Buttons.h"
 #include "../lcd/menu/Menu.h"
-#include "../../database/Database.h"
 #include "handlers/Handlers.h"
+#include "../../board/Board.h"
 
 extern void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
+
+uint8_t lastStepTime[MAX_NUMBER_OF_ENCODERS];
+int8_t encoderSpeed[MAX_NUMBER_OF_ENCODERS];
 
 ///
 /// \brief Default constructor.

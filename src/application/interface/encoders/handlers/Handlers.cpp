@@ -28,8 +28,6 @@
 #include "../../pads/Pads.h"
 #include "../../lcd/LCD.h"
 #include "../../lcd/menu/Menu.h"
-#include "../../encoders/Encoders.h"
-#include "../../../database/Database.h"
 
 void handleProgram(uint8_t id, int8_t steps)
 {
