@@ -29,8 +29,8 @@
 #include "map/Map.h"
 #include "lcd/LCD.h"
 #include "pins/Pins.h"
-#include "Import.h"
 #include "DataTypes.h"
+#include "../interface/leds/Variables.h"
 
 ///
 /// \brief Hardcoded board revision.
