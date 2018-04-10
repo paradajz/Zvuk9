@@ -224,7 +224,7 @@ ledState_t LEDs::getLEDstate(uint8_t ledNumber)
 }
 
 ///
-/// \brief Checks  state of LED index which cooresponds with requested note index.
+/// \brief Checks state of LED index which cooresponds with requested note index.
 /// @param [in] note    Note index.
 /// \returns LED state (enumerated type, see ledState_t).
 ///
