@@ -24,7 +24,6 @@
 */
 
 #include "Handlers.h"
-
 #include "../../pads/Pads.h"
 #include "../../MIDIconf.h"
 #include "../../buttons/Buttons.h"
