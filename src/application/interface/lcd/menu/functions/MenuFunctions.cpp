@@ -50,7 +50,8 @@ bool factoryReset(functionArgument argument)
                 if ((i != 6) && (i != 0) && (i != 8))
                 {
                     //flush all accumulated encoder output if there were any movements
-                    encoders.flush();
+                    #warning to-do
+                    // encoders.flush();
                     display.setDirectWriteState(false);
                     return false;
                 }
@@ -233,7 +234,7 @@ bool checkNoteOffStatus(functionArgument argument)
 
 bool checkTransportCC(functionArgument argument)
 {
-    switch((transportControlType_t)argument.argument1)
+    switch((transportControlMode_t)argument.argument1)
     {
         case transportCC:
         case transportMMC:
@@ -250,11 +251,11 @@ bool checkTransportCC(functionArgument argument)
     {
         case true:
         //switch option
-        buttons.setTransportControlType((transportControlType_t)argument.argument1);
+        buttons.setTransportControlMode((transportControlMode_t)argument.argument1);
         return true;
 
         case false:
-        return (buttons.getTransportControlType() == (transportControlType_t)argument.argument1);
+        return (buttons.getTransportControlMode() == (transportControlMode_t)argument.argument1);
         break;
     }
 

@@ -26,11 +26,20 @@
 #include "DigitalInput.h"
 #include "../../../board/Board.h"
 
+///
+/// \brief Default constructor.
+///
 DigitalInput::DigitalInput()
 {
     
 }
 
+///
+/// \brief Calls update functions for buttons and encoders if digital input data is available.
+/// Board implements button matrix on which both encoders and buttons are connected. Because of
+/// this, data source is the same. After reading stored inputs from board, futher reading must
+/// be started manually for board object. This small abstraction takes care of that.
+///
 void DigitalInput::update()
 {
     if (!board.digitalInputDataAvailable())

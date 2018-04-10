@@ -32,6 +32,6 @@
 #define ENCODER_SPEED_CHANGE            3
 
 ///
-/// \brief Time threshold (in milliseconds, approximately) between two encoder steps used to detect fast movement.
+/// \brief Time threshold in milliseconds between two encoder steps used to detect fast movement.
 ///
-#define SPEED_TIMEOUT                   40
+#define SPEED_TIMEOUT                   140

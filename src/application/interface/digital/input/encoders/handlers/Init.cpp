@@ -27,8 +27,14 @@
 #include "../../../../../board/constants/Hardware.h"
 #include "../../../../../board/map/Encoders.h"
 
+///
+/// \brief Function pointers used to define handlers for encoders.
+///
 void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
 
+///
+/// \brief Initializes handlers for all encoders.
+///
 void initHandlers_encoders()
 {
     for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)

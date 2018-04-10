@@ -143,7 +143,7 @@ void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state)
 }
 
 ///
-/// \brief Changes state of LED index which cooresponds with requested note index.
+/// \brief Changes state of LED index which corresponds with requested note index.
 /// @param [in] note    Note index.
 /// @param [in] state   New LED state.
 ///
@@ -234,7 +234,7 @@ ledState_t LEDs::getNoteLEDstate(note_t note)
 
 ///
 /// \brief Sets speed of LED fading transition.
-/// Higher value cooresponds to faster fading.
+/// Higher value corresponds to faster fading.
 ///
 void LEDs::setFadeSpeed(uint8_t speed)
 {

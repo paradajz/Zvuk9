@@ -27,13 +27,22 @@
 
 #include "Config.h"
 
+///
+/// \brief Encoder handling.
+/// \defgroup interfaceEncoders Encoders
+/// \ingroup interfaceDigitalIn
+/// @{
+
 class Encoders
 {
     public:
     Encoders();
-    void init();
-    void update(bool process = true);
-    void flush();
+    static void init();
+    static void update();
+    static void setMIDIchannelPresetEncMode(bool state);
+    static bool getMIDIchannelPresetEncMode();
 };
 
 extern Encoders encoders;
+
+/// @}

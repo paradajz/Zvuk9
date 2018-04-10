@@ -24,12 +24,15 @@
 */
 
 #include "Handlers.h"
-
 #include "../../../../analog/pads/Pads.h"
 #include "../../../../digital/input/buttons/Buttons.h"
+#include "../../../../digital/input/encoders/Encoders.h"
 #include "../../../../lcd/LCD.h"
 #include "../../../../lcd/menu/Menu.h"
 
+///
+/// \brief Handler for program encoder.
+///
 void handleProgram(uint8_t id, int8_t steps)
 {
     if (pads.getEditModeState())
@@ -68,6 +71,9 @@ void handleProgram(uint8_t id, int8_t steps)
     }
 }
 
+///
+/// \brief Handler for scale encoder.
+///
 void handleScale(uint8_t id, int8_t steps)
 {
     if (pads.getEditModeState())
@@ -78,7 +84,7 @@ void handleScale(uint8_t id, int8_t steps)
     //allow only 1 step change
     steps = steps > 0 ? 1 : -1;
 
-    if (buttons.getMIDIchannelEnc())
+    if (encoders.getMIDIchannelPresetEncMode())
     {
         //change midi channel
         buttons.disable(BUTTON_ON_OFF_SPLIT);
@@ -127,6 +133,9 @@ void handleScale(uint8_t id, int8_t steps)
     }
 }
 
+///
+/// \brief Handler for CC encoders.
+///
 void handleCC(uint8_t id, int8_t steps)
 {
     if (pads.getEditModeState())
@@ -164,6 +173,9 @@ void handleCC(uint8_t id, int8_t steps)
     }
 }
 
+///
+/// \brief Handler for limit encoders (X/Y min/max).
+///
 void handleLimit(uint8_t id, int8_t steps)
 {
     if (pads.getEditModeState())
@@ -252,6 +264,9 @@ void handleLimit(uint8_t id, int8_t steps)
     }
 }
 
+///
+/// \brief Handler for curve encoders.
+///
 void handleCurve(uint8_t id, int8_t steps)
 {
     if (pads.getEditModeState())

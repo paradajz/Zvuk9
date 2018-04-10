@@ -26,52 +26,35 @@
 #pragma once
 
 #include "DataTypes.h"
-#include "../../../../board/constants/Hardware.h"
+
+///
+/// \brief Button handling.
+/// \defgroup interfaceButtons Buttons
+/// \ingroup interfaceDigitalIn
+/// @{
 
 class Buttons
 {
     public:
     Buttons();
-    void init();
-    void update();
-    void enable(int8_t buttonID = -1);
-    void disable(int8_t buttonID = -1);
-    bool getButtonEnableState(uint8_t buttonID);
-
-    void setTransportControlType(transportControlType_t type);
-    transportControlType_t getTransportControlType();
-
-    //getters
-    note_t getTonicFromButton(uint8_t buttonNumber);
-    uint8_t getLastPressedButton();
-
-    bool getButtonState(uint8_t buttonID);
-
-    void setButtonState(uint8_t buttonID, bool state);
-    void setMIDIchannelEnc(bool state);
-    bool getMIDIchannelEnc();
+    static void init();
+    static void update();
+    static void setButtonEnableState(int8_t buttonID, bool state);
+    static bool getButtonEnableState(uint8_t buttonID);
+    static void setTransportControlMode(transportControlMode_t type);
+    static transportControlMode_t getTransportControlMode();
+    static note_t getNoteFromButton(uint8_t buttonNumber);
+    static bool getButtonState(uint8_t buttonID);
+    static void setButtonState(uint8_t buttonID, bool state);
 
     private:
-    bool buttonDebounced(uint8_t buttonID, bool buttonState);
-    void handleTransportControlEvent(uint8_t buttonNumber, bool state);
-    void handleTonicEvent(note_t note, bool state);
-    void handleOctaveEvent(bool direction, bool state);
-
-    //button-to-led mapping
-    void mapButtonsToNotes();
-
-    void processButton(uint8_t button, uint8_t state);
-
-    uint32_t                lastCheckTime;
-    uint8_t                 buttonEnabled[MAX_NUMBER_OF_BUTTONS/8+1];
-    bool                    processingEnabled;
-    uint32_t                userMenuTimeout;
-    transportControlType_t  transportControlType;
-    uint8_t                 buttonToNoteArray[MAX_NUMBER_OF_BUTTONS];
-    uint8_t                 lastPressedButton;
-    uint8_t                 buttonPressed[MAX_NUMBER_OF_BUTTONS/8+1];
-    bool                    midiChannelEncState;
-    uint8_t                 buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
+    static bool buttonDebounced(uint8_t buttonID, bool buttonState);
+    static void handleTransportControlEvent(uint8_t buttonNumber, bool state);
+    static void handleTonicEvent(note_t note, bool state);
+    static void handleOctaveEvent(bool direction, bool state);
+    static void processButton(uint8_t button, uint8_t state);
 };
 
 extern Buttons buttons;
+
+/// @}

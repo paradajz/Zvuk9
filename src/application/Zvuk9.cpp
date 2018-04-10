@@ -119,9 +119,6 @@ int main()
         display.displayFirmwareUpdated();
     #endif
 
-    //flush all data from encoders
-    encoders.flush();
-
     while (1)
     {
         // pads.update();

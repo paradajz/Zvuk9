@@ -25,17 +25,12 @@
 
 #pragma once
 
+///
+/// \brief List of all possible transport control modes.
+///
 typedef enum
 {
-    transportStop,
-    transportPlay,
-    transportRecordOn,
-    transportRecordOff
-} transportControl_t;
-
-typedef enum
-{
-    transportMMC,
-    transportCC,
-    transportMMC_CC
-} transportControlType_t;
+    transportMMC,   ///< Uses standard MIDI transport control messages.
+    transportCC,    ///< Uses MIDI-mappable predefined CC messages (interface/MIDIconf.h) for transport controls
+    transportMMC_CC ///< Uses both standard MIDI transport control messages and CC messages.
+} transportControlMode_t;

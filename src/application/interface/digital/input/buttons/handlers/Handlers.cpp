@@ -27,11 +27,15 @@
 #include "../../../../analog/pads/Pads.h"
 #include "../../../../MIDIconf.h"
 #include "../../../../digital/input/buttons/Buttons.h"
+#include "../../../../digital/input/encoders/Encoders.h"
 #include "../../../../digital/output/leds/LEDs.h"
 #include "../../../../lcd/LCD.h"
 #include "../../../../lcd/menu/Menu.h"
 #include "../../../../../database/blocks/GlobalSettings.h"
 
+///
+/// \brief Handler for on/off buttons (split, notes, aftertouch, X and Y).
+///
 void handleOnOff(uint8_t id, bool state)
 {
     if (pads.getEditModeState())
@@ -171,6 +175,9 @@ void handleOnOff(uint8_t id, bool state)
     }
 }
 
+///
+/// \brief Handler for transport control buttons (play, stop and record).
+///
 void handleTransportControl(uint8_t id, bool state)
 {
     if (pads.getEditModeState())
@@ -203,7 +210,7 @@ void handleTransportControl(uint8_t id, bool state)
     {
         case BUTTON_TRANSPORT_PLAY:
         function = functionPlay;
-        switch(buttons.getTransportControlType())
+        switch(buttons.getTransportControlMode())
         {
             case transportCC:
             midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_PLAY, 127, 1);
@@ -226,7 +233,7 @@ void handleTransportControl(uint8_t id, bool state)
         case BUTTON_TRANSPORT_STOP:
         function = functionStop;
         recordOff = leds.getLEDstate(LED_TRANSPORT_RECORD);
-        switch(buttons.getTransportControlType())
+        switch(buttons.getTransportControlMode())
         {
             case transportCC:
             midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_STOP, 127, 1);
@@ -305,7 +312,7 @@ void handleTransportControl(uint8_t id, bool state)
             if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
             {
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
-                switch(buttons.getTransportControlType())
+                switch(buttons.getTransportControlMode())
                 {
                     case transportCC:
                     midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 0, 1);
@@ -326,7 +333,7 @@ void handleTransportControl(uint8_t id, bool state)
             else
             {
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
-                switch(buttons.getTransportControlType())
+                switch(buttons.getTransportControlMode())
                 {
                     case transportCC:
                     midi.sendControlChange(MIDI_SETTING_TRANSPORT_CC_RECORD, 127, 1);
@@ -355,6 +362,9 @@ void handleTransportControl(uint8_t id, bool state)
     display.displayChangeResult(function, leds.getLEDstate(LED_TRANSPORT_RECORD), globalSetting);
 }
 
+///
+/// \brief Handler for up/down buttons.
+///
 void handleUpDown(uint8_t id, bool state)
 {
     if (!buttons.getButtonEnableState(id))
@@ -493,6 +503,9 @@ void handleUpDown(uint8_t id, bool state)
     }
 }
 
+///
+/// \brief Handler for note buttons.
+///
 void handleTonic(uint8_t id, bool state)
 {
     if (state)
@@ -504,7 +517,7 @@ void handleTonic(uint8_t id, bool state)
     if (menu.isMenuDisplayed())
         return;
 
-    note_t note = buttons.getTonicFromButton(id);
+    note_t note = buttons.getNoteFromButton(id);
 
     if (!pads.getEditModeState())
     {
@@ -545,6 +558,9 @@ void handleTonic(uint8_t id, bool state)
     }
 }
 
+///
+/// \brief Handler for button located on program encoder.
+///
 void handleProgramEncButton(uint8_t id, bool state)
 {
     if (!state)
@@ -574,6 +590,9 @@ void handleProgramEncButton(uint8_t id, bool state)
     }
 }
 
+///
+/// \brief Handler for button located on preset encoder.
+///
 void handlePresetEncButton(uint8_t id, bool state)
 {
     if (!state)
@@ -592,7 +611,7 @@ void handlePresetEncButton(uint8_t id, bool state)
         return;
     }
 
-    buttons.setMIDIchannelEnc(true);
+    encoders.setMIDIchannelPresetEncMode(true);
     //midi channel change mode, display on lcd
     display.displayChangeResult(functionChannel, pads.getMIDIchannel(pads.getLastTouchedPad()), pads.getSplitState() ? singlePadSetting : globalSetting);
 }

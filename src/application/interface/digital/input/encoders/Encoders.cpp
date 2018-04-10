@@ -28,10 +28,27 @@
 #include "handlers/Handlers.h"
 #include "../../../../board/Board.h"
 
-extern void (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
+///
+/// \brief External definition for encoder handler functions.
+///
+extern void     (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
 
-uint8_t lastStepTime[MAX_NUMBER_OF_ENCODERS];
-int8_t encoderSpeed[MAX_NUMBER_OF_ENCODERS];
+///
+/// \brief When set to true, preset encoder is used to change MIDI channels instead of presets.
+///
+bool            midiChannelEncState;
+
+///
+/// \brief Array holding last time in milliseconds encoders were moved.
+///
+uint32_t        lastStepTime[MAX_NUMBER_OF_ENCODERS];
+
+///
+/// \brief Array holding current speed (in steps) for all encoders.
+/// Set to 1 by default.
+///
+int8_t          encoderSpeed[MAX_NUMBER_OF_ENCODERS];
+
 
 ///
 /// \brief Default constructor.
@@ -51,29 +68,25 @@ void Encoders::init()
 
 ///
 /// \brief Continuously checks state of all encoders.
-/// @param [in] If set to true, data from encoders won't be processed. Set to true by default.
 ///
-void Encoders::update(bool process)
+void Encoders::update()
 {
     int8_t steps;
 
     for (int i=0; i<MAX_NUMBER_OF_ENCODERS; i++)
     {
-        if (lastStepTime[i] < 255)
-            lastStepTime[i]++;
-
+        //process only enabled encoders
         if (!board.encoderEnabled(i))
             continue;
 
         steps = board.getEncoderState(i);
 
-        if (!process)
-            continue;
-
         if (steps == 0)
             continue;
 
-        if (lastStepTime[i] < SPEED_TIMEOUT)
+        //when time difference between two movements is smaller than SPEED_TIMEOUT,
+        //start accelerating
+        if ((rTimeMs() - lastStepTime[i]) < SPEED_TIMEOUT)
         {
             encoderSpeed[i] += ENCODER_SPEED_CHANGE;
             steps = steps > 0 ? encoderSpeed[i] : -encoderSpeed[i];
@@ -94,17 +107,32 @@ void Encoders::update(bool process)
         if (encoderHandler[i] != NULL)
         {
             (*encoderHandler[i])(i, steps);
-            lastStepTime[i] = 0;
+            lastStepTime[i] = rTimeMs();
         }
     }
+
+    //disable midi channel function when regular text gets shown on display
+    if (midiChannelEncState && (display.getActiveTextType() == lcdtext_still))
+        midiChannelEncState = false;
 }
 
 ///
-/// \brief Flushes all data from encoders.
+/// \brief Enables or disables MIDI channel changing mode for preset encoder.
+/// @param[in] state    If set to true, preset encoder will be used to change MIDI channels.
+///                     Otherwise, presets are changed using this encoder.
 ///
-void Encoders::flush()
+void Encoders::setMIDIchannelPresetEncMode(bool state)
 {
-    update(false);
+    midiChannelEncState = state;
+}
+
+///
+/// \brief Checks if MIDI channel changing mode for preset encoder is enabled.
+/// \returns True if MIDI channel changing mode is enabled, false otherwise.
+///
+bool Encoders::getMIDIchannelPresetEncMode()
+{
+    return midiChannelEncState;
 }
 
 Encoders encoders;
