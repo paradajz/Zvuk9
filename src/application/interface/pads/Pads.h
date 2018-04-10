@@ -26,9 +26,7 @@
 #pragma once
 
 #include "curves/Curves.h"
-#include "../../board/Board.h"
 #include "Config.h"
-#include "../../database/Database.h"
 #include "Sanity.h"
 
 ///

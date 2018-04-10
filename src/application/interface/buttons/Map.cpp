@@ -24,6 +24,7 @@
 */
 
 #include "Buttons.h"
+#include "../../board/map/Buttons.h"
 
 void Buttons::mapButtonsToNotes()
 {

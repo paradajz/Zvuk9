@@ -27,7 +27,6 @@
 
 #include "DataTypes.h"
 #include "../DataTypes.h"
-#include "../../../board/Board.h"
 
 ///
 /// \brief Class responsible for curve arithmetic.

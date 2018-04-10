@@ -27,6 +27,7 @@
 #include "../leds/LEDs.h"
 #include "../../database/Database.h"
 #include "PredefinedScales.h"
+#include "../../board/Board.h"
 
 ///
 /// \ingroup interfacePads
