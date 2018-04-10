@@ -86,12 +86,18 @@ void Menu::setMenuTitle(bool rootTitle)
         switch(activeMenu)
         {
             case userMenu:
+            stringBuffer.startLine();
             stringBuffer.appendText_P(menuType_user_string);
+            stringBuffer.endLine();
+
             display.updateText(0, lcdtext_still, 0);
             break;
 
             case serviceMenu:
+            stringBuffer.startLine();
             stringBuffer.appendText_P(menuType_service_string);
+            stringBuffer.endLine();
+
             display.updateText(0, lcdtext_still, 0);
             break;
 
