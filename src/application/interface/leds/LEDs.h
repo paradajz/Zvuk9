@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "../../board/Board.h"
-#include "../pads/DataTypes.h"
 #include "DataTypes.h"
 
 ///
