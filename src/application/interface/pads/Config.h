@@ -44,7 +44,7 @@
 ///
 /// \brief Time in milliseconds during which pressure reading is ignored after X or Y has changed value.
 ///
-#define PRESSURE_IGNORE_XY_CHANGE                   10
+#define PRESSURE_IGNORE_XY_CHANGE                   2
 
 ///
 /// \brief Time in milliseconds after which notes from pad are sent once X and Y MIDI messages have been sent.
