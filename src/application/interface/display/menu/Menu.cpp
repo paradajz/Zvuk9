@@ -424,6 +424,8 @@ void Menu::confirmOption(bool confirm)
         {
             //we need to get one level behind new level to find out menu title when going backwards
             menuHierarchyPosition = newLevel/10;
+            //update indexes so that correct index for menu title is retrieved
+            updateMenuHierarchyItems();
 
             if (newLevel > 10)
                 setMenuTitle(false);
