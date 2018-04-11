@@ -43,6 +43,9 @@ class Encoders
     static bool getMIDIchannelPresetEncMode();
 };
 
+///
+/// \brief External definition of Encoders class instance.
+///
 extern Encoders encoders;
 
 /// @}

@@ -55,6 +55,9 @@ class Buttons
     static void processButton(uint8_t button, uint8_t state);
 };
 
+///
+/// \brief External definition of Buttons class instance.
+///
 extern Buttons buttons;
 
 /// @}

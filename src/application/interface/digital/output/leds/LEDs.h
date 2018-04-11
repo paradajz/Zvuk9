@@ -54,6 +54,9 @@ class LEDs
     static void setFadeSpeed(uint8_t speed);
 };
 
+///
+/// \brief External definition of LEDs class instance.
+///
 extern LEDs leds;
 
 /// @}

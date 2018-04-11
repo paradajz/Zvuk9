@@ -135,4 +135,7 @@ bool Encoders::getMIDIchannelPresetEncMode()
     return midiChannelEncState;
 }
 
+///
+/// \brief Encoders class instance.
+///
 Encoders encoders;

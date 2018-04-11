@@ -29,11 +29,32 @@
 #include "../../../../board/map/LEDs.h"
 #include "../../../../board/constants/LEDs.h"
 
+///
+/// \brief Current LED blink state.
+/// State of this variable is changed after defined blink time and applied to all
+/// LEDs which have blinking enabled.
+///
 static bool         blinkState;
+
+///
+/// \brief LED fading speed.
+/// Higher number means LED fading is faster.
+/// On AVR board, maximum amount of PWM steps is 255.
+/// When PWM value is 0, LED is off, on 255 it is fully on.
+/// LED fading works by gradually changing PWM value from 0 to 255.
+/// PWM value is increased or decreased by value of this variable each time.
+///
 volatile uint8_t    pwmSteps;
+
+///
+/// \brief Array holding states of all LEDs.
+///
 uint8_t             ledState[MAX_NUMBER_OF_LEDS];
+
+///
+/// \brief Last time in milliseconds LED blink state has been changed.
+///
 static uint32_t     lastLEDblinkUpdateTime;
-volatile int8_t     transitionCounter[MAX_NUMBER_OF_LEDS];
 
 ///
 /// \brief Array of LED indexes matched with note_t enumeration defined in MIDI module.
@@ -241,4 +262,7 @@ void LEDs::setFadeSpeed(uint8_t speed)
     pwmSteps = speed;
 }
 
+///
+/// \brief LEDs class instance.
+///
 LEDs leds;

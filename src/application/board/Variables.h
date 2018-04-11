@@ -36,3 +36,4 @@ extern volatile int8_t      encPulses[MAX_NUMBER_OF_ENCODERS];
 extern int8_t               encPulses_x4[MAX_NUMBER_OF_ENCODERS];
 extern volatile uint16_t    padPressed;
 extern uint8_t              padReadingIndex;
+extern volatile int8_t      transitionCounter[MAX_NUMBER_OF_LEDS];

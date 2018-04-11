@@ -274,4 +274,7 @@ transportControlMode_t Buttons::getTransportControlMode()
     return transportControlMode;
 }
 
+///
+/// \brief Buttons class instance.
+///
 Buttons buttons;

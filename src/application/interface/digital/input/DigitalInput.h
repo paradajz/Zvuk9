@@ -41,6 +41,9 @@ class DigitalInput
     static void update();
 };
 
+///
+/// \brief External definition of DigitalInput class instance.
+///
 extern DigitalInput digitalInput;
 
 /// @}

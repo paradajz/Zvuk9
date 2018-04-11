@@ -26,3 +26,4 @@
 #include "Board.h"
 
 volatile int8_t     activeLEDcolumn;
+volatile int8_t     transitionCounter[MAX_NUMBER_OF_LEDS];
