@@ -297,6 +297,11 @@ bool Menu::isMenuDisplayed()
     return (activeMenu != noMenu);
 }
 
+///
+/// \brief Handles switching of menu screens when options are selected.
+/// @param [in] confirm     If set to true, selected option is entered.
+///                         Otherwise, menu switches one level back.
+///
 void Menu::confirmOption(bool confirm)
 {
     if (confirm && functionRunning)
