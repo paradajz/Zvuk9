@@ -119,7 +119,9 @@ void Buttons::init()
 
     if (getButtonState(BUTTON_PROGRAM_ENC) && getButtonState(BUTTON_PRESET_ENC))
     {
-        menu.show(serviceMenu);
+        //clear entire display first
+        display.clearAll();
+        menu.setMenuType(serviceMenu);
         processingEnabled = false;
     }
     else

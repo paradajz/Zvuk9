@@ -587,7 +587,9 @@ void handleProgramEncButton(uint8_t id, bool state)
         }
         else
         {
-            menu.show(userMenu);
+            //clear entire display first
+            display.clearAll();
+            menu.setMenuType(userMenu);
             #ifdef DEBUG
             printf_P(PSTR("Entering user menu.\n"));
             #endif
@@ -620,6 +622,19 @@ void handlePresetEncButton(uint8_t id, bool state)
         //always disable calibration on return
         if (pads.isCalibrationEnabled())
             pads.setCalibrationMode(false);
+
+        //check if we exited from menu
+        if (!menu.isMenuDisplayed())
+        {
+            //disable calibration if active
+            pads.setCalibrationMode(false);
+            //exit menu and restore initial state
+            display.setupHomeScreen();
+            //re-enable buttons
+            for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
+                buttons.setButtonEnableState(i, true);
+        }
+
         return;
     }
 

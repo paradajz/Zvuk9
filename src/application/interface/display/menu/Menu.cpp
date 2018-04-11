@@ -24,48 +24,96 @@
 */
 
 #include "Menu.h"
+#include "DataTypes.h"
 #include "../Variables.h"
 #include "../strings/Strings.h"
-#include "../../analog/pads/Pads.h"
-#include "../../digital/input/buttons/Buttons.h"
+#include "MenuLayout.h"
 
+///
+/// \brief Currently active menu.
+///
+menuType_t activeMenu;
+
+///
+/// \brief Currently active position in menu.
+///
+uint16_t menuHierarchyPosition;
+
+///
+/// \brief Total number of items in current menu layout.
+///
+uint8_t menuSize;
+
+///
+/// \brief Flag indicating whether or not menu item function is running.
+///
+bool functionRunning;
+
+uint8_t items;
+uint8_t indexes[100];
+
+///
+/// \brief Pointer to menu layout.
+///
+menuItem_t *menuLayout;
+
+///
+/// \brief Default constructor.
+///
 Menu::Menu()
 {
     activeMenu = noMenu;
 }
 
-void Menu::show(menuType_t type)
+///
+/// \brief Shows initial screen for specified menu type.
+/// @param [in] type    Menu type (user or service). If type is set to noMenu,
+///                     menu is cleared.
+/// \returns True if menu setting was successful, false otherwise.
+///
+bool Menu::setMenuType(menuType_t type)
 {
-    activeMenu = type;
-
     switch(type)
     {
         case serviceMenu:
-        createServiceMenuLayout();
+        menuLayout = serviceMenuLayout;
+        menuSize = SERVICE_MENU_ITEMS;
         break;
 
         case userMenu:
-        createUserMenuLayout();
+        menuLayout = userMenuLayout;
+        menuSize = USER_MENU_ITEMS;
+        break;
+
+        case noMenu:
+        //nothing
         break;
 
         default:
-        break;
+        return false;
     }
+
+    activeMenu = type;
 
     //always reset menu level when displaying menu
     menuHierarchyPosition = 1;
-    activeOption = 0;
     functionRunning = false;
 
-    //clear entire display
-    display.clearAll();
+    if (type != noMenu)
+    {
+        setMenuTitle(true);
+        getMenuItems();
+        updateMenuScreen();
+    }
 
-    setMenuTitle(true);
-    menuSize = getMenuSize();
-    getMenuItems();
-    updateMenuScreen();
+    return true;
 }
 
+///
+/// \brief Sets menu title.
+/// @param [in] rootTitle   If set to true, menu name will be shown.
+///                         Otherwise, string of first item in current menu hierarchy is shown.
+///
 void Menu::setMenuTitle(bool rootTitle)
 {
     uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
@@ -78,7 +126,7 @@ void Menu::setMenuTitle(bool rootTitle)
     {
         stringBuffer.startLine();
         stringBuffer.appendChar('<', 1);
-        stringBuffer.appendText_P(menuItem[indexes[currentOptionIndex]].stringPointer);
+        stringBuffer.appendText_P(menuLayout[indexes[currentOptionIndex]].stringPointer);
         stringBuffer.endLine();
         display.updateText(0, displayText_still, 0);
     }
@@ -108,27 +156,6 @@ void Menu::setMenuTitle(bool rootTitle)
     }
 }
 
-uint8_t Menu::getMenuSize()
-{
-    uint8_t menuSize = 0;
-
-    switch(activeMenu)
-    {
-        case serviceMenu:
-        menuSize = SERVICE_MENU_ITEMS;
-        break;
-
-        case userMenu:
-        menuSize = USER_MENU_ITEMS;
-        break;
-
-        default:
-        break;
-    }
-
-    return menuSize;
-}
-
 void Menu::getMenuItems()
 {
     //reset current items
@@ -140,9 +167,9 @@ void Menu::getMenuItems()
 
     for (int i=0; i<menuSize; i++)
     {
-        if (getNumberOfDigits(menuItem[i].level) == currentDigits)
+        if (getNumberOfDigits(menuLayout[i].level) == currentDigits)
         {
-            int16_t result = menuItem[i].level - subtract;
+            int16_t result = menuLayout[i].level - subtract;
 
             if ((getNumberOfDigits(result) == 1) && (result > 0))
             {
@@ -177,10 +204,10 @@ void Menu::updateMenuScreen()
         else
             stringBuffer.appendChar(' ', 1);
 
-        stringBuffer.appendText_P(menuItem[indexes[i+startPosition]].stringPointer);
+        stringBuffer.appendText_P(menuLayout[indexes[i+startPosition]].stringPointer);
 
         //check for checkable items
-        if (menuItem[indexes[i+startPosition]].checkable && menuItem[indexes[i+startPosition]].function != NULL)
+        if (menuLayout[indexes[i+startPosition]].checkable && menuLayout[indexes[i+startPosition]].function != NULL)
         {
             //checked and unchecked strings have the same size
             uint8_t checkMarkerSize = ARRAY_SIZE_CHAR(checked_string);
@@ -188,7 +215,7 @@ void Menu::updateMenuScreen()
             stringBuffer.appendChar(' ', spaceFill);
 
             //place checked/unchecked characters at the end of the screen line
-            (menuItem[indexes[i+startPosition]].function(menuItem[indexes[i+startPosition]].argument)) ? stringBuffer.appendText_P(checked_string) : stringBuffer.appendText_P(unchecked_string);
+            (menuLayout[indexes[i+startPosition]].function(menuLayout[indexes[i+startPosition]].argument)) ? stringBuffer.appendText_P(checked_string) : stringBuffer.appendText_P(unchecked_string);
         }
 
         stringBuffer.endLine();
@@ -197,10 +224,18 @@ void Menu::updateMenuScreen()
     }
 }
 
+///
+/// \brief Change menu option.
+/// @param [in] direction   Flag indicating in which direction menu option marker should move.
+///                         True means positive direction: increase marker index.
+///                         False means negative direction: decrease marker index.
+///
 void Menu::changeOption(bool direction)
 {
+    //don't allow changing of options if menu item function is running
     if (functionRunning)
         return;
+
     uint8_t currentOption = menuHierarchyPosition % 10;
 
     //here we actually change selected option
@@ -219,29 +254,14 @@ void Menu::changeOption(bool direction)
         //we need to update global hierarchy position
         //to do that, first we get rid of current position and then add new one
         menuHierarchyPosition = (menuHierarchyPosition-currentOption)+newSelectedOption;
-
         updateMenuScreen();
     }
 }
 
-void Menu::exitMenu()
-{
-    #ifdef DEBUG
-    printf_P(PSTR("Exiting menu\n"));
-    #endif
-
-    //disable calibration if active
-    pads.setCalibrationMode(false);
-    //exit menu and restore initial state
-    display.setupHomeScreen();
-    //re-enable buttons
-    for (int i=0; i<MAX_NUMBER_OF_BUTTONS; i++)
-        buttons.setButtonEnableState(i, true);
-
-    activeMenu = noMenu;
-    functionRunning = false;
-}
-
+///
+/// \brief Checks if menu is currently active.
+/// \returns True if menu is displayed, false otherwise.
+///
 bool Menu::isMenuDisplayed()
 {
     return (activeMenu != noMenu);
@@ -266,7 +286,10 @@ void Menu::confirmOption(bool confirm)
     if (newLevel < 1)
     {
         //exit menu
-        exitMenu();
+        #ifdef DEBUG
+        printf_P(PSTR("Exiting menu.\n"));
+        #endif
+        activeMenu = noMenu;
         return;
     }
 
@@ -278,15 +301,17 @@ void Menu::confirmOption(bool confirm)
     {
         bool menuLevelPresent = false;
 
-        //check if level has assigned function
-        if (menuItem[indexes[currentOptionIndex]].function != NULL)
+        //check if item has assigned function
+        if (menuLayout[indexes[currentOptionIndex]].function != NULL)
         {
-            if (menuItem[indexes[currentOptionIndex]].checkable)
+            //check if item has checkable function which just returns true or false
+            if (menuLayout[indexes[currentOptionIndex]].checkable)
             {
                 //set second argument to "true" value to switch to new option
-                menuItem[indexes[currentOptionIndex]].argument.argument2 = true;
-                //menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
-                if (menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument))
+                menuLayout[indexes[currentOptionIndex]].argument.argument2 = true;
+                //menuLayout[indexes[currentOptionIndex]].function(menuLayout[indexes[currentOptionIndex]].argument);
+                #warning should be checked
+                if (menuLayout[indexes[currentOptionIndex]].function(menuLayout[indexes[currentOptionIndex]].argument))
                 {
                     //do nothing
                 }
@@ -297,7 +322,7 @@ void Menu::confirmOption(bool confirm)
                 }
 
                 //reset switch argument
-                menuItem[indexes[currentOptionIndex]].argument.argument2 = false;
+                menuLayout[indexes[currentOptionIndex]].argument.argument2 = false;
 
                 //now refresh screen with changed arguments
                 updateMenuScreen();
@@ -309,7 +334,7 @@ void Menu::confirmOption(bool confirm)
 
                 if (!functionRunning)
                 {
-                    functionStatus = menuItem[indexes[currentOptionIndex]].function(menuItem[indexes[currentOptionIndex]].argument);
+                    functionStatus = menuLayout[indexes[currentOptionIndex]].function(menuLayout[indexes[currentOptionIndex]].argument);
 
                     if (functionStatus)
                     {
@@ -336,7 +361,7 @@ void Menu::confirmOption(bool confirm)
         //we should first check it that level exists
         for (int i=0; i<menuSize; i++)
         {
-            if (menuItem[i].level == newLevel)
+            if (menuLayout[i].level == newLevel)
             {
                 menuLevelPresent = true;
                 break;
@@ -378,11 +403,6 @@ void Menu::confirmOption(bool confirm)
         //fill menu with items
         updateMenuScreen();
     }
-}
-
-void Menu::stopFunction()
-{
-    functionRunning = false;
 }
 
 Menu menu;

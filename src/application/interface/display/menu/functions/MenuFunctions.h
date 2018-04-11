@@ -26,14 +26,15 @@
 #pragma once
 
 #include "../Menu.h"
+#include "../DataTypes.h"
 
-bool factoryReset(functionArgument argument);
-bool deviceInfo(functionArgument argument);
-bool enableCalibration(functionArgument argument);
-bool checkRunningStatus(functionArgument argument);
-bool checkTransportCC(functionArgument argument);
-bool checkPitchBendType(functionArgument argument);
-bool checkVelocitySensitivity(functionArgument argument);
-bool checkPressureCurve(functionArgument argument);
-bool checkAftertouchType(functionArgument argument);
-bool checkNoteOffStatus(functionArgument argument);
+bool factoryReset(functionArgument_t argument);
+bool deviceInfo(functionArgument_t argument);
+bool enableCalibration(functionArgument_t argument);
+bool checkRunningStatus(functionArgument_t argument);
+bool checkTransportCC(functionArgument_t argument);
+bool checkPitchBendType(functionArgument_t argument);
+bool checkVelocitySensitivity(functionArgument_t argument);
+bool checkPressureCurve(functionArgument_t argument);
+bool checkAftertouchType(functionArgument_t argument);
+bool checkNoteOffStatus(functionArgument_t argument);

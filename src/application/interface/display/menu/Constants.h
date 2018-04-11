@@ -25,31 +25,6 @@
 
 #pragma once
 
-#include "../Display.h"
-#include "../Macros.h"
 
-///
-/// \brief Menu system.
-/// \defgroup displayMenu Menu
-/// \ingroup interfaceDisplay
-/// @{
 
-class Menu
-{
-    public:
-    Menu();
-    static bool setMenuType(menuType_t type);
-    static bool isMenuDisplayed();
-    static void changeOption(bool direction);
-    static void confirmOption(bool confirm);
-
-    private:
-    static void setMenuTitle(bool rootTitle);
-    static void updateMenuScreen();
-    static void getMenuItems();
-};
-
-///
-/// \brief External definition of Menu class instance.
-///
-extern Menu menu;
+#define MAX_MENU_OPTIONS    USER_MENU_ITEMS //more items in user menu than service

@@ -25,31 +25,17 @@
 
 #pragma once
 
-#include "../Display.h"
-#include "../Macros.h"
-
-///
-/// \brief Menu system.
-/// \defgroup displayMenu Menu
-/// \ingroup interfaceDisplay
-/// @{
-
-class Menu
+typedef struct
 {
-    public:
-    Menu();
-    static bool setMenuType(menuType_t type);
-    static bool isMenuDisplayed();
-    static void changeOption(bool direction);
-    static void confirmOption(bool confirm);
+    uint8_t argument1;
+    uint8_t argument2;
+} functionArgument_t;
 
-    private:
-    static void setMenuTitle(bool rootTitle);
-    static void updateMenuScreen();
-    static void getMenuItems();
-};
-
-///
-/// \brief External definition of Menu class instance.
-///
-extern Menu menu;
+typedef struct
+{
+    const char *stringPointer;                      ///< Pointer to string used for menu item.
+    uint16_t level;                                 ///< Denotes item level in menu hierarchy, ie. 1.2.3.1.
+    bool (*function)(functionArgument_t argument);  ///< Pointer to function which should be run on menu item entry.
+    functionArgument_t argument;
+    bool checkable;
+} menuItem_t;

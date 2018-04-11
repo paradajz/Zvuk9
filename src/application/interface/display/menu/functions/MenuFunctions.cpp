@@ -30,7 +30,7 @@
 #include "../../../digital/input/buttons/Buttons.h"
 #include "../../../digital/output/leds/LEDs.h"
 
-bool factoryReset(functionArgument argument)
+bool factoryReset(functionArgument_t argument)
 {
     display.setDirectWriteState(true);
     display.clearAll();
@@ -128,13 +128,13 @@ bool factoryReset(functionArgument argument)
     return true;
 }
 
-bool deviceInfo(functionArgument argument)
+bool deviceInfo(functionArgument_t argument)
 {
     display.displayDeviceInfo();
     return true;
 }
 
-bool enableCalibration(functionArgument argument)
+bool enableCalibration(functionArgument_t argument)
 {
     if (pads.getNumberOfPressedPads())
          return false;
@@ -156,7 +156,7 @@ bool enableCalibration(functionArgument argument)
     return true;
 }
 
-bool checkAftertouchType(functionArgument argument)
+bool checkAftertouchType(functionArgument_t argument)
 {
     switch((aftertouchType_t)argument.argument1)
     {
@@ -185,7 +185,7 @@ bool checkAftertouchType(functionArgument argument)
     return false;
 }
 
-bool checkRunningStatus(functionArgument argument)
+bool checkRunningStatus(functionArgument_t argument)
 {
     switch(argument.argument2)
     {
@@ -203,7 +203,7 @@ bool checkRunningStatus(functionArgument argument)
     return false;
 }
 
-bool checkNoteOffStatus(functionArgument argument)
+bool checkNoteOffStatus(functionArgument_t argument)
 {
     switch((noteOffType_t)argument.argument1)
     {
@@ -232,7 +232,7 @@ bool checkNoteOffStatus(functionArgument argument)
     return false;
 }
 
-bool checkTransportCC(functionArgument argument)
+bool checkTransportCC(functionArgument_t argument)
 {
     switch((transportControlMode_t)argument.argument1)
     {
@@ -262,7 +262,7 @@ bool checkTransportCC(functionArgument argument)
     return false;
 }
 
-bool checkPitchBendType(functionArgument argument)
+bool checkPitchBendType(functionArgument_t argument)
 {
     switch((pitchBendType_t)argument.argument1)
     {
@@ -292,7 +292,7 @@ bool checkPitchBendType(functionArgument argument)
     return false;
 }
 
-bool checkVelocitySensitivity(functionArgument argument)
+bool checkVelocitySensitivity(functionArgument_t argument)
 {
     switch((velocitySensitivity_t)argument.argument1)
     {
@@ -322,7 +322,7 @@ bool checkVelocitySensitivity(functionArgument argument)
     return false;
 }
 
-bool checkPressureCurve(functionArgument argument)
+bool checkPressureCurve(functionArgument_t argument)
 {
     switch((curve_t)argument.argument1)
     {
