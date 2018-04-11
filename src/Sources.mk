@@ -29,7 +29,19 @@ ifneq ($(findstring boot,$(MAKECMDGOALS)), boot)
     SOURCES += $(shell find modules/midi -name "*.cpp")
     SOURCES += $(shell find modules/dbms -name "*.cpp")
     SOURCES += $(shell find modules/core -name "*.cpp")
-    SOURCES += $(shell find modules/u8g2/csrc -name "*.c")
+
+    #u8x8 sources
+    SOURCES += modules/u8g2/csrc/u8x8_string.c
+    SOURCES += modules/u8g2/csrc/u8x8_setup.c
+    SOURCES += modules/u8g2/csrc/u8x8_u8toa.c
+    SOURCES += modules/u8g2/csrc/u8x8_8x8.c
+    SOURCES += modules/u8g2/csrc/u8x8_u16toa.c
+    SOURCES += modules/u8g2/csrc/u8x8_display.c
+    SOURCES += modules/u8g2/csrc/u8x8_fonts.c
+    SOURCES += modules/u8g2/csrc/u8x8_byte.c
+    SOURCES += modules/u8g2/csrc/u8x8_cad.c
+    SOURCES += modules/u8g2/csrc/u8x8_gpio.c
+    SOURCES += modules/u8g2/csrc/u8x8_d_ssd1322.c
 
     SOURCES += application/Zvuk9.cpp
 
