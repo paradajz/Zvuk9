@@ -59,7 +59,7 @@ void LCD::displayWelcomeMessage()
 
     while (stringBuffer.buffer[charIndex] != '\0')
     {
-        u8x8.drawGlyph(location+charIndex, rowMap[LCD_ROW_DEVICE_NAME_MESSAGE], stringBuffer.buffer[charIndex]);
+        display_hw.drawGlyph(location+charIndex, rowMap[LCD_ROW_DEVICE_NAME_MESSAGE], stringBuffer.buffer[charIndex]);
         charIndex++;
     }
 
@@ -73,7 +73,7 @@ void LCD::displayWelcomeMessage()
 
     while (stringBuffer.buffer[charIndex] != '\0')
     {
-        u8x8.drawGlyph(location+charIndex, rowMap[LCD_ROW_WELCOME_MESSAGE], stringBuffer.buffer[charIndex]);
+        display_hw.drawGlyph(location+charIndex, rowMap[LCD_ROW_WELCOME_MESSAGE], stringBuffer.buffer[charIndex]);
         wait_ms(50);
         charIndex++;
     }

@@ -29,6 +29,7 @@ ifneq ($(findstring boot,$(MAKECMDGOALS)), boot)
     SOURCES += $(shell find modules/midi -name "*.cpp")
     SOURCES += $(shell find modules/dbms -name "*.cpp")
     SOURCES += $(shell find modules/core -name "*.cpp")
+    SOURCES += $(shell find modules/u8g2/csrc -name "*.c")
 
     SOURCES += application/Zvuk9.cpp
 

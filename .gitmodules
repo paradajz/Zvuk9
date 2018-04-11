@@ -10,3 +10,6 @@
 [submodule "src/Firmware/dbms"]
 	path = src/modules/dbms
 	url = https://github.com/paradajz/LESS-DB.git
+[submodule "src/modules/u8g2"]
+	path = src/modules/u8g2
+	url = https://github.com/olikraus/u8g2.git

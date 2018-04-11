@@ -139,6 +139,5 @@ class LCD
 };
 
 extern LCD display;
-extern U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
 
 /// @}

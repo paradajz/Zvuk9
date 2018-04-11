@@ -27,7 +27,7 @@
 
 #include "Variables.h"
 #include "map/Map.h"
-#include "lcd/LCD.h"
+#include "display/u8g2_wrapper.h"
 #include "pins/Pins.h"
 #include "DataTypes.h"
 #include "../interface/digital/output/leds/Variables.h"

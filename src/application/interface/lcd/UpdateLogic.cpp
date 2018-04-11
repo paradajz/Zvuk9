@@ -25,8 +25,6 @@
 
 #include "LCD.h"
 
-U8X8_SSD1322_NHD_256X64_4W_HW_SPI u8x8;
-
 StringBuffer             stringBuffer;
 
 ///
@@ -42,12 +40,12 @@ LCD::LCD()
 ///
 void LCD::init()
 {
-    u8x8.begin();
-    u8x8.setPowerSave(0);
-    u8x8.setFlipMode(1);
+    display_hw.initDisplay();
+    display_hw.setPowerSave(0);
+    display_hw.setFlipMode(1);
 
-    u8x8.setFont(u8x8_font_pressstart2p_r);
-    u8x8.clear();
+    display_hw.setFont(u8x8_font_pressstart2p_r);
+    display_hw.clearDisplay();
 
     //init char arrays
     for (int i=0; i<LCD_HEIGHT; i++)
@@ -102,12 +100,12 @@ bool LCD::update()
         for (int j=0; j<string_len; j++)
         {
             if (BIT_READ(charChange[i], j))
-                u8x8.drawGlyph(j, rowMap[i], charPointer[j+scrollEvent[i].currentIndex]);
+                display_hw.drawGlyph(j, rowMap[i], charPointer[j+scrollEvent[i].currentIndex]);
         }
 
         //now fill remaining columns with spaces
         for (int j=string_len; j<LCD_WIDTH; j++)
-            u8x8.drawGlyph(j, rowMap[i], ' ');
+            display_hw.drawGlyph(j, rowMap[i], ' ');
 
         charChange[i] = 0;
     }
@@ -136,7 +134,7 @@ void LCD::updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex)
     if (directWriteState)
     {
         for (int j=0; j<size; j++)
-            u8x8.drawGlyph(j+startIndex, rowMap[row], stringBuffer.buffer[j]);
+            display_hw.drawGlyph(j+startIndex, rowMap[row], stringBuffer.buffer[j]);
     }
     else
     {
