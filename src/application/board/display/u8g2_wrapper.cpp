@@ -28,9 +28,9 @@ extern "C" uint8_t u8x8_gpio_and_delay(u8x8_t *u8x8, uint8_t msg, uint8_t arg_in
     switch(msg)
     {
         case U8X8_MSG_GPIO_AND_DELAY_INIT:
-        //init lcd pins
-        setOutput(LCD_CS_PORT, LCD_CS_PIN);
-        setOutput(LCD_DC_PORT, LCD_DC_PIN);
+        //init display pins
+        setOutput(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+        setOutput(DISPLAY_DC_PORT, DISPLAY_DC_PIN);
         break;
 
         case U8X8_MSG_DELAY_10MICRO:
@@ -46,11 +46,11 @@ extern "C" uint8_t u8x8_gpio_and_delay(u8x8_t *u8x8, uint8_t msg, uint8_t arg_in
         break;
 
         case U8X8_MSG_GPIO_CS:
-        arg_int ? setHigh(LCD_CS_PORT, LCD_CS_PIN) : setLow(LCD_CS_PORT, LCD_CS_PIN);
+        arg_int ? setHigh(DISPLAY_CS_PORT, DISPLAY_CS_PIN) : setLow(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
         break;
 
         case U8X8_MSG_GPIO_DC:
-        arg_int ? setHigh(LCD_DC_PORT, LCD_DC_PIN) : setLow(LCD_DC_PORT, LCD_DC_PIN);
+        arg_int ? setHigh(DISPLAY_DC_PORT, DISPLAY_DC_PIN) : setLow(DISPLAY_DC_PORT, DISPLAY_DC_PIN);
         break;
 
         default:
@@ -81,13 +81,13 @@ extern "C" uint8_t u8x8_byte_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, 
 
         case U8X8_MSG_BYTE_INIT:
         /* disable chipselect */
-        setHigh(LCD_CS_PORT, LCD_CS_PIN);
+        setHigh(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
         spiInit();
         break;
 
         case U8X8_MSG_BYTE_SET_DC:
         //u8x8_gpio_SetDC(u8x8, arg_int);
-        arg_int ? setHigh(LCD_DC_PORT, LCD_DC_PIN) : setLow(LCD_DC_PORT, LCD_DC_PIN);
+        arg_int ? setHigh(DISPLAY_DC_PORT, DISPLAY_DC_PIN) : setLow(DISPLAY_DC_PORT, DISPLAY_DC_PIN);
         break;
 
         case U8X8_MSG_BYTE_START_TRANSFER:
@@ -125,14 +125,14 @@ extern "C" uint8_t u8x8_byte_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, 
         setBitOrder(MSBFIRST);
 
         //enable chip select
-        setLow(LCD_CS_PORT, LCD_CS_PIN);
+        setLow(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
         u8x8->gpio_and_delay_cb(u8x8, U8X8_MSG_DELAY_NANO, u8x8->display_info->post_chip_enable_wait_ns, NULL);
         break;
 
         case U8X8_MSG_BYTE_END_TRANSFER:
         u8x8->gpio_and_delay_cb(u8x8, U8X8_MSG_DELAY_NANO, u8x8->display_info->pre_chip_disable_wait_ns, NULL);
         //disable chip select
-        setHigh(LCD_CS_PORT, LCD_CS_PIN);
+        setHigh(DISPLAY_CS_PORT, DISPLAY_CS_PIN);
         break;
 
         default:

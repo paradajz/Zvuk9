@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "../LCD.h"
+#include "../Display.h"
 #include "../Macros.h"
 #include "items/ServiceMenu.h"
 #include "items/UserMenu.h"

@@ -25,8 +25,8 @@
 
 #include "Buttons.h"
 #include "../../../../database/Database.h"
-#include "../../../lcd/LCD.h"
-#include "../../../lcd/menu/Menu.h"
+#include "../../../display/Display.h"
+#include "../../../display/menu/Menu.h"
 #include "handlers/Handlers.h"
 
 ///

@@ -23,16 +23,17 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "../LCD.h"
+#include "../Display.h"
+#include "../Variables.h"
 #include "../../analog/pads/Pads.h"
 
-void LCD::displayFirmwareUpdated()
+void Display::displayFirmwareUpdated()
 {
     stringBuffer.startLine();
     stringBuffer.appendText_P(firmware_updated);
     stringBuffer.endLine();
 
-    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(stringBuffer.getSize()));
+    updateText(DISPLAY_ROW_MESSAGE_1, displayText_temp, getTextCenter(stringBuffer.getSize()));
 
     stringBuffer.startLine();
     stringBuffer.appendText_P(deviceInfo_swVersion_string);
@@ -43,10 +44,10 @@ void LCD::displayFirmwareUpdated()
     stringBuffer.appendInt(0);
     stringBuffer.endLine();
 
-    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(stringBuffer.getSize()));
+    updateText(DISPLAY_ROW_MESSAGE_2, displayText_temp, getTextCenter(stringBuffer.getSize()));
 }
 
-void LCD::displayWelcomeMessage()
+void Display::displayWelcomeMessage()
 {
     uint8_t charIndex;
     uint8_t location;
@@ -59,7 +60,7 @@ void LCD::displayWelcomeMessage()
 
     while (stringBuffer.buffer[charIndex] != '\0')
     {
-        display_hw.drawGlyph(location+charIndex, rowMap[LCD_ROW_DEVICE_NAME_MESSAGE], stringBuffer.buffer[charIndex]);
+        display_hw.drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_DEVICE_NAME_MESSAGE], stringBuffer.buffer[charIndex]);
         charIndex++;
     }
 
@@ -73,7 +74,7 @@ void LCD::displayWelcomeMessage()
 
     while (stringBuffer.buffer[charIndex] != '\0')
     {
-        display_hw.drawGlyph(location+charIndex, rowMap[LCD_ROW_WELCOME_MESSAGE], stringBuffer.buffer[charIndex]);
+        display_hw.drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_WELCOME_MESSAGE], stringBuffer.buffer[charIndex]);
         wait_ms(50);
         charIndex++;
     }
@@ -83,22 +84,22 @@ void LCD::displayWelcomeMessage()
     clearAll();
 }
 
-void LCD::displayError(function_t function, changeResult_t result)
+void Display::displayError(function_t function, changeResult_t result)
 {
     stringBuffer.startLine();
     stringBuffer.appendText_P((char*)pgm_read_word(&(functionErrorArray[function])));
     stringBuffer.endLine();
 
-    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(stringBuffer.getSize()));
+    updateText(DISPLAY_ROW_MESSAGE_1, displayText_temp, getTextCenter(stringBuffer.getSize()));
 
     stringBuffer.startLine();
     stringBuffer.appendText_P((char*)pgm_read_word(&(changeResultArray[result])));
     stringBuffer.endLine();
 
-    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(stringBuffer.getSize()));
+    updateText(DISPLAY_ROW_MESSAGE_2, displayText_temp, getTextCenter(stringBuffer.getSize()));
 }
 
-void LCD::displayChangeResult(function_t function, int16_t value, settingType_t type)
+void Display::displayChangeResult(function_t function, int16_t value, settingType_t type)
 {
     stringBuffer.startLine();
     stringBuffer.appendText_P((char*)pgm_read_word(&(functionArray[function])));
@@ -145,14 +146,14 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
 
     stringBuffer.endLine();
 
-    updateText(LCD_ROW_MESSAGE_1, lcdText_temp, getTextCenter(stringBuffer.getSize()));
+    updateText(DISPLAY_ROW_MESSAGE_1, displayText_temp, getTextCenter(stringBuffer.getSize()));
 
     stringBuffer.startLine();
 
     switch(type)
     {
         case globalSetting:
-        stringBuffer.appendChar(' ', LCD_WIDTH);
+        stringBuffer.appendChar(' ', DISPLAY_WIDTH);
         break;
 
         case singlePadSetting:
@@ -167,5 +168,5 @@ void LCD::displayChangeResult(function_t function, int16_t value, settingType_t 
 
     stringBuffer.endLine();
 
-    updateText(LCD_ROW_MESSAGE_2, lcdText_temp, getTextCenter(stringBuffer.getSize()));
+    updateText(DISPLAY_ROW_MESSAGE_2, displayText_temp, getTextCenter(stringBuffer.getSize()));
 }

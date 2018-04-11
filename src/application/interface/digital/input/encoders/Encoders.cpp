@@ -24,7 +24,7 @@
 */
 
 #include "Encoders.h"
-#include "../../../lcd/menu/Menu.h"
+#include "../../../display/menu/Menu.h"
 #include "handlers/Handlers.h"
 #include "../../../../board/Board.h"
 
@@ -112,7 +112,7 @@ void Encoders::update()
     }
 
     //disable midi channel function when regular text gets shown on display
-    if (midiChannelEncState && (display.getActiveTextType() == lcdtext_still))
+    if (midiChannelEncState && (display.getActiveTextType() == displayText_still))
         midiChannelEncState = false;
 }
 

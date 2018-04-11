@@ -24,6 +24,7 @@
 */
 
 #include "Menu.h"
+#include "../Variables.h"
 #include "../strings/Strings.h"
 #include "../../analog/pads/Pads.h"
 #include "../../digital/input/buttons/Buttons.h"
@@ -79,7 +80,7 @@ void Menu::setMenuTitle(bool rootTitle)
         stringBuffer.appendChar('<', 1);
         stringBuffer.appendText_P(menuItem[indexes[currentOptionIndex]].stringPointer);
         stringBuffer.endLine();
-        display.updateText(0, lcdtext_still, 0);
+        display.updateText(0, displayText_still, 0);
     }
     else
     {
@@ -90,7 +91,7 @@ void Menu::setMenuTitle(bool rootTitle)
             stringBuffer.appendText_P(menuType_user_string);
             stringBuffer.endLine();
 
-            display.updateText(0, lcdtext_still, 0);
+            display.updateText(0, displayText_still, 0);
             break;
 
             case serviceMenu:
@@ -98,7 +99,7 @@ void Menu::setMenuTitle(bool rootTitle)
             stringBuffer.appendText_P(menuType_service_string);
             stringBuffer.endLine();
 
-            display.updateText(0, lcdtext_still, 0);
+            display.updateText(0, displayText_still, 0);
             break;
 
             default:
@@ -158,10 +159,10 @@ void Menu::updateMenuScreen()
 
     //we can display up to three options/suboptions at the time
     //newSelectedOption needs to be subtracted by 1 since indexing uses 1 as starting point
-    uint8_t markerOption = ((currentOption-1) > (LCD_HEIGHT-2)) ? (LCD_HEIGHT-2) : (currentOption-1);
+    uint8_t markerOption = ((currentOption-1) > (DISPLAY_HEIGHT-2)) ? (DISPLAY_HEIGHT-2) : (currentOption-1);
     //position from which we start retrieving menu items
-    uint8_t startPosition = ((currentOption-1) > (LCD_HEIGHT-2)) ? currentOption-1-(LCD_HEIGHT-2) : 0;
-    uint8_t itemsIterate = items > (LCD_HEIGHT-1) ? (LCD_HEIGHT-1) : items;
+    uint8_t startPosition = ((currentOption-1) > (DISPLAY_HEIGHT-2)) ? currentOption-1-(DISPLAY_HEIGHT-2) : 0;
+    uint8_t itemsIterate = items > (DISPLAY_HEIGHT-1) ? (DISPLAY_HEIGHT-1) : items;
 
     for (int i=0; i<itemsIterate; i++)
     {
@@ -183,7 +184,7 @@ void Menu::updateMenuScreen()
         {
             //checked and unchecked strings have the same size
             uint8_t checkMarkerSize = ARRAY_SIZE_CHAR(checked_string);
-            uint8_t spaceFill = LCD_WIDTH - stringBuffer.getSize() - checkMarkerSize;
+            uint8_t spaceFill = DISPLAY_WIDTH - stringBuffer.getSize() - checkMarkerSize;
             stringBuffer.appendChar(' ', spaceFill);
 
             //place checked/unchecked characters at the end of the screen line
@@ -192,7 +193,7 @@ void Menu::updateMenuScreen()
 
         stringBuffer.endLine();
 
-        display.updateText(i+1, lcdtext_still, 0);
+        display.updateText(i+1, displayText_still, 0);
     }
 }
 
@@ -270,7 +271,7 @@ void Menu::confirmOption(bool confirm)
     }
 
     //clear all lines except for the first one
-    for (int i=1; i<LCD_HEIGHT; i++)
+    for (int i=1; i<DISPLAY_HEIGHT; i++)
         display.clearRow(i);
 
     if (confirm)

@@ -29,8 +29,8 @@
 #include "../../../../digital/input/buttons/Buttons.h"
 #include "../../../../digital/input/encoders/Encoders.h"
 #include "../../../../digital/output/leds/LEDs.h"
-#include "../../../../lcd/LCD.h"
-#include "../../../../lcd/menu/Menu.h"
+#include "../../../../display/Display.h"
+#include "../../../../display/menu/Menu.h"
 #include "../../../../../database/blocks/GlobalSettings.h"
 
 ///
@@ -624,6 +624,6 @@ void handlePresetEncButton(uint8_t id, bool state)
     }
 
     encoders.setMIDIchannelPresetEncMode(true);
-    //midi channel change mode, display on lcd
+    //midi channel change mode, display on display
     display.displayChangeResult(functionChannel, pads.getMIDIchannel(pads.getLastTouchedPad()), pads.getSplitState() ? singlePadSetting : globalSetting);
 }

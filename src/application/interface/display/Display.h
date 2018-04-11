@@ -33,18 +33,16 @@
 #include "Macros.h"
 #include "strings/Strings.h"
 
-extern StringBuffer             stringBuffer;
-
 ///
-/// \brief LCD control.
-/// \defgroup interfaceLCD LCD
+/// \brief Display control.
+/// \defgroup interfaceDisplay Display
 /// \ingroup interface
 /// @{
 
-class LCD
+class Display
 {
     public:
-    LCD();
+    Display();
     void init();
     bool update();
 
@@ -80,52 +78,52 @@ class LCD
     void clearAll();
     void clearRow(uint8_t row);
 
-    void updateText(uint8_t row, lcdTextType_t textType, uint8_t startIndex);
+    void updateText(uint8_t row, displayTextType_t textType, uint8_t startIndex);
     uint8_t getTextCenter(uint8_t textSize);
 
-    lcdTextType_t getActiveTextType();
+    displayTextType_t getActiveTextType();
 
     private:
     void updateScrollStatus(uint8_t row);
     void updateTempTextStatus();
 
     ///
-    /// \brief Holds time index LCD message was shown.
+    /// \brief Holds time index display message was shown.
     ///
     uint32_t        messageDisplayTime;
 
     ///
-    /// \brief Holds last time LCD was updated.
-    /// LCD isn't updated in real-time but after defined amount of time (see LCD_REFRESH_TIME).
+    /// \brief Holds last time display was updated.
+    /// Display isn't updated in real-time but after defined amount of time (see DISPLAY_REFRESH_TIME).
     ///
-    uint32_t        lastLCDupdateTime;
+    uint32_t        lastDisplayUpdateTime;
 
     ///
     /// \brief Holds active text type on display.
-    /// Enumerated type (see lcdTextType_t enumeration).
+    /// Enumerated type (see displayTextType_t enumeration).
     ///
-    lcdTextType_t   activeTextType;
+    displayTextType_t   activeTextType;
 
     ///
-    /// \brief Array holding still LCD text for each LCD row.
+    /// \brief Array holding still display text for each display row.
     ///
-    char            lcdRowStillText[LCD_HEIGHT][STRING_BUFFER_SIZE];
+    char            displayRowStillText[DISPLAY_HEIGHT][STRING_BUFFER_SIZE];
 
     ///
-    /// \brief Array holding temp LCD text for each LCD row.
+    /// \brief Array holding temp display text for each display row.
     ///
-    char            lcdRowTempText[LCD_HEIGHT][STRING_BUFFER_SIZE];
+    char            displayRowTempText[DISPLAY_HEIGHT][STRING_BUFFER_SIZE];
 
     ///
-    /// \brief Array holding true of false value representing the change of character at specific location on LCD row.
-    /// \warning This variables assume there can be no more than 32 characters per LCD row.
+    /// \brief Array holding true of false value representing the change of character at specific location on display row.
+    /// \warning This variables assume there can be no more than 32 characters per display row.
     ///
-    uint32_t        charChange[LCD_HEIGHT];
+    uint32_t        charChange[DISPLAY_HEIGHT];
 
     ///
-    /// \brief Structure array holding scrolling information for all LCD rows.
+    /// \brief Structure array holding scrolling information for all display rows.
     ///
-    scrollEvent_t   scrollEvent[LCD_HEIGHT];
+    scrollEvent_t   scrollEvent[DISPLAY_HEIGHT];
 
     ///
     /// \brief Holds last time text has been scrolled on display.
@@ -133,11 +131,14 @@ class LCD
     uint32_t        lastScrollTime;
 
     ///
-    /// \brief Holds state of direct LCD writing (true/enabled, false/disabled).
+    /// \brief Holds state of direct display writing (true/enabled, false/disabled).
     ///
     bool            directWriteState;
 };
 
-extern LCD display;
+///
+/// \brief External definition of Display class instance.
+///
+extern Display display;
 
 /// @}

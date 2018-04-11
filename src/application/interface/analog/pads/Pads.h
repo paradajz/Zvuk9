@@ -123,7 +123,7 @@ class Pads
     bool checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value);
     bool checkX(int8_t pad);
     bool checkY(int8_t pad);
-    void checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
+    void checkDisplayData(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
 
     void sendNotes(int8_t pad, uint8_t velocity, bool state);
     void sendAftertouch(int8_t pad);

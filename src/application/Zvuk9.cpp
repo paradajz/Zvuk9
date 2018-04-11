@@ -23,8 +23,8 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "interface/lcd/LCD.h"
-#include "interface/lcd/menu/Menu.h"
+#include "interface/display/Display.h"
+#include "interface/display/menu/Menu.h"
 #include "interface/digital/output/leds/LEDs.h"
 #include "interface/digital/input/DigitalInput.h"
 #include "interface/analog/pads/Pads.h"
@@ -87,9 +87,9 @@ int main()
     // {
     //     display.setDirectWriteState(true);
     //     stringBuffer.appendText_P(dbInit_string);
-    //     display.updateText(1, lcdtext_still, display.getTextCenter(ARRAY_SIZE(dbInit_string)));
+    //     display.updateText(1, displayText_still, display.getTextCenter(ARRAY_SIZE(dbInit_string)));
     //     stringBuffer.appendText_P(pleaseWait_string);
-    //     display.updateText(2, lcdtext_still, display.getTextCenter(ARRAY_SIZE(pleaseWait_string)));
+    //     display.updateText(2, displayText_still, display.getTextCenter(ARRAY_SIZE(pleaseWait_string)));
     //     database.factoryReset(initFull);
     //     display.setDirectWriteState(false);
     // }

@@ -140,15 +140,15 @@ const uint8_t decoderInOrderArray[] =
 #define INPUT_SHIFT_REG_LATCH_PORT  PORTD
 #define INPUT_SHIFT_REG_LATCH_PIN   7
 
-//LCD
-#define LCD_DC_PORT                 PORTA
-#define LCD_DC_PIN                  3
+//display
+#define DISPLAY_DC_PORT                 PORTA
+#define DISPLAY_DC_PIN                  3
 
-#define LCD_CS_PORT                 PORTA
-#define LCD_CS_PIN                  4
+#define DISPLAY_CS_PORT                 PORTA
+#define DISPLAY_CS_PIN                  4
 
-#define LCD_RESET_PORT              PORTA
-#define LCD_RESET_PIN               5
+#define DISPLAY_RESET_PORT              PORTA
+#define DISPLAY_RESET_PIN               5
 
 //SPI
 #define SPI_CLOCK_PORT              PORTB

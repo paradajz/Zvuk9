@@ -24,7 +24,7 @@
 */
 
 #include "Pads.h"
-#include "../../lcd/menu/Menu.h"
+#include "../../display/menu/Menu.h"
 #include "../../../database/blocks/PadCalibration.h"
 #include "../../digital/output/leds/LEDs.h"
 #include "../../digital/input/buttons/Buttons.h"
@@ -44,7 +44,7 @@ volatile uint16_t   padPressed;
 ///
 void Pads::update()
 {
-    bool restoreLCD = false;
+    bool restoreDisplay = false;
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
     {
@@ -180,10 +180,10 @@ void Pads::update()
 
             if (!BIT_READ(lastMIDInoteState, i))
             {
-                //lcd restore detection
+                //display restore detection
                 //display data from last touched pad if current pad is released
                 if ((index != getLastTouchedPad()) && getNumberOfPressedPads())
-                    restoreLCD = true;
+                    restoreDisplay = true;
             }
 
             if (!getEditModeState())
@@ -211,18 +211,18 @@ void Pads::update()
             if (!menu.isMenuDisplayed())
                 checkMIDIdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
 
-            if (restoreLCD)
+            if (restoreDisplay)
             {
                 uint8_t padIndex = getLastTouchedPad();
 
                 if (!menu.isMenuDisplayed())
-                    checkLCDdata(padIndex, true, true, true, true);
+                    checkDisplayData(padIndex, true, true, true, true);
 
                 if (splitEnabled)
                     updateFunctionLEDs(padIndex);
 
                 #ifdef DEBUG
-                printf_P(PSTR("Restoring data on LCD from last pad.\n"));
+                printf_P(PSTR("Restoring data on display from last pad.\n"));
                 #endif
             }
             else
@@ -235,11 +235,11 @@ void Pads::update()
                     {
                         //is menu is active and calibration mode is enabled, display only data for coordinate which is being calibrated
                         if (calibrationEnabled)
-                            checkLCDdata(i, (activeCalibration == coordinateZ), false, (activeCalibration == coordinateX), activeCalibration == coordinateY);
+                            checkDisplayData(i, (activeCalibration == coordinateZ), false, (activeCalibration == coordinateX), activeCalibration == coordinateY);
                     }
                     else
                     {
-                        checkLCDdata(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
+                        checkDisplayData(i, velocityAvailable, aftertouchAvailable, xAvailable, yAvailable);
                     }
                 }
             }
@@ -751,23 +751,23 @@ bool Pads::checkNoteBuffer()
 }
 
 ///
-/// \brief Checks if data for requested pad should be updated on LCD.
+/// \brief Checks if data for requested pad should be updated on display.
 /// @param [in] pad                     Pad for which MIDI data is being checked.
 /// @param [in] velocityAvailable       If set to true, MIDI velocity data will be refreshed for requested pad.
 /// @param [in] aftertouchAvailable     If set to true, MIDI aftertouch data will be refreshed for requested pad.
 /// @param [in] xAvailable              If set to true, CC MIDI data for X coordinate will be refreshed for requested pad.
 /// @param [in] yAvailable              If set to true, CC MIDI data for Y coordinate will be refreshed for requested pad.
 ///
-void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
+void Pads::checkDisplayData(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable)
 {
     assert(PAD_CHECK(pad));
 
-    static bool lcdCleared = true;
+    static bool displayCleared = true;
     static int8_t lastShownPad = -1;
 
     if (isPadPressed(pad))
     {
-        lcdCleared = false;
+        displayCleared = false;
 
         if (xAvailable)
         {
@@ -856,10 +856,10 @@ void Pads::checkLCDdata(int8_t pad, bool velocityAvailable, bool aftertouchAvail
             display.displayPad(pad+1);
         }
     }
-    else if (!getNumberOfPressedPads() && !lcdCleared)
+    else if (!getNumberOfPressedPads() && !displayCleared)
     {
         display.clearPadPressData();
-        lcdCleared = true;
+        displayCleared = true;
         lastShownPad = -1;
     }
     else

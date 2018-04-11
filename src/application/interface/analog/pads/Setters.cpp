@@ -25,7 +25,7 @@
 
 #include "Pads.h"
 #include "../../digital/output/leds/LEDs.h"
-#include "../../lcd/LCD.h"
+#include "../../display/Display.h"
 #include "../../../database/Database.h"
 
 ///
