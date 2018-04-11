@@ -26,10 +26,6 @@
 #include "Display.h"
 #include "Variables.h"
 
-///
-/// \brief StringBuffer class instance.
-/// Used to make string building easier.
-///
 StringBuffer stringBuffer;
 
 ///
@@ -301,7 +297,4 @@ displayTextType_t Display::getActiveTextType()
     return activeTextType;
 }
 
-///
-/// \brief Display class instance.
-///
 Display display;

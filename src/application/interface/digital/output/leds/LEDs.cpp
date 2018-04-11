@@ -262,7 +262,4 @@ void LEDs::setFadeSpeed(uint8_t speed)
     pwmSteps = speed;
 }
 
-///
-/// \brief LEDs class instance.
-///
 LEDs leds;

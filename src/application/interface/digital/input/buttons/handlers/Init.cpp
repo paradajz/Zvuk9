@@ -26,9 +26,6 @@
 #include "Handlers.h"
 #include "../../../../../board/Board.h"
 
-///
-/// \brief Function pointers used to define handlers for buttons.
-///
 void (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (uint8_t data, bool state);
 
 ///

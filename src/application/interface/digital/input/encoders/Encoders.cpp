@@ -29,7 +29,7 @@
 #include "../../../../board/Board.h"
 
 ///
-/// \brief External definition for encoder handler functions.
+/// \brief External definition of function pointers used as handlers for encoders.
 ///
 extern void     (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
 
@@ -135,7 +135,4 @@ bool Encoders::getMIDIchannelPresetEncMode()
     return midiChannelEncState;
 }
 
-///
-/// \brief Encoders class instance.
-///
 Encoders encoders;

@@ -399,6 +399,9 @@ class Pads
 
 };
 
+///
+/// \brief External definition of Pads class instance.
+///
 extern Pads pads;
 
 /// @}

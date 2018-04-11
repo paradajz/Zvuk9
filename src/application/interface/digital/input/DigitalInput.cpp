@@ -54,7 +54,4 @@ void DigitalInput::update()
     }
 }
 
-///
-/// \brief DigitalInput class instance.
-///
 DigitalInput digitalInput;

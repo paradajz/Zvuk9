@@ -27,6 +27,7 @@
 
 ///
 /// \brief External definition of StringBuffer class instance.
+/// Used to make string building easier.
 /// \ingroup interfaceDisplay
 ///
 extern StringBuffer stringBuffer;

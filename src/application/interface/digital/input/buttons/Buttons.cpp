@@ -30,7 +30,7 @@
 #include "handlers/Handlers.h"
 
 ///
-/// \brief External definition for button handler functions.
+/// \brief External definition of function pointers used as handlers for buttons.
 ///
 extern void             (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (uint8_t data, bool state);
 
@@ -274,7 +274,4 @@ transportControlMode_t Buttons::getTransportControlMode()
     return transportControlMode;
 }
 
-///
-/// \brief Buttons class instance.
-///
 Buttons buttons;
