@@ -32,6 +32,9 @@
 
 ///
 /// \brief Handler for program encoder.
+/// @param [in] id      Encoder index.
+/// @param [in] steps   Amount of steps to move.
+///                     Negative number represents inverted direction.
 ///
 void handleProgram(uint8_t id, int8_t steps)
 {
@@ -73,6 +76,9 @@ void handleProgram(uint8_t id, int8_t steps)
 
 ///
 /// \brief Handler for scale encoder.
+/// @param [in] id      Encoder index.
+/// @param [in] steps   Amount of steps to move.
+///                     Negative number represents inverted direction.
 ///
 void handleScale(uint8_t id, int8_t steps)
 {
@@ -135,6 +141,9 @@ void handleScale(uint8_t id, int8_t steps)
 
 ///
 /// \brief Handler for CC encoders.
+/// @param [in] id      Encoder index.
+/// @param [in] steps   Amount of steps to move.
+///                     Negative number represents inverted direction.
 ///
 void handleCC(uint8_t id, int8_t steps)
 {
@@ -175,6 +184,9 @@ void handleCC(uint8_t id, int8_t steps)
 
 ///
 /// \brief Handler for limit encoders (X/Y min/max).
+/// @param [in] id      Encoder index.
+/// @param [in] steps   Amount of steps to move.
+///                     Negative number represents inverted direction.
 ///
 void handleLimit(uint8_t id, int8_t steps)
 {
@@ -266,6 +278,9 @@ void handleLimit(uint8_t id, int8_t steps)
 
 ///
 /// \brief Handler for curve encoders.
+/// @param [in] id      Encoder index.
+/// @param [in] steps   Amount of steps to move.
+///                     Negative number represents inverted direction.
 ///
 void handleCurve(uint8_t id, int8_t steps)
 {

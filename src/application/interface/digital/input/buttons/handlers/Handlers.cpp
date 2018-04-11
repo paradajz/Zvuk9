@@ -35,6 +35,8 @@
 
 ///
 /// \brief Handler for on/off buttons (split, notes, aftertouch, X and Y).
+/// @param [in] id      Button index.
+/// @param [in] state   Button state (true/pressed, false/released).
 ///
 void handleOnOff(uint8_t id, bool state)
 {
@@ -177,6 +179,8 @@ void handleOnOff(uint8_t id, bool state)
 
 ///
 /// \brief Handler for transport control buttons (play, stop and record).
+/// @param [in] id      Button index.
+/// @param [in] state   Button state (true/pressed, false/released).
 ///
 void handleTransportControl(uint8_t id, bool state)
 {
@@ -364,6 +368,8 @@ void handleTransportControl(uint8_t id, bool state)
 
 ///
 /// \brief Handler for up/down buttons.
+/// @param [in] id      Button index.
+/// @param [in] state   Button state (true/pressed, false/released).
 ///
 void handleUpDown(uint8_t id, bool state)
 {
@@ -505,6 +511,8 @@ void handleUpDown(uint8_t id, bool state)
 
 ///
 /// \brief Handler for note buttons.
+/// @param [in] id      Button index.
+/// @param [in] state   Button state (true/pressed, false/released).
 ///
 void handleTonic(uint8_t id, bool state)
 {
@@ -560,6 +568,8 @@ void handleTonic(uint8_t id, bool state)
 
 ///
 /// \brief Handler for button located on program encoder.
+/// @param [in] id      Button index.
+/// @param [in] state   Button state (true/pressed, false/released).
 ///
 void handleProgramEncButton(uint8_t id, bool state)
 {
@@ -592,6 +602,8 @@ void handleProgramEncButton(uint8_t id, bool state)
 
 ///
 /// \brief Handler for button located on preset encoder.
+/// @param [in] id      Button index.
+/// @param [in] state   Button state (true/pressed, false/released).
 ///
 void handlePresetEncButton(uint8_t id, bool state)
 {
