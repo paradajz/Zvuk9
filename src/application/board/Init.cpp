@@ -32,4 +32,10 @@ void Board::init()
     initEncoders();
     initAnalog();
     initPads();
+
+    initUART_MIDI(MIDI_BAUD_RATE_STD, false);
+
+    #ifndef DEBUG
+    initUSB_MIDI();
+    #endif
 };
