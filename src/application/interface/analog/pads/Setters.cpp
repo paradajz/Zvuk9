@@ -491,7 +491,7 @@ changeResult_t Pads::setMIDIchannel(int8_t pad, int8_t channel)
 
 ///
 /// \brief Changes velocity sensitivity.
-/// @param [in] type    Velocity sensitivity (enumerated type). See velocitySensitivity_t enumeration.
+/// @param [in] sensitivity     Velocity sensitivity (enumerated type). See velocitySensitivity_t enumeration.
 /// \returns Result of changing velocity sensitivity (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setVelocitySensitivity(velocitySensitivity_t sensitivity)
@@ -1615,7 +1615,8 @@ changeResult_t Pads::setPitchBendType(pitchBendType_t type)
 
 ///
 /// \brief Enables or disables pitch bend sending.
-/// @param [in] state   New pitch bend sending state (true/enabled, false/disabled).
+/// @param [in] state       New pitch bend sending state (true/enabled, false/disabled).
+/// @param [in] coordinate  Pitch bend coordinate (X or Y only).
 /// \returns Result of changing pitch bend sending (enumerated type). See changeResult_t enumeration.
 ///
 changeResult_t Pads::setPitchBendState(bool state, padCoordinate_t coordinate)

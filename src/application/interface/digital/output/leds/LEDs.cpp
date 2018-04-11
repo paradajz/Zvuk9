@@ -176,7 +176,7 @@ void LEDs::setNoteLEDstate(note_t note, ledState_t state)
 ///
 /// \brief Turns blinking for requested LED index on or off.
 /// Blinking can be started only on LEDs which are already on.
-/// @param [in] ledNumber   LED index for which blink state is being changed.
+/// @param [in] ledID       LED index for which blink state is being changed.
 /// @param [in] state       New blink LED state (true/blink on, false/blink off).
 ///
 void LEDs::setBlinkState(uint8_t ledID, bool state)

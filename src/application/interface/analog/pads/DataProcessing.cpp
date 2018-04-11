@@ -333,8 +333,10 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
 
 ///
 /// \brief Checks if aftertouch data is available on requested pad.
-/// @param [in] pad     Pad which is being checked.
-/// @param [in] value   Pad pressure.
+/// @param [in] pad                 Pad which is being checked.
+/// @param [in] velocityAvailable   Flags if initial velocity is available.
+///                                 Used when pad is relased to perform extra checks.
+/// @param [in] value               Pad pressure.
 /// \returns True if data is available, false otherwise.
 ///
 bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)

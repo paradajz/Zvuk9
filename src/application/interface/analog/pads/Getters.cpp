@@ -377,9 +377,9 @@ uint8_t Pads::getCClimit(int8_t pad, padCoordinate_t type, limitType_t limitType
 
 ///
 /// \brief Checks for CC curve on requested coordinate and pad.
-/// @param [in] pad     Pad which is being checked.
-/// @param [in] type    Coordinate on which CC curve is being checked (enumerated type) - only X or Y
-///                     coordinates are allowed. See padCoordinate_t enumeration.
+/// @param [in] pad         Pad which is being checked.
+/// @param [in] coordinate  Coordinate on which CC curve is being checked (enumerated type) - only X or Y
+///                         coordinates are allowed. See padCoordinate_t enumeration.
 ///
 curve_t Pads::getCCcurve(int8_t pad, padCoordinate_t coordinate)
 {
@@ -935,8 +935,7 @@ uint8_t Pads::getScaledPressure(int8_t pad, uint16_t pressure, pressureType_t ty
 /// @param [in] pad         Pad which is being checked.
 /// @param [in] xyValue     Raw X or Y value (0-1023).
 /// @param [in] type        Coordinate which is being checked (X or Y). Enumerated type. See padCoordinate_t enumeration.
-/// @param [in] midiScale   If set to true, requested value will be scaled to MIDI range (0-127), otherwise, value will be scaled to raw range (0-1023).
-/// Scaling to raw range is useful in certain scenarios since lowest and largest X or Y values are never 0 and 1023 but some values in between.
+/// @param [in] scaleType   Type of scaling (enumerated type, see valueScaleType_t).
 ///
 uint16_t Pads::getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, valueScaleType_t scaleType)
 {
@@ -1074,7 +1073,8 @@ pitchBendType_t Pads::getPitchBendType()
 
 ///
 /// \brief Checks if pitch bend is enabled on requested pad.
-/// @param [in]     Pad which is being checked.
+/// @param [in] pad         Pad which is being checked.
+/// @param [in] coordinate  Coordinate which is being checked (only X or Y).
 /// \returns True if pitch bend is enabled on requested pad, false otherwise.
 ///
 bool Pads::getPitchBendState(int8_t pad, padCoordinate_t coordinate)

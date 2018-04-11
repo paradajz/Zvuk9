@@ -383,7 +383,7 @@ class Pads
     uint32_t                lastPadPressTime[NUMBER_OF_PADS];
 
     ///
-    /// \brif Holds currently active pitch bend type.
+    /// \brief Holds currently active pitch bend type.
     ///
     pitchBendType_t         pitchBendType;
 

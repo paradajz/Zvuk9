@@ -205,7 +205,7 @@ void Buttons::processButton(uint8_t buttonID, uint8_t state)
 /// append DEBOUNCE_COMPARE with OR command. If final value is equal to 0xFF or
 /// DEBOUNCE_COMPARE, signal is debounced.
 /// @param [in] buttonID    Button index which is being checked.
-/// @param [in] state       Current button state.
+/// @param [in] buttonState Current button state.
 /// \returns                True if button reading is stable, false otherwise.
 ///
 bool Buttons::buttonDebounced(uint8_t buttonID, bool buttonState)
