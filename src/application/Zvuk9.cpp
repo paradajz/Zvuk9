@@ -121,14 +121,14 @@ int main()
 
     while (1)
     {
+        #ifdef DEBUG
+        vserial.update();
+        #endif
+
         // pads.update();
         digitalInput.update();
         display.update();
         leds.update();
-
-        #ifdef DEBUG
-        vserial.update();
-        #endif
     }
 
     return 0;
