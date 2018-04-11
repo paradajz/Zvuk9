@@ -46,7 +46,6 @@ class Menu
     private:
     static void setMenuTitle(bool rootTitle);
     static void updateMenuScreen();
-    static uint8_t getItemIndex(uint8_t index);
     static void updateMenuHierarchyItems();
 };
 

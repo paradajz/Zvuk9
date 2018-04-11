@@ -37,7 +37,7 @@ menuType_t  activeMenu;
 ///
 /// \brief Currently active position in menu.
 ///
-uint16_t    menuHierarchyPosition;
+int16_t    menuHierarchyPosition;
 
 ///
 /// \brief Total number of items in current menu layout.
@@ -53,6 +53,12 @@ bool        functionRunning;
 /// \brief Total number of items in current menu hierarchy.
 ///
 uint8_t     menuHierarchyItems;
+
+///
+/// \brief Array holding indexes of items in current menu hierarchy.
+/// Due to simple menu design, maximum number of indexes in hierarchy is 9.
+///
+uint8_t     itemIndex[9];
 
 ///
 /// \brief Pointer to menu layout.
@@ -119,17 +125,18 @@ bool Menu::setMenuType(menuType_t type)
 ///
 void Menu::setMenuTitle(bool rootTitle)
 {
-    uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
-
     //make sure to clear the first line before setting new title
     display.clearRow(0);
 
     //set menu title, but only if current level isn't 1 (root)
     if (!rootTitle)
     {
+        //go back one level to get menu title
+        uint8_t currentOptionIndex = (menuHierarchyPosition % 10) - 1;
+
         stringBuffer.startLine();
         stringBuffer.appendChar('<', 1);
-        stringBuffer.appendText_P(menuLayout[getItemIndex(currentOptionIndex)].stringPointer);
+        stringBuffer.appendText_P(menuLayout[itemIndex[currentOptionIndex]].stringPointer);
         stringBuffer.endLine();
         display.updateText(0, displayText_still, 0);
     }
@@ -160,86 +167,77 @@ void Menu::setMenuTitle(bool rootTitle)
 }
 
 ///
-/// \brief Retrieve requested index in current hierarchy level from menu layout.
-/// @param [in] index   Menu item index in current menu hierarchy.
-/// \returns Menu layout index.
-///
-uint8_t Menu::getItemIndex(uint8_t index)
-{
-    uint8_t currentDigits = getNumberOfDigits(menuHierarchyPosition);
-    uint8_t currentOption = menuHierarchyPosition % 10;
-    uint16_t subtract = (menuHierarchyPosition - currentOption) * (currentDigits > 1);
-    uint8_t count = 0;
-
-    for (int i=0; i<menuSize; i++)
-    {
-        //check only items which match current hierarchy
-        if (getNumberOfDigits(menuLayout[i].level) == currentDigits)
-        {
-            int16_t result = menuLayout[i].level - subtract;
-
-            if ((getNumberOfDigits(result) == 1) && (result > 0) && (count == index))
-                return i;
-
-            count++;
-        }
-    }
-}
-
-///
-/// \brief Retrieve number of items in current menu hierarchy.
+/// \brief Retrieve number of items in current menu hierarchy and store their indexes.
 ///
 void Menu::updateMenuHierarchyItems()
 {
     //reset current items
     menuHierarchyItems = 0;
 
+    //get number of digits for current menu hierarchy level
     uint8_t currentDigits = getNumberOfDigits(menuHierarchyPosition);
-    uint8_t currentOption = menuHierarchyPosition % 10;
-    uint16_t subtract = (menuHierarchyPosition - currentOption) * (currentDigits > 1);
+    //same hierarchy members are found by subtracting root index of hierarchy from level being checked
+    //ie. if current level is 211 subtract 210 from all indexes and check the positive results with 1 digit
+    int16_t subtract = menuHierarchyPosition - (menuHierarchyPosition % 10);
+    uint8_t itemCount = 0;
 
     for (int i=0; i<menuSize; i++)
     {
+        //check only items which match current amount of digits
         if (getNumberOfDigits(menuLayout[i].level) == currentDigits)
         {
-            int16_t result = menuLayout[i].level - subtract;
-
-            if ((getNumberOfDigits(result) == 1) && (result > 0))
+            if (currentDigits != 1)
+            {
+                //check only items which match current hierarchy
+                if ((getNumberOfDigits(menuLayout[i].level-subtract) == 1) && ((menuLayout[i].level-subtract) > 0))
+                {
+                    menuHierarchyItems++;
+                    itemIndex[itemCount] = i;
+                    itemCount++;
+                }
+            }
+            else
+            {
+                //just count here, root items
                 menuHierarchyItems++;
+                itemIndex[itemCount] = i;
+                itemCount++;
+            }
         }
     }
 }
 
+///
+/// \brief Displays all items for current menu hierarchy on display.
+///
 void Menu::updateMenuScreen()
 {
     uint8_t currentOption = menuHierarchyPosition % 10;
-
-    //we can display up to three options/suboptions at the time
-    //newSelectedOption needs to be subtracted by 1 since indexing uses 1 as starting point
+    //display row in which marker should be shown
     uint8_t markerOption = ((currentOption-1) > (DISPLAY_HEIGHT-2)) ? (DISPLAY_HEIGHT-2) : (currentOption-1);
-    //position from which we start retrieving menu items
+    //position from which items are being shown
     uint8_t startPosition = ((currentOption-1) > (DISPLAY_HEIGHT-2)) ? currentOption-1-(DISPLAY_HEIGHT-2) : 0;
+    //limit items printout depending on display height
     uint8_t itemsIterate = menuHierarchyItems > (DISPLAY_HEIGHT-1) ? (DISPLAY_HEIGHT-1) : menuHierarchyItems;
 
     for (int i=0; i<itemsIterate; i++)
     {
-        //clear line first
+        //skipping first row since it's reserved for the menu title
         display.clearRow(i+1);
 
         stringBuffer.startLine();
 
-        //skipping first row since it's reserved for the menu title
         if (i == markerOption)
             stringBuffer.appendChar('>', 1);
         else
             stringBuffer.appendChar(' ', 1);
 
-        uint8_t itemIndex = getItemIndex(i+startPosition);
+        uint8_t index = itemIndex[i+startPosition];
 
-        stringBuffer.appendText_P(menuLayout[itemIndex].stringPointer);
+        stringBuffer.appendText_P(menuLayout[index].stringPointer);
 
         //check for checkable items
-        if (menuLayout[itemIndex].checkable && menuLayout[itemIndex].function != NULL)
+        if (menuLayout[index].checkable && menuLayout[index].function != NULL)
         {
             //checked and unchecked strings have the same size
             uint8_t checkMarkerSize = ARRAY_SIZE_CHAR(checked_string);
@@ -247,7 +245,7 @@ void Menu::updateMenuScreen()
             stringBuffer.appendChar(' ', spaceFill);
 
             //place checked/unchecked characters at the end of the screen line
-            (menuLayout[itemIndex].function(menuLayout[itemIndex].argument)) ? stringBuffer.appendText_P(checked_string) : stringBuffer.appendText_P(unchecked_string);
+            (menuLayout[index].function(menuLayout[index].argument)) ? stringBuffer.appendText_P(checked_string) : stringBuffer.appendText_P(unchecked_string);
         }
 
         stringBuffer.endLine();
@@ -311,7 +309,7 @@ void Menu::confirmOption(bool confirm)
 
     //this confirms current hierarchy level and moves to next one,
     //or it deletes current level and switches to previous, depending on received argument
-    uint16_t newLevel = menuHierarchyPosition;
+    int16_t newLevel = menuHierarchyPosition;
 
     confirm ? newLevel = (newLevel*10) + 1 : newLevel /= 10;
 
@@ -333,18 +331,17 @@ void Menu::confirmOption(bool confirm)
     {
         bool menuLevelPresent = false;
 
-        uint8_t itemIndex = getItemIndex(currentOptionIndex);
+        uint8_t index = itemIndex[currentOptionIndex];
 
         //check if item has assigned function
-        if (menuLayout[itemIndex].function != NULL)
+        if (menuLayout[index].function != NULL)
         {
             //check if item has checkable function which just returns true or false
-            if (menuLayout[itemIndex].checkable)
+            if (menuLayout[index].checkable)
             {
                 //set second argument to "true" value to switch to new option
-                menuLayout[itemIndex].argument.argument2 = true;
-                #warning should be checked
-                if (menuLayout[itemIndex].function(menuLayout[itemIndex].argument))
+                menuLayout[index].argument.argument2 = true;
+                if (menuLayout[index].function(menuLayout[index].argument))
                 {
                     //do nothing
                 }
@@ -355,7 +352,7 @@ void Menu::confirmOption(bool confirm)
                 }
 
                 //reset switch argument
-                menuLayout[itemIndex].argument.argument2 = false;
+                menuLayout[index].argument.argument2 = false;
 
                 //now refresh screen with changed arguments
                 updateMenuScreen();
@@ -367,7 +364,7 @@ void Menu::confirmOption(bool confirm)
 
                 if (!functionRunning)
                 {
-                    functionStatus = menuLayout[itemIndex].function(menuLayout[itemIndex].argument);
+                    functionStatus = menuLayout[index].function(menuLayout[index].argument);
 
                     if (functionStatus)
                     {
@@ -422,7 +419,6 @@ void Menu::confirmOption(bool confirm)
         {
             //we need to get one level behind new level to find out menu title when going backwards
             menuHierarchyPosition = newLevel/10;
-            updateMenuHierarchyItems();
 
             if (newLevel > 10)
                 setMenuTitle(false);

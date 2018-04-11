@@ -39,7 +39,7 @@
 static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
 {
     {
-        .stringPointer = menuOption_pressureSettings_string,
+        .stringPointer = menuOption_velocitySettings_string,
         .level = 1,
         .function = NULL,
         .argument =

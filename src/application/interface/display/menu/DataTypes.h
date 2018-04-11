@@ -34,7 +34,7 @@ typedef struct
 typedef struct
 {
     const char *stringPointer;                      ///< Pointer to string used for menu item.
-    uint16_t level;                                 ///< Denotes item level in menu hierarchy, ie. 1.2.3.1.
+    int16_t level;                                  ///< Denotes item level in menu hierarchy, ie. 1.2.3.1.
     bool (*function)(functionArgument_t argument);  ///< Pointer to function which should be run on menu item entry.
     functionArgument_t argument;
     bool checkable;
