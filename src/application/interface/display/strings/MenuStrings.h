@@ -25,6 +25,11 @@
 
 #pragma once
 
+///
+/// \brief Display strings used in user and service menus.
+/// \ingroup displayStrings
+/// @{
+
 const char menuOption_exit_string[] PROGMEM = "Exit";
 
 //menu
@@ -112,3 +117,5 @@ const char factory_reset_end_2_string[] PROGMEM = "Initiating reboot.";
 
 const char aftertouchPoly_string[] PROGMEM = "Key aftertouch";
 const char aftertouchChannel_string[] PROGMEM = "Channel aftertouch";
+
+/// @}

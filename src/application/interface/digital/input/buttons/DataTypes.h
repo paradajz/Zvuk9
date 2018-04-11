@@ -26,6 +26,10 @@
 #pragma once
 
 ///
+/// \ingroup interfaceButtons
+/// @{
+
+///
 /// \brief List of all possible transport control modes.
 ///
 typedef enum
@@ -34,3 +38,5 @@ typedef enum
     transportCC,    ///< Uses MIDI-mappable predefined CC messages (interface/MIDIconf.h) for transport controls
     transportMMC_CC ///< Uses both standard MIDI transport control messages and CC messages.
 } transportControlMode_t;
+
+/// @}

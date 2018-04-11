@@ -25,6 +25,11 @@
 
 #pragma once
 
+///
+/// \brief Display strings for various curves.
+/// \ingroup displayStrings
+/// @{
+
 const char curve_linear_up_string[] PROGMEM = "Linear up";
 const char curve_linear_down_string[] PROGMEM = "Linear down";
 const char curve_linear_up_broken_1_string[] PROGMEM = "Linear up broken 1";
@@ -75,3 +80,5 @@ const uint8_t curveNameArray_sizes[] PROGMEM =
     ARRAY_SIZE_CHAR(curve_five_steps_up_string),
     ARRAY_SIZE_CHAR(curve_eight_waves_up_down_string)
 };
+
+/// @}

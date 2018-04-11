@@ -27,6 +27,9 @@
 #include "../Variables.h"
 #include "../../analog/pads/Pads.h"
 
+///
+/// \brief Displays "Firmware updated" and firmware version message.
+///
 void Display::displayFirmwareUpdated()
 {
     stringBuffer.startLine();
@@ -47,6 +50,9 @@ void Display::displayFirmwareUpdated()
     updateText(DISPLAY_ROW_MESSAGE_2, displayText_temp, getTextCenter(stringBuffer.getSize()));
 }
 
+///
+/// \brief Displays "Welome!" message character by character on startup.
+///
 void Display::displayWelcomeMessage()
 {
     uint8_t charIndex;
@@ -84,6 +90,11 @@ void Display::displayWelcomeMessage()
     clearAll();
 }
 
+///
+/// \brief Displays specified error message.
+/// @param [in] function    Function for which error should be displayed (see function_t).
+/// @param [in] result      Specific error which occured (see changeResult_t).
+///
 void Display::displayError(function_t function, changeResult_t result)
 {
     stringBuffer.startLine();
@@ -99,6 +110,12 @@ void Display::displayError(function_t function, changeResult_t result)
     updateText(DISPLAY_ROW_MESSAGE_2, displayText_temp, getTextCenter(stringBuffer.getSize()));
 }
 
+///
+/// \brief Displays result of function change.
+/// @param [in] function    Function for which result should be displayed (see function_t).
+/// @param [in] value       Result of function change.
+/// @param [in] type        Scope to which change is applied (see settingType_t).
+///
 void Display::displayChangeResult(function_t function, int16_t value, settingType_t type)
 {
     stringBuffer.startLine();

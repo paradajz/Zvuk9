@@ -25,11 +25,16 @@
 
 #pragma once
 
+///
+/// \brief Display strings.
+/// \defgroup displayStrings Strings
+/// \ingroup interfaceDisplay
+///
+
 #include "Notes.h"
 #include "Errors.h"
 #include "MenuStrings.h"
 #include "Scales.h"
-#include "XY.h"
 #include "Pads.h"
 #include "Misc.h"
 #include "Calibration.h"

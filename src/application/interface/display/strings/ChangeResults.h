@@ -25,6 +25,11 @@
 
 #pragma once
 
+///
+/// \brief Display strings used to indicate result of changing various parameters.
+/// \ingroup displayStrings
+/// @{
+
 const char changeResult_noChange_string[] PROGMEM = "no change in values";
 const char changeResult_valueChanged_string[] PROGMEM = "values changed";
 const char changeResult_outOfRange_string[] PROGMEM = "values out of range";
@@ -57,3 +62,5 @@ const uint8_t changeResultArray_sizes[] PROGMEM =
     ARRAY_SIZE_CHAR(changeResult_notUserScale_string),
     ARRAY_SIZE_CHAR(changeResult_notPredefinedScale_string),
 };
+
+/// @}

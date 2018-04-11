@@ -25,6 +25,11 @@
 
 #pragma once
 
+///
+/// \brief Display strings used to indicate various errors.
+/// \ingroup displayStrings
+/// @{
+
 const char error_changeProgram_string[] PROGMEM = "Program change error:";
 const char error_changeScale_string[] PROGMEM = "Scale change error:";
 const char error_changeMIDIchannel_string[] PROGMEM = "MIDI channel change error";
@@ -105,3 +110,5 @@ const uint8_t functionErrorArray_sizes[] PROGMEM =
     ARRAY_SIZE_CHAR(error_yCurve_string),
     ARRAY_SIZE_CHAR(error_menu_string)
 };
+
+/// @}

@@ -25,6 +25,11 @@
 
 #pragma once
 
+///
+/// \brief Display strings used to indicate notes and their parameters.
+/// \ingroup displayStrings
+/// @{
+
 const char tonicC_string[] PROGMEM = "C";
 const char tonicCSharp_string[] PROGMEM = "C#";
 const char tonicD_string[] PROGMEM = "D";
@@ -79,3 +84,5 @@ const uint8_t noteNameArray_sizes[] PROGMEM =
     ARRAY_SIZE_CHAR(tonicASharp_string),
     ARRAY_SIZE_CHAR(tonicB_strig)
 };
+
+/// @}

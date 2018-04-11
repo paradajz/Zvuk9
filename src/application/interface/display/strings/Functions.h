@@ -25,6 +25,11 @@
 
 #pragma once
 
+///
+/// \brief Display strings used for various interface functions.
+/// \ingroup displayStrings
+/// @{
+
 const char function_midiChannel[] PROGMEM = "MIDI channel: ";
 const char function_play[] PROGMEM = "Play";
 const char function_stop[] PROGMEM = "Stop";
@@ -107,3 +112,5 @@ const uint8_t functionArray_sizes[] PROGMEM =
     ARRAY_SIZE_CHAR(function_yCurve),
     0
 };
+
+/// @}

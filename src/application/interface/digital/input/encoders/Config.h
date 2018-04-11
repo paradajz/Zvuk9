@@ -26,6 +26,10 @@
 #pragma once
 
 ///
+/// \ingroup interfaceEncoders
+/// @{
+
+///
 /// \brief Used to achieve linear encoder acceleration on fast movement.
 /// Every time fast movement is detected, amount of steps is increased by this value.
 ///
@@ -35,3 +39,5 @@
 /// \brief Time threshold in milliseconds between two encoder steps used to detect fast movement.
 ///
 #define SPEED_TIMEOUT                   140
+
+/// @}

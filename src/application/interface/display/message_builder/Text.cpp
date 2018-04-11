@@ -28,6 +28,9 @@
 #include "../../analog/pads/Pads.h"
 #include "../../../database/blocks/Scales.h"
 
+///
+/// \brief Displays home screen.
+///
 void Display::setupHomeScreen()
 {
     clearAll();
@@ -71,6 +74,13 @@ void Display::setupHomeScreen()
     updateText(DISPLAY_ROW_PRESS_INFO_Y, displayText_still, DISPLAY_POSITION_PRESS_INFO_Y_CC_POS_DELIMITER);
 }
 
+///
+/// \brief Displays pad edit screen.
+/// @param [in] pad             Pad for which pad edit screen should be set.
+/// @param [in] octave          Currently active octave in pad edit mode.
+/// @param [in] forceRefresh    If set to true, entire screen will be cleared first.
+///                             Otherwise, only pad and its notes will be refreshed.
+///
 void Display::setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh)
 {
     if (forceRefresh)
@@ -103,7 +113,16 @@ void Display::setupPadEditScreen(uint8_t pad, uint8_t octave, bool forceRefresh)
     displayActivePadNotes();
 }
 
-void Display::setupCalibrationScreen(padCoordinate_t coordinate, bool scrollCalibration)
+///
+/// \brief Displays pad calibration screen.
+/// @param [in] coordinate  Coordinate for which pad calibration screen should be set up.
+/// @param [in] intFlag     Interactive calibration flag. If set to true, text indicating that
+///                         user should scroll on pad to actually calibrate it will be displayed,
+///                         but only for X and Y coordinate. If Z coordinate is specified,
+///                         message indicating that user should hold pad pressed for several seconds
+///                         is displayed instead.
+///
+void Display::setupCalibrationScreen(padCoordinate_t coordinate, bool intFlag)
 {
     clearRow(DISPLAY_ROW_CALIBRATION_VALUES);
     clearRow(DISPLAY_ROW_CALIBRATION_SCROLL_INFO);
@@ -121,10 +140,19 @@ void Display::setupCalibrationScreen(padCoordinate_t coordinate, bool scrollCali
     stringBuffer.endLine();
     updateText(DISPLAY_ROW_CALIBRATION_VALUES, displayText_still, DISPLAY_POSITION_CALIBRATION_MIDI_VALUE_TEXT);
 
-    displayCalibrationStatus(coordinate, scrollCalibration);
+    displayCalibrationStatus(coordinate, intFlag);
 }
 
-void Display::displayCalibrationStatus(padCoordinate_t coordinate, bool status)
+///
+/// \brief Displays current status of pad calibration.
+/// @param [in] coordinate  Coordinate for which pad calibration status is displayed.
+/// @param [in] intFlag     Interactive calibration flag. If set to true, text indicating that
+///                         user should scroll on pad to actually calibrate it will be displayed,
+///                         but only for X and Y coordinate. If Z coordinate is specified,
+///                         message indicating that user should hold pad pressed for several seconds
+///                         is displayed instead.
+///
+void Display::displayCalibrationStatus(padCoordinate_t coordinate, bool intFlag)
 {
     switch(coordinate)
     {
@@ -142,7 +170,7 @@ void Display::displayCalibrationStatus(padCoordinate_t coordinate, bool status)
 
     stringBuffer.startLine();
 
-    switch(status)
+    switch(intFlag)
     {
         case true:
         if (coordinate == coordinateZ)
@@ -168,6 +196,13 @@ void Display::displayCalibrationStatus(padCoordinate_t coordinate, bool status)
     updateText(DISPLAY_ROW_CALIBRATION_SCROLL_INFO, displayText_still, getTextCenter(stringBuffer.getSize()));
 }
 
+///
+/// \brief Used to display remaining time before applied pressure is saved as calibration value.
+/// @param [in] seconds     Number of seconds left.
+/// @param [in] zone        Active pressure zone.
+/// @param [in] done        When set to true, message indicating that calibration is done will
+///                         be displayed. Otherwise, remaining amount of seconds will be displayed instead.
+///
 void Display::displayPressureCalibrationTime(uint8_t seconds, uint8_t zone, bool done)
 {
     clearRow(DISPLAY_ROW_CALIBRATION_SCROLL_INFO);
@@ -191,6 +226,13 @@ void Display::displayPressureCalibrationTime(uint8_t seconds, uint8_t zone, bool
     updateText(DISPLAY_ROW_CALIBRATION_SCROLL_INFO, displayText_still, getTextCenter(stringBuffer.getSize()));
 }
 
+///
+/// \brief Displays program, scale, tonic and scale shift value stored in requested program on home screen.
+/// @param [in] program     Program which should be displayed.
+/// @param [in] scale       Active scale.
+/// @param [in] tonic       Active tonic.
+/// @param [in] scaleShift  Active value of scale shift. If scale isn't shifted, this value isn't displayed.
+///
 void Display::displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, int8_t scaleShift)
 {
     stringBuffer.startLine();
@@ -246,6 +288,11 @@ void Display::displayProgramInfo(uint8_t program, uint8_t scale, note_t tonic, i
     updateText(DISPLAY_ROW_PROGRAM_INFO_PROGRAM, displayText_still, DISPLAY_POSITION_PROGRAM_INFO_PROGRAM);
 }
 
+///
+/// \brief Displays pad number on home screen.
+/// @param [in] pad Pad number. If pad 255 is specified (default value)
+///                 pad number will be cleared.
+///
 void Display::displayPad(uint8_t pad)
 {
     stringBuffer.startLine();
@@ -266,6 +313,11 @@ void Display::displayPad(uint8_t pad)
     updateText(DISPLAY_ROW_PRESS_INFO_PAD_NUMBER, displayText_still, DISPLAY_POSITION_PRESS_INFO_PAD_NUMBER);
 }
 
+///
+/// \brief Displays all assigned notes for last pressed pad in home screen.
+/// @param [in] showNotes   If set to true, assigned notes will be displayed,
+///                         otherwise, notes will be cleared instead.
+///
 void Display::displayActivePadNotes(bool showNotes)
 {
     uint8_t pad = pads.getLastTouchedPad();
@@ -325,6 +377,13 @@ void Display::displayActivePadNotes(bool showNotes)
     padEditMode ? updateText(DISPLAY_ROW_PAD_EDIT_NOTES, displayText_still, DISPLAY_POSITION_PAD_EDIT_NOTES) : updateText(DISPLAY_ROW_PRESS_INFO_NOTES, displayText_still, DISPLAY_POSITION_PRESS_INFO_NOTES);
 }
 
+///
+/// \brief Displays velocity.
+/// When called during calibration, both MIDI and raw values are displayed so that
+/// it's easier to calibrate pressure.
+/// @param [in] midiVelocity    MIDI velocity value.
+/// @param [in] rawPressure     Raw velocity value as retrieved from board ADC.
+///
 void Display::displayVelocity(uint8_t midiVelocity, int16_t rawPressure)
 {
     if (pads.isCalibrationEnabled())
@@ -366,6 +425,11 @@ void Display::displayVelocity(uint8_t midiVelocity, int16_t rawPressure)
     }
 }
 
+///
+/// \brief Displays aftertouch value for last pressed pad in home screen.
+/// @param [in] aftertouch  Aftertouch value. If value 255 is specified (default),
+///                         aftertouch value will be cleared.
+///
 void Display::displayAftertouch(uint8_t aftertouch)
 {
     stringBuffer.startLine();
@@ -388,6 +452,15 @@ void Display::displayAftertouch(uint8_t aftertouch)
     updateText(DISPLAY_ROW_PRESS_INFO_ATOUCH, displayText_still, DISPLAY_POSITION_PRESS_INFO_ATOUCH);
 }
 
+///
+/// \brief Displays X and Y values.
+/// @param [in] type        Coordinate which should be updated (X or Y).
+/// @param [in] messageType Type of X/Y value (pitch bend or CC, see midiMessageType_t).
+/// @param [in] value1      In user mode, used as CC number or pitch bend value. In calibration mode, used as
+///                         X/Y MIDI value.
+/// @param [in] value2      In user mode, used as CC value. When pitch bend is used, this value is ignored.
+///                         In calibration mode this value is used as raw ADC value for X/Y.
+///
 void Display::displayXYvalue(padCoordinate_t type, midiMessageType_t messageType, int16_t value1, int16_t value2)
 {
     uint8_t displayCoordinate = 0, displayRow = 0;
@@ -467,6 +540,11 @@ void Display::displayXYvalue(padCoordinate_t type, midiMessageType_t messageType
     }
 }
 
+///
+/// \brief Displays MIDI channel on home screen.
+/// @param [in] channel     MIDI channel to display.
+///                         If channel is set to 255 (set by default) MIDI channel is cleared.
+///
 void Display::displayMIDIchannel(uint8_t channel)
 {
     stringBuffer.startLine();
@@ -489,6 +567,10 @@ void Display::displayMIDIchannel(uint8_t channel)
     updateText(DISPLAY_ROW_PRESS_INFO_MIDI_CHANNEL, displayText_still, DISPLAY_POSITION_PRESS_INFO_MIDI_CHANNEL);
 }
 
+///
+/// \brief Clears all data on display related to pad press.
+/// Pad number, notes, aftertouch, MIDI channel, velocity, X and Y data is cleared.
+///
 void Display::clearPadPressData()
 {
     if (!pads.isCalibrationEnabled())
@@ -504,6 +586,10 @@ void Display::clearPadPressData()
     displayXYvalue(coordinateY);
 }
 
+///
+/// \brief Clears specified row on display.
+/// @param [in] row     Row on display to clear.
+///
 void Display::clearRow(uint8_t row)
 {
     stringBuffer.startLine();
@@ -512,6 +598,9 @@ void Display::clearRow(uint8_t row)
     updateText(row, displayText_still, 0);
 }
 
+///
+/// \brief Clears entire display.
+///
 void Display::clearAll()
 {
     //clear entire display
@@ -519,6 +608,9 @@ void Display::clearAll()
         clearRow(i);
 }
 
+///
+/// \brief Displays firmware and hardware version in user and service menu.
+///
 void Display::displayDeviceInfo()
 {
     stringBuffer.startLine();
@@ -544,6 +636,9 @@ void Display::displayDeviceInfo()
     updateText(DISPLAY_ROW_MENU_DEVICE_INFO_2, displayText_still, DISPLAY_POSITION_MENU_DEVICE_INFO_2);
 }
 
+///
+/// \brief Displays confirmation screen before performing factory reset.
+///
 void Display::displayFactoryResetConfirm()
 {
     uint8_t location;
@@ -577,6 +672,9 @@ void Display::displayFactoryResetConfirm()
     updateText(DISPLAY_ROW_FACTORY_RESET_INFO_CANCEL, displayText_still, location);
 }
 
+///
+/// \brief Displays initial factory reset phase message.
+///
 void Display::displayFactoryResetStart()
 {
     uint8_t location;
@@ -596,6 +694,9 @@ void Display::displayFactoryResetStart()
     updateText(DISPLAY_ROW_FACTORY_RESET_PROGRESS_2, displayText_still, location);
 }
 
+///
+/// \brief Displays final factory reset phase message.
+///
 void Display::displayFactoryResetEnd()
 {
     uint8_t location;
