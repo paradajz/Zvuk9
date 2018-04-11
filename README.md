@@ -55,7 +55,7 @@ Zvuk9 uses various modules which are licenced under different licenses.
 
 - LUFA is licenced under modified MIT licence.
 - MIDI module is licenced under MIT.
-- U8G2 is licenced under Two-clause BSD licence. This project uses modified content which is available under same terms.
+- U8G2 is licenced under Two-clause BSD licence.
 - Core and LESS-DB modules are available under MIT licence.
 
 This project is available under GNU GPLv3 licence. For commerical uses commercial licence is available on demand.
