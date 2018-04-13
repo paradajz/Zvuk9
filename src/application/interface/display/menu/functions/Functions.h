@@ -28,13 +28,19 @@
 #include "../Menu.h"
 #include "../DataTypes.h"
 
-bool factoryReset(functionArgument_t argument);
-bool deviceInfo(functionArgument_t argument);
-bool enableCalibration(functionArgument_t argument);
-bool checkRunningStatus(functionArgument_t argument);
-bool checkTransportCC(functionArgument_t argument);
-bool checkPitchBendType(functionArgument_t argument);
-bool checkVelocitySensitivity(functionArgument_t argument);
-bool checkPressureCurve(functionArgument_t argument);
-bool checkAftertouchType(functionArgument_t argument);
-bool checkNoteOffStatus(functionArgument_t argument);
+///
+/// \ingroup displayMenu
+/// @{
+
+bool factoryReset(uint8_t argument);
+bool deviceInfo(uint8_t argument);
+bool enableCalibration(uint8_t argument);
+bool checkRunningStatus(uint8_t argument);
+bool checkTransportCC(uint8_t argument);
+bool checkPitchBendType(uint8_t argument);
+bool checkVelocitySensitivity(uint8_t argument);
+bool checkPressureCurve(uint8_t argument);
+bool checkAftertouchType(uint8_t argument);
+bool checkNoteOffStatus(uint8_t argument);
+
+/// @}

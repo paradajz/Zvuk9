@@ -53,3 +53,5 @@ class Menu
 /// \brief External definition of Menu class instance.
 ///
 extern Menu menu;
+
+/// @}

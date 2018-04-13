@@ -24,6 +24,13 @@
 
 #pragma once
 
+///
+/// \ingroup displayMenu
+/// @{
+
+///
+/// \brief List of all items used in service menu.
+///
 typedef enum
 {
     serviceMenuItem_calibration,
@@ -36,3 +43,5 @@ typedef enum
 
     SERVICE_MENU_ITEMS
 } serviceMenuItems_t;
+
+/// @}

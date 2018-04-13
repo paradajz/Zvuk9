@@ -25,17 +25,23 @@
 
 #pragma once
 
-typedef struct
-{
-    uint8_t argument1;
-    uint8_t argument2;
-} functionArgument_t;
+///
+/// \ingroup displayMenu
+/// @{
+
+///
+/// \brief External definition for menu item function request type.
+/// When set to true, item function is expected to change a value.
+///
+extern bool itemFuncChangeVal;
 
 typedef struct
 {
-    const char *stringPointer;                      ///< Pointer to string used for menu item.
-    int16_t level;                                  ///< Denotes item level in menu hierarchy, ie. 1.2.3.1.
-    bool (*function)(functionArgument_t argument);  ///< Pointer to function which should be run on menu item entry.
-    functionArgument_t argument;
-    bool checkable;
+    const char *stringPointer;              ///< Pointer to string used for menu item.
+    int16_t level;                          ///< Denotes item level in menu hierarchy, ie. 1.2.3.1.
+    bool (*function)(uint8_t argument);     ///< Pointer to function which should be run on menu item entry.
+    uint8_t argument;                       ///< Item function argument (used only if function is defined).
+    bool checkable;                         ///< Flag determining whether or not item function checks if certain condition is true or false.
 } menuItem_t;
+
+/// @}

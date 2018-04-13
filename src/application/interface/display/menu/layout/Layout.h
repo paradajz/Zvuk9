@@ -24,13 +24,13 @@
 */
 
 #include "dbms/src/DataTypes.h"
-#include "functions/MenuFunctions.h"
+#include "../functions/Functions.h"
 #include "items/ServiceMenu.h"
 #include "items/UserMenu.h"
-#include "DataTypes.h"
+#include "../DataTypes.h"
 
 ///
-/// \ingroup interfaceDisplay
+/// \ingroup displayMenu
 /// @{
 
 ///
@@ -42,11 +42,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = menuOption_velocitySettings_string,
         .level = 1,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -54,11 +50,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = menuOption_pressureSensitivity_string,
         .level = 11,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -66,11 +58,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = pressure_sensitivity_1_string,
         .level = 111,
         .function = checkVelocitySensitivity,
-        .argument =
-        {
-            .argument1 = (uint8_t)velocity_soft,
-        .   argument2 = 0,
-        },
+        .argument = (uint8_t)velocity_soft,
         .checkable = true,
     },
 
@@ -78,11 +66,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = pressure_sensitivity_2_string,
         .level = 112,
         .function = checkVelocitySensitivity,
-        .argument =
-        {
-            .argument1 = (uint8_t)velocity_medium,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)velocity_medium,
         .checkable = true,
     },
 
@@ -90,11 +74,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = pressure_sensitivity_3_string,
         .level = 113,
         .function = checkVelocitySensitivity,
-        .argument =
-        {
-            .argument1 = (uint8_t)velocity_hard,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)velocity_hard,
         .checkable = true,
     },
 
@@ -102,11 +82,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = menuOption_pressureCurve_string,
         .level = 12,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -114,11 +90,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = pressure_curve_linear_string,
         .level = 121,
         .function = checkPressureCurve,
-        .argument =
-        {
-            .argument1 = (uint8_t)curve_linear_up,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)curve_linear_up,
         .checkable = true,
     },
 
@@ -126,11 +98,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = pressure_curve_log_string,
         .level = 122,
         .function = checkPressureCurve,
-        .argument =
-        {
-            .argument1 = (uint8_t)curve_log_up_1,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)curve_log_up_1,
         .checkable = true,
     },
 
@@ -138,11 +106,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = pressure_curve_inv_exp_string,
         .level = 123,
         .function = checkPressureCurve,
-        .argument =
-        {
-            .argument1 = (uint8_t)curve_exp_up,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)curve_exp_up,
         .checkable = true,
     },
 
@@ -150,11 +114,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = menuOption_midiSettings_string,
         .level = 2,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -162,11 +122,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_atouchType_string,
         .level = 21,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -174,11 +130,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = aftertouchType_channel_string,
         .level = 211,
         .function = checkAftertouchType,
-        .argument =
-        {
-            .argument1 = (uint8_t)aftertouchChannel,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)aftertouchChannel,
         .checkable = true,
     },
 
@@ -186,11 +138,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = aftertouchType_poly_string,
         .level = 212,
         .function = checkAftertouchType,
-        .argument =
-        {
-            .argument1 = (uint8_t)aftertouchPoly,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)aftertouchPoly,
         .checkable = true,
     },
 
@@ -198,11 +146,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_runningStatus_string,
         .level = 22,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -210,11 +154,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = enabled_string_string,
         .level = 221,
         .function = checkRunningStatus,
-        .argument =
-        {
-            .argument1 = 1,
-            .argument2 = 0,
-        },
+        .argument = 1,
         .checkable = true,
     },
 
@@ -222,11 +162,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = disabled_string_string,
         .level = 222,
         .function = checkRunningStatus,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = true,
     },
 
@@ -234,11 +170,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_noteOff_string,
         .level = 23,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -246,11 +178,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = noteOff_offChannel_string,
         .level = 231,
         .function = checkNoteOffStatus,
-        .argument =
-        {
-            .argument1 = noteOffType_standardNoteOff,
-            .argument2 = 0,
-        },
+        .argument = noteOffType_standardNoteOff,
         .checkable = true,
     },
 
@@ -258,11 +186,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = noteOff_zeroVel_string,
         .level = 232,
         .function = checkNoteOffStatus,
-        .argument =
-        {
-            .argument1 = noteOffType_noteOnZeroVel,
-            .argument2 = 0,
-        },
+        .argument = noteOffType_noteOnZeroVel,
         .checkable = true,
     },
 
@@ -270,11 +194,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_transport_string,
         .level = 24,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -282,11 +202,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_transport_MMC_string,
         .level = 241,
         .function = checkTransportCC,
-        .argument =
-        {
-            .argument1 = transportMMC,
-            .argument2 = 0,
-        },
+        .argument = transportMMC,
         .checkable = true,
     },
 
@@ -294,11 +210,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_transport_CC_string,
         .level = 242,
         .function = checkTransportCC,
-        .argument =
-        {
-            .argument1 = transportCC,
-            .argument2 = 0,
-        },
+        .argument = transportCC,
         .checkable = true,
     },
 
@@ -306,11 +218,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_transport_MMC_CC_string,
         .level = 243,
         .function = checkTransportCC,
-        .argument =
-        {
-            .argument1 = transportMMC_CC,
-            .argument2 = 0,
-        },
+        .argument = transportMMC_CC,
         .checkable = true,
     },
 
@@ -318,11 +226,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_pitchBend_string,
         .level = 25,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -330,11 +234,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_pitchBend_1_string,
         .level = 251,
         .function = checkPitchBendType,
-        .argument =
-        {
-            .argument1 = pitchBend1,
-            .argument2 = 0,
-        },
+        .argument = pitchBend1,
         .checkable = true,
     },
 
@@ -342,11 +242,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = midiSettings_pitchBend_2_string,
         .level = 252,
         .function = checkPitchBendType,
-        .argument =
-        {
-            .argument1 = pitchBend2,
-            .argument2 = 0,
-        },
+        .argument = pitchBend2,
         .checkable = true,
     },
 
@@ -354,11 +250,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = menuOption_deviceInfo_string,
         .level = 3,
         .function = deviceInfo,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -366,11 +258,7 @@ static menuItem_t userMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = menuOption_factoryReset_string,
         .level = 4,
         .function = factoryReset,
-        .argument =
-        {
-            .argument1 = (uint8_t)initPartial,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)initPartial,
         .checkable = false,
     }
 };
@@ -384,11 +272,7 @@ static menuItem_t serviceMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = menuOption_padCalibration_string,
         .level = 1,
         .function = NULL,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -396,11 +280,7 @@ static menuItem_t serviceMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = calibration_x_string,
         .level = 11,
         .function = enableCalibration,
-        .argument =
-        {
-            .argument1 = (uint8_t)coordinateX,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)coordinateX,
         .checkable = false,
     },
 
@@ -408,11 +288,7 @@ static menuItem_t serviceMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = calibration_y_string,
         .level = 12,
         .function = enableCalibration,
-        .argument =
-        {
-            .argument1 = (uint8_t)coordinateY,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)coordinateY,
         .checkable = false,
     },
 
@@ -420,11 +296,7 @@ static menuItem_t serviceMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = calibration_pressure_string,
         .level = 13,
         .function = enableCalibration,
-        .argument =
-        {
-            .argument1 = (uint8_t)coordinateZ,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)coordinateZ,
         .checkable = false,
     },
 
@@ -432,11 +304,7 @@ static menuItem_t serviceMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = menuOption_deviceInfo_string,
         .level = 2,
         .function = deviceInfo,
-        .argument =
-        {
-            .argument1 = 0,
-            .argument2 = 0,
-        },
+        .argument = 0,
         .checkable = false,
     },
 
@@ -444,11 +312,7 @@ static menuItem_t serviceMenuLayout[USER_MENU_ITEMS] =
         .stringPointer = menuOption_factoryReset_string,
         .level = 3,
         .function = factoryReset,
-        .argument =
-        {
-            .argument1 = (uint8_t)initFull,
-            .argument2 = 0,
-        },
+        .argument = (uint8_t)initFull,
         .checkable = false,
     }
 };

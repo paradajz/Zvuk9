@@ -27,7 +27,13 @@
 #include "DataTypes.h"
 #include "../Variables.h"
 #include "../strings/Strings.h"
-#include "MenuLayout.h"
+#include "layout/Layout.h"
+
+bool        itemFuncChangeVal;
+
+///
+/// \ingroup displayMenu
+/// @{
 
 ///
 /// \brief Currently active menu.
@@ -37,7 +43,7 @@ menuType_t  activeMenu;
 ///
 /// \brief Currently active position in menu.
 ///
-int16_t    menuHierarchyPosition;
+int16_t     menuHierarchyPosition;
 
 ///
 /// \brief Total number of items in current menu layout.
@@ -65,6 +71,7 @@ uint8_t     itemIndex[9];
 ///
 menuItem_t  *menuLayout;
 
+/// @}
 
 ///
 /// \brief Default constructor.
@@ -344,8 +351,8 @@ void Menu::confirmOption(bool confirm)
             //check if item has checkable function which just returns true or false
             if (menuLayout[index].checkable)
             {
-                //set second argument to "true" value to switch to new option
-                menuLayout[index].argument.argument2 = true;
+                //set itemFuncChangeVal to true to switch to new option
+                itemFuncChangeVal = true;
                 if (menuLayout[index].function(menuLayout[index].argument))
                 {
                     //do nothing
@@ -356,8 +363,8 @@ void Menu::confirmOption(bool confirm)
                     return;
                 }
 
-                //reset switch argument
-                menuLayout[index].argument.argument2 = false;
+                //reset itemFuncChangeVal
+                itemFuncChangeVal = false;
 
                 //now refresh screen with changed arguments
                 updateMenuScreen();

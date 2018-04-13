@@ -24,6 +24,13 @@
 
 #pragma once
 
+///
+/// \ingroup displayMenu
+/// @{
+
+///
+/// \brief List of all items used in user menu.
+///
 typedef enum
 {
     userMenuItem_pressureSettings,
@@ -65,3 +72,5 @@ typedef enum
 
     USER_MENU_ITEMS
 } userMenuItems_t;
+
+/// @}

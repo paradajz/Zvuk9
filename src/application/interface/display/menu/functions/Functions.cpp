@@ -23,14 +23,21 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "MenuFunctions.h"
+#include "Functions.h"
 #include "../../../../database/Database.h"
 #include "../../../analog/pads/Pads.h"
 #include "../../../digital/input/encoders/Encoders.h"
 #include "../../../digital/input/buttons/Buttons.h"
 #include "../../../digital/output/leds/LEDs.h"
 
-bool factoryReset(functionArgument_t argument)
+///
+/// \brief Used to perform factory reset.
+/// Before factory reset is performed, certain pads need to be pressed
+/// for confirmation.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool factoryReset(uint8_t argument)
 {
     display.setDirectWriteState(true);
     display.clearAll();
@@ -115,7 +122,7 @@ bool factoryReset(functionArgument_t argument)
             //now, turn all leds off
             leds.setAllOff();
             wait_ms(2000);
-            database.factoryReset((initType_t)argument.argument1);
+            database.factoryReset((initType_t)argument);
             display.clearAll();
             display.displayFactoryResetEnd();
             wait_ms(2000);
@@ -128,18 +135,28 @@ bool factoryReset(functionArgument_t argument)
     return true;
 }
 
-bool deviceInfo(functionArgument_t argument)
+///
+/// \brief Used to display software and hardware info.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool deviceInfo(uint8_t argument)
 {
     display.displayDeviceInfo();
     return true;
 }
 
-bool enableCalibration(functionArgument_t argument)
+///
+/// \brief Used to initiate setting up of calibration mode.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool enableCalibration(uint8_t argument)
 {
     if (pads.getNumberOfPressedPads())
          return false;
 
-    switch((padCoordinate_t)argument.argument1)
+    switch((padCoordinate_t)argument)
     {
         case coordinateX:
         case coordinateY:
@@ -151,14 +168,23 @@ bool enableCalibration(functionArgument_t argument)
         return false;
     }
 
-    pads.setCalibrationMode(true, (padCoordinate_t)argument.argument1);
-    display.setupCalibrationScreen((padCoordinate_t)argument.argument1, leds.getLEDstate(LED_TRANSPORT_RECORD));
+    pads.setCalibrationMode(true, (padCoordinate_t)argument);
+    display.setupCalibrationScreen((padCoordinate_t)argument, leds.getLEDstate(LED_TRANSPORT_RECORD));
     return true;
 }
 
-bool checkAftertouchType(functionArgument_t argument)
+///
+/// \brief Used to either check or change aftertouch type.
+/// When itemFuncChangeVal is set to false, aftertouch type
+/// is compared to function argument.
+/// When itemFuncChangeVal is set to true, aftertouch type is
+/// changed to function argument value.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool checkAftertouchType(uint8_t argument)
 {
-    switch((aftertouchType_t)argument.argument1)
+    switch((aftertouchType_t)argument)
     {
         case aftertouchPoly:
         case aftertouchChannel:
@@ -169,43 +195,61 @@ bool checkAftertouchType(functionArgument_t argument)
         return false;
     }
 
-    switch(argument.argument2)
+    switch(itemFuncChangeVal)
     {
         case true:
         //change option
-        pads.setAftertouchType((aftertouchType_t)argument.argument1);
+        pads.setAftertouchType((aftertouchType_t)argument);
         return true;
         break;
 
         case false:
         //check if current aftertouch type is same as received argument
-        return (pads.getAftertouchType() == (aftertouchType_t)argument.argument1);
+        return (pads.getAftertouchType() == (aftertouchType_t)argument);
     }
 
     return false;
 }
 
-bool checkRunningStatus(functionArgument_t argument)
+///
+/// \brief Used to either check or change running status.
+/// When itemFuncChangeVal is set to false, running status
+/// is compared to function argument.
+/// When itemFuncChangeVal is set to true, running status is
+/// changed to function argument value.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool checkRunningStatus(uint8_t argument)
 {
-    switch(argument.argument2)
+    switch(itemFuncChangeVal)
     {
         case true:
         //switch option
-        midi.setRunningStatusState((bool)argument.argument1);
-        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument.argument1);
+        midi.setRunningStatusState((bool)argument);
+        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument);
         return true;
 
         case false:
-        return (midi.getRunningStatusState() == (bool)argument.argument1);
+        return (midi.getRunningStatusState() == (bool)argument);
         break;
     }
 
     return false;
 }
 
-bool checkNoteOffStatus(functionArgument_t argument)
+///
+/// \brief Used to either check or change MIDI note off type.
+/// When itemFuncChangeVal is set to false, MIDI note off type
+/// is compared to function argument.
+/// When itemFuncChangeVal is set to true, MIDI note off type is
+/// changed to function argument value.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool checkNoteOffStatus(uint8_t argument)
 {
-    switch((noteOffType_t)argument.argument1)
+    switch((noteOffType_t)argument)
     {
         case noteOffType_noteOnZeroVel:
         case noteOffType_standardNoteOff:
@@ -217,24 +261,33 @@ bool checkNoteOffStatus(functionArgument_t argument)
         return false;
     }
 
-    switch(argument.argument2)
+    switch(itemFuncChangeVal)
     {
         case true:
         //switch option
-        midi.setNoteOffMode((noteOffType_t)argument.argument1);
-        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument.argument1);
+        midi.setNoteOffMode((noteOffType_t)argument);
+        database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument);
         return true;
 
         case false:
-        return (database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID) == (noteOffType_t)argument.argument1);
+        return (database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID) == (noteOffType_t)argument);
     }
 
     return false;
 }
 
-bool checkTransportCC(functionArgument_t argument)
+///
+/// \brief Used to either check or change type of transport controls.
+/// When itemFuncChangeVal is set to false, type of transport controls
+/// is compared to function argument.
+/// When itemFuncChangeVal is set to true, type of transport controls is
+/// changed to function argument value.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool checkTransportCC(uint8_t argument)
 {
-    switch((transportControlMode_t)argument.argument1)
+    switch((transportControlMode_t)argument)
     {
         case transportCC:
         case transportMMC:
@@ -247,24 +300,33 @@ bool checkTransportCC(functionArgument_t argument)
         return false;
     }
 
-    switch(argument.argument2)
+    switch(itemFuncChangeVal)
     {
         case true:
         //switch option
-        buttons.setTransportControlMode((transportControlMode_t)argument.argument1);
+        buttons.setTransportControlMode((transportControlMode_t)argument);
         return true;
 
         case false:
-        return (buttons.getTransportControlMode() == (transportControlMode_t)argument.argument1);
+        return (buttons.getTransportControlMode() == (transportControlMode_t)argument);
         break;
     }
 
     return false;
 }
 
-bool checkPitchBendType(functionArgument_t argument)
+///
+/// \brief Used to either check or change pitch bend type.
+/// When itemFuncChangeVal is set to false, pitch bend type
+/// is compared to function argument.
+/// When itemFuncChangeVal is set to true, pitch bend type is
+/// changed to function argument value.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool checkPitchBendType(uint8_t argument)
 {
-    switch((pitchBendType_t)argument.argument1)
+    switch((pitchBendType_t)argument)
     {
         case pitchBend1:
         case pitchBend2:
@@ -276,15 +338,15 @@ bool checkPitchBendType(functionArgument_t argument)
         return false;
     }
 
-    switch(argument.argument2)
+    switch(itemFuncChangeVal)
     {
         case true:
         //switch option
-        pads.setPitchBendType((pitchBendType_t)argument.argument1);
+        pads.setPitchBendType((pitchBendType_t)argument);
         return true;
 
         case false:
-        return (pads.getPitchBendType() == (pitchBendType_t)argument.argument1);
+        return (pads.getPitchBendType() == (pitchBendType_t)argument);
         break;
 
     }
@@ -292,9 +354,18 @@ bool checkPitchBendType(functionArgument_t argument)
     return false;
 }
 
-bool checkVelocitySensitivity(functionArgument_t argument)
+///
+/// \brief Used to either check or change velocity sensitivity.
+/// When itemFuncChangeVal is set to false, velocity sensitivity
+/// is compared to function argument.
+/// When itemFuncChangeVal is set to true, velocity sensitivity is
+/// changed to function argument value.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool checkVelocitySensitivity(uint8_t argument)
 {
-    switch((velocitySensitivity_t)argument.argument1)
+    switch((velocitySensitivity_t)argument)
     {
         case velocity_soft:
         case velocity_medium:
@@ -307,24 +378,33 @@ bool checkVelocitySensitivity(functionArgument_t argument)
         return false;
     }
 
-    switch(argument.argument2)
+    switch(itemFuncChangeVal)
     {
         case true:
-        pads.setVelocitySensitivity((velocitySensitivity_t)argument.argument1);
+        pads.setVelocitySensitivity((velocitySensitivity_t)argument);
         return true;
         break;
 
         case false:
-        return (pads.getVelocitySensitivity() == (velocitySensitivity_t)argument.argument1);
+        return (pads.getVelocitySensitivity() == (velocitySensitivity_t)argument);
         break;
     }
 
     return false;
 }
 
-bool checkPressureCurve(functionArgument_t argument)
+///
+/// \brief Used to either check or change pressure curve.
+/// When itemFuncChangeVal is set to false, pressure curve
+/// is compared to function argument.
+/// When itemFuncChangeVal is set to true, pressure curve is
+/// changed to function argument value.
+/// @param [in] argument    Function argument defined in menu layout.
+/// \returns                True on success, false otherwise.
+///
+bool checkPressureCurve(uint8_t argument)
 {
-    switch((curve_t)argument.argument1)
+    switch((curve_t)argument)
     {
         case curve_linear_up:
         case curve_log_up_1:
@@ -337,15 +417,15 @@ bool checkPressureCurve(functionArgument_t argument)
         return false;
     }
 
-    switch(argument.argument2)
+    switch(itemFuncChangeVal)
     {
         case true:
-        pads.setVelocityCurve((curve_t)argument.argument1);
+        pads.setVelocityCurve((curve_t)argument);
         return true;
         break;
 
         case false:
-        return (pads.getVelocityCurve() == (curve_t)argument.argument1);
+        return (pads.getVelocityCurve() == (curve_t)argument);
         break;
 
     }
