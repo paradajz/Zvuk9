@@ -26,6 +26,7 @@
 #include "../Display.h"
 #include "../Variables.h"
 #include "../../analog/pads/Pads.h"
+#include "../../../Version.h"
 
 ///
 /// \brief Displays "Firmware updated" and firmware version message.
@@ -40,11 +41,11 @@ void Display::displayFirmwareUpdated()
 
     stringBuffer.startLine();
     stringBuffer.appendText_P(deviceInfo_swVersion_string);
-    stringBuffer.appendInt(2);
+    stringBuffer.appendInt(SW_VERSION_MAJOR);
     stringBuffer.appendText(".");
-    stringBuffer.appendInt(0);
+    stringBuffer.appendInt(SW_VERSION_MINOR);
     stringBuffer.appendText(".");
-    stringBuffer.appendInt(0);
+    stringBuffer.appendInt(SW_VERSION_MINOR);
     stringBuffer.endLine();
 
     updateText(DISPLAY_ROW_MESSAGE_2, displayText_temp, getTextCenter(stringBuffer.getSize()));

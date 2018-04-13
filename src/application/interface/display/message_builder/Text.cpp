@@ -27,6 +27,7 @@
 #include "../Variables.h"
 #include "../../analog/pads/Pads.h"
 #include "../../../database/blocks/Scales.h"
+#include "../../../Version.h"
 
 ///
 /// \brief Displays home screen.
@@ -615,11 +616,11 @@ void Display::displayDeviceInfo()
 {
     stringBuffer.startLine();
     stringBuffer.appendText_P(deviceInfo_swVersion_string);
-    stringBuffer.appendInt(2);
+    stringBuffer.appendInt(SW_VERSION_MAJOR);
     stringBuffer.appendText(".");
-    stringBuffer.appendInt(0);
+    stringBuffer.appendInt(SW_VERSION_MINOR);
     stringBuffer.appendText(".");
-    stringBuffer.appendInt(0);
+    stringBuffer.appendInt(SW_VERSION_REVISION);
     stringBuffer.endLine();
 
     updateText(DISPLAY_ROW_MENU_DEVICE_INFO_1, displayText_still, DISPLAY_POSITION_MENU_DEVICE_INFO_1);
