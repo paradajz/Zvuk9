@@ -25,8 +25,14 @@
 
 #pragma once
 
-#define PAD_PRESSURE_UPPER_DEFAULT      400
+///
+/// \defgroup dbPadCalibration Pad calibration
+/// \ingroup database
+/// @{
 
+///
+/// \brief List of all sections in pad calibration database block.
+///
 typedef enum
 {
     padCalibrationPressureUpperSection,
@@ -36,3 +42,6 @@ typedef enum
     padCalibrationYupperSection,
     PAD_CALIBRATION_SECTIONS
 } dbSection_padCalibration_t;
+
+/// @}
+

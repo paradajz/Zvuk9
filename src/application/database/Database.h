@@ -29,9 +29,11 @@
 #include "blocks/Blocks.h"
 
 ///
-/// \addtogroup eeprom
+/// \brief Database management.
+/// Takes care of accessing and updating parameters stored in memory.
+/// \defgroup database Database
 /// @{
-///
+
 class Database : public DBMS
 {
     public:
@@ -48,6 +50,9 @@ class Database : public DBMS
     static void initGlobalSettings();
 };
 
+///
+/// \brief External definition of Database class instance.
+///
 extern Database database;
 
 /// @}

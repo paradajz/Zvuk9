@@ -111,7 +111,7 @@ bool Database::signatureValid()
 {
     //check if all bytes up to START_OFFSET address match unique id
 
-    for (int i=0; i<ID_OFFSET; i++)
+    for (int i=0; i<NUM_OF_UID_BYTES; i++)
     {
         if (DBMS::read(DB_BLOCK_ID, 0, i) != UNIQUE_ID)
             return false;

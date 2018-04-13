@@ -24,17 +24,21 @@
 */
 
 #include "Database.h"
+#include "../board/constants/Hardware.h"
 
-#include "../interface/analog/pads/Pads.h"
-
+///
+/// \brief Writes custom values in database.
+///
 void Database::writeCustomValues()
 {
-    //we need to init each block and section with data
     initProgramSettings();
     initScales();
     initGlobalSettings();
 }
 
+///
+/// \brief Initializies program block in database with correct values.
+///
 void Database::initProgramSettings()
 {
     //init default active program
@@ -65,6 +69,9 @@ void Database::initProgramSettings()
     }
 }
 
+///
+/// \brief Initializies scale block in database with correct values.
+///
 void Database::initScales()
 {
     //init predefined scale settings
@@ -91,6 +98,9 @@ void Database::initScales()
     }
 }
 
+///
+/// \brief Initializies global settings block in database with correct values.
+///
 void Database::initGlobalSettings()
 {
     //init midi settings

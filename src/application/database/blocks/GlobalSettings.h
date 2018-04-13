@@ -29,6 +29,14 @@
 #include "../../interface/analog/pads/DataTypes.h"
 #include "../../interface/digital/input/buttons/DataTypes.h"
 
+///
+/// \defgroup dbGlobalSettings Global settings
+/// \ingroup database
+/// @{
+
+///
+/// \brief List of all sections in global settings database block.
+///
 typedef enum
 {
     globalSettingsMIDI,
@@ -36,12 +44,34 @@ typedef enum
     GLOBAL_SETTINGS_SECTIONS
 } dbSection_global_t;
 
+///
+/// \brief Default MIDI aftertouch type.
+///
 #define MIDI_SETTING_AFTERTOUCH_TYPE                aftertouchChannel
-#define MIDI_SETTING_RUNNING_STATUS                 0 //disabled
+
+///
+/// \brief Default state of MIDI running status.
+///
+#define MIDI_SETTING_RUNNING_STATUS                 0
+
+///
+/// \brief Default MIDI note off type.
+///
 #define MIDI_SETTING_NOTE_OFF_TYPE                  noteOffType_standardNoteOff
+
+///
+/// \brief Default MIDI transport message send type.
+///
 #define MIDI_SETTING_TRANSPORT_CC                   transportMMC
+
+///
+/// \brief Default MIDI pitch bend type.
+///
 #define MIDI_SETTING_PITCH_BEND_TYPE                pitchBend1
 
+///
+/// \brief List of all elements in global MIDI database section.
+///
 typedef enum
 {
     MIDI_SETTING_AFTERTOUCH_TYPE_ID,
@@ -55,6 +85,9 @@ typedef enum
     MIDI_SETTINGS
 } midiSettings;
 
+///
+/// \brief Array of default (initial) values in global MIDI database section.
+///
 const uint8_t defaultMIDIsettingArray[MIDI_SETTINGS] =
 {
     MIDI_SETTING_AFTERTOUCH_TYPE,
@@ -67,9 +100,19 @@ const uint8_t defaultMIDIsettingArray[MIDI_SETTINGS] =
     0   //reserved
 };
 
+///
+/// \brief Default velocity sensitivity setting.
+///
 #define VELOCITY_SETTING_SENSITIVITY                velocity_soft
+
+///
+/// \brief Default velocity curve.
+///
 #define VELOCITY_SETTING_CURVE                      curve_linear_up
 
+///
+/// \brief List of all elements in global velocity database section.
+///
 typedef enum
 {
     VELOCITY_SETTING_SENSITIVITY_ID,
@@ -77,8 +120,13 @@ typedef enum
     VELOCITY_SETTINGS
 } velocitySettings;
 
+///
+/// \brief Array of default (initial) values in global velocity database section.
+///
 const uint8_t defaultVelocitySettingsArray[VELOCITY_SETTINGS] =
 {
     VELOCITY_SETTING_SENSITIVITY,
     VELOCITY_SETTING_CURVE
 };
+
+/// @}

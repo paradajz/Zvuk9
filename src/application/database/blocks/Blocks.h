@@ -31,6 +31,10 @@
 #include "GlobalSettings.h"
 #include "ID.h"
 
+///
+/// \brief List of all blocks in database.
+/// \ingroup database
+///
 enum dbBlocks
 {
     DB_BLOCK_PROGRAM,           //0

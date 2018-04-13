@@ -26,6 +26,14 @@
 #include "Database.h"
 #include "../interface/analog/pads/Pads.h"
 
+///
+/// \ingroup database
+/// @{
+
+///
+/// \brief Database blocks.
+/// @{
+
 static dbSection_t programSections[PROGRAM_SECTIONS] =
 {
     //programLastActiveProgramSection
@@ -99,7 +107,7 @@ static dbSection_t padCalibrationSections[PAD_CALIBRATION_SECTIONS] =
         .numberOfParameters = NUMBER_OF_PADS,
         .parameterType = WORD_PARAMETER,
         .preserveOnPartialReset = true,
-        .defaultValue = PAD_PRESSURE_UPPER_DEFAULT,
+        .defaultValue = 400,
         .autoIncrement = false,
         .address = 0
     },
@@ -171,7 +179,7 @@ static dbSection_t globalSections[GLOBAL_SETTINGS_SECTIONS] =
 static dbSection_t idSections[1] =
 {
     {
-        .numberOfParameters = ID_OFFSET,
+        .numberOfParameters = NUM_OF_UID_BYTES,
         .parameterType = BYTE_PARAMETER,
         .preserveOnPartialReset = 0,
         .defaultValue = UNIQUE_ID,
@@ -179,6 +187,12 @@ static dbSection_t idSections[1] =
         .address = 0
     },
 };
+
+/// @}
+
+///
+/// \brief Database layout containing references to all blocks.
+/// @{
 
 dbBlock_t dbLayout[DB_BLOCKS] =
 {
@@ -217,3 +231,7 @@ dbBlock_t dbLayout[DB_BLOCKS] =
         .section = idSections,
     },
 };
+
+/// @}
+
+/// @}
