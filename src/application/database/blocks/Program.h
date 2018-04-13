@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "../../interface/analog/pads/curves/Curves.h"
+#include "../../interface/analog/pads/curves/DataTypes.h"
 
 ///
 /// \defgroup dbProgram Program
