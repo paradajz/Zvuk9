@@ -52,15 +52,4 @@ PGM_P const changeResultArray[] PROGMEM =
     changeResult_notPredefinedScale_string
 };
 
-const uint8_t changeResultArray_sizes[] PROGMEM =
-{
-    ARRAY_SIZE_CHAR(changeResult_noChange_string),
-    ARRAY_SIZE_CHAR(changeResult_valueChanged_string),
-    ARRAY_SIZE_CHAR(changeResult_outOfRange_string),
-    ARRAY_SIZE_CHAR(changeResult_notAllowed_string),
-    ARRAY_SIZE_CHAR(changeResult_releasePads_string),
-    ARRAY_SIZE_CHAR(changeResult_notUserScale_string),
-    ARRAY_SIZE_CHAR(changeResult_notPredefinedScale_string),
-};
-
 /// @}

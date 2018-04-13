@@ -83,32 +83,4 @@ PGM_P const functionErrorArray[] PROGMEM =
     error_menu_string
 };
 
-const uint8_t functionErrorArray_sizes[] PROGMEM =
-{
-    ARRAY_SIZE_CHAR(error_changeProgram_string),
-    ARRAY_SIZE_CHAR(error_changeScale_string),
-    ARRAY_SIZE_CHAR(error_changeMIDIchannel_string),
-    ARRAY_SIZE_CHAR(error_play_string),
-    ARRAY_SIZE_CHAR(error_stop_string),
-    ARRAY_SIZE_CHAR(error_record_string),
-    ARRAY_SIZE_CHAR(error_noteChange_string),
-    ARRAY_SIZE_CHAR(error_splitMode_string),
-    ARRAY_SIZE_CHAR(error_sendX_string),
-    ARRAY_SIZE_CHAR(error_sendY_string),
-    ARRAY_SIZE_CHAR(error_sendAftertouch_string),
-    ARRAY_SIZE_CHAR(error_sendNotes_string),
-    ARRAY_SIZE_CHAR(error_octaveChange_string),
-    ARRAY_SIZE_CHAR(error_noteShift_string),
-    ARRAY_SIZE_CHAR(error_padEdit_string),
-    ARRAY_SIZE_CHAR(error_ccX_string),
-    ARRAY_SIZE_CHAR(error_ccY_string),
-    ARRAY_SIZE_CHAR(error_xMin_string),
-    ARRAY_SIZE_CHAR(error_xMax_string),
-    ARRAY_SIZE_CHAR(error_yMin_string),
-    ARRAY_SIZE_CHAR(error_yMax_string),
-    ARRAY_SIZE_CHAR(error_xCurve_string),
-    ARRAY_SIZE_CHAR(error_yCurve_string),
-    ARRAY_SIZE_CHAR(error_menu_string)
-};
-
 /// @}

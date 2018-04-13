@@ -83,34 +83,4 @@ PGM_P const functionArray[] PROGMEM =
     NULL
 };
 
-const uint8_t functionArray_sizes[] PROGMEM =
-{
-    0,
-    0,
-    ARRAY_SIZE_CHAR(function_midiChannel),
-    ARRAY_SIZE_CHAR(function_play),
-    ARRAY_SIZE_CHAR(function_stop),
-    ARRAY_SIZE_CHAR(function_record),
-    ARRAY_SIZE_CHAR(function_tonic),
-    ARRAY_SIZE_CHAR(function_split),
-    ARRAY_SIZE_CHAR(function_x),
-    ARRAY_SIZE_CHAR(function_y),
-    ARRAY_SIZE_CHAR(function_aftertouch),
-    ARRAY_SIZE_CHAR(function_notes),
-    ARRAY_SIZE_CHAR(function_octave),
-    ARRAY_SIZE_CHAR(function_noteShift),
-    0,
-    ARRAY_SIZE_CHAR(function_xCC),
-    ARRAY_SIZE_CHAR(function_yCC),
-    ARRAY_SIZE_CHAR(function_xPitchBend),
-    ARRAY_SIZE_CHAR(function_yPitchBend),
-    ARRAY_SIZE_CHAR(function_xMin),
-    ARRAY_SIZE_CHAR(function_xMax),
-    ARRAY_SIZE_CHAR(function_yMin),
-    ARRAY_SIZE_CHAR(function_yMax),
-    ARRAY_SIZE_CHAR(function_xCurve),
-    ARRAY_SIZE_CHAR(function_yCurve),
-    0
-};
-
 /// @}
