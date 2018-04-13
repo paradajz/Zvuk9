@@ -24,5 +24,5 @@
 */
 
 /// \defgroup interface Interface
-/// \brief Buttons, encoders, LEDs and pads.
+/// \brief Buttons, encoders, LEDs, pads and display.
 ///
