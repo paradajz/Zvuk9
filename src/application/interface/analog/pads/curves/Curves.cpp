@@ -24,7 +24,6 @@
 */
 
 #include "Curves.h"
-#include "../Pads.h"
 #include "Functions.h"
 
 ///

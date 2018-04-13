@@ -29,7 +29,6 @@
 #include "../../../../digital/input/buttons/Buttons.h"
 #include "../../../../digital/input/encoders/Encoders.h"
 #include "../../../../digital/output/leds/LEDs.h"
-#include "../../../../display/Display.h"
 #include "../../../../display/menu/Menu.h"
 #include "../../../../../database/blocks/GlobalSettings.h"
 

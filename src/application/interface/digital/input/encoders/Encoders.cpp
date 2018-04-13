@@ -26,7 +26,6 @@
 #include "Encoders.h"
 #include "../../../display/menu/Menu.h"
 #include "handlers/Handlers.h"
-#include "../../../../board/Board.h"
 
 ///
 /// \brief External definition of function pointers used as handlers for encoders.

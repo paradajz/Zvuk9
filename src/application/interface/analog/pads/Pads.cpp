@@ -24,6 +24,7 @@
 */
 
 #include "Pads.h"
+#include "curves/Curves.h"
 
 ///
 /// \ingroup interfacePads

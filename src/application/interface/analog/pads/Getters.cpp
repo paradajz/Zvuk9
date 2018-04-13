@@ -28,6 +28,7 @@
 #include "../../../database/Database.h"
 #include "PredefinedScales.h"
 #include "../../../board/Board.h"
+#include "curves/Curves.h"
 
 ///
 /// \ingroup interfacePads

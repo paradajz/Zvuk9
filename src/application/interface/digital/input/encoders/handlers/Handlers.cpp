@@ -27,7 +27,6 @@
 #include "../../../../analog/pads/Pads.h"
 #include "../../../../digital/input/buttons/Buttons.h"
 #include "../../../../digital/input/encoders/Encoders.h"
-#include "../../../../display/Display.h"
 #include "../../../../display/menu/Menu.h"
 
 ///

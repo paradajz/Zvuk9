@@ -24,8 +24,8 @@
 */
 
 #include "Pads.h"
+#include "curves/Curves.h"
 #include "../../display/menu/Menu.h"
-#include "../../../database/blocks/PadCalibration.h"
 #include "../../digital/output/leds/LEDs.h"
 #include "../../digital/input/buttons/Buttons.h"
 
