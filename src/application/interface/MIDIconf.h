@@ -27,6 +27,7 @@
 
 ///
 /// \brief MIDI CC values used for transport controls when CC mode for those controls is enabled.
+/// \ingroup interface
 /// @{
 
 #define MIDI_SETTING_TRANSPORT_CC_PLAY              125
