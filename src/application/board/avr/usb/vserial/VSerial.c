@@ -23,14 +23,12 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#ifdef DEBUG
-#include "Serial.h"
+#include "VSerial.h"
 
 /** LUFA CDC Class driver interface configuration and state information. This structure is
  *  passed to all CDC Class driver functions, so that multiple instances of the same class
  *  within a device can be differentiated from one another.
  */
-
 USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
 {
     {
@@ -98,25 +96,16 @@ void EVENT_CDC_Device_ControLineStateChanged(USB_ClassInfo_CDC_Device_t *const C
     //bool HostReady = (CDCInterfaceInfo->State.ControlLineStates.HostToDevice & CDC_CONTROL_LINE_OUT_DTR) != 0;
 }
 
-Serial::Serial()
+void CDC_Init()
 {
-    //def constructor
     CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USBSerialStream);
     stdout = &USBSerialStream;
-}
-
-void Serial::init()
-{
     USB_Init();
 }
 
-void Serial::update()
+void CDC_Update()
 {
     /* Must throw away unused bytes from the host, or it will lock up while waiting for the device */
     CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
     CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
 }
-
-Serial vserial;
-
-#endif

@@ -29,10 +29,7 @@
 #include "interface/digital/input/DigitalInput.h"
 #include "interface/analog/pads/Pads.h"
 #include "database/Database.h"
-
-#ifdef DEBUG
-#include "vserial/Serial.h"
-#endif
+#include "board/Board.h"
 
 MIDI midi;
 
@@ -73,10 +70,6 @@ void startUpAnimation()
 int main()
 {
     //do not change order of initialization!
-
-    #ifdef DEBUG
-    vserial.init();
-    #endif
 
     board.init();
     display.init();
@@ -129,7 +122,7 @@ int main()
     while (1)
     {
         #ifdef DEBUG
-        vserial.update();
+        CDC_Update();
         #endif
 
         // pads.update();

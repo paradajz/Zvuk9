@@ -37,5 +37,7 @@ void Board::init()
 
     #ifndef DEBUG
     initUSB_MIDI();
+    #else
+    CDC_Init();
     #endif
 };

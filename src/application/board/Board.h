@@ -31,6 +31,9 @@
 #include "pins/Pins.h"
 #include "DataTypes.h"
 #include "../interface/digital/output/leds/Variables.h"
+#ifdef DEBUG
+#include "avr/usb/vserial/VSerial.h"
+#endif
 
 ///
 /// \brief Hardcoded board revision.
@@ -48,6 +51,7 @@ class Board
     public:
     Board();
     void init();
+    void updateVSerial();
     bool encoderEnabled(uint8_t encoderNumber);
     uint16_t getPadPressure(uint8_t pad);
     int16_t getPadX(uint8_t pad);

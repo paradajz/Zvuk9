@@ -43,22 +43,22 @@ ifneq ($(findstring boot,$(MAKECMDGOALS)), boot)
     SOURCES += modules/u8g2/csrc/u8x8_gpio.c
     SOURCES += modules/u8g2/csrc/u8x8_d_ssd1322.c
 
-    SOURCES += application/Zvuk9.cpp
-
     ifeq ($(findstring rls,$(MAKECMDGOALS)), rls)
         SOURCES += \
         modules/lufa/LUFA/Drivers/USB/Class/Device/AudioClassDevice.c \
         modules/lufa/LUFA/Drivers/USB/Class/Device/MIDIClassDevice.c
+
+        #filter out usb cdc
+        SOURCES := $(filter-out %vserial/VSerial.c %vserial/Descriptors.c,$(SOURCES))
     else
         SOURCES += \
         modules/lufa/LUFA/Drivers/USB/Class/Device/CDCClassDevice.c
 
-        SOURCES += $(shell find application/vserial -name "*.cpp")
-        SOURCES += $(shell find application/vserial -name "*.c")
-
-        #filter out usb midi here, cdc is used instead in debug
-        SOURCES := $(filter-out %usb/Descriptors.c %USB_MIDI.cpp,$(SOURCES))
+        #filter out usb midi
+        SOURCES := $(filter-out %usb/midi/Descriptors.c %usb/midi/USB_MIDI.cpp,$(SOURCES))
     endif
+
+    SOURCES += application/Zvuk9.cpp
 else
     #bootloader
     SOURCES += \

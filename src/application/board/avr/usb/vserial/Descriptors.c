@@ -35,8 +35,6 @@
  *  the device's capabilities and functions.
  */
 
-#ifdef DEBUG
-
 #include "Descriptors.h"
 
 
@@ -244,4 +242,3 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 	*DescriptorAddress = Address;
 	return Size;
 }
-#endif
