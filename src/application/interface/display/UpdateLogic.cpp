@@ -24,7 +24,6 @@
 */
 
 #include "Display.h"
-#include "Variables.h"
 
 StringBuffer stringBuffer;
 

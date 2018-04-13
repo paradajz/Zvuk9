@@ -88,11 +88,6 @@ void Database::init()
     DBMS::init(dbLayout, DB_BLOCKS);
     setHandleRead(memoryRead);
     setHandleWrite(memoryWrite);
-
-    if (!signatureValid())
-    {
-        factoryReset(initFull);
-    }
 }
 
 ///

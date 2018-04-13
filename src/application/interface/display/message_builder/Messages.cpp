@@ -24,7 +24,6 @@
 */
 
 #include "../Display.h"
-#include "../Variables.h"
 #include "../../analog/pads/Pads.h"
 #include "../../../Version.h"
 

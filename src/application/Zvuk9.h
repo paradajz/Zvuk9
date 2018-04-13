@@ -27,4 +27,13 @@
 
 #include "midi/src/MIDI.h"
 
+///
+/// \brief External definition of StringBuffer class instance.
+/// Used to make string building easier.
+///
+extern StringBuffer stringBuffer;
+
+///
+/// \brief External definition of MIDI class instance.
+///
 extern MIDI midi;

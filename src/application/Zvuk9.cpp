@@ -83,16 +83,23 @@ int main()
 
     database.init();
 
-    // if (!database.signatureValid())
-    // {
-    //     display.setDirectWriteState(true);
-    //     stringBuffer.appendText_P(dbInit_string);
-    //     display.updateText(1, displayText_still, display.getTextCenter(ARRAY_SIZE(dbInit_string)));
-    //     stringBuffer.appendText_P(pleaseWait_string);
-    //     display.updateText(2, displayText_still, display.getTextCenter(ARRAY_SIZE(pleaseWait_string)));
-    //     database.factoryReset(initFull);
-    //     display.setDirectWriteState(false);
-    // }
+    if (!database.signatureValid())
+    {
+        display.setDirectWriteState(true);
+
+        stringBuffer.startLine();
+        stringBuffer.appendText_P(dbInit_string);
+        stringBuffer.endLine();
+        display.updateText(1, displayText_still, display.getTextCenter(ARRAY_SIZE(dbInit_string)));
+
+        stringBuffer.startLine();
+        stringBuffer.appendText_P(pleaseWait_string);
+        stringBuffer.endLine();
+        display.updateText(2, displayText_still, display.getTextCenter(ARRAY_SIZE(pleaseWait_string)));
+
+        database.factoryReset(initFull);
+        display.setDirectWriteState(false);
+    }
 
     midi.setInputChannel(1);
     midi.setNoteOffMode((noteOffType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
