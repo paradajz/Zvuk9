@@ -100,7 +100,7 @@ inline void setMuxInput(uint8_t muxInput)
 }
 
 ///
-/// \brief Configures pad pins so that first pressure value can be read correctly.
+/// \brief Configures pad pins so that pressure value can be read correctly.
 ///
 void setupPressure()
 {
