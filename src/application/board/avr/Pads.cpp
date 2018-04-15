@@ -355,7 +355,7 @@ int16_t Board::getPadX(uint8_t pad)
 int16_t Board::getPadY(uint8_t pad)
 {
     if (samples[coordinateY][pad] != -1)
-        return 1023 - samples[coordinateY][pad];
+        return samples[coordinateY][pad];
     else
         return -1;
 }
