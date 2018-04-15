@@ -35,24 +35,6 @@
 static RingBuff_t  txBuffer;
 
 ///
-/// \brief Buffer in which incoming UART data is stored.
-///
-static RingBuff_t  rxBuffer;
-
-///
-/// \brief ISR used to store incoming data from UART to buffer.
-///
-ISR(USART1_RX_vect)
-{
-    uint8_t data = UDR1;
-
-    if (!RingBuffer_IsFull(&rxBuffer))
-    {
-        RingBuffer_Insert(&rxBuffer, data);
-    }
-}
-
-///
 /// \brief ISR used to write outgoing data in buffer to UART.
 ///
 ISR(USART1_UDRE_vect)
@@ -94,21 +76,6 @@ int8_t UARTwrite(uint8_t data)
     return 1;
 }
 
-///
-/// \brief Reads a byte from incoming UART buffer.
-/// \returns Single byte on success, -1 is buffer is empty.
-///
-int16_t UARTread()
-{
-    if (RingBuffer_IsEmpty(&rxBuffer))
-    {
-        return -1;
-    }
-
-    uint8_t data = RingBuffer_Remove(&rxBuffer);
-    return data;
-}
-
 /// @}
 
 ///
@@ -141,15 +108,12 @@ void Board::initUART_MIDI(uint32_t baudRate, bool reInit)
     //8 bit, no parity, 1 stop bit
     UCSR1C = (1<<UCSZ11) | (1<<UCSZ10);
 
-    //enable receiver, transmitter and receive interrupt
-    UCSR1B = (1<<RXEN1) | (1<<TXEN1) | (1<<RXCIE1);
+    //enable transmitter only
+    UCSR1B = (1<<TXEN1);
 
     if (!reInit)
     {
-        RingBuffer_InitBuffer(&rxBuffer);
         RingBuffer_InitBuffer(&txBuffer);
-
-        midi.handleUARTread(UARTread);
         midi.handleUARTwrite(UARTwrite);
     }
 }
