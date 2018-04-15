@@ -44,6 +44,9 @@ volatile uint16_t   padPressed;
 ///
 void Pads::update()
 {
+    if (!board.padDataAvailable())
+        return;
+
     bool restoreDisplay = false;
 
     for (int i=0; i<NUMBER_OF_PADS; i++)
@@ -54,9 +57,7 @@ void Pads::update()
         bool xAvailable = false;
         bool yAvailable = false;
 
-        uint16_t pressure = board.getPadPressure(i);
-
-        //all needed pressure samples are obtained
+        int16_t pressure = board.getPadPressure(i);
         velocityAvailable = checkVelocity(i, pressure);
 
         //only check x/y and aftertouch if pad is pressed
@@ -245,6 +246,8 @@ void Pads::update()
             }
         }
     }
+
+    board.continuePadReadout();
 }
 
 ///
@@ -253,9 +256,38 @@ void Pads::update()
 /// @param [in] value   Pad pressure.
 /// \returns True if data is available, false otherwise.
 ///
-bool Pads::checkVelocity(int8_t pad, uint16_t value)
+bool Pads::checkVelocity(int8_t pad, int16_t value)
 {
     assert(PAD_CHECK(pad));
+
+    if (value == -1)
+        return false;
+
+    if (!isPadPressed(pad))
+    {
+        velocitySamples[pad][velocitySampleCounter[pad]] = value;
+        velocitySampleCounter[pad]++;
+
+        if (velocitySampleCounter[pad] == 3)
+            velocitySampleCounter[pad] = 0;
+
+        for (int i=1; i<3; i++)
+        {
+            if (abs(velocitySamples[pad][i] - velocitySamples[pad][i-1]) > STABLE_SAMPLE_DIFF)
+                return false;
+        }
+
+        //find max now
+        uint16_t maxVal = 0;
+
+        for (int i=0; i<3; i++)
+        {
+            if (velocitySamples[pad][i] > maxVal)
+                maxVal = velocitySamples[pad][i];
+        }
+
+        value = maxVal;
+    }
 
     if (!PRESSURE_RAW_VALUE_CHECK(value))
         return false;
@@ -312,6 +344,7 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
             initialXposition[pad] = DEFAULT_INITIAL_XY_VALUE;
             initialYposition[pad] = DEFAULT_INITIAL_XY_VALUE;
             lastXYchangeTime = 0;
+            velocitySampleCounter[pad] = 0;
 
             if (isCalibrationEnabled() && (activeCalibration == coordinateZ))
             {
@@ -339,9 +372,12 @@ bool Pads::checkVelocity(int8_t pad, uint16_t value)
 /// @param [in] value               Pad pressure.
 /// \returns True if data is available, false otherwise.
 ///
-bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value)
+bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, int16_t value)
 {
     assert(PAD_CHECK(pad));
+
+    if (value == -1)
+        return false;
 
     if ((rTimeMs() -  lastPadPressTime[pad]) < AFTERTOUCH_READ_DELAY)
         return false;
@@ -493,6 +529,9 @@ bool Pads::checkX(int8_t pad)
 
     int16_t value = board.getPadX(pad);
 
+    if (value == -1)
+        return false;
+
     if (!XY_RAW_VALUE_CHECK(value))
         return false;
 
@@ -585,6 +624,9 @@ bool Pads::checkY(int8_t pad)
         return false;
 
     int16_t value = board.getPadY(pad);
+
+    if (value == -1)
+        return false;
 
     if (!XY_RAW_VALUE_CHECK(value))
         return false;

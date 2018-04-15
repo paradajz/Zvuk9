@@ -42,16 +42,11 @@ class LEDs
     static void setAllOn();
     static void setAllOff();
 
-    static void setBlinkState(uint8_t ledID, bool state);
-    static bool getBlinkState(uint8_t ledID);
-
     static void setLEDstate(uint8_t ledID, ledState_t state);
     static ledState_t getLEDstate(uint8_t ledID);
 
     static void setNoteLEDstate(note_t note, ledState_t state);
     static ledState_t getNoteLEDstate(note_t note);
-
-    static void setFadeSpeed(uint8_t speed);
 };
 
 ///

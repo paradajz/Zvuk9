@@ -13,6 +13,14 @@
         "xmemory0": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "*.ipp": "cpp",
+        "array": "cpp",
+        "chrono": "cpp",
+        "limits": "cpp",
+        "atomic": "cpp",
+        "slist": "cpp",
+        "ratio": "cpp",
+        "system_error": "cpp"
     },
 }

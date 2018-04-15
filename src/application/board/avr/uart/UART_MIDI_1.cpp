@@ -26,12 +26,16 @@
 #include "../../Board.h"
 
 ///
-/// \brief Buffer in which outgoing data is stored.
+/// \ingroup boardAVR
+/// @{
+
+///
+/// \brief Buffer in which outgoing UART data is stored.
 ///
 static RingBuff_t  txBuffer;
 
 ///
-/// \brief Buffer in which incoming data is stored.
+/// \brief Buffer in which incoming UART data is stored.
 ///
 static RingBuff_t  rxBuffer;
 
@@ -104,6 +108,8 @@ int16_t UARTread()
     uint8_t data = RingBuffer_Remove(&rxBuffer);
     return data;
 }
+
+/// @}
 
 ///
 /// \brief Initializes UART peripheral used to send and receive MIDI data.

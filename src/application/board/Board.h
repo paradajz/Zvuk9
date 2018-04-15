@@ -25,59 +25,13 @@
 
 #pragma once
 
-#include "Variables.h"
-#include "map/Map.h"
-#include "display/u8g2_wrapper.h"
-#include "pins/Pins.h"
-#include "DataTypes.h"
-#include "../interface/digital/output/leds/Variables.h"
-#ifdef DEBUG
-#include "avr/usb/vserial/VSerial.h"
+///
+/// \brief Low-level hardware handling.
+/// \defgroup board Board
+///
+
+#ifdef __AVR__
+#include "avr/Board.h"
+#elif defined STM32
+#include "stm32/Board.h"
 #endif
-
-///
-/// \brief Hardcoded board revision.
-/// @{
-///
-
-#define HARDWARE_VERSION_MAJOR      3
-#define HARDWARE_VERSION_MINOR      0
-#define HARDWARE_VERSION_REVISION   0
-
-/// @}
-
-class Board
-{
-    public:
-    Board();
-    void init();
-    void updateVSerial();
-    bool encoderEnabled(uint8_t encoderNumber);
-    uint16_t getPadPressure(uint8_t pad);
-    int16_t getPadX(uint8_t pad);
-    int16_t getPadY(uint8_t pad);
-    void reboot(rebootType_t type);
-    static bool checkNewRevision();
-
-    //digital in
-    static bool digitalInputDataAvailable();
-    static void continueDigitalInReadout();
-
-    //buttons
-    static bool getButtonState(uint8_t buttonIndex);
-
-    //encoders
-    static int8_t getEncoderState(uint8_t encoderID);
-
-    private:
-    static void initPins();
-    static void initAnalog();
-    static void initEncoders();
-    static void initUSB_MIDI();
-    static void initUART_MIDI(uint32_t baudRate, bool reInit);
-    static void initTimers();
-    static void initPads();
-    static int8_t readEncoder(uint8_t encoderID, uint8_t pairState);
-};
-
-extern Board board;

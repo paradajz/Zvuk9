@@ -29,7 +29,8 @@ else
     USE_FLASH_DESCRIPTORS \
     INTERRUPT_CONTROL_ENDPOINT \
     MIDI_SYSEX_ARRAY_SIZE=45 \
-    RING_BUFFER_SIZE=50
+    RING_BUFFER_SIZE=50 \
+    LED_INVERT
 endif
 
 ifeq ($(findstring debug,$(MAKECMDGOALS)), debug)
@@ -37,7 +38,8 @@ ifeq ($(findstring debug,$(MAKECMDGOALS)), debug)
     DEBUG
 else
     DEFINES += \
-    NDEBUG
+    NDEBUG \
+    START_UP_ANIMATION
 endif
 
 #board specific

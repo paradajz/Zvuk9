@@ -117,7 +117,6 @@ bool factoryReset(uint8_t argument)
         {
             wait_ms(1000);
             display.clearAll();
-            leds.setFadeSpeed(2);
             display.displayFactoryResetStart();
             //now, turn all leds off
             leds.setAllOff();
@@ -126,7 +125,7 @@ bool factoryReset(uint8_t argument)
             display.clearAll();
             display.displayFactoryResetEnd();
             wait_ms(2000);
-            board.reboot(rebootApp);
+            board.reboot();
         }
     }
 

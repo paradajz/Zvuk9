@@ -63,6 +63,7 @@ void Pads::init()
 {
     getConfiguration();
     curves.init();
+    setActiveNoteLEDs(false, 0);
 }
 
 Pads pads;

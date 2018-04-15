@@ -117,9 +117,9 @@ class Pads
     void updateLastPressedPad(int8_t pad, bool state);
 
     void checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
-    bool checkVelocity(int8_t pad, uint16_t value);
+    bool checkVelocity(int8_t pad, int16_t value);
     bool checkNoteBuffer();
-    bool checkAftertouch(int8_t pad, bool velocityAvailable, uint16_t value);
+    bool checkAftertouch(int8_t pad, bool velocityAvailable, int16_t value);
     bool checkX(int8_t pad);
     bool checkY(int8_t pad);
     void checkDisplayData(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
@@ -393,6 +393,18 @@ class Pads
 
     uint16_t                pitchBendEnabledX,
                             pitchBendEnabledY;
+
+    ///
+    /// \brief Array holding three samples for velocity reading for all pads.
+    /// Velocity is selected as maximum value once all three samples
+    /// have minimum difference between them specifed by STABLE_SAMPLE_DIFF constant.
+    ///
+    uint16_t                velocitySamples[NUMBER_OF_PADS][3];
+
+    ///
+    /// \brief Holds current sample count for velocity reading for all pads.
+    ///
+    uint8_t                 velocitySampleCounter[NUMBER_OF_PADS];
 
     /// @}
 

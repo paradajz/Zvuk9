@@ -26,8 +26,8 @@
 #include "LEDs.h"
 #include "Variables.h"
 #include "Helpers.h"
-#include "../../../../board/map/LEDs.h"
-#include "../../../../board/constants/LEDs.h"
+#include "../../../../board/common/Map.h"
+#include "../../../../board/common/constants/LEDs.h"
 
 ///
 /// \brief Current LED blink state.
@@ -35,16 +35,6 @@
 /// LEDs which have blinking enabled.
 ///
 static bool         blinkState;
-
-///
-/// \brief LED fading speed.
-/// Higher number means LED fading is faster.
-/// On AVR board, maximum amount of PWM steps is 255.
-/// When PWM value is 0, LED is off, on 255 it is fully on.
-/// LED fading works by gradually changing PWM value from 0 to 255.
-/// PWM value is increased or decreased by value of this variable each time.
-///
-volatile uint8_t    pwmSteps;
 
 ///
 /// \brief Array holding states of all LEDs.
@@ -80,7 +70,7 @@ const uint8_t ledNoteArray[] =
 ///
 LEDs::LEDs()
 {
-    pwmSteps = DEFAULT_FADE_SPEED;
+    
 }
 
 ///
@@ -123,7 +113,7 @@ void LEDs::setAllOff()
 void LEDs::setAllOn()
 {
     for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
-        setLEDstate(i, ledStateFull);
+        setLEDstate(i, ledStateOn);
 }
 
 ///
@@ -141,20 +131,25 @@ void LEDs::setLEDstate(uint8_t ledNumber, ledState_t state)
             ledState[ledNumber] = 0;
             break;
 
-            case ledStateDim:
-            //clear full intensity bit
-            BIT_CLEAR(ledState[ledNumber], LED_FULL_INTENSITY_BIT);
+            case ledStateOn:
+            case ledStateBlink:
             //set active and state bit
             BIT_SET(ledState[ledNumber], LED_ACTIVE_BIT);
             BIT_SET(ledState[ledNumber], LED_STATE_BIT);
-            break;
 
-            case ledStateFull:
-            //set full intensity bit
-            BIT_SET(ledState[ledNumber], LED_FULL_INTENSITY_BIT);
-            //set active and state bit
-            BIT_SET(ledState[ledNumber], LED_ACTIVE_BIT);
-            BIT_SET(ledState[ledNumber], LED_STATE_BIT);
+            if (state == ledStateBlink)
+            {
+                //enable blinking
+                BIT_SET(ledState[ledNumber], LED_BLINK_ON_BIT);
+                //this will turn the led immediately no matter how little time it's
+                //going to blink first time
+                BIT_SET(ledState[ledNumber], LED_STATE_BIT);
+            }
+            else
+            {
+                //disable led blinking
+                BIT_CLEAR(ledState[ledNumber], LED_BLINK_ON_BIT);
+            }
             break;
 
             default:
@@ -174,56 +169,6 @@ void LEDs::setNoteLEDstate(note_t note, ledState_t state)
 }
 
 ///
-/// \brief Turns blinking for requested LED index on or off.
-/// Blinking can be started only on LEDs which are already on.
-/// @param [in] ledID       LED index for which blink state is being changed.
-/// @param [in] state       New blink LED state (true/blink on, false/blink off).
-///
-void LEDs::setBlinkState(uint8_t ledID, bool state)
-{
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-    {
-        switch(state)
-        {
-            case true:
-            if (LED_ON(ledState[ledID]))
-            {
-                //enable blinking
-                BIT_SET(ledState[ledID], LED_BLINK_ON_BIT);
-                //this will turn the led immediately no matter how little time it's
-                //going to blink first time
-                BIT_SET(ledState[ledID], LED_STATE_BIT);
-            }
-            break;
-
-            case false:
-            //disable led blinking
-            BIT_CLEAR(ledState[ledID], LED_BLINK_ON_BIT);
-            //restore led back to constantly on state
-            BIT_SET(ledState[ledID], LED_STATE_BIT);
-            break;
-        }
-    }
-}
-
-///
-/// \brief Checks if blinking is enabled for requested LED.
-/// @param [in] ledID   LED index.
-/// \returns            True if blinking is enabled, false otherwise.
-///
-bool LEDs::getBlinkState(uint8_t ledID)
-{
-    bool value;
-
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-    {
-        value = BIT_READ(ledState[ledID], LED_BLINK_ON_BIT);
-    }
-
-    return value;
-}
-
-///
 /// \brief Checks state for requested LED index.
 /// @param [in] ledNumber   LED which is being checked.
 /// \returns LED state (enumerated type, see ledState_t).
@@ -231,16 +176,9 @@ bool LEDs::getBlinkState(uint8_t ledID)
 ledState_t LEDs::getLEDstate(uint8_t ledNumber)
 {
     if (LED_ON(ledState[ledNumber]))
-    {
-        if (BIT_READ(ledState[ledNumber], LED_FULL_INTENSITY_BIT))
-            return ledStateFull;
-        else
-            return ledStateDim;
-    }
+        return ledStateOn;
     else
-    {
         return ledStateOff;
-    }
 }
 
 ///
@@ -251,15 +189,6 @@ ledState_t LEDs::getLEDstate(uint8_t ledNumber)
 ledState_t LEDs::getNoteLEDstate(note_t note)
 {
     return getLEDstate(ledNoteArray[note]);
-}
-
-///
-/// \brief Sets speed of LED fading transition.
-/// Higher value corresponds to faster fading.
-///
-void LEDs::setFadeSpeed(uint8_t speed)
-{
-    pwmSteps = speed;
 }
 
 LEDs leds;

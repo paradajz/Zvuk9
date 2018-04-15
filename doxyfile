@@ -859,8 +859,8 @@ FILE_PATTERNS          = *.c \
                          *.vhdl \
                          *.ucf \
                          *.qsf \
-						 *.txt \
-						 *.dox
+                         *.txt \
+                         *.dox
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -874,10 +874,16 @@ RECURSIVE              = YES
 #
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
-		
+
 EXCLUDE 			+= ./Documentation
 EXCLUDE 			+= ./src/Build
 EXCLUDE 			+= ./src/modules
+EXCLUDE 			+= ./src/application/board/avr/usb/midi/Descriptors.c
+EXCLUDE 			+= ./src/application/board/avr/usb/midi/Descriptors.h
+EXCLUDE 			+= ./src/application/board/avr/usb/vserial/VSerial.c
+EXCLUDE 			+= ./src/application/board/avr/usb/vserial/VSerial.h
+EXCLUDE 			+= ./src/application/board/avr/usb/vserial/Descriptors.c
+EXCLUDE 			+= ./src/application/board/avr/usb/vserial/Descriptors.h
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

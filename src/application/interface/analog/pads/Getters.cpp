@@ -644,11 +644,11 @@ void Pads::getPadParameters()
 
     uint8_t lastTouchedPad = getLastTouchedPad();
 
-    leds.setLEDstate(LED_ON_OFF_SPLIT, splitEnabled ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(lastTouchedPad, functionOnOffAftertouch) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(lastTouchedPad, functionOnOffNotes) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(lastTouchedPad, functionOnOffX) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(lastTouchedPad, functionOnOffY) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_SPLIT, splitEnabled ? ledStateOn : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(lastTouchedPad, functionOnOffAftertouch) ? ledStateOn : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(lastTouchedPad, functionOnOffNotes) ? ledStateOn : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(lastTouchedPad, functionOnOffX) ? ledStateOn : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(lastTouchedPad, functionOnOffY) ? ledStateOn : ledStateOff);
 }
 
 ///
@@ -924,7 +924,7 @@ uint8_t Pads::getScaledPressure(int8_t pad, uint16_t pressure, pressureType_t ty
         break;
 
         case pressureVelocity:
-        return curves.map(CONSTRAIN(pressure, PAD_PRESS_PRESSURE, padPressureLimitUpper[pad]), PAD_PRESS_PRESSURE, padPressureLimitUpper[pad], 0, 127);
+        return curves.map(CONSTRAIN(pressure, 0, padPressureLimitUpper[pad]), 0, padPressureLimitUpper[pad], 0, 127);
         break;
     }
 

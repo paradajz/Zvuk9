@@ -53,19 +53,13 @@ void handleOnOff(uint8_t id, bool state)
             switch(id)
             {
                 case BUTTON_ON_OFF_NOTES:
-                //stop blinking
-                leds.setBlinkState(LED_ON_OFF_NOTES, false);
                 //make sure led state is correct
-                //hack: notes on/off can only be ledStateOff (0) or ledStateFull (2) - multiply by 2
-                leds.setLEDstate(LED_ON_OFF_NOTES, (ledState_t)(pads.getMIDISendState(pads.getLastTouchedPad(), functionOnOffNotes)*2));
+                leds.setLEDstate(LED_ON_OFF_NOTES, (ledState_t)(bool)(pads.getMIDISendState(pads.getLastTouchedPad(), functionOnOffNotes)));
                 break;
 
                 case BUTTON_ON_OFF_SPLIT:
-                //stop blinking
-                leds.setBlinkState(LED_ON_OFF_SPLIT, false);
                 //make sure led state is correct
-                //hack: split can only be ledStateOff (0) or ledStateFull (2) - multiply by 2
-                leds.setLEDstate(LED_ON_OFF_SPLIT, (ledState_t)(pads.getSplitState()*2));
+                leds.setLEDstate(LED_ON_OFF_SPLIT, (ledState_t)(bool)(pads.getSplitState()));
                 break;
 
                 default:
@@ -80,14 +74,12 @@ void handleOnOff(uint8_t id, bool state)
     {
         if (id == BUTTON_ON_OFF_NOTES)
         {
-            leds.setLEDstate(LED_ON_OFF_NOTES, ledStateFull);
-            leds.setBlinkState(LED_ON_OFF_NOTES, true);
+            leds.setLEDstate(LED_ON_OFF_NOTES, ledStateBlink);
             return;
         }
         else if (id == BUTTON_ON_OFF_SPLIT)
         {
-            leds.setLEDstate(LED_ON_OFF_SPLIT, ledStateFull);
-            leds.setBlinkState(LED_ON_OFF_SPLIT, true);
+            leds.setLEDstate(LED_ON_OFF_SPLIT, ledStateBlink);
             return;
         }
         else
@@ -112,10 +104,9 @@ void handleOnOff(uint8_t id, bool state)
         result = pads.setMIDISendState(functionOnOffNotes, !pads.getMIDISendState(lastTouchedPad, functionOnOffNotes));
 
         if (pads.getMIDISendState(lastTouchedPad, functionOnOffNotes))
-            ledState = ledStateFull;
+            ledState = ledStateOn;
         else
             ledState = ledStateOff;
-        leds.setBlinkState(ledNumber, false);
         break;
 
         case BUTTON_ON_OFF_AFTERTOUCH:
@@ -123,7 +114,7 @@ void handleOnOff(uint8_t id, bool state)
         ledNumber = LED_ON_OFF_AFTERTOUCH;
         function = functionOnOffAftertouch;
         if (pads.getMIDISendState(lastTouchedPad, functionOnOffAftertouch))
-            ledState = ledStateFull;
+            ledState = ledStateOn;
         else
             ledState = ledStateOff;
         break;
@@ -134,7 +125,7 @@ void handleOnOff(uint8_t id, bool state)
         function = functionOnOffX;
 
         if (pads.getMIDISendState(lastTouchedPad, functionOnOffX))
-            ledState = ledStateFull;
+            ledState = ledStateOn;
         else
             ledState = ledStateOff;
         break;
@@ -145,7 +136,7 @@ void handleOnOff(uint8_t id, bool state)
         function = functionOnOffY;
 
         if (pads.getMIDISendState(lastTouchedPad, functionOnOffY))
-            ledState = ledStateFull;
+            ledState = ledStateOn;
         else
             ledState = ledStateOff;
         break;
@@ -154,8 +145,7 @@ void handleOnOff(uint8_t id, bool state)
         ledNumber = LED_ON_OFF_SPLIT;
         function = functionOnOffSplit;
         result = pads.setSplitState(!pads.getSplitState());
-        pads.getSplitState() ? ledState = ledStateFull : ledState = ledStateOff;
-        leds.setBlinkState(ledNumber, false);
+        pads.getSplitState() ? ledState = ledStateOn : ledState = ledStateOff;
         break;
 
         default:
@@ -230,7 +220,7 @@ void handleTransportControl(uint8_t id, bool state)
             midi.sendSysEx(6, sysExArray, true);
             break;
         }
-        leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateFull);
+        leds.setLEDstate(LED_TRANSPORT_PLAY, ledStateOn);
         break;
 
         case BUTTON_TRANSPORT_STOP:
@@ -281,7 +271,7 @@ void handleTransportControl(uint8_t id, bool state)
         {
             if ((pads.getCalibrationMode() == coordinateX) || (pads.getCalibrationMode() == coordinateY))
             {
-                if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
+                if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateOn)
                 {
                     leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
                     display.setupCalibrationScreen(pads.getCalibrationMode(), false);
@@ -289,14 +279,14 @@ void handleTransportControl(uint8_t id, bool state)
                 }
                 else
                 {
-                    leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
+                    leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOn);
                     display.setupCalibrationScreen(pads.getCalibrationMode(), true);
                     return;
                 }
             }
             else
             {
-                if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
+                if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateOn)
                 {
                     leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
                     display.displayCalibrationStatus(pads.getCalibrationMode(), false);
@@ -304,7 +294,7 @@ void handleTransportControl(uint8_t id, bool state)
                 }
                 else
                 {
-                    leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
+                    leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOn);
                     display.displayCalibrationStatus(pads.getCalibrationMode(), true);
                     return;
                 }
@@ -312,7 +302,7 @@ void handleTransportControl(uint8_t id, bool state)
         }
         else
         {
-            if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateFull)
+            if (leds.getLEDstate(LED_TRANSPORT_RECORD) == ledStateOn)
             {
                 leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOff);
                 switch(buttons.getTransportControlMode())
@@ -335,7 +325,7 @@ void handleTransportControl(uint8_t id, bool state)
             }
             else
             {
-                leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateFull);
+                leds.setLEDstate(LED_TRANSPORT_RECORD, ledStateOn);
                 switch(buttons.getTransportControlMode())
                 {
                     case transportCC:
@@ -401,8 +391,8 @@ void handleUpDown(uint8_t id, bool state)
                 printf_P(PSTR("Pad edit mode entered.\n"));
                 #endif
 
-                leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
-                leds.setLEDstate(LED_OCTAVE_UP, ledStateFull);
+                leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOn);
+                leds.setLEDstate(LED_OCTAVE_UP, ledStateOn);
             }
             else
             {
@@ -437,7 +427,7 @@ void handleUpDown(uint8_t id, bool state)
                 pads.setOctave(direction ? pads.getOctave(true)+1 : pads.getOctave(true)-1, true);
                 display.setupPadEditScreen(pads.getLastTouchedPad()+1, pads.getOctave(true));
                 pads.setActiveNoteLEDs(true, lastTouchedPad);
-                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
+                direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOn) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOn);
                 break;
 
                 case true:
@@ -470,7 +460,7 @@ void handleUpDown(uint8_t id, bool state)
                 }
                 else
                 {
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateDim) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateDim);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOn) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOn);
                 }
             }
             else if (buttons.getButtonState(BUTTON_ON_OFF_NOTES))
@@ -500,7 +490,7 @@ void handleUpDown(uint8_t id, bool state)
                 }
                 else
                 {
-                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateFull) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateFull);
+                    direction ? leds.setLEDstate(LED_OCTAVE_UP, ledStateOn) : leds.setLEDstate(LED_OCTAVE_DOWN, ledStateOn);
                 }
             }
             break;

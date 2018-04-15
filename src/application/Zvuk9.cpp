@@ -35,9 +35,6 @@ MIDI midi;
 
 void startUpAnimation()
 {
-    //slow down fading for effect
-    leds.setFadeSpeed(3);
-
     ledState_t tempLedStateArray[MAX_NUMBER_OF_LEDS];
 
     for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
@@ -62,9 +59,6 @@ void startUpAnimation()
         leds.setLEDstate(i, tempLedStateArray[i]);
 
     wait_ms(1000);
-
-    //restore normal fade speed
-    leds.setFadeSpeed(DEFAULT_FADE_SPEED);
 }
 
 int main()
@@ -102,8 +96,6 @@ int main()
     pads.init();
     encoders.init();
 
-    pads.setActiveNoteLEDs(false, 0);
-
     #ifdef START_UP_ANIMATION
     startUpAnimation();
     #else
@@ -119,13 +111,15 @@ int main()
         display.displayFirmwareUpdated();
     #endif
 
+    startADCconversion();
+
     while (1)
     {
         #ifdef DEBUG
         CDC_Update();
         #endif
 
-        // pads.update();
+        pads.update();
         digitalInput.update();
         display.update();
         leds.update();

@@ -41,9 +41,7 @@ Display::Display()
 void Display::init()
 {
     display_hw.initDisplay();
-    display_hw.setPowerSave(0);
     display_hw.setFlipMode(1);
-
     display_hw.setFont(u8x8_font_pressstart2p_r);
     display_hw.clearDisplay();
 

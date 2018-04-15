@@ -28,7 +28,7 @@
 ///
 /// \brief LED blinking time in milliseconds.
 ///
-#define DEFAULT_BLINK_SPEED                 300
+#define DEFAULT_BLINK_SPEED                 150
 
 ///
 /// \brief If set to 1, LED is active (either blinking or constantly on).
@@ -45,7 +45,3 @@
 ///
 #define LED_STATE_BIT                       0x02
 
-///
-/// \brief If set to 1, LED is using full intensity.
-///
-#define LED_FULL_INTENSITY_BIT              0x03

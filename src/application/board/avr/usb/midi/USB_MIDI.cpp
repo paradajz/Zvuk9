@@ -27,6 +27,10 @@
 #include "Descriptors.h"
 
 ///
+/// \ingroup boardAVR
+/// @{
+
+///
 /// \brief MIDI Class Device Mode Configuration and State Structure.
 ///
 static USB_ClassInfo_MIDI_Device_t MIDI_Interface;
@@ -45,6 +49,13 @@ void EVENT_USB_Device_ConfigurationChanged(void)
     ConfigSuccess &= Endpoint_ConfigureEndpoint(MIDI_STREAM_OUT_EPADDR, EP_TYPE_BULK, MIDI_STREAM_EPSIZE, 1);
 }
 
+///
+/// \brief Used to read incoming USB packet.
+/// @param [in,out] USBMIDIpacket   Pointer to structure holding data in which
+///                                 USB data is stored.
+/// \returns                        True if there is incoming data in USB buffers.
+///                                 false otherwise.
+///
 bool usbRead(USBMIDIpacket_t& USBMIDIpacket)
 {
     //device must be connected and configured for the task to run
@@ -72,6 +83,13 @@ bool usbRead(USBMIDIpacket_t& USBMIDIpacket)
     }
 }
 
+///
+/// \brief Used to write data to USB interface.
+/// @param [in] USBMIDIpacket       Pointer to structure holding data in which
+///                                 USB data is stored.
+/// \returns                        True if there is writing to USB interface has
+///                                 succeeded, false otherwise.
+///
 bool usbWrite(USBMIDIpacket_t& USBMIDIpacket)
 {
     if (USB_DeviceState != DEVICE_STATE_Configured)
@@ -92,6 +110,11 @@ bool usbWrite(USBMIDIpacket_t& USBMIDIpacket)
     return true;
 }
 
+/// @}
+
+///
+/// \brief Initializes USB interface and callbacks for MIDI library (USB access).
+///
 void Board::initUSB_MIDI()
 {
     MIDI_Interface.Config.StreamingInterfaceNumber  = INTERFACE_ID_AudioStream;

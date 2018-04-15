@@ -827,8 +827,7 @@ void Pads::setCalibrationMode(bool state, padCoordinate_t type)
 
         //make sure split is disabled
         setSplitState(false);
-        leds.setBlinkState(LED_ON_OFF_SPLIT, false);
-        leds.setLEDstate(LED_ON_OFF_SPLIT, (ledState_t)(pads.getSplitState()*2));
+        leds.setLEDstate(LED_ON_OFF_SPLIT, (ledState_t)(bool)(pads.getSplitState()));
 
         switch(type)
         {
@@ -841,7 +840,7 @@ void Pads::setCalibrationMode(bool state, padCoordinate_t type)
             leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
             //enable x
             pads.setMIDISendState(functionOnOffX, true);
-            leds.setLEDstate(LED_ON_OFF_X, ledStateFull);
+            leds.setLEDstate(LED_ON_OFF_X, ledStateOn);
             //set linear curve
             pads.setCCcurve(coordinateX, curve_linear_up);
             pads.setCClimit(coordinateX, limitTypeMin, 0);
@@ -857,7 +856,7 @@ void Pads::setCalibrationMode(bool state, padCoordinate_t type)
             leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, ledStateOff);
             //enable y
             pads.setMIDISendState(functionOnOffY, true);
-            leds.setLEDstate(LED_ON_OFF_Y, ledStateFull);
+            leds.setLEDstate(LED_ON_OFF_Y, ledStateOn);
             //set linear curve
             pads.setCCcurve(coordinateY, curve_linear_up);
             pads.setCClimit(coordinateY, limitTypeMin, 0);
@@ -1405,10 +1404,10 @@ changeResult_t Pads::updateFunctionLEDs(int8_t pad)
     leds.setLEDstate(LED_ON_OFF_Y, ledStateOff);
 
     //turn on feature LEDs depending on enabled features for last touched pad
-    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(pad, functionOnOffAftertouch) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(pad, functionOnOffNotes) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(pad, functionOnOffX) ? ledStateFull : ledStateOff);
-    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(pad, functionOnOffY) ? ledStateFull : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_AFTERTOUCH, getMIDISendState(pad, functionOnOffAftertouch) ? ledStateOn : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_NOTES, getMIDISendState(pad, functionOnOffNotes) ? ledStateOn : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_X, getMIDISendState(pad, functionOnOffX) ? ledStateOn : ledStateOff);
+    leds.setLEDstate(LED_ON_OFF_Y, getMIDISendState(pad, functionOnOffY) ? ledStateOn : ledStateOff);
 
     return valueChanged;
 }
@@ -1444,13 +1443,13 @@ void Pads::updateNoteLEDs(int8_t pad, bool state)
         for (int i=0; i<noteCounter; i++)
         {
             tonicArray[i] = (uint8_t)getTonicFromNote(noteArray[i]);
-            leds.setNoteLEDstate((note_t)tonicArray[i], ledStateFull);
+            leds.setNoteLEDstate((note_t)tonicArray[i], ledStateBlink);
         }
         break;
 
         case false:
         //note off
-        //we need to set LEDs back to dim states for released pad, but only if
+        //we need to set LEDs back to full states for released pad, but only if
         //some other pad with same active note isn't already pressed
         bool noteActive;
 
@@ -1474,7 +1473,7 @@ void Pads::updateNoteLEDs(int8_t pad, bool state)
             }
 
             if (!noteActive)
-                leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledStateDim);
+                leds.setNoteLEDstate(getTonicFromNote((note_t)noteArray[z]), ledStateOn);
         }
         break;
     }
@@ -1713,15 +1712,15 @@ void Pads::setActiveNoteLEDs(bool padEditMode, uint8_t pad)
         for (int i=0; i<MIDI_NOTES; i++)
             leds.setNoteLEDstate((note_t)i, ledStateOff);
 
-        //set dim led state for assigned notes on current pad
+        //set full led state for assigned notes on current pad
         for (int i=0; i<noteCounter; i++)
-            leds.setNoteLEDstate((note_t)tonicArray[i], ledStateDim);
+            leds.setNoteLEDstate((note_t)tonicArray[i], ledStateOn);
 
-        //set full led state for assigned notes on current pad if note matches current octave
+        //set blink led state for assigned notes on current pad if note matches current octave
         for (int i=0; i<noteCounter; i++)
         {
             if (octaveArray[i] == pads.getOctave(true))
-                leds.setNoteLEDstate((note_t)tonicArray[i], ledStateFull);
+                leds.setNoteLEDstate((note_t)tonicArray[i], ledStateBlink);
         }
         break;
 
@@ -1734,7 +1733,7 @@ void Pads::setActiveNoteLEDs(bool padEditMode, uint8_t pad)
         {
             //turn note LED on only if corresponding note is active
             if (pads.isNoteAssigned((note_t)i))
-                leds.setNoteLEDstate((note_t)i, ledStateDim);
+                leds.setNoteLEDstate((note_t)i, ledStateOn);
         }
         break;
     }

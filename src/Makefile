@@ -30,7 +30,7 @@ LDFLAGS := -Wl,--gc-sections -mrelax -Wl,--start-group -Wl,-lm -Wl,--end-group
 #optimisation level
 ifneq ($(filter fw_%, $(MAKECMDGOALS)), )
     #firmware
-    OPT := -O2
+    OPT := -O3
 else
     #optimize for size for bootloader
     OPT := -Os

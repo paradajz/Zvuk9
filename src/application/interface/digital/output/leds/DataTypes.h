@@ -31,6 +31,6 @@
 typedef enum
 {
     ledStateOff,
-    ledStateDim,
-    ledStateFull
+    ledStateOn,
+    ledStateBlink
 } ledState_t;

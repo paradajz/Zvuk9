@@ -25,13 +25,12 @@
 
 #pragma once
 
-#include "../../../../board/constants/Hardware.h"
+#include "../../../../board/common/constants/Hardware.h"
 
 ///
 /// \brief External variables used both in LEDs interface and by low-level control.
 /// @{
 
-extern volatile uint8_t     pwmSteps;
 extern uint8_t              ledState[MAX_NUMBER_OF_LEDS];
 
 /// @}
