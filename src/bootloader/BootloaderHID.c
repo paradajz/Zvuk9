@@ -59,13 +59,8 @@ void Application_Jump_Check(void)
     //invert reading - pin uses pull-up
     bool hardwareTrigger = !readPin(BTLDR_BUTTON_PORT, BTLDR_BUTTON_PIN);
 
-    //check if user wants to enter bootloader
-    bool softwareTrigger = eeprom_read_byte((uint8_t*)REBOOT_VALUE_EEPROM_LOCATION) == BTLDR_REBOOT_VALUE;
-    //reset value in eeprom after reading
-    eeprom_write_byte((uint8_t*)REBOOT_VALUE_EEPROM_LOCATION, APP_REBOOT_VALUE);
-
-    //jump to app only if both software and hardware triggers aren't activated
-    if (!hardwareTrigger && !softwareTrigger)
+    //jump to app only if both hardware trigger isnt' activated
+    if (!hardwareTrigger)
         JumpToApplication = true;
 
     //clear reset source

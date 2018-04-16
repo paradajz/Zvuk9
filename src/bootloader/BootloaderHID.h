@@ -49,8 +49,7 @@
 #include <LUFA/Drivers/USB/USB.h>
 #include <LUFA/Platform/Platform.h>
 
-#include "../application/board/constants/Reboot.h"
-#include "../application/board/pins/Pins.h"
+#include "../application/board/avr/Pins.h"
 
 /* Preprocessor Checks: */
 #if !defined(__OPTIMIZE_SIZE__)
