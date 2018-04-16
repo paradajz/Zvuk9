@@ -45,9 +45,10 @@ void startUpAnimation()
         leds.setLEDstate(i, ledStateOff);
     }
 
-    //turn all leds on slowly
+    //turn all leds
     leds.setAllOn();
 
+    //enable global interrupts so that leds can actually turn on
     sei();
 
     display.displayWelcomeMessage();
@@ -67,7 +68,6 @@ int main()
 
     board.init();
     display.init();
-
     database.init();
 
     if (!database.signatureValid())
@@ -90,9 +90,7 @@ int main()
 
     midi.setInputChannel(1);
     midi.setNoteOffMode((noteOffType_t)database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID));
-    bool runningStatus = database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID);
-    midi.setRunningStatusState(runningStatus);
-
+    midi.setRunningStatusState(database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID));
     pads.init();
     encoders.init();
 
@@ -103,10 +101,10 @@ int main()
     #endif
 
     display.setupHomeScreen();
-
     buttons.init();
 
     #ifndef DEBUG
+    #warning should be checked
     if (board.checkNewRevision())
         display.displayFirmwareUpdated();
     #endif
