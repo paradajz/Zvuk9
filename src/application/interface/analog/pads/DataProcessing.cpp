@@ -301,11 +301,6 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
     {
         if ((rTimeMs() - lastXYchangeTime) < PRESSURE_IGNORE_XY_CHANGE)
             return false;
-
-        #ifdef DEBUG
-        if ((pad == 6) && isPadPressed(pad))
-        printf_P(PSTR("Pad off, current time: %d\n"), rTimeMs());
-        #endif
     }
 
     bool returnValue = false;
