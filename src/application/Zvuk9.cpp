@@ -111,6 +111,7 @@ int main()
         display.displayFirmwareUpdated();
     #endif
 
+    //start first conversion manually
     startADCconversion();
 
     while (1)
