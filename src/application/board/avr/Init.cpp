@@ -36,6 +36,7 @@ void Board::init()
     CDC_Init();
     #endif
 
+    initEEPROM();
     initPins();
     initTimers();
     initEncoders();

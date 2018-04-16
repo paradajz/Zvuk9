@@ -75,6 +75,7 @@ class Board
     static int8_t getEncoderState(uint8_t encoderID);
 
     private:
+    static void initEEPROM();
     static void initPins();
     static void initEncoders();
     static void initUSB_MIDI();
