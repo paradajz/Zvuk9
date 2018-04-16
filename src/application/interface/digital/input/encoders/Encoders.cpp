@@ -28,6 +28,10 @@
 #include "handlers/Handlers.h"
 
 ///
+/// \ingroup interfaceEncoders
+/// @{
+
+///
 /// \brief External definition of function pointers used as handlers for encoders.
 ///
 extern void     (*encoderHandler[MAX_NUMBER_OF_ENCODERS]) (uint8_t id, int8_t steps);
@@ -48,6 +52,7 @@ uint32_t        lastStepTime[MAX_NUMBER_OF_ENCODERS];
 ///
 int8_t          encoderSpeed[MAX_NUMBER_OF_ENCODERS];
 
+/// @}
 
 ///
 /// \brief Default constructor.

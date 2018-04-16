@@ -29,6 +29,10 @@
 #include "handlers/Handlers.h"
 
 ///
+/// \ingroup interfaceButtons
+/// @{
+
+///
 /// \brief External definition of function pointers used as handlers for buttons.
 ///
 extern void             (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (uint8_t data, bool state);
@@ -65,6 +69,8 @@ uint8_t                 buttonPressed[MAX_NUMBER_OF_BUTTONS/8+1];
 /// \brief Array holding debounce count for all buttons to avoid incorrect state detection.
 ///
 uint8_t                 buttonDebounceCounter[MAX_NUMBER_OF_BUTTONS];
+
+/// @}
 
 ///
 /// \brief Default constructor.
