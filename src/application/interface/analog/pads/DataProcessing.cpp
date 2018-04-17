@@ -390,7 +390,7 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, int16_t value)
     if (value == -1)
         return false;
 
-    if ((rTimeMs() -  lastPadPressTime[pad]) < AFTERTOUCH_READ_DELAY)
+    if ((rTimeMs() - lastPadPressTime[pad]) < AFTERTOUCH_READ_DELAY)
         return false;
 
     //pad is pressed
