@@ -104,7 +104,6 @@ int main()
     buttons.init();
 
     #ifndef DEBUG
-    #warning should be checked
     if (board.checkNewRevision())
         display.displayFirmwareUpdated();
     #endif
