@@ -40,7 +40,7 @@
 ///
 /// \brief Curve used to achieve linear and smoother response from pads.
 ///
-const uint16_t pressure_correction[1023] PROGMEM =
+const uint16_t pressure_correction[1024] PROGMEM =
 {
     0,
     1,
@@ -1064,6 +1064,7 @@ const uint16_t pressure_correction[1023] PROGMEM =
     1019,
     1020,
     1021,
+    1022,
     1023,
 };
 
