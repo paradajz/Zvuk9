@@ -120,8 +120,8 @@ class Pads
     bool checkVelocity(int8_t pad, int16_t value);
     bool checkNoteBuffer();
     bool checkAftertouch(int8_t pad, bool velocityAvailable, int16_t value);
-    bool checkX(int8_t pad);
-    bool checkY(int8_t pad);
+    bool checkX(int8_t pad, int16_t value);
+    bool checkY(int8_t pad, int16_t value);
     void checkDisplayData(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
 
     void sendNotes(int8_t pad, uint8_t velocity, bool state);
@@ -168,12 +168,6 @@ class Pads
     /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
     ///
     uint16_t                lastMIDInoteState;
-
-    ///
-    /// \brief Array holding initial pressure value for all pads (raw value 0-1023).
-    /// Used to detect whether pressure is increasing or decreasing.
-    ///
-    //int16_t                 initialPressureValue[NUMBER_OF_PADS];
 
     ///
     /// \brief Array holding CC controller number for every pad on X and Y coordinates.
@@ -310,7 +304,7 @@ class Pads
     /// Used to detect value bounce.
     /// @{
 
-    uint8_t                 xSendTimer[NUMBER_OF_PADS],
+    uint32_t                xSendTimer[NUMBER_OF_PADS],
                             ySendTimer[NUMBER_OF_PADS];
 
     /// @}
@@ -324,14 +318,7 @@ class Pads
     /// \brief Array holding last time in milliseconds aftertouch values have been changed for each pad.
     /// Used to detect value bounce.
     ///
-    uint8_t                 lastAftertouchUpdateTime[NUMBER_OF_PADS];
-
-    ///
-    /// \brief Variable used to detect whether new pressure reading is smaller than previous one for every pad.
-    /// Once reduction has been detected, X and Y readings are ignored to avoid bouncing.
-    /// \warning Variable type assumes there can be no more than 16 pads since each bit holds value for single pad.
-    ///
-    //uint16_t                pressureReduction;
+    uint32_t                lastAftertouchUpdateTime[NUMBER_OF_PADS];
 
     ///
     /// \brief Variables used to record pad press history.
@@ -394,6 +381,8 @@ class Pads
     uint16_t                pitchBendEnabledX,
                             pitchBendEnabledY;
 
+    /// @}
+
     ///
     /// \brief Array holding three samples for pressure reading for all pads.
     /// Pressure is selected as maximum value once all three samples
@@ -406,8 +395,21 @@ class Pads
     ///
     uint8_t                 pressureSampleCounter[NUMBER_OF_PADS];
 
-    /// @}
+    ///
+    /// \brief Used to count samples for X/Y coordinates.
+    ///
+    uint8_t                 xySampleCounter[NUMBER_OF_PADS];
 
+    ///
+    /// \brief Holds sum of current X/Y readings.
+    /// Two samples are summed after which they're divided by two.
+    /// {
+
+    uint16_t                xSamples[NUMBER_OF_PADS],
+                            ySamples[NUMBER_OF_PADS];
+
+
+    /// @}
 };
 
 ///

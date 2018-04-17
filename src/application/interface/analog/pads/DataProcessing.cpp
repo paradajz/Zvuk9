@@ -63,8 +63,28 @@ void Pads::update()
         //only check x/y and aftertouch if pad is pressed
         if (isPadPressed(i))
         {
-            xAvailable = checkX(i);
-            yAvailable = checkY(i);
+            xSamples[i] += board.getPadX(i);
+            ySamples[i] += board.getPadY(i);
+
+            xySampleCounter[i]++;
+
+            if (xySampleCounter[i] == 2)
+            {
+                xSamples[i] >>= 1;
+                ySamples[i] >>= 1;
+                xySampleCounter[i] = 0;
+
+                //once pad has been pressed ignore X/Y readings on low pressure
+                if (isPadPressed(i) && (getScaledPressure(i, board.getPadPressure(i), pressureVelocity) > XY_MIN_PRESSURE_PRESSED))
+                {
+                    xAvailable = checkX(i, xSamples[i]);
+                    yAvailable = checkY(i, ySamples[i]);
+                }
+
+                //reset sample sum back to 0
+                xSamples[i] = 0;
+                ySamples[i] = 0;
+            }
 
             aftertouchAvailable = checkAftertouch(i, velocityAvailable, pressure);
 
@@ -288,11 +308,11 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
 
     value = maxVal;
 
-    if (!PRESSURE_RAW_VALUE_CHECK(value))
-        return false;
-
     uint8_t calibratedPressure = getScaledPressure(pad, value, pressureVelocity);
     calibratedPressure = curves.getCurveValue(velocityCurve, calibratedPressure, 0, 127);
+
+    if (!PRESSURE_RAW_VALUE_CHECK(value))
+        return false;
 
     bool pressDetected = (calibratedPressure > 0);
 
@@ -318,9 +338,6 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
             lastPadPressTime[pad] = rTimeMs();
             returnValue = true;
         }
-
-        //always update lastPressure value
-        //initialPressureValue[pad] = value;
         break;
 
         case false:
@@ -381,16 +398,13 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, int16_t value)
     {
         uint8_t calibratedPressureAfterTouch = getScaledPressure(pad, value, pressureAftertouch);
 
-        if (lastAftertouchUpdateTime[pad] < 255)
-            lastAftertouchUpdateTime[pad]++;
-
         bool updateAftertouch = false;
 
         //if it's been more than AFTERTOUCH_SEND_TIMEOUT since last time aftertouch was sent, aftertouch value
         //must exceed AFTERTOUCH_SEND_TIMEOUT_STEP
         //else the value must differ from last one and time difference must be more than AFTERTOUCH_SEND_TIMEOUT_IGNORE
         //so that we don't send fluctuating values
-        if (lastAftertouchUpdateTime[pad] > AFTERTOUCH_SEND_TIMEOUT)
+        if ((rTimeMs() - lastAftertouchUpdateTime[pad]) > AFTERTOUCH_SEND_TIMEOUT)
         {
             if ((abs(calibratedPressureAfterTouch - lastAftertouchValue[pad]) > AFTERTOUCH_SEND_TIMEOUT_STEP) || ((calibratedPressureAfterTouch != lastAftertouchValue[pad]) && !calibratedPressureAfterTouch))
                 updateAftertouch = true;
@@ -404,7 +418,7 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, int16_t value)
         if (updateAftertouch)
         {
             lastAftertouchValue[pad] = calibratedPressureAfterTouch;
-            lastAftertouchUpdateTime[pad] = 0;
+            lastAftertouchUpdateTime[pad] = rTimeMs();
 
             if (!BIT_READ(aftertouchActivated, pad) && calibratedPressureAfterTouch)
                 BIT_WRITE(aftertouchActivated, pad, true);
@@ -514,14 +528,12 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, int16_t value)
 /// @param [in] pad     Pad which is being checked.
 /// \returns True if data is available, false otherwise.
 ///
-bool Pads::checkX(int8_t pad)
+bool Pads::checkX(int8_t pad, int16_t value)
 {
     assert(PAD_CHECK(pad));
 
     if ((rTimeMs() - lastPadPressTime[pad]) < XY_READ_DELAY)
         return false;
-
-    int16_t value = board.getPadX(pad);
 
     if (value == -1)
         return false;
@@ -558,14 +570,11 @@ bool Pads::checkX(int8_t pad)
 
     bool xChanged = false;
 
-    if (xSendTimer[pad] < 255)
-        xSendTimer[pad]++;
-
     if (getPitchBendState(pad, coordinateX))
     {
         value = getScaledXY(pad, value, coordinateX, midiScale_14b);
 
-        if (xSendTimer[pad] > XY_SEND_TIMEOUT)
+        if ((rTimeMs() - xSendTimer[pad]) > XY_SEND_TIMEOUT)
         {
             if (abs(value - lastXPitchBendValue[pad]) > XY_SEND_TIMEOUT_STEP)
                 xChanged = true;
@@ -580,7 +589,7 @@ bool Pads::checkX(int8_t pad)
         value = getScaledXY(pad, value, coordinateX, midiScale_7b);
         value = curves.getCurveValue((curve_t)padCurveX[pad], value, ccXminPad[pad], ccXmaxPad[pad]);
 
-        if (xSendTimer[pad] > XY_SEND_TIMEOUT)
+        if ((rTimeMs() - xSendTimer[pad]) > XY_SEND_TIMEOUT)
         {
             if (abs(value - lastXCCvalue[pad]) > XY_SEND_TIMEOUT_STEP)
                 xChanged = true;
@@ -598,7 +607,7 @@ bool Pads::checkX(int8_t pad)
         else
             lastXCCvalue[pad] = value;
 
-        xSendTimer[pad] = 0;
+        xSendTimer[pad] = rTimeMs();
         return true;
     }
 
@@ -610,14 +619,12 @@ bool Pads::checkX(int8_t pad)
 /// @param [in] pad     Pad which is being checked.
 /// \returns True if data is available, false otherwise.
 ///
-bool Pads::checkY(int8_t pad)
+bool Pads::checkY(int8_t pad, int16_t value)
 {
     assert(PAD_CHECK(pad));
 
     if ((rTimeMs() - lastPadPressTime[pad]) < XY_READ_DELAY)
         return false;
-
-    int16_t value = board.getPadY(pad);
 
     if (value == -1)
         return false;
@@ -654,14 +661,11 @@ bool Pads::checkY(int8_t pad)
 
     bool yChanged = false;
 
-    if (ySendTimer[pad] < 255)
-        ySendTimer[pad]++;
-
     if (getPitchBendState(pad, coordinateY))
     {
         value = getScaledXY(pad, value, coordinateY, midiScale_14b);
 
-        if (ySendTimer[pad] > XY_SEND_TIMEOUT)
+        if ((rTimeMs() - ySendTimer[pad]) > XY_SEND_TIMEOUT)
         {
             if (abs(value - lastYPitchBendValue[pad]) > XY_SEND_TIMEOUT_STEP)
                 yChanged = true;
@@ -676,7 +680,7 @@ bool Pads::checkY(int8_t pad)
         value = getScaledXY(pad, value, coordinateY, midiScale_7b);
         value = curves.getCurveValue((curve_t)padCurveY[pad], value, ccYminPad[pad], ccYmaxPad[pad]);
 
-        if (ySendTimer[pad] > XY_SEND_TIMEOUT)
+        if ((rTimeMs() - ySendTimer[pad]) > XY_SEND_TIMEOUT)
         {
             if (abs(value - lastYCCvalue[pad]) > XY_SEND_TIMEOUT_STEP)
                 yChanged = true;
@@ -694,7 +698,8 @@ bool Pads::checkY(int8_t pad)
         else
             lastYCCvalue[pad] = value;
 
-        ySendTimer[pad] = 0;
+        ySendTimer[pad] = rTimeMs();
+
         return true;
     }
 

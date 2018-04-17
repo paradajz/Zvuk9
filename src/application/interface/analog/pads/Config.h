@@ -133,7 +133,7 @@
 #define AFTERTOUCH_PRESSURE_RATIO_UPPER             20
 
 ///
-/// \brief Readings after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.
+/// \brief Time in milliseconds after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.
 /// Used to debounce rapidly changing aftertouch values.
 ///
 #define AFTERTOUCH_SEND_TIMEOUT                     5
@@ -144,10 +144,16 @@
 #define AFTERTOUCH_SEND_TIMEOUT_STEP                3
 
 ///
-/// \brief Readings after which X/Y value needs to change by XY_SEND_TIMEOUT_STEP in order to send new value.
+/// \brief Time in milliseconds after which X/Y value needs to change by XY_SEND_TIMEOUT_STEP in order to send new value.
 /// Used to debounce rapidly changing X/Y values.
 ///
 #define XY_SEND_TIMEOUT                             5
+
+///
+/// \brief Minimum MIDI pressure (velocity) value necessary to send X/Y values (after initial values have been sent).
+/// Used to avoid unstable X/Y values on low pressure.
+///
+#define XY_MIN_PRESSURE_PRESSED                     10
 
 ///
 /// \brief Difference between current and previous aftertouch reading after XY_SEND_TIMEOUT used to detect value change.
