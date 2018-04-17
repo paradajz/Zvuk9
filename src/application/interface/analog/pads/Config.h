@@ -136,12 +136,12 @@
 /// \brief Time in milliseconds after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.
 /// Used to debounce rapidly changing aftertouch values.
 ///
-#define AFTERTOUCH_SEND_TIMEOUT                     5
+#define AFTERTOUCH_SEND_TIMEOUT                     3
 
 ///
 /// \brief Difference between current and previous aftertouch reading after AFTERTOUCH_SEND_TIMEOUTms used to detect value change.
 ///
-#define AFTERTOUCH_SEND_TIMEOUT_STEP                3
+#define AFTERTOUCH_SEND_TIMEOUT_STEP                5
 
 ///
 /// \brief Time in milliseconds after which X/Y value needs to change by XY_SEND_TIMEOUT_STEP in order to send new value.
