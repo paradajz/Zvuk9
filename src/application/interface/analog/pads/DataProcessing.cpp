@@ -263,31 +263,30 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
     if (value == -1)
         return false;
 
-    if (!isPadPressed(pad))
+    //stable pressure sample is taken as maximum value out of three samples
+    //with absolute difference between all samples being less than STABLE_SAMPLE_DIFF
+    pressureSamples[pad][pressureSampleCounter[pad]] = value;
+    pressureSampleCounter[pad]++;
+
+    if (pressureSampleCounter[pad] == 3)
+        pressureSampleCounter[pad] = 0;
+
+    for (int i=1; i<3; i++)
     {
-        velocitySamples[pad][velocitySampleCounter[pad]] = value;
-        velocitySampleCounter[pad]++;
-
-        if (velocitySampleCounter[pad] == 3)
-            velocitySampleCounter[pad] = 0;
-
-        for (int i=1; i<3; i++)
-        {
-            if (abs(velocitySamples[pad][i] - velocitySamples[pad][i-1]) > STABLE_SAMPLE_DIFF)
-                return false;
-        }
-
-        //find max now
-        uint16_t maxVal = 0;
-
-        for (int i=0; i<3; i++)
-        {
-            if (velocitySamples[pad][i] > maxVal)
-                maxVal = velocitySamples[pad][i];
-        }
-
-        value = maxVal;
+        if (abs(pressureSamples[pad][i] - pressureSamples[pad][i-1]) > STABLE_SAMPLE_DIFF)
+            return false;
     }
+
+    //find max now
+    uint16_t maxVal = 0;
+
+    for (int i=0; i<3; i++)
+    {
+        if (pressureSamples[pad][i] > maxVal)
+            maxVal = pressureSamples[pad][i];
+    }
+
+    value = maxVal;
 
     if (!PRESSURE_RAW_VALUE_CHECK(value))
         return false;

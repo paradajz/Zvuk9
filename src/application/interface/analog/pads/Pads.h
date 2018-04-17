@@ -395,16 +395,16 @@ class Pads
                             pitchBendEnabledY;
 
     ///
-    /// \brief Array holding three samples for velocity reading for all pads.
-    /// Velocity is selected as maximum value once all three samples
+    /// \brief Array holding three samples for pressure reading for all pads.
+    /// Pressure is selected as maximum value once all three samples
     /// have minimum difference between them specifed by STABLE_SAMPLE_DIFF constant.
     ///
-    uint16_t                velocitySamples[NUMBER_OF_PADS][3];
+    uint16_t                pressureSamples[NUMBER_OF_PADS][3];
 
     ///
-    /// \brief Holds current sample count for velocity reading for all pads.
+    /// \brief Holds current sample count for pressure reading for all pads.
     ///
-    uint8_t                 velocitySampleCounter[NUMBER_OF_PADS];
+    uint8_t                 pressureSampleCounter[NUMBER_OF_PADS];
 
     /// @}
 

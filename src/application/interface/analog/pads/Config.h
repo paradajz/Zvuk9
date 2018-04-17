@@ -30,11 +30,10 @@
 /// @{
 
 ///
-/// Velocity reading uses the following algorithm:
-/// If sample is greater than zero and pad isn't pressed, read more
-/// samples until three consecutive samples have difference betweeen
-/// them less than STABLE_SAMPLE_DIFF. Once those samples are read,
-/// select maximum. Maximum value is then velocity.
+/// Pressure reading uses the following algorithm:
+/// Read samples until three consecutive samples have difference
+/// betweeen them less than STABLE_SAMPLE_DIFF. Once those samples
+/// are read, select maximum.
 ///
 #define STABLE_SAMPLE_DIFF                          20
 
