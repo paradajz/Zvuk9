@@ -160,8 +160,7 @@ ISR(ADC_vect)
 {
     //always ignore first reading
     static bool ignoreFirst = true;
-    //pad should be switched if all coordinates are read or
-    //after second pressure reading (depending on whether pad is pressed or not)
+    //pad should be switched if all coordinates are read
     bool padSwitch = false;
 
     if (!ignoreFirst)
@@ -178,16 +177,7 @@ ISR(ADC_vect)
             case readPressure1:
             //store second pressure reading from opposite plate
             samples[coordinateZ][activePad] = 1023 - (ADC - pressurePlate1);
-            //switch to x/y reading only if pad is pressed
-            if (BIT_READ(padPressed, activePad))
-            {
-                padReadingIndex = readX;
-            }
-            else
-            {
-                padReadingIndex = readPressure0;
-                padSwitch = true;
-            }
+            padReadingIndex = readX;
             break;
 
             case readX:
@@ -309,24 +299,22 @@ int16_t Board::getPadPressure(uint8_t pad)
     {
         uint16_t cVal = pgm_read_word(&pressure_correction[samples[coordinateZ][pad]]);
 
-        if (cVal > PAD_PRESS_PRESSURE)
-        {
-            return cVal;
-        }
-        else
+        //if pad is already pressed, return zero value only if it's smaller
+        //than PAD_RELEASE_PRESSURE
+        if (cVal < PAD_PRESS_PRESSURE)
         {
             if (BIT_READ(padPressed, pad))
             {
                 if (cVal < PAD_RELEASE_PRESSURE)
-                    return 0;
-                else
-                    return cVal;
+                    cVal = 0;
             }
             else
             {
-                return 0;
+                cVal = 0;
             }
         }
+
+        return cVal;
     }
     else
     {
