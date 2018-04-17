@@ -56,9 +56,6 @@ bool factoryReset(uint8_t argument)
                  //hardcoding!!! :( pads 1, 7 and 9 need to be pressed to invoke factory reset
                 if ((i != 6) && (i != 0) && (i != 8))
                 {
-                    //flush all accumulated encoder output if there were any movements
-                    #warning to-do
-                    // encoders.flush();
                     display.setDirectWriteState(false);
                     return false;
                 }
