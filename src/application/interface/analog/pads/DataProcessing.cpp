@@ -338,7 +338,7 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
             initialXposition[pad] = DEFAULT_INITIAL_XY_VALUE;
             initialYposition[pad] = DEFAULT_INITIAL_XY_VALUE;
             lastXYchangeTime = 0;
-            velocitySampleCounter[pad] = 0;
+            pressureSampleCounter[pad] = 0;
 
             if (isCalibrationEnabled() && (activeCalibration == coordinateZ))
             {
