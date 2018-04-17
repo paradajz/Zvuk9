@@ -39,6 +39,7 @@ void Display::displayFirmwareUpdated()
     updateText(DISPLAY_ROW_MESSAGE_1, displayText_temp, getTextCenter(stringBuffer.getSize()));
 
     stringBuffer.startLine();
+    stringBuffer.appendChar('v', 1);
     stringBuffer.appendText_P(deviceInfo_swVersion_string);
     stringBuffer.appendInt(SW_VERSION_MAJOR);
     stringBuffer.appendText(".");
