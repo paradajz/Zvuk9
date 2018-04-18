@@ -236,7 +236,7 @@ void Buttons::setButtonEnableState(int8_t buttonID, bool state)
     uint8_t arrayIndex = buttonID/8;
     uint8_t buttonIndex = buttonID - 8*arrayIndex;
 
-    BIT_WRITE(buttonEnabled[arrayIndex], buttonIndex, false);
+    BIT_WRITE(buttonEnabled[arrayIndex], buttonIndex, state);
 }
 
 ///
