@@ -30,11 +30,8 @@
 #include "../../../../board/common/constants/LEDs.h"
 
 ///
-/// \brief Current LED blink state.
-/// State of this variable is changed after defined blink time and applied to all
-/// LEDs which have blinking enabled.
-///
-static bool         blinkState;
+/// \ingroup interfaceLEDs
+/// @{
 
 ///
 /// \brief Array holding states of all LEDs.
@@ -44,7 +41,7 @@ uint8_t             ledState[MAX_NUMBER_OF_LEDS];
 ///
 /// \brief Last time in milliseconds LED blink state has been changed.
 ///
-static uint32_t     lastLEDblinkUpdateTime;
+uint32_t            lastLEDblinkUpdateTime;
 
 ///
 /// \brief Array of LED indexes matched with note_t enumeration defined in MIDI module.
@@ -64,6 +61,8 @@ const uint8_t ledNoteArray[] =
     LED_NOTE_A_SHARP,
     LED_NOTE_B
 };
+
+/// @}
 
 ///
 /// \brief Default constructor.
@@ -86,14 +85,13 @@ void LEDs::update()
         {
             if (BIT_READ(ledState[i], LED_BLINK_ON_BIT))
             {
-                if (blinkState)
+                if (!BIT_READ(ledState[i], LED_STATE_BIT))
                     BIT_SET(ledState[i], LED_STATE_BIT);
                 else
                     BIT_CLEAR(ledState[i], LED_STATE_BIT);
             }
         }
 
-        blinkState = !blinkState;
         lastLEDblinkUpdateTime = rTimeMs();
     }
 }

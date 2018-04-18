@@ -26,6 +26,10 @@
 #pragma once
 
 ///
+/// \ingroup interfaceLEDs
+/// @{
+
+///
 /// \brief List of all possible LED states.
 ///
 typedef enum
@@ -34,3 +38,5 @@ typedef enum
     ledStateOn,
     ledStateBlink
 } ledState_t;
+
+/// @}

@@ -29,6 +29,7 @@
 
 ///
 /// \brief Helper macros used to determine if LED is on or off.
+/// \ingroup interfaceLEDs
 /// @{
 
 #define LED_ON_MASK     ((0x01 << LED_ACTIVE_BIT) | (0x01 << LED_STATE_BIT))

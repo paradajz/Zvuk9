@@ -26,9 +26,13 @@
 #pragma once
 
 ///
+/// \ingroup interfaceLEDs
+/// @{
+
+///
 /// \brief LED blinking time in milliseconds.
 ///
-#define DEFAULT_BLINK_SPEED                 150
+#define DEFAULT_BLINK_SPEED                 200
 
 ///
 /// \brief If set to 1, LED is active (either blinking or constantly on).
@@ -44,4 +48,6 @@
 /// \brief If set to 1, LED is currently on.
 ///
 #define LED_STATE_BIT                       0x02
+
+/// @}
 
