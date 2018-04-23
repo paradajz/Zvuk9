@@ -286,6 +286,11 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
 
     for (int i=0; i<STABLE_SAMPLE_COUNT; i++)
     {
+        //if one of the samples is zero
+        //leave maxVal as is (zero)
+        if (!pressureSamples[pad][i])
+            break;
+
         if (pressureSamples[pad][i] > maxVal)
             maxVal = pressureSamples[pad][i];
     }
