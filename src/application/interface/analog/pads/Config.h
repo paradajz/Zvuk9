@@ -40,7 +40,7 @@
 /// betweeen them less than STABLE_SAMPLE_DIFF. Once those samples
 /// are read, select maximum.
 ///
-#define STABLE_SAMPLE_DIFF                          40
+#define STABLE_SAMPLE_DIFF                          25
 
 ///
 /// \brief Time in milliseconds after which X/Y values are being read after pad has been pressed.
