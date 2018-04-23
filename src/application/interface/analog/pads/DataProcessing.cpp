@@ -63,27 +63,11 @@ void Pads::update()
         //only check x/y and aftertouch if pad is pressed
         if (isPadPressed(i))
         {
-            xSamples[i] += board.getPadX(i);
-            ySamples[i] += board.getPadY(i);
-
-            xySampleCounter[i]++;
-
-            if (xySampleCounter[i] == 2)
+            //once pad has been pressed ignore X/Y readings on low pressure
+            if (isPadPressed(i) && (getScaledPressure(i, board.getPadPressure(i), pressureVelocity) > XY_MIN_PRESSURE_PRESSED))
             {
-                xSamples[i] >>= 1;
-                ySamples[i] >>= 1;
-                xySampleCounter[i] = 0;
-
-                //once pad has been pressed ignore X/Y readings on low pressure
-                if (isPadPressed(i) && (getScaledPressure(i, board.getPadPressure(i), pressureVelocity) > XY_MIN_PRESSURE_PRESSED))
-                {
-                    xAvailable = checkX(i, xSamples[i]);
-                    yAvailable = checkY(i, ySamples[i]);
-                }
-
-                //reset sample sum back to 0
-                xSamples[i] = 0;
-                ySamples[i] = 0;
+                xAvailable = checkX(i, board.getPadX(i));
+                yAvailable = checkY(i, board.getPadY(i));
             }
 
             aftertouchAvailable = checkAftertouch(i, velocityAvailable, pressure);
@@ -288,10 +272,10 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
     pressureSamples[pad][pressureSampleCounter[pad]] = value;
     pressureSampleCounter[pad]++;
 
-    if (pressureSampleCounter[pad] == 3)
+    if (pressureSampleCounter[pad] == STABLE_SAMPLE_COUNT)
         pressureSampleCounter[pad] = 0;
 
-    for (int i=1; i<3; i++)
+    for (int i=1; i<STABLE_SAMPLE_COUNT; i++)
     {
         if (abs(pressureSamples[pad][i] - pressureSamples[pad][i-1]) > STABLE_SAMPLE_DIFF)
             return false;
@@ -300,7 +284,7 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
     //find max now
     uint16_t maxVal = 0;
 
-    for (int i=0; i<3; i++)
+    for (int i=0; i<STABLE_SAMPLE_COUNT; i++)
     {
         if (pressureSamples[pad][i] > maxVal)
             maxVal = pressureSamples[pad][i];

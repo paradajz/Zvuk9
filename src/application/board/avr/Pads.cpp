@@ -55,6 +55,8 @@ const uint8_t coordinateAnalogInput[PAD_READINGS] =
 {
     PAD_PLATE_X_PLUS_PIN,
     PAD_PLATE_Y_PLUS_PIN,
+    PAD_PLATE_Y_MINUS_PIN,
+    PAD_PLATE_X_MINUS_PIN,
     PAD_PLATE_Y_PLUS_PIN,
     PAD_PLATE_X_PLUS_PIN
 };
@@ -101,8 +103,12 @@ inline void setMuxInput(uint8_t muxInput)
 
 ///
 /// \brief Configures pad pins so that pressure value can be read correctly.
-///
-void setupPressure()
+// Two pressure setups are used. Using only one setup results in pressure being lower
+/// in one pad corner. To overcome this, use two setups where opposite pins are configured.
+/// Once both setups are finished, pressure is average value of two read pressure readings.
+/// @{
+
+void setupPressure0()
 {
     //apply voltage from one X conductor to one Y conductor
     //read voltages at the other X and Y conductors
@@ -116,6 +122,23 @@ void setupPressure()
     setLow(PAD_PLATE_X_MINUS_PORT, PAD_PLATE_X_MINUS_PIN);
     setHigh(PAD_PLATE_Y_MINUS_PORT, PAD_PLATE_Y_MINUS_PIN);
 }
+
+void setupPressure1()
+{
+    //apply voltage from one X conductor to one Y conductor
+    //read voltages at the other X and Y conductors
+    setInput(PAD_PLATE_Y_MINUS_PORT, PAD_PLATE_Y_MINUS_PIN);
+    setInput(PAD_PLATE_X_MINUS_PORT, PAD_PLATE_X_MINUS_PIN);
+    setOutput(PAD_PLATE_Y_PLUS_PORT, PAD_PLATE_Y_PLUS_PIN);
+    setOutput(PAD_PLATE_X_PLUS_PORT, PAD_PLATE_X_PLUS_PIN);
+
+    setLow(PAD_PLATE_Y_MINUS_PORT, PAD_PLATE_Y_MINUS_PIN);
+    setLow(PAD_PLATE_X_MINUS_PORT, PAD_PLATE_X_MINUS_PIN);
+    setLow(PAD_PLATE_Y_PLUS_PORT, PAD_PLATE_Y_PLUS_PIN);
+    setHigh(PAD_PLATE_X_PLUS_PORT, PAD_PLATE_X_PLUS_PIN);
+}
+
+/// @}
 
 ///
 /// \brief Configures pad pins so that X value can be read correctly.
@@ -168,15 +191,24 @@ ISR(ADC_vect)
         switch(padReadingIndex)
         {
             case readPressure0:
-            //store first reading in temp variable
             pressurePlate1 = ADC;
-            //next pressure reading
             padReadingIndex = readPressure1;
             break;
 
             case readPressure1:
             //store second pressure reading from opposite plate
             samples[coordinateZ][activePad] = 1023 - (ADC - pressurePlate1);
+            padReadingIndex = readPressure2;
+            break;
+
+            case readPressure2:
+            pressurePlate1 = ADC;
+            padReadingIndex = readPressure3;
+            break;
+
+            case readPressure3:
+            //store second pressure reading from opposite plate
+            samples[coordinateZ][activePad] = (samples[coordinateZ][activePad] + (1023 - (ADC - pressurePlate1))) >> 1;
             padReadingIndex = readX;
             break;
 
@@ -240,7 +272,7 @@ void Board::initPads()
     for (int i=0; i<5; i++)
         getADCvalue();
 
-    setupPressure();
+    setupPressure0();
     //start by reading first pressure value
     padReadingIndex = readPressure0;
     setADCchannel(coordinateAnalogInput[padReadingIndex]);
@@ -249,8 +281,10 @@ void Board::initPads()
     setMuxInput(padIDArray[activePad]);
 
     //place setup z/x/y in function pointer for simpler access in isr
-    coordinateSetup[readPressure0] = setupPressure;
-    coordinateSetup[readPressure1] = setupPressure;
+    coordinateSetup[readPressure0] = setupPressure0;
+    coordinateSetup[readPressure1] = setupPressure0;
+    coordinateSetup[readPressure2] = setupPressure1;
+    coordinateSetup[readPressure3] = setupPressure1;
     coordinateSetup[readX] = setupX;
     coordinateSetup[readY] = setupY;
 

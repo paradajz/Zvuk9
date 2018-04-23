@@ -394,22 +394,6 @@ class Pads
     /// \brief Holds current sample count for pressure reading for all pads.
     ///
     uint8_t                 pressureSampleCounter[NUMBER_OF_PADS];
-
-    ///
-    /// \brief Used to count samples for X/Y coordinates.
-    ///
-    uint8_t                 xySampleCounter[NUMBER_OF_PADS];
-
-    ///
-    /// \brief Holds sum of current X/Y readings.
-    /// Two samples are summed after which they're divided by two.
-    /// {
-
-    uint16_t                xSamples[NUMBER_OF_PADS],
-                            ySamples[NUMBER_OF_PADS];
-
-
-    /// @}
 };
 
 ///

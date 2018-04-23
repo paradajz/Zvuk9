@@ -30,12 +30,17 @@
 /// @{
 
 ///
+/// \brief Number of pressure samples.
+///
+#define STABLE_SAMPLE_COUNT                         2
+
+///
 /// Pressure reading uses the following algorithm:
-/// Read samples until three consecutive samples have difference
+/// Read samples until STABLE_SAMPLE_COUNT consecutive samples have difference
 /// betweeen them less than STABLE_SAMPLE_DIFF. Once those samples
 /// are read, select maximum.
 ///
-#define STABLE_SAMPLE_DIFF                          20
+#define STABLE_SAMPLE_DIFF                          40
 
 ///
 /// \brief Time in milliseconds after which X/Y values are being read after pad has been pressed.
@@ -124,13 +129,13 @@
 /// \brief Percentage used to calculate lower pressure limit to send aftertouch.
 /// Lower aftertouch value = Upper pressure (without sensitivity scaling) value + (Upper pressure (velocity) value * AFTERTOUCH_PRESSURE_RATIO_LOWER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_LOWER             23
+#define AFTERTOUCH_PRESSURE_RATIO_LOWER             38
 
 ///
 /// \brief Percentage used to calculate upper pressure limit to send aftertouch.
 /// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER             13
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER             35
 
 ///
 /// \brief Time in milliseconds after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.

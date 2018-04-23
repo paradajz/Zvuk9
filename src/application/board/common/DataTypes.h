@@ -34,8 +34,10 @@
 ///
 typedef enum
 {
-    readPressure0,  ///< Pressure from first FSR plate.
-    readPressure1,  ///< Pressure from second FSR plate.
+    readPressure0,  ///< First pressure reading.
+    readPressure1,  ///< Second pressure reading from opposite conductor.
+    readPressure2,  ///< First pressure reading.
+    readPressure3,  ///< Second pressure reading from opposite conductor.
     readX,          ///< X coordinate.
     readY,          ///< Y coordinate.
     PAD_READINGS
