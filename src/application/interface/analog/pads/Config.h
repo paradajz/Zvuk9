@@ -43,6 +43,11 @@
 #define STABLE_SAMPLE_DIFF                          25
 
 ///
+/// \brief Pressure reading above which stable sample difference is ignored.
+///
+#define STABLE_SAMPLE_DIFF_IGNORE_MIN               80
+
+///
 /// \brief Time in milliseconds after which X/Y values are being read after pad has been pressed.
 /// Initial X/Y values tend to be unstable.
 ///

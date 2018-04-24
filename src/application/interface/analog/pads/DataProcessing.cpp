@@ -267,7 +267,7 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
     if (value == -1)
         return false;
 
-    //stable pressure sample is taken as maximum value out of three samples
+    //stable pressure sample is taken as maximum value out of STABLE_SAMPLE_COUNT samples
     //with absolute difference between all samples being less than STABLE_SAMPLE_DIFF
     pressureSamples[pad][pressureSampleCounter[pad]] = value;
     pressureSampleCounter[pad]++;
@@ -275,10 +275,28 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
     if (pressureSampleCounter[pad] == STABLE_SAMPLE_COUNT)
         pressureSampleCounter[pad] = 0;
 
+    bool diffValid = true;
+
+    //if difference between samples is larger than STABLE_SAMPLE_DIFF,
+    //ignore it if samples have higher pressure value
+    //this is used to allow really fast velocity triggers where samples
+    //differ a lot
     for (int i=1; i<STABLE_SAMPLE_COUNT; i++)
     {
         if (abs(pressureSamples[pad][i] - pressureSamples[pad][i-1]) > STABLE_SAMPLE_DIFF)
-            return false;
+        {
+            diffValid = false;
+            break;
+        }
+    }
+
+    if (!diffValid)
+    {
+        for (int i=0; i<STABLE_SAMPLE_COUNT; i++)
+        {
+            if (pressureSamples[pad][i] < STABLE_SAMPLE_DIFF_IGNORE_MIN)
+                return false;
+        }
     }
 
     //find max now
@@ -287,9 +305,12 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
     for (int i=0; i<STABLE_SAMPLE_COUNT; i++)
     {
         //if one of the samples is zero
-        //leave maxVal as is (zero)
+        //set maxVal to zero
         if (!pressureSamples[pad][i])
+        {
+            maxVal = 0;
             break;
+        }
 
         if (pressureSamples[pad][i] > maxVal)
             maxVal = pressureSamples[pad][i];
