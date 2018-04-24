@@ -30,7 +30,7 @@
 ///
 /// \brief Value after which pad is considered pressed.
 ///
-#define PAD_PRESS_PRESSURE          15
+#define PAD_PRESS_PRESSURE          10
 
 ///
 /// \brief Value below which pad is considered released if it was pressed previously.
