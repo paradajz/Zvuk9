@@ -389,24 +389,20 @@ void Display::displayVelocity(uint8_t midiVelocity, int16_t rawPressure)
     if (pads.isCalibrationEnabled())
     {
         stringBuffer.startLine();
-
-        if (midiVelocity != 255)
-            stringBuffer.appendInt(midiVelocity);
-
-        stringBuffer.appendInt(3-stringBuffer.getSize());
-        stringBuffer.endLine();
-
-        updateText(DISPLAY_ROW_CALIBRATION_VALUES, displayText_still, DISPLAY_POSITION_CALIBRATION_MIDI_VALUE_VALUE);
-
-        stringBuffer.startLine();
-
-        if (midiVelocity != 255)
-            stringBuffer.appendInt(rawPressure);
-
-        stringBuffer.appendChar(' ', 4-stringBuffer.getSize());
+        stringBuffer.appendInt(rawPressure);
+        while (stringBuffer.getSize() < 4)
+            stringBuffer.appendChar(' ', 1);
         stringBuffer.endLine();
 
         updateText(DISPLAY_ROW_CALIBRATION_VALUES, displayText_still, DISPLAY_POSITION_CALIBRATION_RAW_VALUE_VALUE);
+
+        stringBuffer.startLine();
+        stringBuffer.appendInt(midiVelocity);
+        while (stringBuffer.getSize() < 3)
+            stringBuffer.appendChar(' ', 1);
+        stringBuffer.endLine();
+
+        updateText(DISPLAY_ROW_CALIBRATION_VALUES, displayText_still, DISPLAY_POSITION_CALIBRATION_MIDI_VALUE_VALUE);
     }
     else
     {
