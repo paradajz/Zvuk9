@@ -32,20 +32,7 @@
 ///
 /// \brief Number of pressure samples.
 ///
-#define STABLE_SAMPLE_COUNT                         2
-
-///
-/// Pressure reading uses the following algorithm:
-/// Read samples until STABLE_SAMPLE_COUNT consecutive samples have difference
-/// betweeen them less than STABLE_SAMPLE_DIFF. Once those samples
-/// are read, select maximum.
-///
-#define STABLE_SAMPLE_DIFF                          25
-
-///
-/// \brief Pressure reading above which stable sample difference is ignored.
-///
-#define STABLE_SAMPLE_DIFF_IGNORE_MIN               80
+#define STABLE_SAMPLE_COUNT                         3
 
 ///
 /// \brief Time in milliseconds after which X/Y values are being read after pad has been pressed.

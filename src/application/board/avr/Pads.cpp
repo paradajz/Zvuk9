@@ -348,6 +348,10 @@ int16_t Board::getPadPressure(uint8_t pad)
             }
         }
 
+        #ifdef DEBUG
+        printf("pad %d pressure: %d raw: %d\n", pad, cVal, samples[coordinateZ][pad]);
+        #endif
+
         return cVal;
     }
     else
