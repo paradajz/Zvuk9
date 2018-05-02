@@ -117,7 +117,7 @@ static dbSection_t padCalibrationSections[PAD_CALIBRATION_SECTIONS] =
         .numberOfParameters = NUMBER_OF_PADS,
         .parameterType = WORD_PARAMETER,
         .preserveOnPartialReset = true,
-        .defaultValue = 130,
+        .defaultValue = 175,
         .autoIncrement = false,
         .address = 0
     },
@@ -127,7 +127,7 @@ static dbSection_t padCalibrationSections[PAD_CALIBRATION_SECTIONS] =
         .numberOfParameters = NUMBER_OF_PADS,
         .parameterType = WORD_PARAMETER,
         .preserveOnPartialReset = true,
-        .defaultValue = 880,
+        .defaultValue = 835,
         .autoIncrement = false,
         .address = 0
     },
@@ -137,7 +137,7 @@ static dbSection_t padCalibrationSections[PAD_CALIBRATION_SECTIONS] =
         .numberOfParameters = NUMBER_OF_PADS,
         .parameterType = WORD_PARAMETER,
         .preserveOnPartialReset = true,
-        .defaultValue = 130,
+        .defaultValue = 175,
         .autoIncrement = false,
         .address = 0
     },
@@ -147,7 +147,7 @@ static dbSection_t padCalibrationSections[PAD_CALIBRATION_SECTIONS] =
         .numberOfParameters = NUMBER_OF_PADS,
         .parameterType = WORD_PARAMETER,
         .preserveOnPartialReset = true,
-        .defaultValue = 880,
+        .defaultValue = 835,
         .autoIncrement = false,
         .address = 0
     }
