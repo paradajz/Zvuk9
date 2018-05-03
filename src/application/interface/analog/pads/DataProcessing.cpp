@@ -57,6 +57,7 @@ void Pads::update()
         bool xAvailable = false;
         bool yAvailable = false;
 
+        bool tempPressed = isPadPressed(i);
         int16_t pressure = board.getPadPressure(i);
         velocityAvailable = checkVelocity(i, pressure);
 
@@ -64,7 +65,7 @@ void Pads::update()
         if (isPadPressed(i))
         {
             //once pad has been pressed ignore X/Y readings on low pressure
-            if (isPadPressed(i) && (getScaledPressure(i, board.getPadPressure(i), pressureVelocity) > XY_MIN_PRESSURE_PRESSED))
+            if (getScaledPressure(i, board.getPadPressure(i), pressureVelocity) > XY_MIN_PRESSURE_PRESSED)
             {
                 xAvailable = checkX(i, board.getPadX(i));
                 yAvailable = checkY(i, board.getPadY(i));
