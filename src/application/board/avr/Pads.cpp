@@ -208,7 +208,7 @@ ISR(ADC_vect)
 
             case readPressure3:
             //store second pressure reading from opposite plate
-            samples[coordinateZ][activePad] = (samples[coordinateZ][activePad] + (1023 - (ADC - pressurePlate1))) >> 1;
+            samples[coordinateZ][activePad] = samples[coordinateZ][activePad] + (1023 - (ADC - pressurePlate1));
             padReadingIndex = readX;
             break;
 
@@ -331,7 +331,10 @@ int16_t Board::getPadPressure(uint8_t pad)
 {
     if (samples[coordinateZ][pad] != -1)
     {
-        uint16_t cVal = pgm_read_word(&pressure_correction[samples[coordinateZ][pad]]);
+        if (samples[coordinateZ][pad] >= PRESSURE_VALUES)
+            samples[coordinateZ][pad] = PRESSURE_VALUES-1;
+
+        uint16_t cVal = samples[coordinateZ][pad];//pgm_read_word(&pressure_correction[samples[coordinateZ][pad]]);
 
         //if pad is already pressed, return zero value only if it's smaller
         //than PAD_RELEASE_PRESSURE

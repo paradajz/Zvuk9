@@ -38,6 +38,13 @@
 #define PAD_RELEASE_PRESSURE        5
 
 ///
+/// \brief Maximum pressure value.
+/// Pressure from two plates is read and summed which results in larger value than maximum ADC
+/// value (1023).
+///
+#define PRESSURE_VALUES             1600
+
+///
 /// \brief Curve used to achieve linear and smoother response from pads.
 ///
 const uint16_t pressure_correction[1024] PROGMEM =
