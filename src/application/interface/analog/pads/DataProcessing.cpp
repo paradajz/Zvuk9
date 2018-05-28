@@ -57,7 +57,6 @@ void Pads::update()
         bool xAvailable = false;
         bool yAvailable = false;
 
-        bool tempPressed = isPadPressed(i);
         int16_t pressure = board.getPadPressure(i);
         velocityAvailable = checkVelocity(i, pressure);
 
