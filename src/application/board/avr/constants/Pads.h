@@ -28,14 +28,19 @@
 #include "../../common/constants/Hardware.h"
 
 ///
-/// \brief Value after which pad is considered pressed.
+/// \brief Raw ADC value after which pad is considered pressed.
 ///
 #define PAD_PRESS_PRESSURE          20
 
 ///
-/// \brief Value below which pad is considered released if it was pressed previously.
+/// \brief Raw ADC value below which pad is considered released if it was pressed previously.
 ///
 #define PAD_RELEASE_PRESSURE        5
+
+///
+/// \brief Number of times raw ADC value needs to be 0 in order to consider pad released.
+///
+#define PAD_RELEASED_DEBOUNCE_COUNT 5
 
 ///
 /// \brief Maximum pressure value.

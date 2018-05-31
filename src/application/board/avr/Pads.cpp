@@ -329,6 +329,8 @@ void Board::continuePadReadout()
 ///
 int16_t Board::getPadPressure(uint8_t pad)
 {
+    static uint8_t releaseDebounceCount[NUMBER_OF_PADS] = { 0 };
+
     if (samples[coordinateZ][pad] != -1)
     {
         if (samples[coordinateZ][pad] >= PRESSURE_VALUES)
@@ -355,8 +357,29 @@ int16_t Board::getPadPressure(uint8_t pad)
             cVal -= PAD_PRESS_PRESSURE;
         }
 
+        if (!cVal)
+        {
+            releaseDebounceCount[pad]++;
+
+            if (releaseDebounceCount[pad] == PAD_RELEASED_DEBOUNCE_COUNT)
+            {
+                //really released
+                releaseDebounceCount[pad] = 0;
+            }
+            else
+            {
+                //not yet released
+                cVal = 1;
+            }
+        }
+        else
+        {
+            releaseDebounceCount[pad] = 0;
+        }
+
         #ifdef DEBUG
-        printf("pad %d pressure: %d raw: %d\n", pad, cVal, samples[coordinateZ][pad]);
+        if (!pad)
+        printf("pad %d pressure: %d raw: %d\nx: %d\ny: %d\n\n", pad, cVal, samples[coordinateZ][pad], getPadX(pad), getPadY(pad));
         #endif
 
         return cVal;
