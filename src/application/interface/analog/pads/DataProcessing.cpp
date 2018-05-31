@@ -289,6 +289,8 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
 
     if (pressureSampleCounter[pad] == STABLE_SAMPLE_COUNT)
         pressureSampleCounter[pad] = 0;
+    else
+        return false;
 
     //find max now
     uint16_t maxVal = 0;
