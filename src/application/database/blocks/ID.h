@@ -33,7 +33,7 @@
 ///
 /// \brief Magic value used to indicate whether or not is database formatted.
 ///
-#define UNIQUE_ID           47
+#define UNIQUE_ID           42
 
 ///
 /// \brief Number of times UNIQUE_ID is written in database consecutively.
