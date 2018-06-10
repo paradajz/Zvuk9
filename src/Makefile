@@ -91,7 +91,7 @@ $(TARGET).elf: $(RUN_CLEAN) target_print $(OBJECTS)
 	@srec_cat $(TARGET).hex -Intel -exclude $(FLASH_SIZE_START_ADDR) $(FLASH_SIZE_END_ADDR) -Little_Endian_Maximum $(FLASH_SIZE_START_ADDR) -fill 0xff -over $(TARGET).hex -I -Output $(TARGET).hex -Intel
 	@srec_cat $(TARGET).hex -Intel -Little_Endian_CRC16 -max-address $(TARGET).hex -Intel -Cyclic_Redundancy_Check_16_XMODEM -Output $(TARGET).hex -Intel
 	@#convert hex to bin
-	@objcopy -I ihex "$(TARGET).hex" -O binary "$(TARGET).bin"
+	@avr-objcopy -I ihex "$(TARGET).hex" -O binary "$(TARGET).bin"
 	@#create a file with contents being mcu name (for upload process)
 	@echo $(MCU) > build/MCU
 	@#create a file with contents being target name (for upload process)
