@@ -68,6 +68,4 @@ else
     modules/lufa/LUFA/Drivers/USB/Class/Device/HIDClassDevice.c
 endif
 
-#some modules contain Tests.cpp which should not be compiled
-#remove Array.cpp from DBMS module used for testing purposes
-SOURCES := $(filter-out %Tests.cpp,$(SOURCES))
+SOURCES := $(filter-out %tests-all.cpp,$(SOURCES))
