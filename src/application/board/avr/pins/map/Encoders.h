@@ -90,7 +90,7 @@ const bool encoderEnabledMap[MAX_NUMBER_OF_ENCODERS] =
 ///
 /// \brief Array holding information on how much pulses specific encoder generates per step.
 ///
-const uint8_t pulsesPerStep[MAX_NUMBER_OF_ENCODERS] =
+const uint8_t encoderPulsesPerStepMap[MAX_NUMBER_OF_ENCODERS] =
 {
     2,  //PROGRAM_ENCODER
     4,  //X_CURVE_ENCODER
@@ -129,7 +129,7 @@ const uint8_t pulsesPerStep[MAX_NUMBER_OF_ENCODERS] =
 ///
 /// \brief Array holding information whether or not rotation for specific encoder is inverted.
 ///
-const uint8_t encInverted[] =
+const uint8_t encoderInvertedMap[] =
 {
     1,  //PROGRAM_ENCODER
     1,  //X_CURVE_ENCODER

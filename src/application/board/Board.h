@@ -127,11 +127,10 @@ class Board
     ///
     /// \brief Checks state of requested encoder.
     /// @param [in] encoderID       Encoder which is being checked.
-    /// @param [in] pulsesPerStep   Amount of pulses per encoder step.
     /// \returns 0 if encoder hasn't been moved, 1 if it's moving in positive and -1 if it's
     /// moving in negative direction.
     ///
-    static int8_t getEncoderState(uint8_t encoderID, uint8_t pulsesPerStep);
+    static int8_t getEncoderState(uint8_t encoderID);
 
     ///
     /// \brief Used to read contents of memory provided by specific board.
@@ -181,11 +180,10 @@ class Board
     /// Internal function.
     /// @param [in] encoderID       Encoder which is being checked.
     /// @param [in] pairState       A and B signal readings from encoder placed into bits 0 and 1.
-    /// @param [in] pulsesPerStep   Amount of pulses per encoder step.
     /// \returns 0 if encoder hasn't been moved, 1 if it's moving in positive and -1 if it's
     /// moving in negative direction.
     ///
-    static int8_t readEncoder(uint8_t encoderID, uint8_t pairState, uint8_t pulsesPerStep);
+    static int8_t readEncoder(uint8_t encoderID, uint8_t pairState);
 };
 
 ///

@@ -44,7 +44,7 @@ int8_t  encoderPulses[MAX_NUMBER_OF_ENCODERS];
 /// @}
 
 
-int8_t Board::readEncoder(uint8_t encoderID, uint8_t pairState, uint8_t pulsesPerStep)
+int8_t Board::readEncoder(uint8_t encoderID, uint8_t pairState)
 {
     int8_t returnValue = 0;
 
@@ -55,9 +55,13 @@ int8_t Board::readEncoder(uint8_t encoderID, uint8_t pairState, uint8_t pulsesPe
 
     encoderPulses[encoderID] += encoderLookUpTable[encoderData[encoderID]];
 
-    if (abs(encoderPulses[encoderID]) >= pulsesPerStep)
+    if (abs(encoderPulses[encoderID]) >= encoderPulsesPerStepMap[encoderID])
     {
-        returnValue = (encoderPulses[encoderID] > 0) ? 1 : -1;
+        if (encoderInvertedMap[encoderID])
+            returnValue = (encoderPulses[encoderID] > 0) ? -1 : 1;
+        else
+            returnValue = (encoderPulses[encoderID] > 0) ? 1 : -1;
+
         //reset count
         encoderPulses[encoderID] = 0;
     }
@@ -65,13 +69,13 @@ int8_t Board::readEncoder(uint8_t encoderID, uint8_t pairState, uint8_t pulsesPe
     return returnValue;
 }
 
-int8_t Board::getEncoderState(uint8_t encoderID, uint8_t pulsesPerStep)
+int8_t Board::getEncoderState(uint8_t encoderID)
 {
     uint8_t column = encoderID % NUMBER_OF_BUTTON_COLUMNS;
     uint8_t row  = (encoderID/NUMBER_OF_BUTTON_COLUMNS)*2;
     uint8_t pairState = (digitalInBufferReadOnly[column] >> row) & 0x03;
 
-    return readEncoder(encoderID, pairState, pulsesPerStep);
+    return readEncoder(encoderID, pairState);
 }
 
 bool Board::encoderEnabled(uint8_t encoderNumber)
