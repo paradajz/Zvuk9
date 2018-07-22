@@ -26,6 +26,8 @@
 #include "../Display.h"
 #include "../../analog/pads/Pads.h"
 #include "../../../Version.h"
+#include "board/common/display/u8x8_wrapper.h"
+
 
 ///
 /// \brief Displays "Firmware updated" and firmware version message.

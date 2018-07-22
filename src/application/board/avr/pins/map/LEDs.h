@@ -23,44 +23,46 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "Board.h"
-#include "Variables.h"
+#pragma once
+
+#include "board/avr/DataTypes.h"
+#include "Hardware.h"
 
 ///
-/// \ingroup boardAVR
+/// \brief LED indexes.
+/// \ingroup board
 /// @{
 
-///
-/// \brief Array used to store readings from digital input matrix.
-///
-volatile uint8_t    digitalInBuffer[NUMBER_OF_BUTTON_COLUMNS];
+#define LED_NOTE_C_SHARP            12
+#define LED_NOTE_D_SHARP            11
+#define LED_NOTE_F_SHARP            10
+#define LED_NOTE_G_SHARP            9
+#define LED_NOTE_A_SHARP            8
+
+#define LED_NOTE_C                  22
+#define LED_NOTE_D                  21
+#define LED_NOTE_E                  20
+#define LED_NOTE_F                  19
+#define LED_NOTE_G                  18
+#define LED_NOTE_A                  17
+#define LED_NOTE_B                  16
+
+#define LED_ON_OFF_NOTES            2
+#define LED_ON_OFF_AFTERTOUCH       3
+#define LED_ON_OFF_X                5
+#define LED_ON_OFF_Y                4
+#define LED_ON_OFF_SPLIT            6
+
+#define LED_TRANSPORT_PLAY          15
+#define LED_TRANSPORT_STOP          14
+#define LED_TRANSPORT_RECORD        13
+
+#define LED_OCTAVE_DOWN             1
+#define LED_OCTAVE_UP               0
 
 ///
-/// \brief Holds value of currently active input matrix column.
+/// \brief Array holding ports and bits for all LED rows.
 ///
-volatile uint8_t    activeInColumn;
+extern mcuPin_t ledRowPins[NUMBER_OF_LED_ROWS];
 
 /// @}
-
-///
-/// \brief Checks if data from button matrix is available.
-/// Matrix data is read in ISR and stored into digitalInBuffer array.
-/// Once all columns are read, data is considered available.
-/// At this point, input matrix column variable is set to invalid value
-/// to stop further data reading from ISR until continueDigitalInReadout
-/// function is called.
-/// \returns True if data is available, false otherwise.
-///
-bool Board::digitalInputDataAvailable()
-{
-    return (activeInColumn == NUMBER_OF_BUTTON_COLUMNS);
-}
-
-///
-/// \brief Resets active input matrix column so that readings in ISR can continue.
-///
-void Board::continueDigitalInReadout()
-{
-    activeInColumn = 0;
-}
-

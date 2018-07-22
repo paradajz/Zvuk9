@@ -26,7 +26,7 @@
 #pragma once
 
 ///
-/// \ingroup boardCommon
+/// \ingroup board
 /// @{
 
 ///

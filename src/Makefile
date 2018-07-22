@@ -39,15 +39,6 @@ else
     LDFLAGS += -Wl,--section-start=.text=$(BOOT_START_ADDR)
 endif
 
-#common include files
-INCLUDE_FILES := -include "modules/core/src/Core.h"
-INCLUDE_FILES += -include "application/Zvuk9.h"
-
-#common include directories
-INCLUDE_DIRS := \
--I"modules/lufa/" \
--I"modules/"
-
 #custom linker script
 LDFLAGS += -T linker/ld_1286.x
 

@@ -25,36 +25,52 @@
 
 #pragma once
 
+#include "../Pins.h"
+#include "board/common/DataTypes.h"
+
 ///
-/// \brief LED indexes.
-/// \ingroup boardCommonMapAvr
+/// \brief Pad indexes.
+/// \ingroup board
 /// @{
 
-#define LED_NOTE_C_SHARP            12
-#define LED_NOTE_D_SHARP            11
-#define LED_NOTE_F_SHARP            10
-#define LED_NOTE_G_SHARP            9
-#define LED_NOTE_A_SHARP            8
+#define PAD_0       0
+#define PAD_1       1
+#define PAD_2       2
+#define PAD_3       3
+#define PAD_4       4
+#define PAD_5       5
+#define PAD_6       6
+#define PAD_7       7
+#define PAD_8       8
 
-#define LED_NOTE_C                  22
-#define LED_NOTE_D                  21
-#define LED_NOTE_E                  20
-#define LED_NOTE_F                  19
-#define LED_NOTE_G                  18
-#define LED_NOTE_A                  17
-#define LED_NOTE_B                  16
+///
+/// \brief Array holding pad indexes for easier access.
+///
+const uint8_t padIDArray[NUMBER_OF_PADS] =
+{
+    PAD_0,
+    PAD_1,
+    PAD_2,
+    PAD_3,
+    PAD_4,
+    PAD_5,
+    PAD_6,
+    PAD_7,
+    PAD_8
+};
 
-#define LED_ON_OFF_NOTES            2
-#define LED_ON_OFF_AFTERTOUCH       3
-#define LED_ON_OFF_X                5
-#define LED_ON_OFF_Y                4
-#define LED_ON_OFF_SPLIT            6
-
-#define LED_TRANSPORT_PLAY          15
-#define LED_TRANSPORT_STOP          14
-#define LED_TRANSPORT_RECORD        13
-
-#define LED_OCTAVE_DOWN             1
-#define LED_OCTAVE_UP               0
+///
+/// \brief Array holding pins which should be read for specific coordinate.
+/// Matched with padReadOrder_t enumeration.
+///
+const uint8_t coordinateAnalogInput[PAD_READINGS] =
+{
+    PAD_PLATE_X_PLUS_PIN,
+    PAD_PLATE_Y_PLUS_PIN,
+    PAD_PLATE_Y_MINUS_PIN,
+    PAD_PLATE_X_MINUS_PIN,
+    PAD_PLATE_Y_PLUS_PIN,
+    PAD_PLATE_X_PLUS_PIN
+};
 
 /// @}

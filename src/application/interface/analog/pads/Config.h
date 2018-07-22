@@ -92,8 +92,14 @@
 
 /// @}
 
+///
+/// \brief Minimum and maximum MIDI pitch bend values.
+/// @{
+
 #define MIDI_PITCHBEND_MIN                          -8192
 #define MIDI_PITCHBEND_MAX                          8191
+
+/// @}
 
 ///
 /// \brief When Pitch Bend Type 2 is used, 7% of pad surface is used for full PB range in positive, and 7% in negative direction.

@@ -26,6 +26,8 @@
 #include "Encoders.h"
 #include "../../../display/menu/Menu.h"
 #include "handlers/Handlers.h"
+#include "pins/map/Encoders.h"
+
 
 ///
 /// \ingroup interfaceEncoders
@@ -83,7 +85,7 @@ void Encoders::update()
         if (!board.encoderEnabled(i))
             continue;
 
-        steps = board.getEncoderState(i);
+        steps = board.getEncoderState(i, pulsesPerStep[i]);
 
         if (steps == 0)
             continue;

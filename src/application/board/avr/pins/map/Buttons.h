@@ -23,11 +23,12 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+
 #pragma once
 
 ///
 /// \brief Button indexes.
-/// \ingroup boardCommonMapAvr
+/// \ingroup board
 /// @{
 
 #define BUTTON_NOTE_C_SHARP         20

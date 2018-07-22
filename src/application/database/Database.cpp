@@ -25,6 +25,7 @@
 
 #include "Database.h"
 #include "Layout.h"
+#include "board/Board.h"
 
 ///
 /// \brief Default constructor.
@@ -40,6 +41,8 @@ Database::Database()
 void Database::init()
 {
     DBMS::init(dbLayout, DB_BLOCKS);
+    setHandleRead(board.memoryRead);
+    setHandleWrite(board.memoryWrite);
 }
 
 ///

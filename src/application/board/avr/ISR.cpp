@@ -23,9 +23,10 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "Board.h"
-#include "../../interface/digital/output/leds/Helpers.h"
-#include "constants/LEDs.h"
+#include "../Board.h"
+#include "HardwareControl.cpp"
+#include "board/common/analog/Variables.h"
+#include "../../interface/analog/pads/DataTypes.h"
 
 ///
 /// \ingroup boardAVR
@@ -36,247 +37,6 @@
 ///
 volatile uint32_t   rTime_ms;
 
-///
-/// \brief Array holding LED row pins for easier access.
-///
-const uint8_t       ledRowPinArray[] =
-{
-    LED_ROW_1_PIN,
-    LED_ROW_2_PIN,
-    LED_ROW_3_PIN
-};
-
-///
-/// \brief Array holding LED row ports for easier access.
-///
-volatile uint8_t    *ledRowPortArray[] =
-{
-    &LED_ROW_1_PORT,
-    &LED_ROW_2_PORT,
-    &LED_ROW_3_PORT
-};
-
-/// @}
-
-///
-/// \brief Initializes main and PWM timers.
-///
-void Board::initTimers()
-{
-    //configure timer3
-    //used for millis and button/led matrix control
-    //reset values first
-    TCCR3A = 0;
-    TCCR3B = 0;
-    TCNT3 = 0;
-    TIMSK3 = 0;
-    OCR3A = 0;
-    OCR3B = 0;
-    OCR3C = 0;
-
-    //set CTC mode
-    TCCR3B |= (1 << WGM32);
-
-    //set prescaler to 64
-    TCCR3B |= (1 << CS31) | (1 << CS30);
-
-    //set compare match register to desired timer count
-    OCR3A = 249; //1ms
-
-    //enable CTC interrupt for timer3
-    TIMSK3 |= (1<<OCIE3A);
-
-    //configure timer1/2 for LED matrix PWM
-    //reset values first
-    TCCR1A = 0;
-    TCCR1B = 0;
-    TCCR1C = 0;
-    TIMSK1 = 0;
-    TCNT1 = 0;
-    OCR1A = 0;
-    OCR1B = 0;
-    OCR1C = 0;
-
-    TCCR2A = 0;
-    TCCR2B = 0;
-    TIMSK2 = 0;
-    TCNT2 = 0;
-    OCR2A = 0;
-    OCR2B = 0;
-
-    //phase correct PWM, top 0xFF
-    TCCR1A |= (1<<WGM10);
-    TCCR2A |= (1<<WGM20);
-
-    //prescaler 1
-    TCCR1B |= (1<<CS10);
-    TCCR2B |= (1<<CS20);
-
-    //clear timer0 conf (unused)
-    TCCR0A = 0;
-    TCCR0B = 0;
-    TCNT0 = 0;
-    TIMSK0 = 0;
-    OCR0A = 0;
-}
-
-///
-/// \ingroup boardAVR
-/// @{
-
-///
-/// \brief Turns requested LED row on with specified PWM intensity.
-/// @param [in] rowNumber   Row in LED matrix which is being turned on.
-/// @param [in] intensity   PWM intensity of requested row.
-///
-inline void ledRowOn(uint8_t rowNumber, uint8_t intensity)
-{
-    if (intensity == 255)
-    {
-        //max value, don't use pwm
-        #ifdef LED_INVERT
-        setLow(*(ledRowPortArray[rowNumber]), ledRowPinArray[rowNumber]);
-        #else
-        setHigh(*(ledRowPortArray[rowNumber]), ledRowPinArray[rowNumber]);
-        #endif
-        return;
-    }
-
-    if (!intensity)
-        return;
-
-    #ifdef LED_INVERT
-    intensity = 255 - intensity;
-    #endif
-
-    switch (rowNumber)
-    {
-        //turn off pwm if intensity is max
-        case 0:
-        OCR2A = intensity;
-        TCCR2A |= (1<<COM2A1);
-        break;
-
-        case 1:
-        OCR1A  = intensity;
-        TCCR1A |= (1<<COM1A1);
-        break;
-
-        case 2:
-        OCR1B = intensity;
-        TCCR1A |= (1<<COM1B1);
-        break;
-
-        default:
-        break;
-    }
-}
-
-///
-/// \brief Turns all rows in LED matrix off.
-///
-inline void ledRowsOff()
-{
-    //turn off pwm
-    TCCR2A &= ~(1<<COM2A1);
-    TCCR1A &= ~(1<<COM1A1);
-    TCCR1A &= ~(1<<COM1B1);
-
-    for (int i=0; i<NUMBER_OF_LED_ROWS; i++)
-    {
-        #ifdef LED_INVERT
-        setHigh(*(ledRowPortArray[i]), ledRowPinArray[i]);
-        #else
-        setLow(*(ledRowPortArray[i]), ledRowPinArray[i]);
-        #endif
-    }
-}
-
-///
-/// \brief Activates currently active LED matrix column (stored in activeLEDcolumn variable).
-///
-inline void activateOutputColumn()
-{
-    //clear current decoder state
-    DECODER_OUT_PORT &= DECODER_OUT_CLEAR_MASK;
-    //activate new column
-    DECODER_OUT_PORT |= decoderOutOrderArray[activeLEDcolumn];
-}
-
-///
-/// \brief Activates currently active button matrix column (stored in activeInColumn variable).
-///
-inline void activateInputColumn()
-{
-    //clear current decoder state
-    DECODER_IN_PORT &= DECODER_IN_CLEAR_MASK;
-
-    //activate new column
-    DECODER_IN_PORT |= decoderInOrderArray[activeInColumn];
-}
-
-///
-/// \brief Checks if any of LEDs in currently active LED matrix column needs to be turned on.
-/// This function also performs transition effect betweeen two LED states.
-///
-inline void checkLEDs()
-{
-    //if there is an active LED in current column, turn on LED row
-    //do fancy transitions here
-    for (int i=0; i<NUMBER_OF_LED_ROWS; i++)
-    {
-        uint8_t ledNumber = activeLEDcolumn+i*NUMBER_OF_LED_COLUMNS;
-        uint8_t ledStateSingle = LED_ON(ledState[ledNumber]);
-
-        ledStateSingle *= (NUMBER_OF_LED_TRANSITIONS-1);
-
-        if (ledTransitionScale[transitionCounter[ledNumber]])
-            ledRowOn(i, ledTransitionScale[transitionCounter[ledNumber]]);
-
-        if (transitionCounter[ledNumber] != ledStateSingle)
-        {
-            if (transitionCounter[ledNumber] < ledStateSingle)
-            {
-                //fade up
-                transitionCounter[ledNumber] += DEFAULT_FADE_SPEED;
-
-                if (transitionCounter[ledNumber] > ledStateSingle)
-                    transitionCounter[ledNumber] = ledStateSingle;
-            }
-            else
-            {
-                //fade down
-                transitionCounter[ledNumber] -= DEFAULT_FADE_SPEED;
-
-                if (transitionCounter[ledNumber] < 0)
-                    transitionCounter[ledNumber] = 0;
-            }
-        }
-    }
-}
-
-///
-/// Acquires data for all buttons connected in currently active button matrix column by
-/// reading inputs from shift register.
-///
-inline void storeDigitalIn()
-{
-    setLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
-    setLow(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
-    _NOP();
-
-    digitalInBuffer[activeInColumn] = 0;
-
-    setHigh(INPUT_SHIFT_REG_LATCH_PORT, INPUT_SHIFT_REG_LATCH_PIN);
-
-    for (int i=0; i<8; i++)
-    {
-        setLow(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
-        _NOP();
-        BIT_WRITE(digitalInBuffer[activeInColumn], 7-i, !readPin(INPUT_SHIFT_REG_IN_PORT, INPUT_SHIFT_REG_IN_PIN));
-        setHigh(INPUT_SHIFT_REG_CLOCK_PORT, INPUT_SHIFT_REG_CLOCK_PIN);
-    }
-}
 
 ///
 /// \brief Main interrupt service routine.
@@ -287,29 +47,123 @@ ISR(TIMER3_COMPA_vect)
     //1ms
     ledRowsOff();
 
-    if (activeLEDcolumn == NUMBER_OF_LED_COLUMNS)
-        activeLEDcolumn = 0;
+    if (activeOutColumn == NUMBER_OF_LED_COLUMNS)
+        activeOutColumn = 0;
 
     activateOutputColumn();
     checkLEDs();
 
-    activeLEDcolumn++;
+    activeOutColumn++;
 
     //update run time
     rTime_ms++;
 
     //read input matrix
-    if (activeInColumn < NUMBER_OF_BUTTON_COLUMNS)
+    if (dIn_count < DIGITAL_IN_BUFFER_SIZE)
     {
-        for (int i=0; i<NUMBER_OF_BUTTON_COLUMNS; i++)
+        if (++dIn_head == DIGITAL_IN_BUFFER_SIZE)
+            dIn_head = 0;
+
+        storeDigitalIn();
+
+        dIn_count++;
+    }
+}
+
+///
+/// \brief ADC ISR used to read values from pads.
+///
+ISR(ADC_vect)
+{
+    //always ignore first reading
+    static bool ignoreFirst = true;
+    //pad should be switched if all coordinates are read
+    bool padSwitch = false;
+
+    if (!ignoreFirst)
+    {
+        switch(padReadingIndex)
         {
-            activeInColumn = i;
-            activateInputColumn();
-            storeDigitalIn();
+            case readPressure0:
+            pressurePlate1 = ADC;
+            padReadingIndex = readPressure1;
+            break;
+
+            case readPressure1:
+            //store second pressure reading from opposite plate
+            samples[coordinateZ][activePad] = 1023 - (ADC - pressurePlate1);
+            padReadingIndex = readPressure2;
+            break;
+
+            case readPressure2:
+            pressurePlate1 = ADC;
+            padReadingIndex = readPressure3;
+            break;
+
+            case readPressure3:
+            //store second pressure reading from opposite plate
+            samples[coordinateZ][activePad] = samples[coordinateZ][activePad] + (1023 - (ADC - pressurePlate1));
+            padReadingIndex = readX;
+            break;
+
+            case readX:
+            samples[coordinateX][activePad] = ADC;
+            //finally, read y
+            padReadingIndex = readY;
+            break;
+
+            case readY:
+            samples[coordinateY][activePad] = ADC;
+            //continue with pressure reading
+            padReadingIndex = readPressure0;
+            padSwitch = true;
+            break;
         }
 
-        activeInColumn = NUMBER_OF_BUTTON_COLUMNS;
+        //configure i/o for readout
+        switch(padReadingIndex)
+        {
+            case readPressure0:
+            case readPressure1:
+            setupPressure0();
+            break;
+
+            case readPressure2:
+            case readPressure3:
+            setupPressure1();
+            break;
+
+            case readX:
+            setupX();
+            break;
+
+            default:
+            setupY();
+            break;
+        }
+
+        //switch adc channel
+        setADCchannel(coordinateAnalogInput[padReadingIndex]);
+
+        if (padSwitch)
+        {
+            activePad++;
+
+            if (activePad == NUMBER_OF_PADS)
+            {
+                //all pads are read
+                setMuxInput(padIDArray[0]);
+                return;
+            }
+
+            //set new pad
+            setMuxInput(padIDArray[activePad]);
+        }
     }
+
+    ignoreFirst = !ignoreFirst;
+
+    startADCconversion();
 }
 
 /// @}

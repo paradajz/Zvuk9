@@ -25,13 +25,172 @@
 
 #pragma once
 
-///
-/// \brief Low-level hardware handling.
-/// \defgroup board Board
-///
+#include "interface/digital/output/leds/Variables.h"
+#include "common/DataTypes.h"
+#include "dbms/src/DataTypes.h"
 
-#ifdef __AVR__
-#include "avr/Board.h"
-#elif defined STM32
-#include "stm32/Board.h"
-#endif
+///
+/// \defgroup board Board
+
+///
+/// \ingroup board
+/// @{
+
+class Board
+{
+    public:
+    ///
+    /// \brief Default constructor.
+    ///
+    Board();
+
+    ///
+    /// \brief Perfoms initialization of MCU and all board peripherals.
+    ///
+    void init();
+
+    ///
+    /// \brief Checks if firmware has been updated.
+    /// Firmware file has written CRC in last two flash addresses. Application stores last read CRC in EEPROM.
+    /// If EEPROM and flash CRC differ, firmware has been updated.
+    /// \returns True if firmware has been updated, false otherwise.
+    ///
+    static bool checkNewRevision();
+
+    ///
+    /// \brief Performs software MCU reboot.
+    ///
+    void reboot();
+
+    ///
+    /// \brief Checks if pad data is available.
+    /// Pad data is read in ISR and stored into samples array.
+    /// Once all coordinates are read, data is considered available.
+    /// At this point, activePad variable is set to invalid value
+    /// to stop further data reading from ISR until continuePadReadout
+    /// function is called.
+    /// \returns True if data is available, false otherwise.
+    ///
+    bool padDataAvailable();
+
+    ///
+    /// \brief Resets active pad index and starts data acquisition from pads again.
+    ///
+    void continuePadReadout();
+
+    ///
+    /// \brief Returns Z coordinate (pressure) reading for requested pad.
+    /// @param [in] pad Pad for which reading is returned.
+    /// \returns Z coordinate (pressure) value for requested pad.
+    ///
+    int16_t getPadPressure(uint8_t pad);
+
+    ///
+    /// \brief Returns X coordinate reading for requested pad.
+    /// @param [in] pad Pad for which reading is returned.
+    /// \returns X coordinate value for requested pad.
+    ///
+    int16_t getPadX(uint8_t pad);
+
+    ///
+    /// \brief Returns Y coordinate reading for requested pad.
+    /// @param [in] pad Pad for which reading is returned.
+    /// \returns Y coordinate value for requested pad.
+    ///
+    int16_t getPadY(uint8_t pad);
+
+    ///
+    /// \brief Checks if data from button matrix is available.
+    /// Matrix data is read in ISR and stored into digitalInBuffer array.
+    /// Once all columns are read, data is considered available.
+    /// At this point, input matrix column variable is set to invalid value
+    /// to stop further data reading from ISR until continueDigitalInReadout
+    /// function is called.
+    /// \returns True if data is available, false otherwise.
+    ///
+    static bool digitalInputDataAvailable();
+
+    ///
+    /// \brief Returns last read button state for requested button index.
+    /// @param [in] buttonIndex Index of button which should be read.
+    /// \returns True if button is pressed, false otherwise.
+    ///
+    static bool getButtonState(uint8_t buttonIndex);
+
+    ///
+    /// \brief Checks if requested encoder ID is enabled.
+    /// @param [in] encoderNumber Encoder which is being checked.
+    /// \returns True if encoder is enabled, false otherwise.
+    ///
+    bool encoderEnabled(uint8_t encoderNumber);
+
+    ///
+    /// \brief Checks state of requested encoder.
+    /// @param [in] encoderID       Encoder which is being checked.
+    /// @param [in] pulsesPerStep   Amount of pulses per encoder step.
+    /// \returns 0 if encoder hasn't been moved, 1 if it's moving in positive and -1 if it's
+    /// moving in negative direction.
+    ///
+    static int8_t getEncoderState(uint8_t encoderID, uint8_t pulsesPerStep);
+
+    ///
+    /// \brief Used to read contents of memory provided by specific board.
+    /// @param [in] address Memory address from which to read from.
+    /// @param [in] type    Type of parameter which is being read. Defined in DBMS module.
+    /// @param [in] value   Pointer to variable in which read value is being stored.
+    /// \returns            True on success, false otherwise.
+    ///
+    static bool memoryRead(uint32_t address, sectionParameterType_t type, int32_t &value);
+
+    ///
+    /// \brief Used to write value to memory provided by specific board.
+    /// @param [in] address Memory address in which new value is being written.
+    /// @param [in] value   Value to write.
+    /// @param [in] type    Type of parameter which is being written. Defined in DBMS module.
+    /// \returns            True on success, false otherwise.
+    ///
+    static bool memoryWrite(uint32_t address, int32_t value, sectionParameterType_t type);
+
+    private:
+    ///
+    /// \brief Initializes all pins to correct states.
+    ///
+    static void initPins();
+    ///
+    /// \brief Initializes USB peripheral and configures it as MIDI device.
+    ///
+    static void initUSB_MIDI();
+
+    ///
+    /// \brief Initializes UART peripheral used to send and receive MIDI data.
+    ///
+    static void initUART_MIDI();
+
+    ///
+    /// \brief Initializes main and PWM timers.
+    ///
+    static void initTimers();
+
+    ///
+    /// \brief Initializes pads and ADC peripheral.
+    ///
+    static void initPads();
+
+    ///
+    /// \brief Checks state of requested encoder.
+    /// Internal function.
+    /// @param [in] encoderID       Encoder which is being checked.
+    /// @param [in] pairState       A and B signal readings from encoder placed into bits 0 and 1.
+    /// @param [in] pulsesPerStep   Amount of pulses per encoder step.
+    /// \returns 0 if encoder hasn't been moved, 1 if it's moving in positive and -1 if it's
+    /// moving in negative direction.
+    ///
+    static int8_t readEncoder(uint8_t encoderID, uint8_t pairState, uint8_t pulsesPerStep);
+};
+
+///
+/// \brief External definition of Board class instance.
+///
+extern Board board;
+
+/// @}

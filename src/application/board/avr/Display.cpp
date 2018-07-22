@@ -23,10 +23,12 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "Pins.h"
+#include "pins/Pins.h"
 #include "../common/display/u8x8_wrapper.h"
 
-//implementation of low-level display access functions for u8x8/avr
+///
+/// \ingroup board
+/// @{
 
 uint8_t u8x8_gpio_and_delay(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, U8X8_UNUSED void *arg_ptr)
 {
@@ -146,3 +148,5 @@ uint8_t u8x8_byte_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_p
 
     return 1;
 }
+
+/// @}

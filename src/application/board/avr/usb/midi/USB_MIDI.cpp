@@ -27,13 +27,14 @@
 #include "Descriptors.h"
 
 ///
-/// \ingroup boardAVR
+/// \ingroup board
 /// @{
 
 ///
 /// \brief MIDI Class Device Mode Configuration and State Structure.
 ///
 static USB_ClassInfo_MIDI_Device_t MIDI_Interface;
+
 
 ///
 /// \brief Event handler for the USB_ConfigurationChanged event.
@@ -112,9 +113,6 @@ bool usbWrite(USBMIDIpacket_t& USBMIDIpacket)
 
 /// @}
 
-///
-/// \brief Initializes USB interface and callbacks for MIDI library (USB access).
-///
 void Board::initUSB_MIDI()
 {
     MIDI_Interface.Config.StreamingInterfaceNumber  = INTERFACE_ID_AudioStream;

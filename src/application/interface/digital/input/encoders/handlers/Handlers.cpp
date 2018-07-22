@@ -28,6 +28,9 @@
 #include "../../../../digital/input/buttons/Buttons.h"
 #include "../../../../digital/input/encoders/Encoders.h"
 #include "../../../../display/menu/Menu.h"
+#include "pins/map/Encoders.h"
+#include "pins/map/Buttons.h"
+
 
 ///
 /// \brief Handler for program encoder.

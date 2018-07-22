@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "../../../board/common/constants/Hardware.h"
+#include "Hardware.h"
 #include "../../../database/blocks/Blocks.h"
 
 ///

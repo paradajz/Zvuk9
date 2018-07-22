@@ -13,7 +13,6 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
     You may ONLY use this file:
     1) if you have a valid commercial Ad Bit LLC license and then in accordance with
     the terms contained in the written license agreement between you and Ad Bit LLC,
@@ -23,21 +22,14 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "Board.h"
+#include "board/Board.h"
+#include "Variables.h"
 
 ///
-/// \ingroup boardAVR
+/// \ingroup board
 /// @{
 
-///
-/// \brief Holds value of currently active LED matrix column.
-///
-volatile int8_t     activeLEDcolumn;
-
-///
-/// \brief Array holding current LED transition (PWM value) for all LEDs.
-/// Transitions are updated in ISR.
-///
+volatile uint8_t    activeOutColumn;
 volatile int8_t     transitionCounter[MAX_NUMBER_OF_LEDS];
 
 /// @}

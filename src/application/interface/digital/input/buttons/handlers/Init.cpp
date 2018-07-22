@@ -24,7 +24,9 @@
 */
 
 #include "Handlers.h"
-#include "../../../../../board/common/Common.h"
+#include "pins/map/Buttons.h"
+#include "Hardware.h"
+
 
 void (*buttonHandler[MAX_NUMBER_OF_BUTTONS]) (uint8_t data, bool state);
 

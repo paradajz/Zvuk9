@@ -27,8 +27,7 @@
 
 ///
 /// \brief Pin definitions.
-/// \defgroup boardPins Pins
-/// \ingroup boardAVR
+/// \ingroup board
 /// @{
 
 #define MUX_COMMON_PIN_0_PORT       PORTF

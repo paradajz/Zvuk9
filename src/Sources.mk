@@ -1,3 +1,14 @@
+#common include files
+INCLUDE_FILES := -include "modules/core/src/Core.h"
+INCLUDE_FILES += -include "application/Zvuk9.h"
+
+#common include directories
+INCLUDE_DIRS := \
+-I"modules/lufa/" \
+-I"modules/" \
+-I"application/" \
+-I"application/board/avr/"
+
 SOURCES :=
 
 #lufa sources

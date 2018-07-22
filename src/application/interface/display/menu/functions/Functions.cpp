@@ -29,6 +29,9 @@
 #include "../../../digital/input/encoders/Encoders.h"
 #include "../../../digital/input/buttons/Buttons.h"
 #include "../../../digital/output/leds/LEDs.h"
+#include "board/common/display/u8x8_wrapper.h"
+#include "pins/map/LEDs.h"
+
 
 ///
 /// \brief Used to perform factory reset.

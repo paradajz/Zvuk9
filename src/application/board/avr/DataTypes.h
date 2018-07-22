@@ -13,7 +13,6 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
     You may ONLY use this file:
     1) if you have a valid commercial Ad Bit LLC license and then in accordance with
     the terms contained in the written license agreement between you and Ad Bit LLC,
@@ -26,49 +25,16 @@
 #pragma once
 
 ///
-/// \ingroup boardCommon
+/// \ingroup board
 /// @{
 
 ///
-/// \brief Total number of pads.
+/// \brief Structure used to define single MCU pin.
 ///
-#define NUMBER_OF_PADS              9
-
-///
-/// \brief Total number of LED columns in LED matrix.
-///
-#define NUMBER_OF_LED_COLUMNS       8
-
-///
-/// \brief Total number of LED rows in LED matrix.
-///
-#define NUMBER_OF_LED_ROWS          3
-
-///
-/// \brief Total number of button columns in button matrix.
-///
-#define NUMBER_OF_BUTTON_COLUMNS    8
-
-///
-/// \brief Total number of button rows in button matrix.
-///
-#define NUMBER_OF_BUTTON_ROWS       8
-
-///
-/// \brief Maximum number of buttons.
-///
-#define MAX_NUMBER_OF_BUTTONS       (NUMBER_OF_BUTTON_COLUMNS*NUMBER_OF_BUTTON_ROWS)
-
-///
-/// \brief Maximum number of encoders.
-/// Since encoders are also connected in button matrix and encoders need two
-/// pins, total number of encoders is total number of buttons divided by two.
-///
-#define MAX_NUMBER_OF_ENCODERS      (MAX_NUMBER_OF_BUTTONS/2)
-
-///
-/// \brief Maximum number of LEDs.
-///
-#define MAX_NUMBER_OF_LEDS          (NUMBER_OF_LED_COLUMNS*NUMBER_OF_LED_ROWS)
+typedef struct
+{
+    volatile uint8_t *port;
+    uint8_t pin;
+} mcuPin_t;
 
 /// @}

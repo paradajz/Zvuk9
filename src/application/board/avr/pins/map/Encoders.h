@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "../../common/constants/Hardware.h"
+#include "Hardware.h"
 
 ///
-/// \ingroup boardCommonMapAvr
+/// \ingroup board
 /// @{
 
 ///

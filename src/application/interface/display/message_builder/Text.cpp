@@ -625,8 +625,6 @@ void Display::displayDeviceInfo()
     stringBuffer.appendInt(HARDWARE_VERSION_MAJOR);
     stringBuffer.appendText(".");
     stringBuffer.appendInt(HARDWARE_VERSION_MINOR);
-    stringBuffer.appendText(".");
-    stringBuffer.appendInt(HARDWARE_VERSION_REVISION);
     stringBuffer.endLine();
 
     updateText(DISPLAY_ROW_MENU_DEVICE_INFO_2, displayText_still, DISPLAY_POSITION_MENU_DEVICE_INFO_2);

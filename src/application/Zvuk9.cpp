@@ -31,7 +31,12 @@
 #include "database/Database.h"
 #include "board/Board.h"
 
+#ifdef DEBUG
+#include "usb/vserial/VSerial.h"
+#endif
+
 MIDI midi;
+
 
 void startUpAnimation()
 {

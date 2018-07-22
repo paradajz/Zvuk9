@@ -53,6 +53,7 @@ USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
 
 FILE USBSerialStream;
 
+
 void EVENT_USB_Device_Connect(void)
 {
     //LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);

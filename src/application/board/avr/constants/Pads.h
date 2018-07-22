@@ -25,7 +25,11 @@
 
 #pragma once
 
-#include "../../common/constants/Hardware.h"
+#include "Hardware.h"
+
+///
+/// \ingroup board
+/// @{
 
 ///
 /// \brief Raw ADC value after which pad is considered pressed.

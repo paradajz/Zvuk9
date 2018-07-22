@@ -23,10 +23,9 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "Board.h"
-#include "dbms/src/DBMS.h"
+#include "../Board.h"
 
-bool memoryRead(uint32_t address, sectionParameterType_t type, int32_t &value)
+bool Board::memoryRead(uint32_t address, sectionParameterType_t type, int32_t &value)
 {
     switch(type)
     {
@@ -49,7 +48,7 @@ bool memoryRead(uint32_t address, sectionParameterType_t type, int32_t &value)
     return true;
 }
 
-bool memoryWrite(uint32_t address, int32_t value, sectionParameterType_t type)
+bool Board::memoryWrite(uint32_t address, int32_t value, sectionParameterType_t type)
 {
     switch(type)
     {
@@ -70,13 +69,4 @@ bool memoryWrite(uint32_t address, int32_t value, sectionParameterType_t type)
     }
 
     return true;
-}
-
-///
-/// \brief Used to configure callbacks for accessing EEPROM memory on AVR MCU.
-///
-void Board::initEEPROM()
-{
-    DBMS::setHandleRead(memoryRead);
-    DBMS::setHandleWrite(memoryWrite);
 }

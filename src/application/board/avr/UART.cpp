@@ -23,10 +23,10 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "../../Board.h"
+#include "../Board.h"
 
 ///
-/// \ingroup boardAVR
+/// \ingroup board
 /// @{
 
 ///
@@ -78,12 +78,9 @@ int8_t UARTwrite(uint8_t data)
 
 /// @}
 
-///
-/// \brief Initializes UART peripheral used to send and receive MIDI data.
-///
-void Board::initUART_MIDI(uint32_t baudRate, bool reInit)
+void Board::initUART_MIDI()
 {
-    int32_t baud_count = ((F_CPU / 8) + (baudRate / 2)) / baudRate;
+    int32_t baud_count = ((F_CPU / 8) + (MIDI_BAUD_RATE_STD / 2)) / MIDI_BAUD_RATE_STD;
 
     //clear registers first
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
@@ -111,9 +108,6 @@ void Board::initUART_MIDI(uint32_t baudRate, bool reInit)
     //enable transmitter only
     UCSR1B = (1<<TXEN1);
 
-    if (!reInit)
-    {
-        RingBuffer_InitBuffer(&txBuffer);
-        midi.handleUARTwrite(UARTwrite);
-    }
+    RingBuffer_InitBuffer(&txBuffer);
+    midi.handleUARTwrite(UARTwrite);
 }

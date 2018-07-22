@@ -31,6 +31,9 @@
 #include "../../../../digital/output/leds/LEDs.h"
 #include "../../../../display/menu/Menu.h"
 #include "../../../../../database/blocks/GlobalSettings.h"
+#include "pins/map/LEDs.h"
+#include "pins/map/Buttons.h"
+
 
 ///
 /// \brief Handler for on/off buttons (split, notes, aftertouch, X and Y).

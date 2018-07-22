@@ -24,7 +24,7 @@
 */
 
 #include "Database.h"
-#include "../board/common/constants/Hardware.h"
+#include "Hardware.h"
 
 ///
 /// \brief Writes custom values in database.

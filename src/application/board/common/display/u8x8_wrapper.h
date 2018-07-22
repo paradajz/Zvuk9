@@ -28,7 +28,6 @@
 ///
 /// \brief C++ U8x8 library wrapper.
 /// Based on original wrapper for Arduino boards.
-/// \defgroup boardDisplay Display
 /// \ingroup board
 /// @{
 ///

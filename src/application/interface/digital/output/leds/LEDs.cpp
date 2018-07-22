@@ -26,8 +26,8 @@
 #include "LEDs.h"
 #include "Variables.h"
 #include "Helpers.h"
-#include "../../../../board/common/Map.h"
-#include "../../../../board/common/constants/LEDs.h"
+#include "pins/map/LEDs.h"
+
 
 ///
 /// \ingroup interfaceLEDs

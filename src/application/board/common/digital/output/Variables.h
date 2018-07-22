@@ -13,7 +13,6 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
     You may ONLY use this file:
     1) if you have a valid commercial Ad Bit LLC license and then in accordance with
     the terms contained in the written license agreement between you and Ad Bit LLC,
@@ -25,12 +24,27 @@
 
 #pragma once
 
-///
-/// \defgroup boardCommonMapAvr AVR
-/// \ingroup boardCommonMap
-///
+#include "Hardware.h"
 
-#include "Buttons.h"
-#include "Encoders.h"
-#include "Pads.h"
-#include "LEDs.h"
+///
+/// \ingroup board
+/// @{
+
+///
+/// \brief Holds value of currently active output matrix column.
+///
+extern volatile uint8_t     activeOutColumn;
+
+///
+/// \brief Holds last LED state for all LEDs.
+/// Used in direct-out setups only where LED state is updated only when it changes.
+///
+extern uint8_t              lastLEDstate[MAX_NUMBER_OF_LEDS];
+
+///
+/// \brief Array holding current LED transition (PWM value) for all LEDs.
+/// Transitions are updated in ISR.
+///
+extern volatile int8_t      transitionCounter[MAX_NUMBER_OF_LEDS];
+
+/// @}

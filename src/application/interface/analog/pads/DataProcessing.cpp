@@ -28,16 +28,15 @@
 #include "../../display/menu/Menu.h"
 #include "../../digital/output/leds/LEDs.h"
 #include "../../digital/input/buttons/Buttons.h"
+#include "pins/map/LEDs.h"
+#include "pins/map/Buttons.h"
+#include "board/common/analog/Variables.h"
+
 
 ///
 /// \ingroup interfacePads
 /// @{
 
-///
-/// \brief Holds press states for all pads.
-/// Implementation of Board class variable.
-///
-volatile uint16_t   padPressed;
 
 ///
 /// \brief Performs various continuous checks related to pad data.
@@ -522,6 +521,7 @@ bool Pads::checkAftertouch(int8_t pad, bool velocityAvailable, int16_t value)
 ///
 /// \brief Checks if X coordinate data is available on requested pad.
 /// @param [in] pad     Pad which is being checked.
+/// @param [in] value   Current X coordinate value.
 /// \returns True if data is available, false otherwise.
 ///
 bool Pads::checkX(int8_t pad, int16_t value)
@@ -613,6 +613,7 @@ bool Pads::checkX(int8_t pad, int16_t value)
 ///
 /// \brief Checks if Y coordinate data is available on requested pad.
 /// @param [in] pad     Pad which is being checked.
+/// @param [in] value   Current Y coordinate value.
 /// \returns True if data is available, false otherwise.
 ///
 bool Pads::checkY(int8_t pad, int16_t value)

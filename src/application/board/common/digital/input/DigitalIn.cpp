@@ -13,7 +13,6 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
     You may ONLY use this file:
     1) if you have a valid commercial Ad Bit LLC license and then in accordance with
     the terms contained in the written license agreement between you and Ad Bit LLC,
@@ -23,21 +22,38 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#pragma once
+#include "board/Board.h"
+#include "Variables.h"
 
 ///
-/// \brief Pad indexes.
-/// \ingroup boardCommonMapAvr
+/// \ingroup board
 /// @{
 
-#define PAD_0       0
-#define PAD_1       1
-#define PAD_2       2
-#define PAD_3       3
-#define PAD_4       4
-#define PAD_5       5
-#define PAD_6       6
-#define PAD_7       7
-#define PAD_8       8
+volatile uint8_t    digitalInBuffer[DIGITAL_IN_BUFFER_SIZE][DIGITAL_IN_ARRAY_SIZE];
+uint8_t             digitalInBufferReadOnly[DIGITAL_IN_ARRAY_SIZE];
+volatile uint8_t    activeInColumn;
+volatile uint8_t    dIn_head;
+volatile uint8_t    dIn_tail;
+volatile uint8_t    dIn_count;
 
 /// @}
+
+
+bool Board::digitalInputDataAvailable()
+{
+    if (dIn_count >= DIGITAL_IN_BUFFER_SIZE)
+    {
+        //ring buffer is full - this section is interrupt-safe currently
+        if (++dIn_tail == DIGITAL_IN_BUFFER_SIZE)
+            dIn_tail = 0;
+
+        for (int i=0; i<DIGITAL_IN_ARRAY_SIZE; i++)
+            digitalInBufferReadOnly[i] = digitalInBuffer[dIn_tail][i];
+
+        dIn_count--;
+
+        return true;
+    }
+
+    return false;
+}

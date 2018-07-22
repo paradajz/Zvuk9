@@ -13,7 +13,6 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
     You may ONLY use this file:
     1) if you have a valid commercial Ad Bit LLC license and then in accordance with
     the terms contained in the written license agreement between you and Ad Bit LLC,
@@ -23,14 +22,13 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-///
-/// \brief Common constants and data types for all boards.
-/// \defgroup boardCommon Common
-/// \ingroup board
-///
+#include "board/Board.h"
+#include "board/common/digital/input/Variables.h"
 
-#include "DataTypes.h"
-#include "constants/Constants.h"
-#include "Map.h"
-#include "display/u8x8_wrapper.h"
+bool Board::getButtonState(uint8_t buttonIndex)
+{
+    uint8_t row = buttonIndex/NUMBER_OF_BUTTON_COLUMNS;
+    uint8_t column = buttonIndex % NUMBER_OF_BUTTON_COLUMNS;
 
+    return BIT_READ(digitalInBufferReadOnly[column], row);
+}

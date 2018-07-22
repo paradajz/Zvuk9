@@ -29,6 +29,9 @@
 #include "PredefinedScales.h"
 #include "../../../board/Board.h"
 #include "curves/Curves.h"
+#include "pins/map/LEDs.h"
+#include "board/common/analog/Variables.h"
+
 
 ///
 /// \ingroup interfacePads

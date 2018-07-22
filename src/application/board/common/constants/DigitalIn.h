@@ -13,7 +13,6 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
     You may ONLY use this file:
     1) if you have a valid commercial Ad Bit LLC license and then in accordance with
     the terms contained in the written license agreement between you and Ad Bit LLC,
@@ -25,13 +24,23 @@
 
 #pragma once
 
+#include "Hardware.h"
+
 ///
-/// \ingroup boardCommon
+/// \ingroup board
 /// @{
 
 ///
-/// \brief Constant used to debounce button readings.
+/// \brief Size of array used to store all digital input readings.
+/// Values are stored in byte array - one bit represents single digital input value.
 ///
-#define BUTTON_DEBOUNCE_COMPARE 0b11110000
+#define DIGITAL_IN_ARRAY_SIZE   NUMBER_OF_BUTTON_COLUMNS
+
+///
+/// \brief Size of ring buffer used to store all digital input readings.
+/// Once digital input array is full (all inputs are read), index within ring buffer
+/// is incremented (if there is space left).
+///
+#define DIGITAL_IN_BUFFER_SIZE  5
 
 /// @}

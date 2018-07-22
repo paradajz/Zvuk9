@@ -24,6 +24,8 @@
 */
 
 #include "Display.h"
+#include "board/common/display/u8x8_wrapper.h"
+
 
 StringBuffer stringBuffer;
 

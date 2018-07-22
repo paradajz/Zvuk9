@@ -27,6 +27,8 @@
 #include "../../../../database/Database.h"
 #include "../../../display/menu/Menu.h"
 #include "handlers/Handlers.h"
+#include "pins/map/Buttons.h"
+
 
 ///
 /// \ingroup interfaceButtons
@@ -117,7 +119,6 @@ void Buttons::init()
         if (board.digitalInputDataAvailable())
         {
             buttons.update();
-            board.continueDigitalInReadout();
         }
     }
     while ((rTimeMs() - currentTime) < 100);

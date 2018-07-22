@@ -23,7 +23,8 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
-#include "Board.h"
+#include "../Board.h"
+#include "constants/CRC.h"
 
 ///
 /// \ingroup boardAVR
@@ -41,27 +42,12 @@ const uint32_t appLength __attribute__ ((section (".applen"))) __attribute__((us
 
 /// @}
 
-///
-/// \brief Default constructor.
-///
-Board::Board()
-{
 
-}
-
-///
-/// \brief Performs software MCU reboot.
-///
 void Board::reboot()
 {
     mcuReset();
 }
 
-///
-/// \brief Checks if firmware has been updated.
-/// Firmware file has written CRC in last two flash addresses. Application stores last read CRC in EEPROM. If EEPROM and flash CRC differ, firmware has been updated.
-/// \returns True if firmware has been updated, false otherwise.
-///
 bool Board::checkNewRevision()
 {
     //current app crc is written in ".applen" linker section
@@ -80,5 +66,3 @@ bool Board::checkNewRevision()
 
     return false;
 }
-
-Board board;

@@ -50,7 +50,6 @@ void DigitalInput::update()
     {
         buttons.update();
         encoders.update();
-        board.continueDigitalInReadout();
     }
 }
 
