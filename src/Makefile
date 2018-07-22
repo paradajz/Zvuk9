@@ -62,6 +62,10 @@ ifneq ("$(wildcard build/TARGET)","")
     endif
 endif
 
+ifeq ($(findstring Microsoft,$(shell uname -r)), Microsoft)
+    UPLOAD_BIN := @cmd.exe /c "..\bin\dfu\loader\hid_bootloader_loader_win.exe"
+endif
+
 build/%.o: %.c
 	@mkdir -p $(@D)
 	@$(CPP) $(CXXFLAGS) $(addprefix -D,$(DEFINES)) $(OPT) -mmcu=$(MCU) $(INCLUDE_DIRS) -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -o "$@" "$<" 
@@ -97,7 +101,7 @@ upload:
 
 #firmware update with bootloader
 uploadboot:
-	python3 ../bin/dfu/hid_bootloader_loader.py $(shell cat build/MCU) build/$(shell cat build/TARGET).hex
+	$(UPLOAD_BIN) $(shell cat build/MCU) build/$(shell cat build/TARGET).hex
 
 #lists all serial ports - used to find out where the programmer is connected
 ser_list:
