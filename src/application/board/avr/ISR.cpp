@@ -94,7 +94,7 @@ ISR(ADC_vect)
             //store second pressure reading from opposite plate
             samples[coordinateZ][activePad] = 1023 - (ADC - pressurePlate1);
             padReadingIndex = readPressure2;
-            setupPressure0();
+            setupPressure1();
             break;
 
             case readPressure2:
@@ -107,14 +107,14 @@ ISR(ADC_vect)
             //store second pressure reading from opposite plate
             samples[coordinateZ][activePad] = samples[coordinateZ][activePad] + (1023 - (ADC - pressurePlate1));
             padReadingIndex = readX;
-            setupPressure1();
+            setupX();
             break;
 
             case readX:
             samples[coordinateX][activePad] = ADC;
             //finally, read y
             padReadingIndex = readY;
-            setupX();
+            setupY();
             break;
 
             case readY:
@@ -122,7 +122,7 @@ ISR(ADC_vect)
             //continue with pressure reading
             padReadingIndex = readPressure0;
             padSwitch = true;
-            setupY();
+            setupPressure0();
             break;
         }
 
