@@ -894,7 +894,6 @@ void Pads::setCalibrationMode(bool state, padCoordinate_t type)
 ///
 changeResult_t Pads::calibratePressure(int8_t pad, int16_t limit, bool updateMIDIvalue)
 {
-    assert(RAW_ANALOG_VALUE_CHECK(limit));
     assert(PAD_CHECK(pad));
 
     if (database.read(DB_BLOCK_PAD_CALIBRATION, padCalibrationPressureUpperSection, pad) != limit)

@@ -303,9 +303,6 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
     uint8_t calibratedPressure = getScaledPressure(pad, value, pressureVelocity);
     calibratedPressure = curves.getCurveValue(velocityCurve, calibratedPressure, 0, 127);
 
-    if (!PRESSURE_RAW_VALUE_CHECK(value))
-        return false;
-
     bool pressDetected = (calibratedPressure > 0);
 
     if (!pressDetected)
