@@ -113,6 +113,9 @@ int main()
         display.displayFirmwareUpdated();
     #endif
 
+    //flush all data from encoders
+    encoders.update(false);
+
     //start first conversion manually
     startADCconversion();
 

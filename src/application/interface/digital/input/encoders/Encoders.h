@@ -38,7 +38,7 @@ class Encoders
     public:
     Encoders();
     static void init();
-    static void update();
+    static void update(bool process = true);
     static void setMIDIchannelPresetEncMode(bool state);
     static bool getMIDIchannelPresetEncMode();
 };

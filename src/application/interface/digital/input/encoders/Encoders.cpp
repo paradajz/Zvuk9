@@ -74,7 +74,7 @@ void Encoders::init()
 ///
 /// \brief Continuously checks state of all encoders.
 ///
-void Encoders::update()
+void Encoders::update(bool process)
 {
     int8_t steps;
 
@@ -111,7 +111,8 @@ void Encoders::update()
 
         if (encoderHandler[i] != NULL)
         {
-            (*encoderHandler[i])(i, steps);
+            if (process)
+                (*encoderHandler[i])(i, steps);
             lastStepTime[i] = rTimeMs();
         }
     }
