@@ -249,8 +249,6 @@ void Pads::update()
             }
         }
     }
-
-    board.continuePadReadout();
 }
 
 ///

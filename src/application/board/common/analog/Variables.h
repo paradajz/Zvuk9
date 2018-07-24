@@ -23,6 +23,8 @@
 */
 
 #include "Hardware.h"
+#include "DataTypes.h"
+#include "../constants/Analog.h"
 
 ///
 /// \ingroup board
@@ -60,11 +62,32 @@ extern uint16_t             pressurePlate1;
 ///
 /// \brief Array holding ADC samples for all three coordinates for all pads.
 ///
-extern volatile int16_t     samples[3][NUMBER_OF_PADS];
+extern padData_t            analogInBuffer[ANALOG_IN_BUFFER_SIZE];
+
+///
+/// \brief Read only copy of ADC input buffer.
+/// Used to avoid data overwrite from ISR.
+///
+extern padData_t            analogInBufferReadOnly;
 
 ///
 /// \brief Holds currently active pad (pad which is being processed).
 ///
 extern uint8_t              activePad;
+
+///
+/// \brief Holds "head" index position in ring buffer.
+///
+extern volatile uint8_t     aIn_head;
+
+///
+/// \brief Holds "tail" index position in ring buffer.
+///
+extern volatile uint8_t     aIn_tail;
+
+///
+/// \brief Holds current number of elements stored in ring buffer.
+///
+extern volatile uint8_t     aIn_count;
 
 /// @}

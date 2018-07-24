@@ -260,14 +260,6 @@ void Board::initPads()
     //select first pad
     activePad = 0;
 
-    for (int i=0; i<3; i++)
-    {
-        for (int k=0; k<NUMBER_OF_PADS; k++)
-        {
-            samples[i][k] = -1;
-        }
-    }
-
     adcInterruptEnable();
 }
 

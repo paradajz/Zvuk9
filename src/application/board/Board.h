@@ -66,17 +66,9 @@ class Board
     /// \brief Checks if pad data is available.
     /// Pad data is read in ISR and stored into samples array.
     /// Once all coordinates are read, data is considered available.
-    /// At this point, activePad variable is set to invalid value
-    /// to stop further data reading from ISR until continuePadReadout
-    /// function is called.
     /// \returns True if data is available, false otherwise.
     ///
     bool padDataAvailable();
-
-    ///
-    /// \brief Resets active pad index and starts data acquisition from pads again.
-    ///
-    void continuePadReadout();
 
     ///
     /// \brief Returns Z coordinate (pressure) reading for requested pad.
@@ -103,9 +95,6 @@ class Board
     /// \brief Checks if data from button matrix is available.
     /// Matrix data is read in ISR and stored into digitalInBuffer array.
     /// Once all columns are read, data is considered available.
-    /// At this point, input matrix column variable is set to invalid value
-    /// to stop further data reading from ISR until continueDigitalInReadout
-    /// function is called.
     /// \returns True if data is available, false otherwise.
     ///
     static bool digitalInputDataAvailable();

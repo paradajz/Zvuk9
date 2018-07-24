@@ -75,79 +75,95 @@ ISR(TIMER3_COMPA_vect)
 ///
 ISR(ADC_vect)
 {
-    //always ignore first reading
-    static bool ignoreFirst = true;
-    //pad should be switched if all coordinates are read
-    bool padSwitch = false;
+    static bool ringBufferInsert = true;
 
-    if (!ignoreFirst)
+    if (aIn_count < ANALOG_IN_BUFFER_SIZE)
     {
-        switch(padReadingIndex)
+        if (ringBufferInsert)
         {
-            case readPressure0:
-            pressurePlate1 = ADC;
-            padReadingIndex = readPressure1;
-            setupPressure0();
-            break;
-
-            case readPressure1:
-            //store second pressure reading from opposite plate
-            samples[coordinateZ][activePad] = 1023 - (ADC - pressurePlate1);
-            padReadingIndex = readPressure2;
-            setupPressure1();
-            break;
-
-            case readPressure2:
-            pressurePlate1 = ADC;
-            padReadingIndex = readPressure3;
-            setupPressure1();
-            break;
-
-            case readPressure3:
-            //store second pressure reading from opposite plate
-            samples[coordinateZ][activePad] = samples[coordinateZ][activePad] + (1023 - (ADC - pressurePlate1));
-            padReadingIndex = readX;
-            setupX();
-            break;
-
-            case readX:
-            samples[coordinateX][activePad] = ADC;
-            //finally, read y
-            padReadingIndex = readY;
-            setupY();
-            break;
-
-            case readY:
-            samples[coordinateY][activePad] = ADC;
-            //continue with pressure reading
-            padReadingIndex = readPressure0;
-            padSwitch = true;
-            setupPressure0();
-            break;
+            //only do this once per readout
+            ringBufferInsert = false;
+            if (++aIn_head == ANALOG_IN_BUFFER_SIZE)
+                aIn_head = 0;
         }
 
-        //switch adc channel
-        setADCchannel(coordinateAnalogInput[padReadingIndex]);
+        //always ignore first reading
+        static bool ignoreFirst = true;
+        //pad should be switched if all coordinates are read
+        bool padSwitch = false;
 
-        if (padSwitch)
+        if (!ignoreFirst)
         {
-            activePad++;
-
-            if (activePad == NUMBER_OF_PADS)
+            switch(padReadingIndex)
             {
-                //all pads are read
-                setMuxInput(padIDArray[0]);
-                return;
+                case readPressure0:
+                pressurePlate1 = ADC;
+                padReadingIndex = readPressure1;
+                setupPressure0();
+                break;
+
+                case readPressure1:
+                //store second pressure reading from opposite plate
+                analogInBuffer[aIn_head].zReading[activePad] = 1023 - (ADC - pressurePlate1);
+                padReadingIndex = readPressure2;
+                setupPressure1();
+                break;
+
+                case readPressure2:
+                pressurePlate1 = ADC;
+                padReadingIndex = readPressure3;
+                setupPressure1();
+                break;
+
+                case readPressure3:
+                //store second pressure reading from opposite plate
+                analogInBuffer[aIn_head].zReading[activePad] = analogInBuffer[aIn_head].zReading[activePad] + (1023 - (ADC - pressurePlate1));
+                padReadingIndex = readX;
+                setupX();
+                break;
+
+                case readX:
+                analogInBuffer[aIn_head].xReading[activePad] = ADC;
+                //finally, read y
+                padReadingIndex = readY;
+                setupY();
+                break;
+
+                case readY:
+                analogInBuffer[aIn_head].yReading[activePad] = ADC;
+                //continue with pressure reading
+                padReadingIndex = readPressure0;
+                padSwitch = true;
+                setupPressure0();
+                break;
             }
 
-            //set new pad
-            setMuxInput(padIDArray[activePad]);
+            //switch adc channel
+            setADCchannel(coordinateAnalogInput[padReadingIndex]);
+
+            if (padSwitch)
+            {
+                activePad++;
+
+                if (activePad == NUMBER_OF_PADS)
+                {
+                    //all pads are read
+                    setMuxInput(padIDArray[0]);
+
+                    ringBufferInsert = true;
+                    aIn_count++;
+                    activePad = 0;
+                }
+
+                //set new pad
+                setMuxInput(padIDArray[activePad]);
+            }
         }
+
+        ignoreFirst = !ignoreFirst;
+
+        startADCconversion();
     }
-
-    ignoreFirst = !ignoreFirst;
-
-    startADCconversion();
 }
 
 /// @}

@@ -33,99 +33,106 @@
 
 volatile uint16_t   padPressed;
 uint16_t            pressurePlate1;
-volatile int16_t    samples[3][NUMBER_OF_PADS];
+padData_t           analogInBuffer[ANALOG_IN_BUFFER_SIZE];
+padData_t           analogInBufferReadOnly;
 uint8_t             activePad;
 uint8_t             padReadingIndex;
+volatile uint8_t    aIn_head;
+volatile uint8_t    aIn_tail;
+volatile uint8_t    aIn_count;
 
 /// @}
 
 
 bool Board::padDataAvailable()
 {
-    return (activePad == NUMBER_OF_PADS);
-}
+    if (aIn_count)
+    {
+        #ifdef __AVR__
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+        #endif
+        {
+            if (++aIn_tail == ANALOG_IN_BUFFER_SIZE)
+                aIn_tail = 0;
 
-void Board::continuePadReadout()
-{
-    activePad = 0;
-    startADCconversion();
+            for (int i=0; i<NUMBER_OF_PADS; i++)
+            {
+                analogInBufferReadOnly.zReading[i] = analogInBuffer[aIn_tail].zReading[i];
+                analogInBufferReadOnly.xReading[i] = analogInBuffer[aIn_tail].xReading[i];
+                analogInBufferReadOnly.yReading[i] = analogInBuffer[aIn_tail].yReading[i];
+            }
+
+            aIn_count--;
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 int16_t Board::getPadX(uint8_t pad)
 {
-    if (samples[coordinateX][pad] != -1)
-        return 1023 - samples[coordinateX][pad];
-    else
-        return -1;
+    return 1023 - analogInBufferReadOnly.xReading[pad];
 }
 
 int16_t Board::getPadY(uint8_t pad)
 {
-    if (samples[coordinateY][pad] != -1)
-        return samples[coordinateY][pad];
-    else
-        return -1;
+    return analogInBufferReadOnly.yReading[pad];
 }
 
 int16_t Board::getPadPressure(uint8_t pad)
 {
     static uint8_t releaseDebounceCount[NUMBER_OF_PADS] = { 0 };
 
-    if (samples[coordinateZ][pad] != -1)
+    if (analogInBufferReadOnly.zReading[pad] >= PRESSURE_VALUES)
+        analogInBufferReadOnly.zReading[pad] = PRESSURE_VALUES-1;
+
+    uint16_t cVal = analogInBufferReadOnly.zReading[pad];
+
+    //if pad is already pressed, return zero value only if it's smaller
+    //than PAD_RELEASE_PRESSURE
+    if (cVal < PAD_PRESS_PRESSURE)
     {
-        if (samples[coordinateZ][pad] >= PRESSURE_VALUES)
-            samples[coordinateZ][pad] = PRESSURE_VALUES-1;
-
-        uint16_t cVal = samples[coordinateZ][pad];//pgm_read_word(&pressure_correction[samples[coordinateZ][pad]]);
-
-        //if pad is already pressed, return zero value only if it's smaller
-        //than PAD_RELEASE_PRESSURE
-        if (cVal < PAD_PRESS_PRESSURE)
+        if (BIT_READ(padPressed, pad))
         {
-            if (BIT_READ(padPressed, pad))
-            {
-                if (cVal < PAD_RELEASE_PRESSURE)
-                    cVal = 0;
-            }
-            else
-            {
+            if (cVal < PAD_RELEASE_PRESSURE)
                 cVal = 0;
-            }
         }
         else
         {
-            cVal -= PAD_PRESS_PRESSURE;
+            cVal = 0;
         }
-
-        if (!cVal)
-        {
-            releaseDebounceCount[pad]++;
-
-            if (releaseDebounceCount[pad] == PAD_RELEASED_DEBOUNCE_COUNT)
-            {
-                //really released
-                releaseDebounceCount[pad] = 0;
-            }
-            else
-            {
-                //not yet released
-                cVal = 1;
-            }
-        }
-        else
-        {
-            releaseDebounceCount[pad] = 0;
-        }
-
-        #ifdef DEBUG
-        if (!pad)
-        printf("pad %d pressure: %d raw: %d\nx: %d\ny: %d\n\n", pad, cVal, samples[coordinateZ][pad], getPadX(pad), getPadY(pad));
-        #endif
-
-        return cVal;
     }
     else
     {
-        return -1;
+        cVal -= PAD_PRESS_PRESSURE;
     }
+
+    if (!cVal)
+    {
+        releaseDebounceCount[pad]++;
+
+        if (releaseDebounceCount[pad] == PAD_RELEASED_DEBOUNCE_COUNT)
+        {
+            //really released
+            releaseDebounceCount[pad] = 0;
+        }
+        else
+        {
+            //not yet released
+            cVal = 1;
+        }
+    }
+    else
+    {
+        releaseDebounceCount[pad] = 0;
+    }
+
+    #ifdef DEBUG
+    if (!pad)
+        printf("pad %d pressure: %d raw: %d\nx: %d\ny: %d\n\n", pad, cVal, analogInBufferReadOnly.zReading[pad], getPadX(pad), getPadY(pad));
+    #endif
+
+    return cVal;
 }
