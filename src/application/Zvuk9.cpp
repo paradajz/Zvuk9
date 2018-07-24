@@ -78,6 +78,7 @@ int main()
     if (!database.signatureValid())
     {
         display.setDirectWriteState(true);
+        display.clearAll();
 
         stringBuffer.startLine();
         stringBuffer.appendText_P(dbInit_string);
