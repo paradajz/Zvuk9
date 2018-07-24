@@ -245,7 +245,7 @@ void Board::initPads()
     //initialize ADC peripheral first
     adcConf adcConfiguration;
 
-    adcConfiguration.prescaler = ADC_PRESCALER_64;
+    adcConfiguration.prescaler = ADC_PRESCALER_128;
     adcConfiguration.vref = ADC_VREF_AVCC;
 
     setUpADC(adcConfiguration);
