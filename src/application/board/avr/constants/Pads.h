@@ -34,24 +34,41 @@
 ///
 /// \brief Raw ADC value after which pad is considered pressed.
 ///
-#define PAD_PRESS_PRESSURE          20
+#define PAD_PRESS_PRESSURE                          20
 
 ///
 /// \brief Raw ADC value below which pad is considered released if it was pressed previously.
 ///
-#define PAD_RELEASE_PRESSURE        5
+#define PAD_RELEASE_PRESSURE                        5
 
 ///
 /// \brief Number of times raw ADC value needs to be 0 in order to consider pad released.
 ///
-#define PAD_RELEASED_DEBOUNCE_COUNT 5
+#define PAD_RELEASED_DEBOUNCE_COUNT                 5
+
+///
+/// \brief Raw ADC pressure which corresponds with MIDI velocity 127.
+///
+#define VELOCITY_127_RAW_PRESSURE                   1300
 
 ///
 /// \brief Maximum pressure value.
 /// Pressure from two plates is read and summed which results in larger value than maximum ADC
 /// value (1023).
 ///
-#define PRESSURE_VALUES             1600
+#define PRESSURE_VALUES                             1600
+
+///
+/// \brief Percentage used to calculate lower pressure limit to send aftertouch.
+/// Lower aftertouch value = Upper pressure (without sensitivity scaling) value + (Upper pressure (velocity) value * AFTERTOUCH_PRESSURE_RATIO_LOWER%)
+///
+#define AFTERTOUCH_PRESSURE_RATIO_LOWER             4
+
+///
+/// \brief Percentage used to calculate upper pressure limit to send aftertouch.
+/// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER%)
+///
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER             7
 
 ///
 /// \brief Curve used to achieve linear and smoother response from pads.

@@ -31,6 +31,7 @@
 #include "curves/Curves.h"
 #include "pins/map/LEDs.h"
 #include "board/common/analog/Variables.h"
+#include "constants/Pads.h" //from board
 
 
 ///

@@ -25,6 +25,7 @@
 
 #include "Database.h"
 #include "../interface/analog/pads/Pads.h"
+#include "constants/Pads.h" //from board
 
 ///
 /// \ingroup database
@@ -107,7 +108,7 @@ static dbSection_t padCalibrationSections[PAD_CALIBRATION_SECTIONS] =
         .numberOfParameters = NUMBER_OF_PADS,
         .parameterType = WORD_PARAMETER,
         .preserveOnPartialReset = true,
-        .defaultValue = 1300,
+        .defaultValue = VELOCITY_127_RAW_PRESSURE,
         .autoIncrement = false,
         .address = 0
     },
