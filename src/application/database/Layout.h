@@ -107,7 +107,7 @@ static dbSection_t padCalibrationSections[PAD_CALIBRATION_SECTIONS] =
         .numberOfParameters = NUMBER_OF_PADS,
         .parameterType = WORD_PARAMETER,
         .preserveOnPartialReset = true,
-        .defaultValue = 400,
+        .defaultValue = 1300,
         .autoIncrement = false,
         .address = 0
     },
