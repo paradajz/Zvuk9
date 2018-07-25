@@ -147,7 +147,7 @@
 /// \brief Minimum MIDI pressure (velocity) value necessary to send X/Y values (after initial values have been sent).
 /// Used to avoid unstable X/Y values on low pressure.
 ///
-#define XY_MIN_PRESSURE_PRESSED                     25
+#define XY_MIN_PRESSURE_PRESSED                     7
 
 ///
 /// \brief Difference between current and previous aftertouch reading after XY_SEND_TIMEOUT used to detect value change.
