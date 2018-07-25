@@ -106,6 +106,7 @@ int16_t Board::getPadPressure(uint8_t pad)
     }
     else
     {
+        //normalize - treat PAD_PRESS_PRESSURE value as 0
         cVal -= PAD_PRESS_PRESSURE;
     }
 
