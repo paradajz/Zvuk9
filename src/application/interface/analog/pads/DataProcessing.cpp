@@ -307,6 +307,8 @@ bool Pads::checkVelocity(int8_t pad, int16_t value)
 
     if (!pressDetected)
     {
+        //during scrolling on the pad (X/Y) movement it is possible to detect fake pressure 0
+        //ignore pressure reading 0 for PRESSURE_IGNORE_XY_CHANGEms after X/Y values have been changed
         if ((rTimeMs() - lastXYchangeTime) < PRESSURE_IGNORE_XY_CHANGE)
             return false;
     }
