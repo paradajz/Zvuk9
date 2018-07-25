@@ -111,17 +111,15 @@ int16_t Board::getPadPressure(uint8_t pad)
 
     if (!cVal)
     {
-        releaseDebounceCount[pad]++;
-
-        if (releaseDebounceCount[pad] == PAD_RELEASED_DEBOUNCE_COUNT)
+        if (releaseDebounceCount[pad] >= PAD_RELEASED_DEBOUNCE_COUNT)
         {
             //really released
-            releaseDebounceCount[pad] = 0;
         }
         else
         {
             //not yet released
             cVal = 1;
+            releaseDebounceCount[pad]++;
         }
     }
     else
