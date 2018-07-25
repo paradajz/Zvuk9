@@ -91,7 +91,7 @@ int16_t Board::getPadPressure(uint8_t pad)
     uint16_t cVal = analogInBufferReadOnly.zReading[pad];
 
     //if pad is already pressed, return zero value only if it's smaller
-    //than PAD_RELEASE_PRESSURE
+    //or equal to PAD_RELEASE_PRESSURE
     if (cVal <= PAD_PRESS_PRESSURE)
     {
         if (BIT_READ(padPressed, pad))
