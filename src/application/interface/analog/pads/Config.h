@@ -118,13 +118,13 @@
 /// \brief Percentage used to calculate upper pressure limit on medium pressure sensitivity to send velocity.
 /// Upper velocity value = Lower velocity value + (Lower velocity value * VELOCITY_PRESSURE_RATIO_UPPER_MEDIUM%)
 ///
-#define VELOCITY_PRESSURE_RATIO_UPPER_MEDIUM        50
+#define VELOCITY_PRESSURE_RATIO_UPPER_MEDIUM        35
 
 ///
 /// \brief Percentage used to calculate upper pressure limit on hard pressure sensitivity to send velocity.
 /// Upper velocity value = Lower velocity value + (Lower velocity value * VELOCITY_PRESSURE_RATIO_UPPER_HARD%)
 ///
-#define VELOCITY_PRESSURE_RATIO_UPPER_HARD          60
+#define VELOCITY_PRESSURE_RATIO_UPPER_HARD          45
 
 ///
 /// \brief Time in milliseconds after which aftertouch value needs to change by AFTERTOUCH_SEND_TIMEOUT_STEP in order to send new value.
