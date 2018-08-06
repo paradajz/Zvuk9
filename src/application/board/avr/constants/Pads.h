@@ -49,7 +49,7 @@
 ///
 /// \brief Raw ADC pressure which corresponds with MIDI velocity 127.
 ///
-#define VELOCITY_127_RAW_PRESSURE                   1000
+#define VELOCITY_127_RAW_PRESSURE                   650
 
 ///
 /// \brief Maximum pressure value.
