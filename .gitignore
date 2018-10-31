@@ -1,3 +1,4 @@
 src/build
 bin/FLASH.hex
 Documentation/
+compile_commands.json
