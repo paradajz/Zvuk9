@@ -164,8 +164,9 @@ ISR(ADC_vect)
 
         ignoreFirst = !ignoreFirst;
 
-        startADCconversion();
     }
+
+    startADCconversion();
 }
 
 /// @}
