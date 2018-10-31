@@ -64,8 +64,15 @@ ifneq ("$(wildcard build/TARGET)","")
     endif
 endif
 
+#use windows binary on wsl since HID access isn't possible in wsl
 ifeq ($(findstring Microsoft,$(shell uname -r)), Microsoft)
-    UPLOAD_BIN := @cmd.exe /c "..\bin\dfu\loader\hid_bootloader_loader_win.exe"
+    UPLOAD_BIN := @cmd.exe /c "..\bin\dfu\hid_bootloader_loader_win.exe"
+else ifeq ($(shell uname), Linux)
+    UPLOAD_BIN := @ ../bin/dfu/hid_bootloader_loader_linux
+else ifeq ($(shell uname), Darwin)
+    UPLOAD_BIN := @ ../bin/dfu/hid_bootloader_loader_mac
+else
+    $(error Unsupported platform)
 endif
 
 build/%.o: %.c
