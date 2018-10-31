@@ -56,14 +56,6 @@ OBJECTS := $(OBJECTS:.cpp=.o)
 #targets
 fw_rls fw_debug boot: $(TARGET).elf
 
-#determine if make clean should be run before compilation
-#first check if TARGET file in build dir exists
-ifneq ("$(wildcard build/TARGET)","")
-    ifneq ($(shell cat build/TARGET), $(MAKECMDGOALS))
-        RUN_CLEAN := clean
-    endif
-endif
-
 #use windows binary on wsl since HID access isn't possible in wsl
 ifeq ($(findstring Microsoft,$(shell uname -r)), Microsoft)
     UPLOAD_BIN := @cmd.exe /c "..\bin\dfu\hid_bootloader_loader_win.exe"
@@ -85,7 +77,7 @@ build/%.o: %.cpp
 	@$(CXX) $(CXXFLAGS) $(addprefix -D,$(DEFINES)) $(OPT) -mmcu=$(MCU) $(INCLUDE_FILES) -std=c++11 $(INCLUDE_DIRS) -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -o "$@" "$<" 
 	@echo Finished building: $<
 
-$(TARGET).elf: $(RUN_CLEAN) target_print $(OBJECTS)
+$(TARGET).elf: $(OBJECTS)
 	@#link
 	@$(CXX) -o$(TARGET).elf $(OBJECTS) -mmcu=$(MCU) $(LDFLAGS) -Wl,-Map,$(TARGET).map
 	@echo Finished building target: $@
@@ -122,9 +114,6 @@ ser_list:
 clean:
 	@echo Cleaning up.
 	@rm -rf build/
-
-target_print:
-	@echo Building target $(MAKECMDGOALS)
 
 #debugging
 print-%:
