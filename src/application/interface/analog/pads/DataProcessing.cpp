@@ -23,6 +23,7 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <assert.h>
 #include "Pads.h"
 #include "curves/Curves.h"
 #include "../../display/menu/Menu.h"
@@ -31,7 +32,8 @@
 #include "pins/map/LEDs.h"
 #include "pins/map/Buttons.h"
 #include "board/common/analog/Variables.h"
-
+#include "core/src/general/Timing.h"
+#include "core/src/general/BitManipulation.h"
 
 ///
 /// \ingroup interfacePads

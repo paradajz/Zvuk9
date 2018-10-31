@@ -27,6 +27,7 @@
 #include "../../../display/menu/Menu.h"
 #include "handlers/Handlers.h"
 #include "pins/map/Encoders.h"
+#include "core/src/general/Timing.h"
 
 ///
 /// \ingroup interfaceEncoders

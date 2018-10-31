@@ -23,13 +23,15 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <assert.h>
+#include <util/atomic.h>
 #include "Pads.h"
 #include "../../digital/output/leds/LEDs.h"
 #include "../../display/Display.h"
 #include "../../../database/Database.h"
 #include "pins/map/LEDs.h"
 #include "board/common/analog/Variables.h"
-
+#include "core/src/general/BitManipulation.h"
 
 ///
 /// \ingroup interfacePads

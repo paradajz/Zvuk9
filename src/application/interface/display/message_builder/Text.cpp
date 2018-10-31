@@ -27,6 +27,7 @@
 #include "../../analog/pads/Pads.h"
 #include "../../../database/blocks/Scales.h"
 #include "../../../Version.h"
+#include "core/src/general/Misc.h"
 
 ///
 /// \brief Displays home screen.

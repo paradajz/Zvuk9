@@ -22,6 +22,7 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <util/atomic.h>
 #include "board/Board.h"
 #include "Variables.h"
 

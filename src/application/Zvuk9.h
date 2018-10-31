@@ -26,6 +26,7 @@
 #pragma once
 
 #include "midi/src/MIDI.h"
+#include "core/src/general/Strings.h"
 
 ///
 /// \brief External definition of StringBuffer class instance.

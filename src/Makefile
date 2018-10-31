@@ -20,6 +20,7 @@ CXXFLAGS := \
 -fshort-enums \
 -mrelax \
 -Wall \
+-Wno-switch-bool \
 -c \
 -fno-jump-tables \
 -fno-strict-aliasing
@@ -31,6 +32,7 @@ LDFLAGS := -Wl,--gc-sections -mrelax -Wl,--start-group -Wl,-lm -Wl,--end-group
 ifneq ($(filter fw_%, $(MAKECMDGOALS)), )
     #firmware
     OPT := -O3
+    LEN_APPEND := 1
 else
     #optimize for size for bootloader
     OPT := -Os
@@ -73,7 +75,7 @@ build/%.o: %.c
 
 build/%.o: %.cpp
 	@mkdir -p $(@D)
-	@$(CXX) $(CXXFLAGS) $(addprefix -D,$(DEFINES)) $(OPT) -mmcu=$(MCU) $(INCLUDE_FILES) $(INCLUDE_DIRS) -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -o "$@" "$<" 
+	@$(CXX) $(CXXFLAGS) $(addprefix -D,$(DEFINES)) $(OPT) -mmcu=$(MCU) $(INCLUDE_FILES) -std=c++11 $(INCLUDE_DIRS) -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -o "$@" "$<" 
 	@echo Finished building: $<
 
 $(TARGET).elf: $(RUN_CLEAN) target_print $(OBJECTS)
@@ -83,8 +85,10 @@ $(TARGET).elf: $(RUN_CLEAN) target_print $(OBJECTS)
 	@#convert elf to hex
 	@avr-objcopy -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures "$(TARGET).elf" "$(TARGET).hex"
 	@#write firmware length at specified location and crc at the end of compiled binary if supported for target
-	@srec_cat $(TARGET).hex -Intel -exclude $(FLASH_SIZE_START_ADDR) $(FLASH_SIZE_END_ADDR) -Little_Endian_Maximum $(FLASH_SIZE_START_ADDR) -fill 0xff -over $(TARGET).hex -I -Output $(TARGET).hex -Intel
-	@srec_cat $(TARGET).hex -Intel -Little_Endian_CRC16 -max-address $(TARGET).hex -Intel -Cyclic_Redundancy_Check_16_XMODEM -Output $(TARGET).hex -Intel
+	@if [ "$(LEN_APPEND)" = "1" ]; then\
+		srec_cat $(TARGET).hex -Intel -exclude $(FLASH_SIZE_START_ADDR) $(FLASH_SIZE_END_ADDR) -Little_Endian_Maximum $(FLASH_SIZE_START_ADDR) -fill 0xff -over $(TARGET).hex -I -Output $(TARGET).hex -Intel;\
+		srec_cat $(TARGET).hex -Intel -Little_Endian_CRC16 -max-address $(TARGET).hex -Intel -Cyclic_Redundancy_Check_16_XMODEM -Output $(TARGET).hex -Intel;\
+	fi
 	@#convert hex to bin
 	@avr-objcopy -I ihex "$(TARGET).hex" -O binary "$(TARGET).bin"
 	@#create a file with contents being mcu name (for upload process)

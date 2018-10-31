@@ -23,6 +23,8 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <avr/cpufunc.h>
+#include <avr/interrupt.h>
 #include "../Board.h"
 #include "HardwareControl.cpp"
 #include "board/common/analog/Variables.h"

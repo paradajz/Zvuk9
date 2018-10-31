@@ -30,6 +30,10 @@
 #include "pins/Pins.h"
 #include "pins/map/LEDs.h"
 #include "pins/map/Pads.h"
+#include "core/src/HAL/avr/PinManipulation.h"
+#include "core/src/general/BitManipulation.h"
+#include "core/src/HAL/avr/adc/ADC.h"
+
 
 ///
 /// \ingroup board

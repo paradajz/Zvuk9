@@ -31,6 +31,8 @@
 #include "../../../digital/output/leds/LEDs.h"
 #include "board/common/display/u8x8_wrapper.h"
 #include "pins/map/LEDs.h"
+#include "core/src/general/BitManipulation.h"
+#include "core/src/general/Timing.h"
 
 
 ///

@@ -23,6 +23,8 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <avr/wdt.h>
+#include <avr/interrupt.h>
 #include "../Board.h"
 #include "pins/Pins.h"
 #include "../../interface/analog/pads/DataTypes.h"
@@ -30,6 +32,8 @@
 #include "pins/Pins.h"
 #include "pins/map/Pads.h"
 #include "../common/analog/Variables.h"
+#include "core/src/HAL/avr/adc/ADC.h"
+#include "core/src/HAL/avr/PinManipulation.h"
 
 #ifdef DEBUG
 #include "usb/vserial/VSerial.h"

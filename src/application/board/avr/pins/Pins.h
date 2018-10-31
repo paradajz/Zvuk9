@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <avr/io.h>
+
 ///
 /// \brief Pin definitions.
 /// \ingroup board

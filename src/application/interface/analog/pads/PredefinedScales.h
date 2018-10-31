@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DataTypes.h"
+#include "core/src/general/Misc.h"
 
 ///
 /// \ingroup interfacePads

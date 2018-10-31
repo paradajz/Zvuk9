@@ -49,7 +49,7 @@
 #include <LUFA/Drivers/USB/USB.h>
 #include <LUFA/Platform/Platform.h>
 
-#include "../application/board/avr/Pins.h"
+#include "board/avr/pins/Pins.h"
 
 /* Preprocessor Checks: */
 #if !defined(__OPTIMIZE_SIZE__)

@@ -23,7 +23,9 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <assert.h>
 #include "Pads.h"
+#include "core/src/general/BitManipulation.h"
 
 ///
 /// \ingroup interfacePads

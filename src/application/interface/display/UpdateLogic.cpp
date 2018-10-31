@@ -25,6 +25,8 @@
 
 #include "Display.h"
 #include "board/common/display/u8x8_wrapper.h"
+#include "core/src/general/Timing.h"
+#include "core/src/general/BitManipulation.h"
 
 
 StringBuffer stringBuffer;
@@ -125,7 +127,7 @@ bool Display::update()
 ///
 void Display::updateText(uint8_t row, displayTextType_t textType, uint8_t startIndex)
 {
-    uint8_t size = strlen(stringBuffer.buffer);
+    uint8_t size = stringBuffer.getSize();
     uint8_t scrollSize = 0;
 
     if (size+startIndex >= STRING_BUFFER_SIZE-2)
@@ -133,19 +135,22 @@ void Display::updateText(uint8_t row, displayTextType_t textType, uint8_t startI
 
     if (directWriteState)
     {
+        char* buffer = stringBuffer.getString();
+
         for (int j=0; j<size; j++)
-            display_hw.drawGlyph(j+startIndex, rowMap[row], stringBuffer.buffer[j]);
+            display_hw.drawGlyph(j+startIndex, rowMap[row], buffer[j]);
     }
     else
     {
         bool scrollingEnabled = false;
+        char* buffer = stringBuffer.getString();
 
         switch(textType)
         {
             case displayText_still:
             for (int i=0; i<size; i++)
             {
-                displayRowStillText[row][startIndex+i] = stringBuffer.buffer[i];
+                displayRowStillText[row][startIndex+i] = buffer[i];
                 BIT_WRITE(charChange[row], startIndex+i, 1);
             }
 
@@ -186,7 +191,7 @@ void Display::updateText(uint8_t row, displayTextType_t textType, uint8_t startI
             displayRowTempText[row][DISPLAY_WIDTH-1] = '\0';
 
             for (int i=0; i<size; i++)
-                displayRowTempText[row][startIndex+i] = stringBuffer.buffer[i];
+                displayRowTempText[row][startIndex+i] = buffer[i];
 
             //make sure message is properly EOL'ed
             displayRowTempText[row][startIndex+size] = '\0';

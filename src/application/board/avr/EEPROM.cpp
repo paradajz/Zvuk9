@@ -23,6 +23,7 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <avr/eeprom.h>
 #include "../Board.h"
 
 bool Board::memoryRead(uint32_t address, sectionParameterType_t type, int32_t &value)

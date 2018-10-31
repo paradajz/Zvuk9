@@ -37,17 +37,19 @@
 class Database : public DBMS
 {
     public:
-    Database();
-    static void init();
-    static void factoryReset(initType_t type);
-    static bool signatureValid();
+    Database(bool (*readCallback)(uint32_t address, sectionParameterType_t type, int32_t &value), bool (*writeCallback)(uint32_t address, int32_t value, sectionParameterType_t type)) :
+    DBMS(readCallback, writeCallback)
+    {}
+    void init();
+    void factoryReset(initType_t type);
+    bool signatureValid();
 
     private:
-    static void createLayout();
-    static void writeCustomValues();
-    static void initProgramSettings();
-    static void initScales();
-    static void initGlobalSettings();
+    void createLayout();
+    void writeCustomValues();
+    void initProgramSettings();
+    void initScales();
+    void initGlobalSettings();
 };
 
 ///

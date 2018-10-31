@@ -27,7 +27,7 @@
 #include "../../analog/pads/Pads.h"
 #include "../../../Version.h"
 #include "board/common/display/u8x8_wrapper.h"
-
+#include "core/src/general/Timing.h"
 
 ///
 /// \brief Displays "Firmware updated" and firmware version message.
@@ -67,9 +67,11 @@ void Display::displayWelcomeMessage()
     location = getTextCenter(stringBuffer.getSize());
     charIndex = 0;
 
-    while (stringBuffer.buffer[charIndex] != '\0')
+    char* buffer = stringBuffer.getString();
+
+    while (buffer[charIndex] != '\0')
     {
-        display_hw.drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_DEVICE_NAME_MESSAGE], stringBuffer.buffer[charIndex]);
+        display_hw.drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_DEVICE_NAME_MESSAGE], buffer[charIndex]);
         charIndex++;
     }
 
@@ -81,9 +83,9 @@ void Display::displayWelcomeMessage()
     location = getTextCenter(stringBuffer.getSize());
     charIndex = 0;
 
-    while (stringBuffer.buffer[charIndex] != '\0')
+    while (buffer[charIndex] != '\0')
     {
-        display_hw.drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_WELCOME_MESSAGE], stringBuffer.buffer[charIndex]);
+        display_hw.drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_WELCOME_MESSAGE], buffer[charIndex]);
         wait_ms(50);
         charIndex++;
     }

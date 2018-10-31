@@ -27,6 +27,7 @@
 #include "DataTypes.h"
 #include "../strings/Strings.h"
 #include "layout/Layout.h"
+#include "core/src/general/Misc.h"
 
 bool        itemFuncChangeVal;
 

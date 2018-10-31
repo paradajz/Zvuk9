@@ -25,6 +25,9 @@
 
 #include "pins/Pins.h"
 #include "../common/display/u8x8_wrapper.h"
+#include "core/src/HAL/avr/spi/SPI.h"
+#include "core/src/HAL/avr/PinManipulation.h"
+#include "core/src/general/Timing.h"
 
 ///
 /// \ingroup board

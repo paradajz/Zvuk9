@@ -1,5 +1,4 @@
 #common include files
-INCLUDE_FILES := -include "modules/core/src/Core.h"
 INCLUDE_FILES += -include "application/Zvuk9.h"
 
 #common include directories

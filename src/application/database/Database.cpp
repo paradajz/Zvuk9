@@ -28,21 +28,11 @@
 #include "board/Board.h"
 
 ///
-/// \brief Default constructor.
-///
-Database::Database()
-{
-    
-}
-
-///
 /// \brief Initializes database.
 ///
 void Database::init()
 {
-    DBMS::init(dbLayout, DB_BLOCKS);
-    setHandleRead(board.memoryRead);
-    setHandleWrite(board.memoryWrite);
+    setLayout(dbLayout, DB_BLOCKS);
 }
 
 ///
@@ -52,7 +42,7 @@ void Database::init()
 void Database::factoryReset(initType_t type)
 {
     if (type == initFull)
-        DBMS::clear();
+        clear();
 
     initData(type);
     writeCustomValues();
@@ -68,11 +58,11 @@ bool Database::signatureValid()
 
     for (int i=0; i<NUM_OF_UID_BYTES; i++)
     {
-        if (DBMS::read(DB_BLOCK_ID, 0, i) != UNIQUE_ID)
+        if (read(DB_BLOCK_ID, 0, i) != UNIQUE_ID)
             return false;
     }
 
     return true;
 }
 
-Database database;
+Database database(Board::memoryRead, Board::memoryWrite);

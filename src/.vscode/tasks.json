@@ -3,7 +3,7 @@
     "tasks": [
         {
             "label": "build",
-            "command": "make fw_rls",
+            "command": "make fw_rls LANG=C",
             "type": "shell",
             "problemMatcher": [
                 "$gcc"

@@ -22,10 +22,12 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <util/atomic.h>
 #include "board/Board.h"
 #include "Variables.h"
 #include "interface/analog/pads/DataTypes.h"
 #include "constants/Pads.h"
+#include "core/src/general/BitManipulation.h"
 
 ///
 /// \ingroup board

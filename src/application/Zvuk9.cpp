@@ -23,6 +23,7 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <avr/interrupt.h>
 #include "interface/display/Display.h"
 #include "interface/display/menu/Menu.h"
 #include "interface/digital/output/leds/LEDs.h"
@@ -30,6 +31,10 @@
 #include "interface/analog/pads/Pads.h"
 #include "database/Database.h"
 #include "board/Board.h"
+#include "core/src/general/Misc.h"
+#include "core/src/general/Timing.h"
+#include "core/src/HAL/avr/adc/ADC.h"
+
 
 #ifdef DEBUG
 #include "usb/vserial/VSerial.h"

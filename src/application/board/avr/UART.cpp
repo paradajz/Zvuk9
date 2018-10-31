@@ -24,6 +24,7 @@
 */
 
 #include "../Board.h"
+#include "core/src/general/RingBuffer.h"
 
 ///
 /// \ingroup board
@@ -56,7 +57,7 @@ ISR(USART1_UDRE_vect)
 /// \returns Positive value on success. Since this function waits if
 /// outgoig buffer is full, result will always be success (1).
 ///
-int8_t UARTwrite(uint8_t data)
+bool UARTwrite(uint8_t data)
 {
     //if both the outgoing buffer and the UART data register are empty
     //write the byte to the data register directly
@@ -67,13 +68,13 @@ int8_t UARTwrite(uint8_t data)
             UDR1 = data;
         }
 
-        return 1;
+        return true;
     }
 
     while (RingBuffer_IsFull(&txBuffer));
     RingBuffer_Insert(&txBuffer, data);
     UCSR1B |= (1<<UDRIE1);
-    return 1;
+    return true;
 }
 
 /// @}

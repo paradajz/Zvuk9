@@ -23,8 +23,12 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <avr/wdt.h>
+#include <avr/eeprom.h>
 #include "../Board.h"
 #include "constants/CRC.h"
+#include "core/src/HAL/avr/reset/Reset.h"
+
 
 ///
 /// \ingroup boardAVR

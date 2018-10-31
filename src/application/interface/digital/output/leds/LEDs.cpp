@@ -27,7 +27,8 @@
 #include "Variables.h"
 #include "Helpers.h"
 #include "pins/map/LEDs.h"
-
+#include "core/src/general/BitManipulation.h"
+#include "core/src/general/Timing.h"
 
 ///
 /// \ingroup interfaceLEDs
