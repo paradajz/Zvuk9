@@ -60,11 +60,11 @@ endif
 
 #mcu specific
 ifeq ($(MCU),at90usb1286)
-    FUSE_UNLOCK := 0x3f
+    FUSE_UNLOCK := 0xff
     FUSE_EXT := 0xf8
     FUSE_HIGH := 0xd2
     FUSE_LOW := 0xff
-    FUSE_LOCK := 0x2f
+    FUSE_LOCK := 0xef
     EEPROM_SIZE := 4096
     BOOT_START_ADDR := 0x1F000
     FLASH_SIZE_START_ADDR := 0x98
