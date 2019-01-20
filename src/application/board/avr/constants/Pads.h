@@ -49,7 +49,7 @@
 ///
 /// \brief Raw ADC pressure which corresponds with MIDI velocity 127.
 ///
-#define VELOCITY_127_RAW_PRESSURE                   650
+#define VELOCITY_127_RAW_PRESSURE                   350
 
 ///
 /// \brief Maximum pressure value.
@@ -62,13 +62,13 @@
 /// \brief Percentage used to calculate lower pressure limit to send aftertouch.
 /// Lower aftertouch value = Upper pressure (without sensitivity scaling) value + (Upper pressure (velocity) value * AFTERTOUCH_PRESSURE_RATIO_LOWER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_LOWER             4
+#define AFTERTOUCH_PRESSURE_RATIO_LOWER             80
 
 ///
 /// \brief Percentage used to calculate upper pressure limit to send aftertouch.
 /// Upper aftertouch value = Lower aftertouch value + (Lower aftertouch value * AFTERTOUCH_PRESSURE_RATIO_UPPER%)
 ///
-#define AFTERTOUCH_PRESSURE_RATIO_UPPER             7
+#define AFTERTOUCH_PRESSURE_RATIO_UPPER             20
 
 ///
 /// \brief Curve used to achieve linear and smoother response from pads.
