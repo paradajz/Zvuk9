@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "../../board/Board.h"
 #include "../analog/pads/Pads.h"
 #include "Config.h"
 #include "DataTypes.h"
 #include "Layout.h"
 #include "Macros.h"
 #include "strings/Strings.h"
+#include "U8X8/U8X8.h"
 
 ///
 /// \brief Display control.

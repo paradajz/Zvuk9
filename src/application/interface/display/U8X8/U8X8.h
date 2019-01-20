@@ -32,37 +32,16 @@
 /// @{
 ///
 
-class U8X8
+namespace U8X8
 {
-    public:
-    U8X8();
-    void initDisplay();
+    bool initDisplay();
+    uint8_t getColumns();
+    uint8_t getRows();
     void clearDisplay();
-    void setPowerSave(bool state);
-    void setFlipMode(bool state);
+    void setPowerSave(uint8_t is_enable);
+    void setFlipMode(uint8_t mode);
     void setFont(const uint8_t *font_8x8);
-    void drawGlyph(uint8_t x, uint8_t y, char character);
-
-    private:
-    ///
-    /// \brief Main U8x8 data structure.
-    ///
-    u8x8_t u8x8;
-};
-
-///
-/// \brief External definitions for low-level display control.
-/// These functions must be implemented in order to access display.
-/// @{
-
-extern uint8_t u8x8_gpio_and_delay(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, U8X8_UNUSED void *arg_ptr);
-extern uint8_t u8x8_byte_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr);
-
-/// @}
-
-///
-/// \brief External definition of U8X8 class instance.
-///
-extern U8X8 display_hw;
+    void drawGlyph(uint8_t x, uint8_t y, uint8_t encoding);
+}
 
 /// @}

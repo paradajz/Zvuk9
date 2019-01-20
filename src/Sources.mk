@@ -78,4 +78,4 @@ else
     modules/lufa/LUFA/Drivers/USB/Class/Device/HIDClassDevice.c
 endif
 
-SOURCES := $(filter-out %tests-all.cpp,$(SOURCES))
+SOURCES := $(filter-out %tests.cpp,$(SOURCES))

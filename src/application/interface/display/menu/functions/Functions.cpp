@@ -29,10 +29,10 @@
 #include "../../../digital/input/encoders/Encoders.h"
 #include "../../../digital/input/buttons/Buttons.h"
 #include "../../../digital/output/leds/LEDs.h"
-#include "board/common/display/u8x8_wrapper.h"
 #include "pins/map/LEDs.h"
 #include "core/src/general/BitManipulation.h"
 #include "core/src/general/Timing.h"
+#include "board/Board.h"
 
 
 ///
@@ -72,15 +72,15 @@ bool factoryReset(uint8_t argument)
                     switch(i)
                     {
                         case 0:
-                        display_hw.drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_1, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], 'x');
+                        U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_1, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], 'x');
                         break;
 
                         case 6:
-                        display_hw.drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_7, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], 'x');
+                        U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_7, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], 'x');
                         break;
 
                         case 8:
-                        display_hw.drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_9, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], 'x');
+                        U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_9, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], 'x');
                         break;
 
                         default:
@@ -97,15 +97,15 @@ bool factoryReset(uint8_t argument)
                     switch(i)
                     {
                         case 0:
-                        display_hw.drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_1, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], ' ');
+                        U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_1, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], ' ');
                         break;
 
                         case 6:
-                        display_hw.drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_7, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], ' ');
+                        U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_7, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], ' ');
                         break;
 
                         case 8:
-                        display_hw.drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_9, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], ' ');
+                        U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_9, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], ' ');
                         break;
 
                         default:

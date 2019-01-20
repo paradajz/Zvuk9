@@ -24,10 +24,8 @@
 */
 
 #include "Display.h"
-#include "board/common/display/u8x8_wrapper.h"
 #include "core/src/general/Timing.h"
 #include "core/src/general/BitManipulation.h"
-
 
 StringBuffer stringBuffer;
 
@@ -44,10 +42,10 @@ Display::Display()
 ///
 void Display::init()
 {
-    display_hw.initDisplay();
-    display_hw.setFlipMode(1);
-    display_hw.setFont(u8x8_font_pressstart2p_r);
-    display_hw.clearDisplay();
+    U8X8::initDisplay();
+    U8X8::setFlipMode(1);
+    U8X8::setFont(u8x8_font_pressstart2p_r);
+    U8X8::clearDisplay();
 
     //init char arrays
     for (int i=0; i<DISPLAY_HEIGHT; i++)
@@ -102,12 +100,12 @@ bool Display::update()
         for (int j=0; j<string_len; j++)
         {
             if (BIT_READ(charChange[i], j))
-                display_hw.drawGlyph(j, rowMap[i], charPointer[j+scrollEvent[i].currentIndex]);
+                U8X8::drawGlyph(j, rowMap[i], charPointer[j+scrollEvent[i].currentIndex]);
         }
 
         //now fill remaining columns with spaces
         for (int j=string_len; j<DISPLAY_WIDTH; j++)
-            display_hw.drawGlyph(j, rowMap[i], ' ');
+            U8X8::drawGlyph(j, rowMap[i], ' ');
 
         charChange[i] = 0;
     }
@@ -138,7 +136,7 @@ void Display::updateText(uint8_t row, displayTextType_t textType, uint8_t startI
         char* buffer = stringBuffer.getString();
 
         for (int j=0; j<size; j++)
-            display_hw.drawGlyph(j+startIndex, rowMap[row], buffer[j]);
+            U8X8::drawGlyph(j+startIndex, rowMap[row], buffer[j]);
     }
     else
     {

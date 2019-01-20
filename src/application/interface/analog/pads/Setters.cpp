@@ -32,6 +32,7 @@
 #include "pins/map/LEDs.h"
 #include "board/common/analog/Variables.h"
 #include "core/src/general/BitManipulation.h"
+#include "board/Board.h"
 
 ///
 /// \ingroup interfacePads

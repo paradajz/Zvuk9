@@ -26,7 +26,6 @@
 #include "../Display.h"
 #include "../../analog/pads/Pads.h"
 #include "../../../Version.h"
-#include "board/common/display/u8x8_wrapper.h"
 #include "core/src/general/Timing.h"
 
 ///
@@ -71,7 +70,7 @@ void Display::displayWelcomeMessage()
 
     while (buffer[charIndex] != '\0')
     {
-        display_hw.drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_DEVICE_NAME_MESSAGE], buffer[charIndex]);
+        U8X8::drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_DEVICE_NAME_MESSAGE], buffer[charIndex]);
         charIndex++;
     }
 
@@ -85,7 +84,7 @@ void Display::displayWelcomeMessage()
 
     while (buffer[charIndex] != '\0')
     {
-        display_hw.drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_WELCOME_MESSAGE], buffer[charIndex]);
+        U8X8::drawGlyph(location+charIndex, rowMap[DISPLAY_ROW_WELCOME_MESSAGE], buffer[charIndex]);
         wait_ms(50);
         charIndex++;
     }

@@ -28,6 +28,7 @@
 #include "handlers/Handlers.h"
 #include "pins/map/Encoders.h"
 #include "core/src/general/Timing.h"
+#include "board/Board.h"
 
 ///
 /// \ingroup interfaceEncoders
