@@ -1572,33 +1572,6 @@ void Pads::updateLastPressedPad(int8_t pad, bool state)
 }
 
 ///
-/// \brief Saves current time into buffer so that notes for requested pad are sent after defined amount of time.
-/// @param [in] pad     Pad for which a note send event is being created.
-///
-void Pads::storeNotes(int8_t pad)
-{
-    assert(PAD_CHECK(pad));
-
-    uint8_t i = note_buffer_head + 1;
-
-    if (i >= PAD_NOTE_BUFFER_SIZE)
-        i = 0;
-
-    //if buffer is full, wait until there is some space
-    if (note_buffer_tail == i)
-    {
-        #ifdef DEBUG
-        printf_P(PSTR("Oops, buffer full. Waiting...\n"));
-        #endif
-
-        while (!checkNoteBuffer());
-    }
-
-    pad_buffer[i] = pad;
-    note_buffer_head = i;
-}
-
-///
 /// \brief Changes active pitch bend type.
 /// @param [in] type    New pitch bend type (enumerated type). See pitchBend_t enumeration.
 /// \returns Result of changing pitch bend type (enumerated type). See changeResult_t enumeration.

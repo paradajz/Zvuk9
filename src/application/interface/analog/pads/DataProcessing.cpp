@@ -738,9 +738,7 @@ void Pads::checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvai
             case true:
             //if note on event happened, store notes in buffer first
             if (getMIDISendState(pad, functionOnOffNotes))
-            {
-                storeNotes(pad);
-            }
+                noteStored[pad] = true;
             break;
 
             case false:
@@ -751,43 +749,27 @@ void Pads::checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvai
         }
     }
 
-    checkNoteBuffer();
+    checkNoteBuffer(pad);
 }
 
 ///
-/// \brief Checks if there are any notes to send in pad note buffer.
-/// \returns True if data is available in buffer, false otherwise.s
+/// \brief Checks if there are any notes to send for the specified pad.
+/// @param [in] pad Pad which is being checked.
 ///
-bool Pads::checkNoteBuffer()
+void Pads::checkNoteBuffer(int8_t pad)
 {
-    //notes are stored in buffer and they're sent after PAD_NOTE_SEND_DELAY
-    //to avoid glide effect while sending x/y + notes
-    if (note_buffer_head == note_buffer_tail)
-    {
-        //buffer is empty
-        return false;
-    }
+    if (!noteStored[pad])
+        return;
 
-    //there is something in buffer
-    uint8_t index = note_buffer_tail + 1;
-
-    if (index >= PAD_NOTE_BUFFER_SIZE)
-        index = 0;
-
-    //this is fifo (circular) buffer
-    //check first element in buffer
-    //if first element (note) can't pass this condition, none of the other elements can, so return
-    if ((rTimeMs() - lastPadPressTime[index]) < PAD_NOTE_SEND_DELAY)
-        return false;
+    if ((rTimeMs() - lastPadPressTime[pad]) < PAD_NOTE_SEND_DELAY)
+        return;
 
     //send
     //make sure to check if pad is still pressed!
-    if (isPadPressed(pad_buffer[index]))
-        sendNotes(pad_buffer[index], lastVelocityValue[pad_buffer[index]], true);
+    if (isPadPressed(pad))
+        sendNotes(pad, lastVelocityValue[pad], true);
 
-    note_buffer_tail = index;
-
-    return true;
+    noteStored[pad] = false;
 }
 
 ///

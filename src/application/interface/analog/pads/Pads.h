@@ -118,7 +118,7 @@ class Pads
 
     void checkMIDIdata(int8_t pad, bool velocityAvailable, bool aftertouchAvailable, bool xAvailable, bool yAvailable);
     bool checkVelocity(int8_t pad, int16_t value);
-    bool checkNoteBuffer();
+    void checkNoteBuffer(int8_t pad);
     bool checkAftertouch(int8_t pad, bool velocityAvailable, int16_t value);
     bool checkX(int8_t pad, int16_t value);
     bool checkY(int8_t pad, int16_t value);
@@ -130,7 +130,6 @@ class Pads
     void sendY(int8_t pad);
 
     changeResult_t updateFunctionLEDs(int8_t pad);
-    void storeNotes(int8_t pad);
     void resetScale();
 
     ///
@@ -332,16 +331,10 @@ class Pads
     /// @}
 
     ///
-    /// \brief Variables used to implement note buffer.
-    /// Note buffer contains time and pad index and it's used to delay sending
-    /// of MIDI notes after X and Y coordinates after defined amount of time.
-    /// @{
-
-    uint8_t                 pad_buffer[PAD_NOTE_BUFFER_SIZE];
-    uint8_t                 note_buffer_head;
-    uint8_t                 note_buffer_tail;
-
-    /// @}
+    /// \brief Array indicating that there are notes to send for all pads.
+    /// Used for delayed sending of MIDI notes after X and Y coordinates after defined amount of time.
+    ///
+    bool                    noteStored[NUMBER_OF_PADS];
 
     ///
     /// \brief Holds current state of calibration mode (true if enabled, false otherwise).
