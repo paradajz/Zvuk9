@@ -31,6 +31,6 @@
 
 #define SW_VERSION_MAJOR        1
 #define SW_VERSION_MINOR        0
-#define SW_VERSION_REVISION     0
+#define SW_VERSION_REVISION     1
 
 /// @}
