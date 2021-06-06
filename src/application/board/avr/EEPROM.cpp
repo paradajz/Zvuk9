@@ -26,22 +26,22 @@
 #include <avr/eeprom.h>
 #include "../Board.h"
 
-bool Board::memoryRead(uint32_t address, sectionParameterType_t type, int32_t &value)
+bool Board::memoryRead(uint32_t address, LESSDB::sectionParameterType_t type, int32_t& value)
 {
-    switch(type)
+    switch (type)
     {
-        case BIT_PARAMETER:
-        case BYTE_PARAMETER:
-        case HALFBYTE_PARAMETER:
+    case LESSDB::sectionParameterType_t::bit:
+    case LESSDB::sectionParameterType_t::byte:
+    case LESSDB::sectionParameterType_t::halfByte:
         value = eeprom_read_byte((uint8_t*)address);
         break;
 
-        case WORD_PARAMETER:
+    case LESSDB::sectionParameterType_t::word:
         value = eeprom_read_word((uint16_t*)address);
         break;
 
-        default:
-        // case DWORD_PARAMETER:
+    default:
+        // case LESSDB::sectionParameterType_t::dword:
         value = eeprom_read_dword((uint32_t*)address);
         break;
     }
@@ -49,22 +49,22 @@ bool Board::memoryRead(uint32_t address, sectionParameterType_t type, int32_t &v
     return true;
 }
 
-bool Board::memoryWrite(uint32_t address, int32_t value, sectionParameterType_t type)
+bool Board::memoryWrite(uint32_t address, int32_t value, LESSDB::sectionParameterType_t type)
 {
-    switch(type)
+    switch (type)
     {
-        case BIT_PARAMETER:
-        case BYTE_PARAMETER:
-        case HALFBYTE_PARAMETER:
+    case LESSDB::sectionParameterType_t::bit:
+    case LESSDB::sectionParameterType_t::byte:
+    case LESSDB::sectionParameterType_t::halfByte:
         eeprom_update_byte((uint8_t*)address, value);
         break;
 
-        case WORD_PARAMETER:
+    case LESSDB::sectionParameterType_t::word:
         eeprom_update_word((uint16_t*)address, value);
         break;
 
-        default:
-        // case DWORD_PARAMETER:
+    default:
+        // case LESSDB::sectionParameterType_t::dword:
         eeprom_update_dword((uint32_t*)address, value);
         break;
     }

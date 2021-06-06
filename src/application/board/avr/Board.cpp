@@ -29,7 +29,6 @@
 #include "constants/CRC.h"
 #include "core/src/HAL/avr/reset/Reset.h"
 
-
 ///
 /// \ingroup boardAVR
 /// @{
@@ -37,36 +36,16 @@
 ///
 /// \brief Placeholder variable used only to reserve space in linker section.
 ///
-const uint32_t appLength __attribute__ ((section (".applen"))) __attribute__((used)) = 0;
+const uint32_t appLength __attribute__((section(".applen"))) __attribute__((used)) = 0;
 
 ///
 /// \brief Location at which size of application is written in flash.
 ///
-#define APP_LENGTH_LOCATION         (uint32_t)0x00000098
+#define APP_LENGTH_LOCATION (uint32_t)0x00000098
 
 /// @}
-
 
 void Board::reboot()
 {
     mcuReset();
-}
-
-bool Board::checkNewRevision()
-{
-    //current app crc is written in ".applen" linker section
-    //previous crc is stored into eeprom
-    //if two differ, app has changed
-
-    uint32_t flash_size = pgm_read_dword(APP_LENGTH_LOCATION);
-    uint16_t crc_eeprom = eeprom_read_word((uint16_t*)SW_CRC_LOCATION_EEPROM);
-    uint16_t crc_flash = pgm_read_word(flash_size);
-
-    if (crc_eeprom != crc_flash)
-    {
-        eeprom_update_word((uint16_t*)SW_CRC_LOCATION_EEPROM, crc_flash);
-        return true;
-    }
-
-    return false;
 }

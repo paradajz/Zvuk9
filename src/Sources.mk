@@ -1,6 +1,3 @@
-#common include files
-INCLUDE_FILES += -include "application/Zvuk9.h"
-
 #common include directories
 INCLUDE_DIRS := \
 -I"modules/lufa/" \
@@ -78,4 +75,4 @@ else
     modules/lufa/LUFA/Drivers/USB/Class/Device/HIDClassDevice.c
 endif
 
-SOURCES := $(filter-out %tests.cpp,$(SOURCES))
+SOURCES := $(filter-out %tests%,$(SOURCES))

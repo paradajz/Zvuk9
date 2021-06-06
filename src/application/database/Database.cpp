@@ -32,16 +32,16 @@
 ///
 void Database::init()
 {
-    setLayout(dbLayout, DB_BLOCKS);
+    setLayout(dbLayout, DB_BLOCKS, 0);
 }
 
 ///
 /// \brief Performs factory reset of data in database.
 /// @param [in] type Factory reset type. See initType_t enumeration.
 ///
-void Database::factoryReset(initType_t type)
+void Database::factoryReset(LESSDB::factoryResetType_t type)
 {
-    if (type == initFull)
+    if (type == LESSDB::factoryResetType_t::full)
         clear();
 
     initData(type);
@@ -56,7 +56,7 @@ bool Database::signatureValid()
 {
     //check if all bytes up to START_OFFSET address match unique id
 
-    for (int i=0; i<NUM_OF_UID_BYTES; i++)
+    for (int i = 0; i < NUM_OF_UID_BYTES; i++)
     {
         if (read(DB_BLOCK_ID, 0, i) != UNIQUE_ID)
             return false;

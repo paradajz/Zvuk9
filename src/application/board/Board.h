@@ -27,7 +27,7 @@
 
 #include "interface/digital/output/leds/Variables.h"
 #include "common/DataTypes.h"
-#include "dbms/src/DataTypes.h"
+#include "dbms/src/LESSDB.h"
 
 ///
 /// \defgroup board Board
@@ -36,148 +36,142 @@
 /// \ingroup board
 /// @{
 
-class Board
+namespace Board
 {
-    public:
-    ///
-    /// \brief Default constructor.
-    ///
-    Board();
-
     ///
     /// \brief Perfoms initialization of MCU and all board peripherals.
     ///
     void init();
 
     ///
-    /// \brief Checks if firmware has been updated.
-    /// Firmware file has written CRC in last two flash addresses. Application stores last read CRC in EEPROM.
-    /// If EEPROM and flash CRC differ, firmware has been updated.
-    /// \returns True if firmware has been updated, false otherwise.
-    ///
-    static bool checkNewRevision();
-
-    ///
     /// \brief Performs software MCU reboot.
     ///
     void reboot();
 
-    ///
-    /// \brief Checks if pad data is available.
-    /// Pad data is read in ISR and stored into samples array.
-    /// Once all coordinates are read, data is considered available.
-    /// \returns True if data is available, false otherwise.
-    ///
-    bool padDataAvailable();
+    namespace io
+    {
+        enum class ledBrightness_t : uint8_t
+        {
+            bOff = 0,
+            b25  = 1,
+            b50  = 2,
+            b75  = 3,
+            b100 = 4
+        };
 
-    ///
-    /// \brief Returns Z coordinate (pressure) reading for requested pad.
-    /// @param [in] pad Pad for which reading is returned.
-    /// \returns Z coordinate (pressure) value for requested pad.
-    ///
-    int16_t getPadPressure(uint8_t pad);
+        enum class encoderIndex_t : uint8_t
+        {
+            a,
+            b
+        };
 
-    ///
-    /// \brief Returns X coordinate reading for requested pad.
-    /// @param [in] pad Pad for which reading is returned.
-    /// \returns X coordinate value for requested pad.
-    ///
-    int16_t getPadX(uint8_t pad);
+        /// Structure containing digital input readings for a given input.
+        /// Count represents total amount of readings stored in readings variable.
+        /// Readings variable contains up to last 32 readings where LSB bit is the
+        /// newest reading, and MSB bit is the last.
+        typedef struct
+        {
+            uint8_t  count;
+            uint32_t readings;
+        } dInReadings_t;
 
-    ///
-    /// \brief Returns Y coordinate reading for requested pad.
-    /// @param [in] pad Pad for which reading is returned.
-    /// \returns Y coordinate value for requested pad.
-    ///
-    int16_t getPadY(uint8_t pad);
+        /// Returns last read digital input states for requested digital input index.
+        /// param [in]:     digitalInIndex  Index of digital input which should be read.
+        /// param [in,out]: dInReadings     Reference to variable in which new digital input readings are stored.
+        /// returns: True if there are new readings for specified digital input index.
+        bool digitalInState(size_t digitalInIndex, dInReadings_t& dInReadings);
 
-    ///
-    /// \brief Checks if data from button matrix is available.
-    /// Matrix data is read in ISR and stored into digitalInBuffer array.
-    /// Once all columns are read, data is considered available.
-    /// \returns True if data is available, false otherwise.
-    ///
-    static bool digitalInputDataAvailable();
+        /// Calculates encoder index based on provided button index.
+        /// param [in]: buttonID   Button index from which encoder is being calculated.
+        /// returns: Calculated encoder index.
+        size_t encoderIndex(size_t buttonID);
 
-    ///
-    /// \brief Returns last read button state for requested button index.
-    /// @param [in] buttonIndex Index of button which should be read.
-    /// \returns True if button is pressed, false otherwise.
-    ///
-    static bool getButtonState(uint8_t buttonIndex);
+        /// Used to calculate index of A or B signal of encoder.
+        /// param [in]: encoderID       Encoder which is being checked.
+        /// param [in]: index   A or B signal (enumerated type, see encoderIndex_t).
+        /// returns: Calculated index of A or B signal of encoder.
+        size_t encoderSignalIndex(size_t encoderID, encoderIndex_t index);
 
-    ///
-    /// \brief Checks if requested encoder ID is enabled.
-    /// @param [in] encoderNumber Encoder which is being checked.
-    /// \returns True if encoder is enabled, false otherwise.
-    ///
-    bool encoderEnabled(uint8_t encoderNumber);
+        /// Used to turn LED connected to the board on or off.
+        /// param [in]: ledID           LED for which to change state.
+        /// param [in]: brightnessLevel See ledBrightness_t enum.
+        void writeLEDstate(size_t ledID, ledBrightness_t ledBrightness);
 
-    ///
-    /// \brief Checks state of requested encoder.
-    /// @param [in] encoderID       Encoder which is being checked.
-    /// \returns 0 if encoder hasn't been moved, 1 if it's moving in positive and -1 if it's
-    /// moving in negative direction.
-    ///
-    static int8_t getEncoderState(uint8_t encoderID);
+        /// brief Checks for current analog value for specified analog index.
+        /// @param[in] analogID     Analog index for which ADC value is being checked.
+        /// param [in,out]:         Reference to variable in which new ADC reading is stored.
+        /// returns: True if there is a new reading for specified analog index.
+        bool analogValue(size_t analogID, uint16_t& value);
 
-    ///
-    /// \brief Used to read contents of memory provided by specific board.
-    /// @param [in] address Memory address from which to read from.
-    /// @param [in] type    Type of parameter which is being read. Defined in DBMS module.
-    /// @param [in] value   Pointer to variable in which read value is being stored.
-    /// \returns            True on success, false otherwise.
-    ///
-    static bool memoryRead(uint32_t address, sectionParameterType_t type, int32_t &value);
+        ///
+        /// \brief Checks if pad data is available.
+        /// Pad data is read in ISR and stored into samples array.
+        /// Once all coordinates are read, data is considered available.
+        /// \returns True if data is available, false otherwise.
+        ///
+        bool padDataAvailable();
 
-    ///
-    /// \brief Used to write value to memory provided by specific board.
-    /// @param [in] address Memory address in which new value is being written.
-    /// @param [in] value   Value to write.
-    /// @param [in] type    Type of parameter which is being written. Defined in DBMS module.
-    /// \returns            True on success, false otherwise.
-    ///
-    static bool memoryWrite(uint32_t address, int32_t value, sectionParameterType_t type);
+        ///
+        /// \brief Returns Z coordinate (pressure) reading for requested pad.
+        /// @param [in] pad Pad for which reading is returned.
+        /// \returns Z coordinate (pressure) value for requested pad.
+        ///
+        int16_t getPadPressure(uint8_t pad);
 
-    private:
-    ///
-    /// \brief Initializes all pins to correct states.
-    ///
-    static void initPins();
-    ///
-    /// \brief Initializes USB peripheral and configures it as MIDI device.
-    ///
-    static void initUSB_MIDI();
+        ///
+        /// \brief Returns X coordinate reading for requested pad.
+        /// @param [in] pad Pad for which reading is returned.
+        /// \returns X coordinate value for requested pad.
+        ///
+        int16_t getPadX(uint8_t pad);
 
-    ///
-    /// \brief Initializes UART peripheral used to send and receive MIDI data.
-    ///
-    static void initUART_MIDI();
+        ///
+        /// \brief Returns Y coordinate reading for requested pad.
+        /// @param [in] pad Pad for which reading is returned.
+        /// \returns Y coordinate value for requested pad.
+        ///
+        int16_t getPadY(uint8_t pad);
+    }    // namespace io
 
-    ///
-    /// \brief Initializes main and PWM timers.
-    ///
-    static void initTimers();
+    namespace NVM
+    {
+        //NVM: non-volatile memory
 
-    ///
-    /// \brief Initializes pads and ADC peripheral.
-    ///
-    static void initPads();
+        enum class parameterType_t : uint8_t
+        {
+            byte,
+            word,
+            dword
+        };
 
-    ///
-    /// \brief Checks state of requested encoder.
-    /// Internal function.
-    /// @param [in] encoderID       Encoder which is being checked.
-    /// @param [in] pairState       A and B signal readings from encoder placed into bits 0 and 1.
-    /// \returns 0 if encoder hasn't been moved, 1 if it's moving in positive and -1 if it's
-    /// moving in negative direction.
-    ///
-    static int8_t readEncoder(uint8_t encoderID, uint8_t pairState);
-};
+        /// Initializes and prepares non-volatile storage on board.
+        bool init();
 
-///
-/// \brief External definition of Board class instance.
-///
-extern Board board;
+        /// Returns total available bytes to store in non-volatile memory.
+        uint32_t size();
+
+        /// Used to wipe non-volatile memory on specified range.
+        /// param [in]: start   Starting address from which to erase.
+        /// param [in]: end     Last address to erase.
+        bool clear(uint32_t start, uint32_t end);
+
+        /// Returns amount of actual memory it takes to store provided parameter type.
+        size_t paramUsage(parameterType_t type);
+
+        /// Used to read contents of memory provided by specific board,
+        /// param [in]: address Memory address from which to read from.
+        /// param [in]: value   Pointer to variable in which read value is being stored.
+        /// param [in]: type    Type of parameter which is being read.
+        /// returns: True on success, false otherwise.
+        bool read(uint32_t address, int32_t& value, parameterType_t type);
+
+        /// Used to write value to memory provided by specific board.
+        /// param [in]: address Memory address in which new value is being written.
+        /// param [in]: value   Value to write.
+        /// param [in]: type    Type of parameter which is being written.
+        /// returns: True on success, false otherwise.
+        bool write(uint32_t address, int32_t value, parameterType_t type);
+    }    // namespace NVM
+};       // namespace Board
 
 /// @}

@@ -34,7 +34,6 @@
 #include "core/src/general/Timing.h"
 #include "board/Board.h"
 
-
 ///
 /// \brief Used to perform factory reset.
 /// Before factory reset is performed, certain pads need to be pressed
@@ -50,15 +49,15 @@ bool factoryReset(uint8_t argument)
 
     uint16_t padsPressed = 0;
 
-    while(1)
+    while (1)
     {
         pads.update();
 
-        for (int i=0; i<NUMBER_OF_PADS; i++)
+        for (int i = 0; i < NUMBER_OF_PADS; i++)
         {
             if (pads.isPadPressed(i))
             {
-                 //hardcoding!!! :( pads 1, 7 and 9 need to be pressed to invoke factory reset
+                //hardcoding!!! :( pads 1, 7 and 9 need to be pressed to invoke factory reset
                 if ((i != 6) && (i != 0) && (i != 8))
                 {
                     display.setDirectWriteState(false);
@@ -69,21 +68,21 @@ bool factoryReset(uint8_t argument)
                 {
                     BIT_WRITE(padsPressed, i, 1);
 
-                    switch(i)
+                    switch (i)
                     {
-                        case 0:
+                    case 0:
                         U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_1, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], 'x');
                         break;
 
-                        case 6:
+                    case 6:
                         U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_7, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], 'x');
                         break;
 
-                        case 8:
+                    case 8:
                         U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_9, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], 'x');
                         break;
 
-                        default:
+                    default:
                         break;
                     }
                 }
@@ -94,21 +93,21 @@ bool factoryReset(uint8_t argument)
                 {
                     BIT_WRITE(padsPressed, i, 0);
 
-                    switch(i)
+                    switch (i)
                     {
-                        case 0:
+                    case 0:
                         U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_1, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], ' ');
                         break;
 
-                        case 6:
+                    case 6:
                         U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_7, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], ' ');
                         break;
 
-                        case 8:
+                    case 8:
                         U8X8::drawGlyph(DISPLAY_POSITION_FACTORY_RESET_PAD_9, rowMap[DISPLAY_ROW_FACTORY_RESET_PADS], ' ');
                         break;
 
-                        default:
+                    default:
                         break;
                     }
                 }
@@ -123,7 +122,7 @@ bool factoryReset(uint8_t argument)
             //now, turn all leds off
             leds.setAllOff();
             wait_ms(2000);
-            database.factoryReset((initType_t)argument);
+            database.factoryReset(LESSDB::factoryResetType_t::full);
             display.clearAll();
             display.displayFactoryResetEnd();
             wait_ms(2000);
@@ -155,17 +154,17 @@ bool deviceInfo(uint8_t argument)
 bool enableCalibration(uint8_t argument)
 {
     if (pads.getNumberOfPressedPads())
-         return false;
+        return false;
 
-    switch((padCoordinate_t)argument)
+    switch ((padCoordinate_t)argument)
     {
-        case coordinateX:
-        case coordinateY:
-        case coordinateZ:
+    case coordinateX:
+    case coordinateY:
+    case coordinateZ:
         //this is fine
         break;
 
-        default:
+    default:
         return false;
     }
 
@@ -185,26 +184,26 @@ bool enableCalibration(uint8_t argument)
 ///
 bool checkAftertouchType(uint8_t argument)
 {
-    switch((aftertouchType_t)argument)
+    switch ((aftertouchType_t)argument)
     {
-        case aftertouchPoly:
-        case aftertouchChannel:
+    case aftertouchPoly:
+    case aftertouchChannel:
         //nothing
         break;
 
-        default:
+    default:
         return false;
     }
 
-    switch(itemFuncChangeVal)
+    switch (itemFuncChangeVal)
     {
-        case true:
+    case true:
         //change option
         pads.setAftertouchType((aftertouchType_t)argument);
         return true;
         break;
 
-        case false:
+    case false:
         //check if current aftertouch type is same as received argument
         return (pads.getAftertouchType() == (aftertouchType_t)argument);
     }
@@ -223,15 +222,15 @@ bool checkAftertouchType(uint8_t argument)
 ///
 bool checkRunningStatus(uint8_t argument)
 {
-    switch(itemFuncChangeVal)
+    switch (itemFuncChangeVal)
     {
-        case true:
+    case true:
         //switch option
         midi.setRunningStatusState((bool)argument);
         database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_RUNNING_STATUS_ID, argument);
         return true;
 
-        case false:
+    case false:
         return (midi.getRunningStatusState() == (bool)argument);
         break;
     }
@@ -250,27 +249,27 @@ bool checkRunningStatus(uint8_t argument)
 ///
 bool checkNoteOffStatus(uint8_t argument)
 {
-    switch((noteOffType_t)argument)
+    switch ((noteOffType_t)argument)
     {
-        case noteOffType_noteOnZeroVel:
-        case noteOffType_standardNoteOff:
+    case noteOffType_noteOnZeroVel:
+    case noteOffType_standardNoteOff:
         //nothing
         break;
 
-        default:
+    default:
         //invalid argument
         return false;
     }
 
-    switch(itemFuncChangeVal)
+    switch (itemFuncChangeVal)
     {
-        case true:
+    case true:
         //switch option
         midi.setNoteOffMode((noteOffType_t)argument);
         database.update(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID, argument);
         return true;
 
-        case false:
+    case false:
         return (database.read(DB_BLOCK_GLOBAL_SETTINGS, globalSettingsMIDI, MIDI_SETTING_NOTE_OFF_TYPE_ID) == (noteOffType_t)argument);
     }
 
@@ -288,27 +287,27 @@ bool checkNoteOffStatus(uint8_t argument)
 ///
 bool checkTransportCC(uint8_t argument)
 {
-    switch((transportControlMode_t)argument)
+    switch ((transportControlMode_t)argument)
     {
-        case transportCC:
-        case transportMMC:
-        case transportMMC_CC:
+    case transportCC:
+    case transportMMC:
+    case transportMMC_CC:
         //nothing
         break;
 
-        default:
+    default:
         //invalid argument
         return false;
     }
 
-    switch(itemFuncChangeVal)
+    switch (itemFuncChangeVal)
     {
-        case true:
+    case true:
         //switch option
         buttons.setTransportControlMode((transportControlMode_t)argument);
         return true;
 
-        case false:
+    case false:
         return (buttons.getTransportControlMode() == (transportControlMode_t)argument);
         break;
     }
@@ -327,29 +326,28 @@ bool checkTransportCC(uint8_t argument)
 ///
 bool checkPitchBendType(uint8_t argument)
 {
-    switch((pitchBendType_t)argument)
+    switch ((pitchBendType_t)argument)
     {
-        case pitchBend1:
-        case pitchBend2:
+    case pitchBend1:
+    case pitchBend2:
         //nothing
         break;
 
-        default:
+    default:
         //invalid argument
         return false;
     }
 
-    switch(itemFuncChangeVal)
+    switch (itemFuncChangeVal)
     {
-        case true:
+    case true:
         //switch option
         pads.setPitchBendType((pitchBendType_t)argument);
         return true;
 
-        case false:
+    case false:
         return (pads.getPitchBendType() == (pitchBendType_t)argument);
         break;
-
     }
 
     return false;
@@ -366,27 +364,27 @@ bool checkPitchBendType(uint8_t argument)
 ///
 bool checkVelocitySensitivity(uint8_t argument)
 {
-    switch((velocitySensitivity_t)argument)
+    switch ((velocitySensitivity_t)argument)
     {
-        case velocity_soft:
-        case velocity_medium:
-        case velocity_hard:
+    case velocity_soft:
+    case velocity_medium:
+    case velocity_hard:
         //ok
         break;
 
-        default:
+    default:
         //invalid argument
         return false;
     }
 
-    switch(itemFuncChangeVal)
+    switch (itemFuncChangeVal)
     {
-        case true:
+    case true:
         pads.setVelocitySensitivity((velocitySensitivity_t)argument);
         return true;
         break;
 
-        case false:
+    case false:
         return (pads.getVelocitySensitivity() == (velocitySensitivity_t)argument);
         break;
     }
@@ -405,30 +403,29 @@ bool checkVelocitySensitivity(uint8_t argument)
 ///
 bool checkPressureCurve(uint8_t argument)
 {
-    switch((curve_t)argument)
+    switch ((curve_t)argument)
     {
-        case curve_linear_up:
-        case curve_log_up_1:
-        case curve_exp_up:
+    case curve_linear_up:
+    case curve_log_up_1:
+    case curve_exp_up:
         //ok
         break;
 
-        default:
+    default:
         //invalid argument
         return false;
     }
 
-    switch(itemFuncChangeVal)
+    switch (itemFuncChangeVal)
     {
-        case true:
+    case true:
         pads.setVelocityCurve((curve_t)argument);
         return true;
         break;
 
-        case false:
+    case false:
         return (pads.getVelocityCurve() == (curve_t)argument);
         break;
-
     }
 
     return false;

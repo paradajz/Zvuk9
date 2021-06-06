@@ -34,7 +34,8 @@
 #include "core/src/general/Misc.h"
 #include "core/src/general/Timing.h"
 #include "core/src/HAL/avr/adc/ADC.h"
-
+#include "midi/src/MIDI.h"
+#include "core/src/general/Strings.h"
 
 #ifdef DEBUG
 #include "usb/vserial/VSerial.h"
@@ -42,12 +43,11 @@
 
 MIDI midi;
 
-
 void startUpAnimation()
 {
     ledState_t tempLedStateArray[MAX_NUMBER_OF_LEDS];
 
-    for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
+    for (int i = 0; i < MAX_NUMBER_OF_LEDS; i++)
     {
         //copy ledstates to temp field
         tempLedStateArray[i] = leds.getLEDstate(i);
@@ -66,7 +66,7 @@ void startUpAnimation()
     wait_ms(1500);
 
     //restore led states
-    for (int i=0; i<MAX_NUMBER_OF_LEDS; i++)
+    for (int i = 0; i < MAX_NUMBER_OF_LEDS; i++)
         leds.setLEDstate(i, tempLedStateArray[i]);
 
     wait_ms(1000);
@@ -95,7 +95,7 @@ int main()
         stringBuffer.endLine();
         display.updateText(2, displayText_still, display.getTextCenter(ARRAY_SIZE(pleaseWait_string)));
 
-        database.factoryReset(initFull);
+        database.factoryReset(LESSDB::factoryResetType_t::full);
         display.setDirectWriteState(false);
     }
 
@@ -105,19 +105,14 @@ int main()
     pads.init();
     encoders.init();
 
-    #ifdef START_UP_ANIMATION
+#ifdef START_UP_ANIMATION
     startUpAnimation();
-    #else
+#else
     sei();
-    #endif
+#endif
 
     display.setupHomeScreen();
     buttons.init();
-
-    #ifndef DEBUG
-    if (board.checkNewRevision())
-        display.displayFirmwareUpdated();
-    #endif
 
     //flush all data from encoders
     encoders.update(false);
@@ -127,9 +122,9 @@ int main()
 
     while (1)
     {
-        #ifdef DEBUG
+#ifdef DEBUG
         CDC_Update();
-        #endif
+#endif
 
         pads.update();
         digitalInput.update();

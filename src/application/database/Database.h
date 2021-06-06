@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "../dbms/src/DBMS.h"
+#include "../dbms/src/LESSDB.h"
 #include "blocks/Blocks.h"
 
 ///
@@ -34,14 +34,15 @@
 /// \defgroup database Database
 /// @{
 
-class Database : public DBMS
+class Database : public LESSDB
 {
     public:
-    Database(bool (*readCallback)(uint32_t address, sectionParameterType_t type, int32_t &value), bool (*writeCallback)(uint32_t address, int32_t value, sectionParameterType_t type)) :
-    DBMS(readCallback, writeCallback)
+    Database(LESSDB::StorageAccess& storageAccess, bool initializeData)
+        : LESSDB(storageAccess)
     {}
+
     void init();
-    void factoryReset(initType_t type);
+    void factoryReset(LESSDB::factoryResetType_t type);
     bool signatureValid();
 
     private:
