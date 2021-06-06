@@ -1,0 +1,24 @@
+// Workspace settings
+{
+    "files.exclude": {
+        "**/build/*": true,
+        "bin/": true,
+        "**/compile_commands.json": true,
+        "**/ipch*": true,
+        "**/*cortex-debug*": true,
+        "**/*.clangd*": true,
+        "**/*profraw": true,
+    },
+    "C_Cpp.intelliSenseEngine": "Disabled",
+    "C_Cpp.autocomplete": "Disabled",
+    "C_Cpp.autoAddFileAssociations": false,
+    "C_Cpp.configurationWarnings": "Disabled",
+    "editor.renderWhitespace": "all",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "git.detectSubmodules": false,
+    "extensions.ignoreRecommendations": true,
+    "explorer.compactFolders": false,
+    "editor.mouseWheelZoom": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "xaver.clang-format"
+}
