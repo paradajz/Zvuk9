@@ -94,7 +94,7 @@ ifeq (,$(findstring gen,$(TYPE)))
             board/common/comm/uart/UART.cpp
         endif
 
-        # SOURCES += $(shell $(FIND) ./application -type f -name "*.cpp")
+        SOURCES += $(shell $(FIND) ./application/database -type f -name "*.cpp")
         SOURCES += application/main.cpp
 
         SOURCES += $(shell $(FIND) ./board/common/io -type f -name "*.cpp")

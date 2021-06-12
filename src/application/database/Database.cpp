@@ -25,38 +25,132 @@
 
 #include "Database.h"
 #include "Layout.h"
-#include "board/Board.h"
+
+/// Helper macro for easier entry and exit from system block.
+/// Important: ::init must called before trying to use this macro.
+#define SYSTEM_BLOCK_ENTER(code)                                                                           \
+    {                                                                                                      \
+        LESSDB::setLayout(dbLayout, static_cast<uint8_t>(block_t::AMOUNT) + 1, 0);                         \
+        code                                                                                               \
+            LESSDB::setLayout(&dbLayout[1], static_cast<uint8_t>(block_t::AMOUNT), _userDataStartAddress); \
+    }
 
 /// Initializes database.
-void Database::init()
+bool Database::init()
 {
-    setLayout(dbLayout, DB_BLOCKS, 0);
-}
+    if (!LESSDB::init())
+        return false;
 
-/// Performs factory reset of data in database.
-/// @param [in] type Factory reset type. See initType_t enumeration.
-void Database::factoryReset(LESSDB::factoryResetType_t type)
-{
-    if (type == LESSDB::factoryResetType_t::full)
-        clear();
-
-    initData(type);
-    writeCustomValues();
-}
-
-/// Checks if database has been already initialized by checking DB_BLOCK_ID.
-/// \returns True if valid, false otherwise.
-bool Database::signatureValid()
-{
-    //check if all bytes up to START_OFFSET address match unique id
-
-    for (int i = 0; i < NUM_OF_UID_BYTES; i++)
+    //set only system block for now
+    if (!LESSDB::setLayout(dbLayout, 1, 0))
     {
-        if (read(DB_BLOCK_ID, 0, i) != UNIQUE_ID)
-            return false;
+        return false;
     }
+    else
+    {
+        _userDataStartAddress = LESSDB::nextParameterAddress();
+    }
+
+    bool returnValue = true;
+
+    if (!isSignatureValid())
+    {
+        returnValue = factoryReset(LESSDB::factoryResetType_t::full);
+    }
+
+    if (returnValue)
+    {
+        _initialized = true;
+
+        if (_handlers != nullptr)
+            _handlers->initialized();
+    }
+
+    return returnValue;
+}
+
+bool Database::isInitialized()
+{
+    return _initialized;
+}
+
+bool Database::factoryReset(LESSDB::factoryResetType_t type)
+{
+    if (_handlers != nullptr)
+        _handlers->factoryResetStart();
+
+    if (!clear())
+        return false;
+
+    //init system block first
+    SYSTEM_BLOCK_ENTER(
+        if (!initData(type)) return false;);
+
+    if (!initData(type))
+        return false;
+
+    writeDefaults();
+
+    if (!setDbUID(getDbUID()))
+        return false;
+
+    if (_handlers != nullptr)
+        _handlers->factoryResetDone();
 
     return true;
 }
 
-Database database(Board::memoryRead, Board::memoryWrite);
+/// Checks if database has been already initialized by checking DB_BLOCK_ID.
+/// returns: True if valid, false otherwise.
+bool Database::isSignatureValid()
+{
+    uint16_t signature;
+
+    SYSTEM_BLOCK_ENTER(
+        signature = read(0,
+                         static_cast<uint8_t>(SectionPrivate::system_t::uid),
+                         0);)
+
+    return getDbUID() == signature;
+}
+
+/// Calculates unique database ID.
+/// UID is calculated by appending number of parameters and their types for all
+/// sections and all blocks.
+uint16_t Database::getDbUID()
+{
+    /// Magic value with which calculated signature is XORed.
+    const uint16_t uidBase = 0x1701;
+
+    uint16_t signature = 0;
+
+    //get unique database signature based on its blocks/sections
+    for (int i = 0; i < static_cast<uint8_t>(block_t::AMOUNT) + 1; i++)
+    {
+        for (int j = 0; j < dbLayout[i].numberOfSections; j++)
+        {
+            signature += static_cast<uint16_t>(dbLayout[i].section[j].numberOfParameters);
+            signature += static_cast<uint16_t>(dbLayout[i].section[j].parameterType);
+        }
+    }
+
+    return signature ^ uidBase;
+}
+
+/// Updates unique database UID.
+/// UID is written to first two database locations.
+/// param [in]: uid Database UID to set.
+bool Database::setDbUID(uint16_t uid)
+{
+    bool returnValue;
+
+    SYSTEM_BLOCK_ENTER(
+        returnValue = update(0, static_cast<uint8_t>(SectionPrivate::system_t::uid), 0, uid);)
+
+    return returnValue;
+}
+
+void Database::registerHandlers(Handlers& handlers)
+{
+    _handlers = &handlers;
+}

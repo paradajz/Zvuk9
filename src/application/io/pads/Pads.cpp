@@ -26,11 +26,6 @@
 #include "Pads.h"
 #include "curves/Curves.h"
 
-/// \ingroup interfacePads
-/// @{
-
-/// Default constructor.
-/// Initializes variables to their default states.
 Pads::Pads()
 {
     for (int i = 0; i < NUMBER_OF_PADS; i++)
@@ -60,7 +55,3 @@ void Pads::init()
     curves.init();
     setActiveNoteLEDs(false, 0);
 }
-
-Pads pads;
-
-/// @}

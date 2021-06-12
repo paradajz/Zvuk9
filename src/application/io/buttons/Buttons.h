@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <inttypes.h>
+#include "midi/src/MIDI.h"
 
 class Buttons
 {
@@ -83,14 +83,14 @@ class Buttons
     bool                   getButtonEnableState(uint8_t buttonID);
     void                   setTransportControlMode(transportControlMode_t type);
     transportControlMode_t getTransportControlMode();
-    note_t                 getNoteFromButton(uint8_t buttonNumber);
+    MIDI::note_t           getNoteFromButton(uint8_t buttonNumber);
     bool                   getButtonState(uint8_t buttonID);
     void                   setButtonState(uint8_t buttonID, bool state);
 
     private:
     bool buttonDebounced(uint8_t buttonID, bool buttonState);
     void handleTransportControlEvent(uint8_t buttonNumber, bool state);
-    void handleTonicEvent(note_t note, bool state);
+    void handleTonicEvent(MIDI::note_t note, bool state);
     void handleOctaveEvent(bool direction, bool state);
     void processButton(uint8_t button, uint8_t state);
     void initHandlers();
@@ -111,6 +111,8 @@ class Buttons
     /// Flag holding information about whether buttons are handled or not.
     /// If set to false, pressing buttons will result in no action being taken.
     bool processingEnabled;
+
+    HWA& _hwa;
 
     /// Holds currently active transport control mode.
     transportControlMode_t transportControlMode;

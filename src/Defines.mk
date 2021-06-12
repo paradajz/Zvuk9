@@ -10,9 +10,9 @@ CDC_TX_BUFFER_SIZE       := 4096
 CDC_RX_BUFFER_SIZE       := 1024
 UART_BAUDRATE_MIDI_STD   := 31250
 
-SW_VERSION_MAJOR         := $(shell git describe --tags --abbrev=0 | cut -c 2- | cut -d. -f1)
-SW_VERSION_MINOR         := $(shell git describe --tags --abbrev=0 | cut -c 2- | cut -d. -f2)
-SW_VERSION_REVISION      := $(shell git describe --tags --abbrev=0 | cut -c 2- | cut -d. -f3)
+SW_VERSION_MAJOR         := 0#$(shell git describe --tags --abbrev=0 | cut -c 2- | cut -d. -f1)
+SW_VERSION_MINOR         := 0#$(shell git describe --tags --abbrev=0 | cut -c 2- | cut -d. -f2)
+SW_VERSION_REVISION      := 0#$(shell git describe --tags --abbrev=0 | cut -c 2- | cut -d. -f3)
 
 DEFINES += \
 UART_BAUDRATE_MIDI_STD=$(UART_BAUDRATE_MIDI_STD) \

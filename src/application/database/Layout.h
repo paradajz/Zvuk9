@@ -24,206 +24,204 @@
 */
 
 #include "Database.h"
-#include "../interface/analog/pads/Pads.h"
-#include "constants/Pads.h"    //from board
+#include "io/pads/Pads.h"
 
-/// \ingroup database
-/// @{
-
-/// Database blocks.
-/// @{
-
-static LESSDB::section_t programSections[PROGRAM_SECTIONS] = {
-    //programLastActiveProgramSection
+namespace SectionPrivate
+{
+    enum class system_t : uint32_t
     {
-        .numberOfParameters     = 1,
-        .parameterType          = LESSDB::sectionParameterType_t::byte,
-        .preserveOnPartialReset = false,
-        .defaultValue           = 0,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
+        uid,
+        AMOUNT
+    };
+}
 
-    //programLastActiveScaleSection
-    {
-        .numberOfParameters     = NUMBER_OF_PROGRAMS,
-        .parameterType          = LESSDB::sectionParameterType_t::byte,
-        .preserveOnPartialReset = false,
-        .defaultValue           = 0,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
+namespace
+{
+    //not user accessible
+    LESSDB::section_t systemSections[static_cast<uint32_t>(SectionPrivate::system_t::AMOUNT)] = {
+        //uid section
+        {
+            .numberOfParameters     = 1,
+            .parameterType          = LESSDB::sectionParameterType_t::word,
+            .preserveOnPartialReset = false,
+            .defaultValue           = 0,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
+    };
 
-    //programGlobalSettingsSection
-    {
-        .numberOfParameters     = GLOBAL_PROGRAM_SETTINGS * NUMBER_OF_PROGRAMS,
-        .parameterType          = LESSDB::sectionParameterType_t::byte,
-        .preserveOnPartialReset = false,
-        .defaultValue           = 0,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
+    LESSDB::section_t globalSections[static_cast<uint32_t>(Database::Section::global_t::AMOUNT)] = {
+        //globalSettingsMIDI
+        {
+            .numberOfParameters     = static_cast<uint32_t>(Database::midiSettings_t::AMOUNT),
+            .parameterType          = LESSDB::sectionParameterType_t::byte,
+            .preserveOnPartialReset = false,
+            .defaultValue           = 1,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
 
-    //programLocalSettingsSection
-    {
-        .numberOfParameters     = LOCAL_PROGRAM_SETTINGS * NUMBER_OF_PADS * NUMBER_OF_PROGRAMS,
-        .parameterType          = LESSDB::sectionParameterType_t::byte,
-        .preserveOnPartialReset = false,
-        .defaultValue           = 0,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
-};
+        //globalSettingsVelocity
+        {
+            .numberOfParameters     = static_cast<uint32_t>(Database::velocitySettings_t::AMOUNT),
+            .parameterType          = LESSDB::sectionParameterType_t::byte,
+            .preserveOnPartialReset = false,
+            .defaultValue           = 0,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
+    };
 
-static LESSDB::section_t scaleSections[SCALE_SECTIONS] = {
-    //scalePredefinedSection
-    {
-        .numberOfParameters     = PREDEFINED_SCALE_PARAMETERS * PREDEFINED_SCALES * NUMBER_OF_PROGRAMS,
-        .parameterType          = LESSDB::sectionParameterType_t::byte,
-        .preserveOnPartialReset = false,
-        .defaultValue           = 0,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
+    LESSDB::section_t programSections[static_cast<uint32_t>(Database::Section::program_t::AMOUNT)] = {
+        //programLastActiveProgramSection
+        {
+            .numberOfParameters     = 1,
+            .parameterType          = LESSDB::sectionParameterType_t::byte,
+            .preserveOnPartialReset = false,
+            .defaultValue           = 0,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
 
-    //scaleUserSection
-    {
-        .numberOfParameters     = NUMBER_OF_PADS * NOTES_PER_PAD * NUMBER_OF_USER_SCALES,
-        .parameterType          = LESSDB::sectionParameterType_t::byte,
-        .preserveOnPartialReset = false,
-        .defaultValue           = 0,
-        .autoIncrement          = false,
-        .address                = 0,
-    }
-};
+        //programLastActiveScaleSection
+        {
+            .numberOfParameters     = Database::NUMBER_OF_PROGRAMS,
+            .parameterType          = LESSDB::sectionParameterType_t::byte,
+            .preserveOnPartialReset = false,
+            .defaultValue           = 0,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
 
-static LESSDB::section_t padCalibrationSections[PAD_CALIBRATION_SECTIONS] = {
-    //padCalibrationPressureUpperSection
-    {
-        .numberOfParameters     = NUMBER_OF_PADS,
-        .parameterType          = LESSDB::sectionParameterType_t::word,
-        .preserveOnPartialReset = true,
-        .defaultValue           = VELOCITY_127_RAW_PRESSURE,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
+        //programGlobalSettingsSection
+        {
+            .numberOfParameters     = static_cast<uint32_t>(Database::globalProgramSettings_t::AMOUNT) * Database::NUMBER_OF_PROGRAMS,
+            .parameterType          = LESSDB::sectionParameterType_t::byte,
+            .preserveOnPartialReset = false,
+            .defaultValue           = 0,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
 
-    //padCalibrationXlowerSection
-    {
-        .numberOfParameters     = NUMBER_OF_PADS,
-        .parameterType          = LESSDB::sectionParameterType_t::word,
-        .preserveOnPartialReset = true,
-        .defaultValue           = 175,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
+        //programLocalSettingsSection
+        {
+            .numberOfParameters     = static_cast<uint32_t>(Database::localProgramSettings_t::AMOUNT) * NUMBER_OF_PADS * Database::NUMBER_OF_PROGRAMS,
+            .parameterType          = LESSDB::sectionParameterType_t::byte,
+            .preserveOnPartialReset = false,
+            .defaultValue           = 0,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
+    };
 
-    //padCalibrationXupperSection
-    {
-        .numberOfParameters     = NUMBER_OF_PADS,
-        .parameterType          = LESSDB::sectionParameterType_t::word,
-        .preserveOnPartialReset = true,
-        .defaultValue           = 835,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
+    LESSDB::section_t scaleSections[static_cast<uint32_t>(Database::Section::scale_t::AMOUNT)] = {
+        //scalePredefinedSection
+        {
+            .numberOfParameters     = static_cast<uint32_t>(Database::predefinedScaleParameters_t::AMOUNT) * static_cast<uint32_t>(Pads::scale_t::AMOUNT) * Database::NUMBER_OF_PROGRAMS,
+            .parameterType          = LESSDB::sectionParameterType_t::byte,
+            .preserveOnPartialReset = false,
+            .defaultValue           = 0,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
 
-    //padCalibrationYlowerSection
-    {
-        .numberOfParameters     = NUMBER_OF_PADS,
-        .parameterType          = LESSDB::sectionParameterType_t::word,
-        .preserveOnPartialReset = true,
-        .defaultValue           = 175,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
+        //scaleUserSection
+        {
+            .numberOfParameters     = NUMBER_OF_PADS * Database::NOTES_PER_PAD_USER_SCALE * Database::NUMBER_OF_USER_SCALES,
+            .parameterType          = LESSDB::sectionParameterType_t::byte,
+            .preserveOnPartialReset = false,
+            .defaultValue           = 0,
+            .autoIncrement          = false,
+            .address                = 0,
+        }
+    };
 
-    //padCalibrationYupperSection
-    {
-        .numberOfParameters     = NUMBER_OF_PADS,
-        .parameterType          = LESSDB::sectionParameterType_t::word,
-        .preserveOnPartialReset = true,
-        .defaultValue           = 835,
-        .autoIncrement          = false,
-        .address                = 0,
-    }
-};
+    LESSDB::section_t padCalibrationSections[static_cast<uint32_t>(Database::Section::padCalibration_t::AMOUNT)] = {
+        //padCalibrationPressureUpperSection
+        {
+            .numberOfParameters     = NUMBER_OF_PADS,
+            .parameterType          = LESSDB::sectionParameterType_t::word,
+            .preserveOnPartialReset = true,
+            .defaultValue           = MAX_ADC_VALUE,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
 
-static LESSDB::section_t globalSections[GLOBAL_SETTINGS_SECTIONS] = {
-    //globalSettingsMIDI
-    {
-        .numberOfParameters     = MIDI_SETTINGS,
-        .parameterType          = LESSDB::sectionParameterType_t::byte,
-        .preserveOnPartialReset = false,
-        .defaultValue           = 1,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
+        //padCalibrationXlowerSection
+        {
+            .numberOfParameters     = NUMBER_OF_PADS,
+            .parameterType          = LESSDB::sectionParameterType_t::word,
+            .preserveOnPartialReset = true,
+            .defaultValue           = 175,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
 
-    //globalSettingsVelocity
-    {
-        .numberOfParameters     = VELOCITY_SETTINGS,
-        .parameterType          = LESSDB::sectionParameterType_t::byte,
-        .preserveOnPartialReset = false,
-        .defaultValue           = 0,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
-};
+        //padCalibrationXupperSection
+        {
+            .numberOfParameters     = NUMBER_OF_PADS,
+            .parameterType          = LESSDB::sectionParameterType_t::word,
+            .preserveOnPartialReset = true,
+            .defaultValue           = 835,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
 
-static LESSDB::section_t idSections[1] = {
-    {
-        .numberOfParameters     = NUM_OF_UID_BYTES,
-        .parameterType          = LESSDB::sectionParameterType_t::byte,
-        .preserveOnPartialReset = 0,
-        .defaultValue           = UNIQUE_ID,
-        .autoIncrement          = false,
-        .address                = 0,
-    },
-};
+        //padCalibrationYlowerSection
+        {
+            .numberOfParameters     = NUMBER_OF_PADS,
+            .parameterType          = LESSDB::sectionParameterType_t::word,
+            .preserveOnPartialReset = true,
+            .defaultValue           = 175,
+            .autoIncrement          = false,
+            .address                = 0,
+        },
 
-/// @}
+        //padCalibrationYupperSection
+        {
+            .numberOfParameters     = NUMBER_OF_PADS,
+            .parameterType          = LESSDB::sectionParameterType_t::word,
+            .preserveOnPartialReset = true,
+            .defaultValue           = 835,
+            .autoIncrement          = false,
+            .address                = 0,
+        }
+    };
 
-/// Database layout containing references to all blocks.
-/// @{
+    LESSDB::block_t dbLayout[static_cast<uint32_t>(Database::block_t::AMOUNT) + 1] = {
+        //system block
+        {
+            .numberOfSections = static_cast<uint32_t>(SectionPrivate::system_t::AMOUNT),
+            .section          = systemSections,
+            .address          = 0,
+        },
 
-LESSDB::block_t dbLayout[DB_BLOCKS] = {
-    //program block
-    {
-        .numberOfSections = PROGRAM_SECTIONS,
-        .section          = programSections,
-        .address          = 0,
-    },
+        //global block
+        {
+            .numberOfSections = static_cast<uint32_t>(Database::Section::global_t::AMOUNT),
+            .section          = globalSections,
+            .address          = 0,
+        },
 
-    //scale block
-    {
-        .numberOfSections = SCALE_SECTIONS,
-        .section          = scaleSections,
-        .address          = 0,
-    },
+        //program block
+        {
+            .numberOfSections = static_cast<uint32_t>(Database::Section::program_t::AMOUNT),
+            .section          = programSections,
+            .address          = 0,
+        },
 
-    //pad calibration block
-    {
-        .numberOfSections = PAD_CALIBRATION_SECTIONS,
-        .section          = padCalibrationSections,
-        .address          = 0,
-    },
+        //scale block
+        {
+            .numberOfSections = static_cast<uint32_t>(Database::Section::scale_t::AMOUNT),
+            .section          = scaleSections,
+            .address          = 0,
+        },
 
-    //global block
-    {
-        .numberOfSections = GLOBAL_SETTINGS_SECTIONS,
-        .section          = globalSections,
-        .address          = 0,
-    },
-
-    //id block
-    {
-        .numberOfSections = 1,
-        .section          = idSections,
-        .address          = 0,
-    },
-};
-
-/// @}
-
-/// @}
+        //pad calibration block
+        {
+            .numberOfSections = static_cast<uint32_t>(Database::Section::padCalibration_t::AMOUNT),
+            .section          = padCalibrationSections,
+            .address          = 0,
+        },
+    };
+}    // namespace

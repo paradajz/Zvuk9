@@ -44,7 +44,6 @@
 
 #ifdef ADC_12_BIT
 /// Raw ADC value after which pad is considered pressed.
-#define MAX_ADC_VALUE      4095
 #define PAD_PRESS_PRESSURE 50
 #else
 #error Unsupported ADC resolution

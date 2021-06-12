@@ -94,5 +94,3 @@ uint8_t Curves::getCurveValue(curve_t curve, uint8_t value, uint8_t min, uint8_t
     else
         return pgm_read_byte(&(curveArray[curve][value]));
 }
-
-Curves curves;

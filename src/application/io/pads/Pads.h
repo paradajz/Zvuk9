@@ -25,17 +25,130 @@
 
 #pragma once
 
+#include "midi/src/MIDI.h"
 #include "Config.h"
-#include "Sanity.h"
-
-/// Pad updating and processing.
-/// \defgroup interfacePads Pads
-/// \ingroup interface
-/// @{
+// #include "Sanity.h"
 
 class Pads
 {
     public:
+    enum class curve_t : uint32_t
+    {
+        linear_up,
+        linear_down,
+        linear_up_broken_1,
+        linear_up_broken_2,
+        linear_up_down_broken,
+        linear_down_broken,
+        flat_center_up,
+        log_up_1,
+        log_up_2,
+        exp_up,
+        switching,
+        five_steps_up,
+        eight_waves_up_down,
+        AMOUNT
+    };
+
+    enum class velocitySensitivity_t : uint32_t
+    {
+        soft,
+        medium,
+        hard
+    };
+
+    enum class limitType_t : uint32_t
+    {
+        min,
+        max
+    };
+
+    enum class aftertouchType_t : uint32_t
+    {
+        channel,
+        poly
+    };
+
+    enum class padCoordinate_t : uint32_t
+    {
+        x,
+        y,
+        z,
+        AMOUNT
+    };
+
+    enum class pressureType_t : uint32_t
+    {
+        velocity,
+        aftertouch
+    };
+
+    enum class changeResult_t : uint32_t
+    {
+        noChange,
+        valueChanged,
+        outOfRange,
+        notAllowed,
+        releasePads,
+        notUserScale,
+        notPredefinedScale
+    };
+
+    enum class function_t : uint32_t
+    {
+        program,
+        scale,
+        channel,
+        play,
+        stop,
+        record,
+        notes,
+        onOffSplit,
+        onOffX,
+        onOffY,
+        onOffAftertouch,
+        onOffNotes,
+        octave,
+        noteShift,
+        padEditMode,
+        xCC,
+        yCC,
+        xPitchBend,
+        yPitchBend,
+        xMinLimit,
+        xMaxLimit,
+        yMinLimit,
+        yMaxLimit,
+        xCurve,
+        yCurve,
+        menu
+    };
+
+    enum class scale_t : uint32_t
+    {
+        naturalMinor,
+        melodicMinor,
+        harmonicMinor,
+        major,
+        harmonicMajor,
+        minorPentatonic,
+        majorPentatonic,
+        AMOUNT
+    };
+
+    enum class pitchBendType_t : uint32_t
+    {
+        type1,
+        type2
+    };
+
+    enum class valueScaleType_t : uint32_t
+    {
+        raw,
+        _7b,
+        _14b
+    };
+
     Pads();
 
     void init();
@@ -49,14 +162,14 @@ class Pads
     bool                  isUserScale(int8_t scale);
     bool                  isPredefinedScale(int8_t scale);
     bool                  getEditModeState();
-    note_t                getTonic();
+    MIDI::note_t          getTonic();
     uint8_t               getOctave(bool padEditMode = false);
     bool                  getSplitState();
     bool                  getMIDISendState(int8_t pad, function_t type);
     aftertouchType_t      getAftertouchType();
     uint8_t               getPadNote(int8_t pad, int8_t noteIndex);
-    bool                  isNoteAssigned(note_t note);
-    note_t                getTonicFromNote(int8_t note);
+    bool                  isNoteAssigned(MIDI::note_t note);
+    MIDI::note_t          getTonicFromNote(int8_t note);
     uint8_t               getOctaveFromNote(int8_t note);
     int8_t                getScaleShiftLevel();
     uint8_t               getCCvalue(int8_t pad, padCoordinate_t type);
@@ -69,7 +182,7 @@ class Pads
     padCoordinate_t       getCalibrationMode();
     uint16_t              getCalibrationLimit(int8_t pad, padCoordinate_t coordinate, limitType_t limitType);
     int8_t                getPredefinedScaleNotes(int8_t scale);
-    note_t                getScaleNote(int8_t scale, int8_t index);
+    MIDI::note_t          getScaleNote(int8_t scale, int8_t index);
     uint8_t               getScaledPressure(int8_t pad, uint16_t pressure, pressureType_t type);
     uint16_t              getScaledXY(int8_t pad, uint16_t xyValue, padCoordinate_t type, valueScaleType_t scaleType);
     pitchBendType_t       getPitchBendType();
@@ -77,7 +190,7 @@ class Pads
 
     changeResult_t setProgram(int8_t program);
     changeResult_t setScale(int8_t scale);
-    changeResult_t setTonic(note_t note, bool internalChange = false);
+    changeResult_t setTonic(MIDI::note_t note, bool internalChange = false);
     changeResult_t setEditModeState(bool state, int8_t pad = 0);
     changeResult_t setSplitState(bool state);
     changeResult_t setMIDISendState(function_t type, bool state);
@@ -88,10 +201,10 @@ class Pads
     changeResult_t setCCcurve(padCoordinate_t coordinate, int16_t curve);
     changeResult_t setCCvalue(padCoordinate_t coordinate, int16_t cc);
     changeResult_t setCClimit(padCoordinate_t coordinate, limitType_t limitType, int16_t value);
-    void           setCalibrationMode(bool state, padCoordinate_t type = coordinateX);
+    void           setCalibrationMode(bool state, padCoordinate_t type);
     changeResult_t calibratePressure(int8_t pad, int16_t limit, bool updateMIDIvalue = false);
     changeResult_t calibrateXY(int8_t pad, padCoordinate_t type, limitType_t limitType, int16_t limit, bool updateMIDIvalue = false);
-    changeResult_t setPadNote(int8_t pad, note_t note);
+    changeResult_t setPadNote(int8_t pad, MIDI::note_t note);
     changeResult_t setOctave(int8_t shift, bool padEditMode = false);
     changeResult_t setScaleShiftLevel(int8_t shiftLevel, bool internalChange = false);
     changeResult_t setPitchBendType(pitchBendType_t type);
@@ -99,17 +212,17 @@ class Pads
     void           setActiveNoteLEDs(bool padEditMode, uint8_t pad);
 
     private:
-    void                       getConfiguration();
-    void                       getProgramParameters();
-    void                       getScaleParameters();
-    void                       getPadLimits();
-    void                       getXLimits();
-    void                       getYLimits();
-    void                       getPressureLimits();
-    void                       getAftertouchLimits();
-    void                       getPadParameters();
-    bool                       isAftertouchActivated(int8_t pad);
-    dbSection_padCalibration_t getPressureZone(int8_t pad);
+    void    getConfiguration();
+    void    getProgramParameters();
+    void    getScaleParameters();
+    void    getPadLimits();
+    void    getXLimits();
+    void    getYLimits();
+    void    getPressureLimits();
+    void    getAftertouchLimits();
+    void    getPadParameters();
+    bool    isAftertouchActivated(int8_t pad);
+    uint8_t getPressureZone(int8_t pad);
 
     void setPadPressState(int8_t pad, bool state);
     void updateNoteLEDs(int8_t pad, bool state);
@@ -220,8 +333,8 @@ class Pads
     /// @}
 
     /// Array holding MIDI notes for every pad.
-    /// Each pad can have several notes. See value of NOTES_PER_PAD.
-    uint8_t padNote[NUMBER_OF_PADS][NOTES_PER_PAD];
+    /// Each pad can have several notes.
+    uint8_t padNote[NUMBER_OF_PADS][Database::NOTES_PER_PAD_USER_SCALE];
 
     /// Array holding value of MIDI channel for every pad.
     uint8_t midiChannel[NUMBER_OF_PADS];
@@ -327,8 +440,3 @@ class Pads
     /// Holds current sample count for pressure reading for all pads.
     uint8_t pressureSampleCounter[NUMBER_OF_PADS];
 };
-
-/// External definition of Pads class instance.
-extern Pads pads;
-
-/// @}

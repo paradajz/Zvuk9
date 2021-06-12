@@ -28,9 +28,6 @@
 #include "DataTypes.h"
 #include "../DataTypes.h"
 
-/// Class responsible for curve arithmetic.
-/// @{
-
 class Curves
 {
     public:
@@ -44,7 +41,3 @@ class Curves
     uint8_t curveMin[NUMBER_OF_CURVES];
     uint8_t curveMax[NUMBER_OF_CURVES];
 };
-
-extern Curves curves;
-
-/// @}
