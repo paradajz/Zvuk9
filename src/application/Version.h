@@ -25,12 +25,11 @@
 
 #pragma once
 
-///
-/// \brief Firmware version in major.minor.revision notation.
+/// Firmware version in major.minor.revision notation.
 /// @{
 
-#define SW_VERSION_MAJOR        1
-#define SW_VERSION_MINOR        0
-#define SW_VERSION_REVISION     1
+#define SW_VERSION_MAJOR    1
+#define SW_VERSION_MINOR    0
+#define SW_VERSION_REVISION 1
 
 /// @}

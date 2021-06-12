@@ -25,19 +25,14 @@
 
 #pragma once
 
-///
 /// \defgroup dbID Unique ID
 /// \ingroup database
 /// @{
 
-///
-/// \brief Magic value used to indicate whether or not is database formatted.
-///
-#define UNIQUE_ID           42
+/// Magic value used to indicate whether or not is database formatted.
+#define UNIQUE_ID 42
 
-///
-/// \brief Number of times UNIQUE_ID is written in database consecutively.
-///
-#define NUM_OF_UID_BYTES    10
+/// Number of times UNIQUE_ID is written in database consecutively.
+#define NUM_OF_UID_BYTES 10
 
 /// @}

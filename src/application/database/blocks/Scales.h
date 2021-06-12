@@ -27,14 +27,11 @@
 
 #include "../../interface/analog/pads/DataTypes.h"
 
-///
 /// \defgroup dbScales Scales
 /// \ingroup database
 /// @{
 
-///
-/// \brief List of all sections in scale database block.
-///
+/// List of all sections in scale database block.
 typedef enum
 {
     scalePredefinedSection,
@@ -42,39 +39,25 @@ typedef enum
     SCALE_SECTIONS
 } dbSection_userScale_t;
 
-///
-/// \brief Total number of user scales.
-///
-#define NUMBER_OF_USER_SCALES                       10
+/// Total number of user scales.
+#define NUMBER_OF_USER_SCALES 10
 
-///
-/// \brief Default octave used for all scales.
-///
-#define DEFAULT_OCTAVE                              4
+/// Default octave used for all scales.
+#define DEFAULT_OCTAVE 4
 
-///
-/// \brief Maximum number of assigned notes pad pad (for user scales).
-///
-#define NOTES_PER_PAD                               7
+/// Maximum number of assigned notes pad pad (for user scales).
+#define NOTES_PER_PAD 7
 
-///
-/// \brief Value used as invalid (blank note).
-///
-#define BLANK_NOTE                                  128
+/// Value used as invalid (blank note).
+#define BLANK_NOTE 128
 
-///
-/// \brief Default tonic assigned to predefined scales.
-///
-#define PREDEFINED_SCALE_TONIC                      C
+/// Default tonic assigned to predefined scales.
+#define PREDEFINED_SCALE_TONIC C
 
-///
-/// \brief Default scale shift value for predefined scales.
-///
-#define PREDEFINED_SCALE_SHIFT                      0
+/// Default scale shift value for predefined scales.
+#define PREDEFINED_SCALE_SHIFT 0
 
-///
-/// \brief List of all elements in predefined scale database section.
-///
+/// List of all elements in predefined scale database section.
 typedef enum
 {
     PREDEFINED_SCALE_OCTAVE_ID,
@@ -83,11 +66,8 @@ typedef enum
     PREDEFINED_SCALE_PARAMETERS
 } predefinedScaleParameters;
 
-///
-/// \brief Array of default (initial) values in predefined scale database section.
-///
-const uint8_t defaultPredefinedScaleParametersArray[PREDEFINED_SCALE_PARAMETERS] =
-{
+/// Array of default (initial) values in predefined scale database section.
+const uint8_t defaultPredefinedScaleParametersArray[PREDEFINED_SCALE_PARAMETERS] = {
     DEFAULT_OCTAVE,
     PREDEFINED_SCALE_TONIC,
     PREDEFINED_SCALE_SHIFT

@@ -31,16 +31,14 @@
 #include "GlobalSettings.h"
 #include "ID.h"
 
-///
-/// \brief List of all blocks in database.
+/// List of all blocks in database.
 /// \ingroup database
-///
 enum dbBlocks
 {
-    DB_BLOCK_PROGRAM,           //0
-    DB_BLOCK_SCALE,             //1
-    DB_BLOCK_PAD_CALIBRATION,   //2
-    DB_BLOCK_GLOBAL_SETTINGS,   //3
-    DB_BLOCK_ID,                //4
+    DB_BLOCK_PROGRAM,            //0
+    DB_BLOCK_SCALE,              //1
+    DB_BLOCK_PAD_CALIBRATION,    //2
+    DB_BLOCK_GLOBAL_SETTINGS,    //3
+    DB_BLOCK_ID,                 //4
     DB_BLOCKS
 };

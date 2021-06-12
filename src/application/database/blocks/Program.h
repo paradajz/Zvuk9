@@ -27,14 +27,11 @@
 
 #include "../../interface/analog/pads/curves/DataTypes.h"
 
-///
 /// \defgroup dbProgram Program
 /// \ingroup database
 /// @{
 
-///
-/// \brief List of all sections in program database block.
-///
+/// List of all sections in program database block.
 typedef enum
 {
     programLastActiveProgramSection,
@@ -44,47 +41,38 @@ typedef enum
     PROGRAM_SECTIONS
 } dbSection_program_t;
 
-///
-/// \brief Maximum number of programs.
-///
-#define NUMBER_OF_PROGRAMS                          15
+/// Maximum number of programs.
+#define NUMBER_OF_PROGRAMS 15
 
-///
-/// \brief Initial program value.
-///
-#define DEFAULT_ACTIVE_PROGRAM                      0
+/// Initial program value.
+#define DEFAULT_ACTIVE_PROGRAM 0
 
-///
-/// \brief Default scale index applied to all programs.
-///
-#define DEFAULT_ACTIVE_SCALE                        0
+/// Default scale index applied to all programs.
+#define DEFAULT_ACTIVE_SCALE 0
 
-///
-/// \brief Default values for global program settings.
+/// Default values for global program settings.
 /// @{
 
-#define GLOBAL_PROGRAM_SETTING_SPLIT_STATE          0x00
-#define GLOBAL_PROGRAM_SETTING_X_ENABLE             0x01
-#define GLOBAL_PROGRAM_SETTING_Y_ENABLE             0x01
-#define GLOBAL_PROGRAM_SETTING_NOTE_ENABLE          0x01
-#define GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE    0x01
-#define GLOBAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE  0
-#define GLOBAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE  0
-#define GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL         0x01
-#define GLOBAL_PROGRAM_SETTING_CC_X                 0x14
-#define GLOBAL_PROGRAM_SETTING_CC_Y                 0x15
-#define GLOBAL_PROGRAM_SETTING_X_MIN                0
-#define GLOBAL_PROGRAM_SETTING_X_MAX                127
-#define GLOBAL_PROGRAM_SETTING_Y_MIN                0
-#define GLOBAL_PROGRAM_SETTING_Y_MAX                127
-#define GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN         curve_linear_up
-#define GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN         curve_linear_up
+#define GLOBAL_PROGRAM_SETTING_SPLIT_STATE         0x00
+#define GLOBAL_PROGRAM_SETTING_X_ENABLE            0x01
+#define GLOBAL_PROGRAM_SETTING_Y_ENABLE            0x01
+#define GLOBAL_PROGRAM_SETTING_NOTE_ENABLE         0x01
+#define GLOBAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE   0x01
+#define GLOBAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE 0
+#define GLOBAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE 0
+#define GLOBAL_PROGRAM_SETTING_MIDI_CHANNEL        0x01
+#define GLOBAL_PROGRAM_SETTING_CC_X                0x14
+#define GLOBAL_PROGRAM_SETTING_CC_Y                0x15
+#define GLOBAL_PROGRAM_SETTING_X_MIN               0
+#define GLOBAL_PROGRAM_SETTING_X_MAX               127
+#define GLOBAL_PROGRAM_SETTING_Y_MIN               0
+#define GLOBAL_PROGRAM_SETTING_Y_MAX               127
+#define GLOBAL_PROGRAM_SETTING_X_CURVE_GAIN        curve_linear_up
+#define GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN        curve_linear_up
 
 /// @}
 
-///
-/// \brief List of all elements in global program database section.
-///
+/// List of all elements in global program database section.
 typedef enum
 {
     GLOBAL_PROGRAM_SETTING_SPLIT_STATE_ID,
@@ -106,11 +94,8 @@ typedef enum
     GLOBAL_PROGRAM_SETTINGS
 } globalProgramSettings;
 
-///
-/// \brief Array of default (initial) values in global program database section.
-///
-const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] =
-{
+/// Array of default (initial) values in global program database section.
+const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] = {
     GLOBAL_PROGRAM_SETTING_SPLIT_STATE,
     GLOBAL_PROGRAM_SETTING_X_ENABLE,
     GLOBAL_PROGRAM_SETTING_Y_ENABLE,
@@ -129,31 +114,28 @@ const uint8_t defaultGlobalProgramSettingArray[GLOBAL_PROGRAM_SETTINGS] =
     GLOBAL_PROGRAM_SETTING_Y_CURVE_GAIN
 };
 
-///
-/// \brief Default values for local program settings.
+/// Default values for local program settings.
 /// @{
 
-#define LOCAL_PROGRAM_SETTING_X_ENABLE              0x01
-#define LOCAL_PROGRAM_SETTING_Y_ENABLE              0x01
-#define LOCAL_PROGRAM_SETTING_NOTE_ENABLE           0x01
-#define LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE     0x01
-#define LOCAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE   0
-#define LOCAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE   0
-#define LOCAL_PROGRAM_SETTING_MIDI_CHANNEL          0x01
-#define LOCAL_PROGRAM_SETTING_CC_X                  0x14
-#define LOCAL_PROGRAM_SETTING_CC_Y                  0x15
-#define LOCAL_PROGRAM_SETTING_X_MIN                 0
-#define LOCAL_PROGRAM_SETTING_X_MAX                 127
-#define LOCAL_PROGRAM_SETTING_Y_MIN                 0
-#define LOCAL_PROGRAM_SETTING_Y_MAX                 127
-#define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN          curve_linear_up
-#define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN          curve_linear_up
+#define LOCAL_PROGRAM_SETTING_X_ENABLE            0x01
+#define LOCAL_PROGRAM_SETTING_Y_ENABLE            0x01
+#define LOCAL_PROGRAM_SETTING_NOTE_ENABLE         0x01
+#define LOCAL_PROGRAM_SETTING_AFTERTOUCH_ENABLE   0x01
+#define LOCAL_PROGRAM_SETTING_PITCH_BEND_X_ENABLE 0
+#define LOCAL_PROGRAM_SETTING_PITCH_BEND_Y_ENABLE 0
+#define LOCAL_PROGRAM_SETTING_MIDI_CHANNEL        0x01
+#define LOCAL_PROGRAM_SETTING_CC_X                0x14
+#define LOCAL_PROGRAM_SETTING_CC_Y                0x15
+#define LOCAL_PROGRAM_SETTING_X_MIN               0
+#define LOCAL_PROGRAM_SETTING_X_MAX               127
+#define LOCAL_PROGRAM_SETTING_Y_MIN               0
+#define LOCAL_PROGRAM_SETTING_Y_MAX               127
+#define LOCAL_PROGRAM_SETTING_X_CURVE_GAIN        curve_linear_up
+#define LOCAL_PROGRAM_SETTING_Y_CURVE_GAIN        curve_linear_up
 
 /// @}
 
-///
-/// \brief List of all elements in local program database section.
-///
+/// List of all elements in local program database section.
 typedef enum
 {
     LOCAL_PROGRAM_SETTING_X_ENABLE_ID,
@@ -174,11 +156,8 @@ typedef enum
     LOCAL_PROGRAM_SETTINGS
 } localProgramSettings;
 
-///
-/// \brief Array of default (initial) values in local program database section.
-///
-const uint8_t defaultLocalProgramSettingArray[] =
-{
+/// Array of default (initial) values in local program database section.
+const uint8_t defaultLocalProgramSettingArray[] = {
     LOCAL_PROGRAM_SETTING_X_ENABLE,
     LOCAL_PROGRAM_SETTING_Y_ENABLE,
     LOCAL_PROGRAM_SETTING_NOTE_ENABLE,

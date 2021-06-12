@@ -25,14 +25,11 @@
 
 #pragma once
 
-///
 /// \defgroup dbPadCalibration Pad calibration
 /// \ingroup database
 /// @{
 
-///
-/// \brief List of all sections in pad calibration database block.
-///
+/// List of all sections in pad calibration database block.
 typedef enum
 {
     padCalibrationPressureUpperSection,
@@ -44,4 +41,3 @@ typedef enum
 } dbSection_padCalibration_t;
 
 /// @}
-

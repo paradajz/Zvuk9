@@ -1,15 +1,15 @@
-[submodule "src/Firmware/core"]
-	path = src/modules/core
-	url = https://github.com/paradajz/avr-core.git
-[submodule "src/Firmware/lufa"]
-	path = src/modules/lufa
-	url = https://github.com/abcminiuser/lufa.git
-[submodule "src/Firmware/midi"]
-	path = src/modules/midi
+[submodule "modules/midi"]
+	path = modules/midi
 	url = https://github.com/paradajz/midi-lib.git
-[submodule "src/Firmware/dbms"]
-	path = src/modules/dbms
+[submodule "modules/dbms"]
+	path = modules/dbms
 	url = https://github.com/paradajz/LESS-DB.git
-[submodule "src/modules/u8g2"]
-	path = src/modules/u8g2
+[submodule "modules/u8g2"]
+	path = modules/u8g2
 	url = https://github.com/olikraus/u8g2.git
+[submodule "modules/core"]
+	path = modules/core
+	url = https://github.com/paradajz/core.git
+[submodule "modules/EmuEEPROM"]
+	path = modules/EmuEEPROM
+	url = https://github.com/paradajz/EmuEEPROM.git
