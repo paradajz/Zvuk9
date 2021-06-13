@@ -25,30 +25,74 @@
 
 #pragma once
 
-#include "DataTypes.h"
+#include "database/Database.h"
+#include "midi/src/MIDI.h"
 
-/// LED control.
-/// \defgroup interfaceLEDs LEDs
-/// \ingroup interface
-/// @{
-
-class LEDs
+namespace IO
 {
-    public:
-    LEDs();
-    static void update();
+    class LEDs
+    {
+        public:
+        enum class color_t : uint8_t
+        {
+            off,
+            red,
+            green,
+            yellow,
+            blue,
+            magenta,
+            cyan,
+            white,
+            AMOUNT
+        };
 
-    static void setAllOn();
-    static void setAllOff();
+        enum class blinkSpeed_t : uint8_t
+        {
+            s1000ms,
+            s500ms,
+            s250ms,
+            noBlink
+        };
 
-    static void       setLEDstate(uint8_t ledID, ledState_t state);
-    static ledState_t getLEDstate(uint8_t ledID);
+        enum class brightness_t : uint8_t
+        {
+            bOff,
+            b25,
+            b50,
+            b75,
+            b100
+        };
 
-    static void       setNoteLEDstate(note_t note, ledState_t state);
-    static ledState_t getNoteLEDstate(note_t note);
-};
+        enum class ledState_t : uint32_t
+        {
+            off,
+            on,
+            blink
+        };
 
-/// External definition of LEDs class instance.
-extern LEDs leds;
+        class HWA
+        {
+            public:
+            HWA() = default;
 
-/// @}
+            virtual void setState(size_t index, brightness_t brightness) = 0;
+        };
+
+        LEDs(HWA& hwa, Database& database)
+            : _hwa(hwa)
+            , _database(database)
+        {}
+
+        void       update();
+        void       setAllOn();
+        void       setAllOff();
+        void       setLEDstate(uint8_t ledID, ledState_t state);
+        ledState_t getLEDstate(uint8_t ledID);
+        void       setNoteLEDstate(MIDI::note_t note, ledState_t state);
+        ledState_t getNoteLEDstate(MIDI::note_t note);
+
+        private:
+        HWA&      _hwa;
+        Database& _database;
+    };
+}    // namespace IO

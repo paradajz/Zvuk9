@@ -24,13 +24,11 @@
 */
 
 #include "Buttons.h"
-#include "../../../../database/Database.h"
 #include "../../../display/menu/Menu.h"
 #include "handlers/Handlers.h"
 #include "pins/map/Buttons.h"
 #include "core/src/general/BitManipulation.h"
 #include "core/src/general/Timing.h"
-#include "board/Board.h"
 
 /// Default constructor.
 Buttons::Buttons()

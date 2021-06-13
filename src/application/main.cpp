@@ -24,207 +24,276 @@
 */
 
 #include "board/Board.h"
+#include "database/Database.h"
+#include "io/leds/LEDs.h"
+#include "io/buttons/Buttons.h"
+#include "io/encoders/Encoders.h"
+#include "core/src/general/Helpers.h"
 
-// class StorageAccess : public LESSDB::StorageAccess
-// {
-//     public:
-//     StorageAccess() = default;
+class StorageAccess : public LESSDB::StorageAccess
+{
+    public:
+    StorageAccess() = default;
 
-//     bool init() override
-//     {
-//         return Board::NVM::init();
-//     }
+    bool init() override
+    {
+        return Board::NVM::init();
+    }
 
-//     uint32_t size() override
-//     {
-//         return Board::NVM::size();
-//     }
+    uint32_t size() override
+    {
+        return Board::NVM::size();
+    }
 
-//     bool clear() override
-//     {
-//         return Board::NVM::clear(0, Board::NVM::size());
-//     }
+    bool clear() override
+    {
+        return Board::NVM::clear(0, Board::NVM::size());
+    }
 
-//     bool read(uint32_t address, int32_t& value, LESSDB::sectionParameterType_t type) override
-//     {
-//         switch (type)
-//         {
-//         case LESSDB::sectionParameterType_t::word:
-//             return Board::NVM::read(address, value, Board::NVM::parameterType_t::word);
+    bool read(uint32_t address, int32_t& value, LESSDB::sectionParameterType_t type) override
+    {
+        switch (type)
+        {
+        case LESSDB::sectionParameterType_t::word:
+            return Board::NVM::read(address, value, Board::NVM::parameterType_t::word);
 
-//         case LESSDB::sectionParameterType_t::dword:
-//             return Board::NVM::read(address, value, Board::NVM::parameterType_t::dword);
+        case LESSDB::sectionParameterType_t::dword:
+            return Board::NVM::read(address, value, Board::NVM::parameterType_t::dword);
 
-//         default:
-//             return Board::NVM::read(address, value, Board::NVM::parameterType_t::byte);
-//         }
-//     }
+        default:
+            return Board::NVM::read(address, value, Board::NVM::parameterType_t::byte);
+        }
+    }
 
-//     bool write(uint32_t address, int32_t value, LESSDB::sectionParameterType_t type) override
-//     {
-//         switch (type)
-//         {
-//         case LESSDB::sectionParameterType_t::word:
-//             return Board::NVM::write(address, value, Board::NVM::parameterType_t::word);
+    bool write(uint32_t address, int32_t value, LESSDB::sectionParameterType_t type) override
+    {
+        switch (type)
+        {
+        case LESSDB::sectionParameterType_t::word:
+            return Board::NVM::write(address, value, Board::NVM::parameterType_t::word);
 
-//         case LESSDB::sectionParameterType_t::dword:
-//             return Board::NVM::write(address, value, Board::NVM::parameterType_t::dword);
+        case LESSDB::sectionParameterType_t::dword:
+            return Board::NVM::write(address, value, Board::NVM::parameterType_t::dword);
 
-//         default:
-//             return Board::NVM::write(address, value, Board::NVM::parameterType_t::byte);
-//         }
-//     }
+        default:
+            return Board::NVM::write(address, value, Board::NVM::parameterType_t::byte);
+        }
+    }
 
-//     size_t paramUsage(LESSDB::sectionParameterType_t type) override
-//     {
-//         switch (type)
-//         {
-//         case LESSDB::sectionParameterType_t::word:
-//             return Board::NVM::paramUsage(Board::NVM::parameterType_t::word);
+    size_t paramUsage(LESSDB::sectionParameterType_t type) override
+    {
+        switch (type)
+        {
+        case LESSDB::sectionParameterType_t::word:
+            return Board::NVM::paramUsage(Board::NVM::parameterType_t::word);
 
-//         case LESSDB::sectionParameterType_t::dword:
-//             return Board::NVM::paramUsage(Board::NVM::parameterType_t::dword);
+        case LESSDB::sectionParameterType_t::dword:
+            return Board::NVM::paramUsage(Board::NVM::parameterType_t::dword);
 
-//         default:
-//             return Board::NVM::paramUsage(Board::NVM::parameterType_t::byte);
-//         }
-//     }
-// } storageAccess;
+        default:
+            return Board::NVM::paramUsage(Board::NVM::parameterType_t::byte);
+        }
+    }
+} storageAccess;
 
-// Database database(storageAccess, false);
+Database database(storageAccess, false);
 
-// class HWAMIDI : public MIDI::HWA
-// {
-//     public:
-//     HWAMIDI() = default;
+class HWAMIDI : public MIDI::HWA
+{
+    public:
+    HWAMIDI() = default;
 
-//     bool init() override
-//     {
-//         return true;
-//     }
+    bool init() override
+    {
+        return true;
+    }
 
-//     bool dinRead(uint8_t& data) override
-//     {
-// #ifdef DIN_MIDI_SUPPORTED
-//         return Board::UART::read(UART_CHANNEL_DIN, data);
-// #else
-//         return false;
-// #endif
-//     }
+    bool dinRead(uint8_t& data) override
+    {
+#ifdef DIN_MIDI_SUPPORTED
+        return Board::UART::read(UART_CHANNEL_DIN, data);
+#else
+        return false;
+#endif
+    }
 
-//     bool dinWrite(uint8_t data) override
-//     {
-// #ifdef DIN_MIDI_SUPPORTED
-//         return Board::UART::write(UART_CHANNEL_DIN, data);
-// #else
-//         return false;
-// #endif
-//     }
+    bool dinWrite(uint8_t data) override
+    {
+#ifdef DIN_MIDI_SUPPORTED
+        return Board::UART::write(UART_CHANNEL_DIN, data);
+#else
+        return false;
+#endif
+    }
 
-//     bool usbRead(MIDI::USBMIDIpacket_t& USBMIDIpacket) override
-//     {
-//         return Board::USB::readMIDI(USBMIDIpacket);
-//     }
+    bool usbRead(MIDI::USBMIDIpacket_t& USBMIDIpacket) override
+    {
+        return Board::USB::readMIDI(USBMIDIpacket);
+    }
 
-//     bool usbWrite(MIDI::USBMIDIpacket_t& USBMIDIpacket) override
-//     {
-//         return Board::USB::writeMIDI(USBMIDIpacket);
-//     }
-// } hwaMIDI;
+    bool usbWrite(MIDI::USBMIDIpacket_t& USBMIDIpacket) override
+    {
+        return Board::USB::writeMIDI(USBMIDIpacket);
+    }
+} hwaMIDI;
 
-// //buttons and encoders have the same data source which is digital input
-// //this helper class pulls the latest data from board and then feeds it into HWAButtons and HWAEncoders
-// class HWADigitalIn
-// {
-//     public:
-//     HWADigitalIn() = default;
+class HWALEDs : public IO::LEDs::HWA
+{
+    public:
+    HWALEDs() = default;
 
-//     bool buttonState(size_t index, uint8_t& numberOfReadings, uint32_t& states)
-//     {
-//         //if encoder under this index is enabled, just return false state each time
-//         //side note: don't bother with references to dependencies here, just use global database object
-//         if (database.read(Database::Section::encoder_t::enable, Board::io::encoderIndex(index)))
-//             return false;
+    void setState(size_t index, IO::LEDs::brightness_t brightness) override
+    {
+        if (_stateHandler != nullptr)
+            _stateHandler(index, brightness);
+    }
 
-//         if (!Board::io::digitalInState(index, dInReadA))
-//             return false;
+    void registerHandler(void (*fptr)(size_t index, IO::LEDs::brightness_t brightness))
+    {
+        _stateHandler = fptr;
+    }
 
-//         numberOfReadings = dInReadA.count;
-//         states           = dInReadA.readings;
+    Board::io::ledBrightness_t appToBoardBrightness(IO::LEDs::brightness_t brightness)
+    {
+        switch (brightness)
+        {
+        case IO::LEDs::brightness_t::b25:
+            return Board::io::ledBrightness_t::b25;
 
-//         return true;
-//     }
+        case IO::LEDs::brightness_t::b50:
+            return Board::io::ledBrightness_t::b50;
 
-//     bool encoderState(size_t index, uint8_t& numberOfReadings, uint32_t& states)
-//     {
-//         if (!Board::io::digitalInState(Board::io::encoderSignalIndex(index, Board::io::encoderIndex_t::a), dInReadA))
-//             return false;
+        case IO::LEDs::brightness_t::b75:
+            return Board::io::ledBrightness_t::b75;
 
-//         if (!Board::io::digitalInState(Board::io::encoderSignalIndex(index, Board::io::encoderIndex_t::b), dInReadB))
-//             return false;
+        case IO::LEDs::brightness_t::b100:
+            return Board::io::ledBrightness_t::b100;
 
-//         numberOfReadings = dInReadA.count > dInReadB.count ? dInReadA.count : dInReadB.count;
+        default:
+            return Board::io::ledBrightness_t::bOff;
+        }
+    }
 
-//         //construct encoder pair readings
-//         //encoder signal is made of A and B signals
-//         //take each bit of A signal and B signal and append it to states variable in order
-//         //latest encoder readings should be in LSB bits
+    private:
+    void (*_stateHandler)(size_t index, IO::LEDs::brightness_t brightness) = nullptr;
+} hwaLEDs;
 
-//         for (uint8_t i = 0; i < numberOfReadings; i++)
-//         {
-//             BIT_WRITE(states, (i * 2) + 1, (dInReadA.readings >> i & 0x01));
-//             BIT_WRITE(states, i * 2, (dInReadB.readings >> i & 0x01));
-//         }
+//buttons and encoders have the same data source which is digital input
+//this helper class pulls the latest data from board and then feeds it into HWAButtons and HWAEncoders
+class HWADigitalIn
+{
+    public:
+    HWADigitalIn() = default;
 
-//         return true;
-//     }
+    bool buttonState(size_t index, uint8_t& numberOfReadings, uint32_t& states)
+    {
+        //if encoder under this index is enabled, just return false state each time
+        //side note: don't bother with references to dependencies here, just use global database object
+        if (encoderEnabled[Board::io::encoderIndex(index)])
+            return false;
 
-//     private:
-//     Board::io::dInReadings_t dInReadA;
-// #ifdef ENCODERS_SUPPORTED
-//     Board::io::dInReadings_t dInReadB;
-// #endif
-// } hwaDigitalIn;
-// #endif
+        if (!Board::io::digitalInState(index, dInReadA))
+            return false;
 
-// class HWAButtons : public IO::Buttons::HWA
-// {
-//     public:
-//     HWAButtons() = default;
+        numberOfReadings = dInReadA.count;
+        states           = dInReadA.readings;
 
-//     bool state(IO::Buttons::button_t index, bool& state) override
-//     {
-//         return hwaDigitalIn.buttonState(buttonBoardIndex[static_cast<uint8_t>(index)], numberOfReadings, states);
-//     }
+        return true;
+    }
 
-//     private:
-//     uint8_t buttonBoardIndex[static_cast<uint8_t>(IO::Buttons::button_t::AMOUNT)] = {
-//         BUTTON_NOTE_C_SHARP,
-//         BUTTON_NOTE_D_SHARP,
-//         BUTTON_NOTE_F_SHARP,
-//         BUTTON_NOTE_G_SHARP,
-//         BUTTON_NOTE_A_SHARP,
-//         BUTTON_NOTE_C,
-//         BUTTON_NOTE_D,
-//         BUTTON_NOTE_E,
-//         BUTTON_NOTE_F,
-//         BUTTON_NOTE_G,
-//         BUTTON_NOTE_A,
-//         BUTTON_NOTE_B,
-//         BUTTON_ON_OFF_SPLIT,
-//         BUTTON_ON_OFF_X,
-//         BUTTON_ON_OFF_Y,
-//         BUTTON_ON_OFF_AFTERTOUCH,
-//         BUTTON_ON_OFF_NOTES,
-//         BUTTON_OCTAVE_DOWN,
-//         BUTTON_OCTAVE_UP,
-//         BUTTON_TRANSPORT_PLAY,
-//         BUTTON_TRANSPORT_STOP,
-//         BUTTON_TRANSPORT_RECORD,
-//         BUTTON_PROGRAM_ENC,
-//         BUTTON_PRESET_ENC,
-//     };
-// } hwaButtons;
+    bool encoderState(size_t index, uint8_t& numberOfReadings, uint32_t& states)
+    {
+        if (!Board::io::digitalInState(Board::io::encoderSignalIndex(index, Board::io::encoderIndex_t::a), dInReadA))
+            return false;
+
+        if (!Board::io::digitalInState(Board::io::encoderSignalIndex(index, Board::io::encoderIndex_t::b), dInReadB))
+            return false;
+
+        numberOfReadings = dInReadA.count > dInReadB.count ? dInReadA.count : dInReadB.count;
+
+        //construct encoder pair readings
+        //encoder signal is made of A and B signals
+        //take each bit of A signal and B signal and append it to states variable in order
+        //latest encoder readings should be in LSB bits
+
+        for (uint8_t i = 0; i < numberOfReadings; i++)
+        {
+            BIT_WRITE(states, (i * 2) + 1, (dInReadA.readings >> i & 0x01));
+            BIT_WRITE(states, i * 2, (dInReadB.readings >> i & 0x01));
+        }
+
+        return true;
+    }
+
+    private:
+    Board::io::dInReadings_t dInReadA;
+    Board::io::dInReadings_t dInReadB;
+
+    const bool encoderEnabled[MAX_NUMBER_OF_ENCODERS] = {
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    };
+} hwaDigitalIn;
+
+#include "io/buttons/Filter.h"
+
+IO::ButtonsFilter buttonsFilter;
+
+class HWAButtons : public IO::Buttons::HWA
+{
+    public:
+    HWAButtons() = default;
+
+    bool state(size_t index, uint8_t& numberOfReadings, uint32_t& states) override
+    {
+        return hwaDigitalIn.buttonState(index, numberOfReadings, states);
+    }
+} hwaButtons;
+
+#include "io/encoders/Filter.h"
+
+IO::EncodersFilter encodersFilter;
+
+class HWAEncoders : public IO::Encoders::HWA
+{
+    public:
+    HWAEncoders() = default;
+
+    bool state(size_t index, uint8_t& numberOfReadings, uint32_t& states) override
+    {
+        return hwaDigitalIn.encoderState(index, numberOfReadings, states);
+    }
+} hwaEncoders;
 
 // void startUpAnimation()
 // {
@@ -257,9 +326,7 @@
 
 int main()
 {
-    //do not change order of initialization!
-
-    //     board.init();
+    Board::init();
     //     display.init();
     //     database.init();
 
@@ -299,9 +366,6 @@ int main()
 
     //     //flush all data from encoders
     //     encoders.update(false);
-
-    //     //start first conversion manually
-    //     startADCconversion();
 
     //     while (1)
     //     {

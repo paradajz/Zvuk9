@@ -39,6 +39,7 @@ ifeq (,$(findstring gen,$(TYPE)))
 
     SOURCES += $(shell $(FIND) ./board/common -maxdepth 1 -type f -name "*.cpp")
     SOURCES += $(shell $(FIND) ./$(MCU_DIR) -maxdepth 1 -type f -regex '.*\.\(s\|c\|cpp\)')
+    SOURCES += board/common/io/Stubs.cpp
     SOURCES += $(BOARD_TARGET_DIR)/Pins.cpp
 
     ifeq ($(TYPE),boot)
@@ -121,12 +122,14 @@ ifeq (,$(findstring gen,$(TYPE)))
         board/$(ARCH)/common/ShiftRegistersWait.cpp \
         board/$(ARCH)/common/ISR.cpp \
         board/$(ARCH)/comm/uart/UART.cpp \
-        board/common/comm/uart/UART.cpp
+        board/common/comm/uart/UART.cpp \
+        board/common/io/Pads.cpp
 
         SOURCES += $(shell $(FIND) ./board/common/comm/usb/descriptors/cdc -type f -name "*.cpp")
         SOURCES += $(shell $(FIND) ./board/common/comm/usb/descriptors/cdc -type f -name "*.c")
         SOURCES += $(shell $(FIND) ./board/$(ARCH)/comm/usb/cdc -type f -name "*.cpp")
         SOURCES += $(shell find ./cdc -type f -name "*.cpp")
+        SOURCES += $(shell find ./shared/logger -type f -name "*.cpp")
     endif
 else ifeq ($(TYPE),flashgen)
     SOURCES += $(shell $(FIND) ./application/database -type f -name "*.cpp")

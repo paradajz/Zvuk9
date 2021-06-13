@@ -23,12 +23,51 @@
     <https://www.gnu.org/licenses/gpl-3.0.txt>
 */
 
+#include <cstdio>
+#include <cstring>
 #include "board/Board.h"
+#include "shared/logger/Logger.h"
+#include "shared/Types.h"
+
+Logger logger(Logger::lineEnding_t::lf);
+
+namespace
+{
+    padData_t padData;
+}
+
+class LoggingInterface : public Logger::StreamWriter
+{
+    public:
+    LoggingInterface() = default;
+
+    bool write(const char* text) override
+    {
+        for (size_t i = 0; i < strlen(text); i++)
+        {
+            while (!Board::USB::writeCDC((char*)&text[i], 1))
+                ;
+        }
+
+        return true;
+    }
+};
 
 int main()
 {
+    Board::init();
+
     while (1)
     {
+        for (int i = 0; i < NUMBER_OF_PADS; i++)
+        {
+            if (Board::io::padDataAvailable(i, padData))
+            {
+                LOG_INFO("Pad %d velocity/pressure/x/y: %d %d %d %d", i, padData.velocity, padData.pressure, padData.x, padData.y);
+            }
+        }
+
+        LOG_INFO("");
     }
 
     return 0;

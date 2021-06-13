@@ -231,9 +231,6 @@ namespace Board
             /// Checks if indicator LEDs need to be turned on or off.
             void checkIndicators();
 
-            /// Initializes outputs used to indicate that bootloader mode is active (MIDI traffic LEDs).
-            void indicateBTLDR();
-
             /// Flashes integrated LEDs on board on startup to indicate that application is about to be loaded.
             void ledFlashStartup();
 

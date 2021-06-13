@@ -90,17 +90,6 @@ extern "C" void PendSV_Handler(void)
 extern "C" void SysTick_Handler(void)
 {
     HAL_IncTick();
-
-#ifdef FW_CDC
-    //use this timer to check for incoming traffic on UART
-    static size_t timerCounter = 0;
-
-    if (++timerCounter == CDC_POLLING_TIME)
-    {
-        timerCounter = 0;
-        Board::detail::cdc::checkIncomingData();
-    }
-#endif
 }
 
 #if defined(FW_APP) || defined(FW_CDC)
@@ -137,12 +126,10 @@ extern "C" void USART6_IRQHandler(void)
 }
 #endif
 
-#ifdef FW_APP
 extern "C" void ADC_IRQHandler(void)
 {
     Board::detail::isrHandling::adc(ADC_INSTANCE->DR);
 }
-#endif
 #endif
 
 #ifdef TIM4

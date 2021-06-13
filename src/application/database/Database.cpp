@@ -82,17 +82,21 @@ bool Database::factoryReset(LESSDB::factoryResetType_t type)
     if (!clear())
         return false;
 
-    //init system block first
-    SYSTEM_BLOCK_ENTER(
-        if (!initData(type)) return false;);
+    if (_initializeData)
+    {
+        //init system block first
+        SYSTEM_BLOCK_ENTER(
+            if (!initData(type)) return false;);
 
-    if (!initData(type))
-        return false;
+        //now the rest
+        if (!initData(type))
+            return false;
 
-    writeDefaults();
+        writeDefaults();
 
-    if (!setDbUID(getDbUID()))
-        return false;
+        if (!setDbUID(getDbUID()))
+            return false;
+    }
 
     if (_handlers != nullptr)
         _handlers->factoryResetDone();

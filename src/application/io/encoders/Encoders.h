@@ -25,24 +25,74 @@
 
 #pragma once
 
-#include "Config.h"
+#include "database/Database.h"
+#include "midi/src/MIDI.h"
 
-/// Encoder handling.
-/// \defgroup interfaceEncoders Encoders
-/// \ingroup interfaceDigitalIn
-/// @{
-
-class Encoders
+namespace IO
 {
-    public:
-    Encoders();
-    static void init();
-    static void update(bool process = true);
-    static void setMIDIchannelPresetEncMode(bool state);
-    static bool getMIDIchannelPresetEncMode();
-};
+    class Encoders
+    {
+        public:
+        enum class position_t : uint8_t
+        {
+            stopped,
+            ccw,
+            cw,
+        };
 
-/// External definition of Encoders class instance.
-extern Encoders encoders;
+        enum class acceleration_t : uint8_t
+        {
+            disabled,
+            slow,
+            medium,
+            fast,
+            AMOUNT
+        };
 
-/// @}
+        class HWA
+        {
+            public:
+            //should return true if the value has been refreshed, false otherwise
+            virtual bool state(size_t index, uint8_t& numberOfReadings, uint32_t& states) = 0;
+        };
+
+        class Filter
+        {
+            public:
+            virtual bool isFiltered(size_t                    index,
+                                    IO::Encoders::position_t  position,
+                                    IO::Encoders::position_t& filteredPosition,
+                                    uint32_t                  sampleTakenTime) = 0;
+
+            virtual void     reset(size_t index)            = 0;
+            virtual uint32_t lastMovementTime(size_t index) = 0;
+        };
+
+        Encoders(HWA&      hwa,
+                 Filter&   filter,
+                 uint32_t  timeDiffTimeout,
+                 Database& database,
+                 MIDI&     midi)
+            : _hwa(hwa)
+            , _filter(filter)
+            , TIME_DIFF_READOUT(timeDiffTimeout)
+            , _database(database)
+            , _midi(midi)
+        {}
+
+        void init();
+        void update(bool process = true);
+        void setMIDIchannelPresetEncMode(bool state);
+        bool getMIDIchannelPresetEncMode();
+
+        private:
+        HWA&    _hwa;
+        Filter& _filter;
+
+        /// Time difference betweeen multiple encoder readouts in milliseconds.
+        const uint32_t TIME_DIFF_READOUT;
+
+        Database& _database;
+        MIDI&     _midi;
+    };
+}    // namespace IO

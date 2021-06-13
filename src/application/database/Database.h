@@ -40,8 +40,9 @@ class Database : public LESSDB
         virtual void initialized()                = 0;
     };
 
-    Database(LESSDB::StorageAccess& storageAccess)
+    Database(LESSDB::StorageAccess& storageAccess, bool initializeData)
         : LESSDB(storageAccess)
+        , _initializeData(initializeData)
     {}
 
     enum class block_t : uint8_t
@@ -225,6 +226,8 @@ class Database : public LESSDB
     void     writeScales();
 
     Handlers* _handlers = nullptr;
+
+    const bool _initializeData;
 
     /// Address at which user data starts (after system block).
     /// Used to set correct offset in database for user layout.

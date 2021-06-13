@@ -177,10 +177,11 @@ namespace Board
                     if (rxBuffer[channel].insert(data))
                     {
 #ifndef USB_LINK_MCU
-#ifdef FW_APP
-#ifdef LED_INDICATORS
+#ifndef FW_CDC
                         Board::detail::io::indicateMIDItraffic(MIDI::interface_t::din, Board::detail::midiTrafficDirection_t::incoming);
-#endif
+#else
+                        //in cdc mode incoming data from serial port is just forwarded to USB
+                        Board::detail::io::indicateMIDItraffic(MIDI::interface_t::din, Board::detail::midiTrafficDirection_t::outgoing);
 #endif
 #endif
                     }
@@ -191,12 +192,8 @@ namespace Board
                     {
                         Board::detail::UART::ll::enableDataEmptyInt(channel);
 
-#ifdef FW_APP
-#ifdef LED_INDICATORS
                         Board::detail::io::indicateMIDItraffic(MIDI::interface_t::din, Board::detail::midiTrafficDirection_t::outgoing);
                         Board::detail::io::indicateMIDItraffic(MIDI::interface_t::din, Board::detail::midiTrafficDirection_t::incoming);
-#endif
-#endif
                     }
                 }
             }
@@ -206,10 +203,11 @@ namespace Board
                 if (txBuffer[channel].remove(data))
                 {
 #ifndef USB_LINK_MCU
-#ifdef FW_APP
-#ifdef LED_INDICATORS
+#ifndef FW_CDC
                     Board::detail::io::indicateMIDItraffic(MIDI::interface_t::din, Board::detail::midiTrafficDirection_t::outgoing);
-#endif
+#else
+                    //in cdc mode, this is actually data from USB forwarded to uart device
+                    Board::detail::io::indicateMIDItraffic(MIDI::interface_t::din, Board::detail::midiTrafficDirection_t::incoming);
 #endif
 #endif
                     remainingBytes = txBuffer[channel].count();
@@ -243,14 +241,8 @@ namespace Board
 
         bool writeMIDI(MIDI::USBMIDIpacket_t& USBMIDIpacket)
         {
-            return USBMIDIOverSerial::write(UART_CHANNEL_USB_LINK, USBMIDIpacket, USBMIDIOverSerial::packetType_t::midi);
-
-#ifdef FW_APP
-#ifdef LED_INDICATORS
             Board::detail::io::indicateMIDItraffic(MIDI::interface_t::usb, Board::detail::midiTrafficDirection_t::outgoing);
-#endif
-#endif
-            return true;
+            return USBMIDIOverSerial::write(UART_CHANNEL_USB_LINK, USBMIDIpacket, USBMIDIOverSerial::packetType_t::midi);
         }
 
         bool readMIDI(MIDI::USBMIDIpacket_t& USBMIDIpacket)
@@ -261,12 +253,7 @@ namespace Board
             {
                 if (odPacketType == USBMIDIOverSerial::packetType_t::midi)
                 {
-#ifdef FW_APP
-#ifdef LED_INDICATORS
                     Board::detail::io::indicateMIDItraffic(MIDI::interface_t::usb, Board::detail::midiTrafficDirection_t::incoming);
-#endif
-#endif
-
                     return true;
                 }
                 else

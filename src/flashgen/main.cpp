@@ -297,7 +297,7 @@ namespace
         }
     } storageAccess;
 
-    Database database(storageAccess);
+    Database database(storageAccess, true);
 }    // namespace
 
 int main(int argc, char* argv[])

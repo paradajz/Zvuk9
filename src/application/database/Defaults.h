@@ -44,7 +44,7 @@
 #define DB_DEFAULT_MIDI_SETTING_AFTERTOUCH_TYPE               static_cast<uint8_t>(Pads::aftertouchType_t::channel)
 #define DB_DEFAULT_MIDI_SETTING_RUNNING_STATUS                0
 #define DB_DEFAULT_MIDI_SETTING_NOTE_OFF_TYPE                 static_cast<uint8_t>(MIDI::noteOffType_t::standardNoteOff)
-#define DB_DEFAULT_MIDI_SETTING_TRANSPORT_CC                  static_cast<uint8_t>(Buttons::transportControlMode_t::MMC)
+#define DB_DEFAULT_MIDI_SETTING_TRANSPORT_CC                  static_cast<uint8_t>(IO::Buttons::transportControlMode_t::MMC)
 #define DB_DEFAULT_MIDI_SETTING_PITCH_BEND_TYPE               static_cast<uint8_t>(Pads::pitchBendType_t::type1)
 #define DB_DEFAULT_VELOCITY_SETTING_SENSITIVITY               static_cast<uint8_t>(Pads::velocitySensitivity_t::soft)
 #define DB_DEFAULT_VELOCITY_SETTING_CURVE                     static_cast<uint8_t>(Pads::curve_t::linear_up)

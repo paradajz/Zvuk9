@@ -122,5 +122,3 @@ bool Encoders::getMIDIchannelPresetEncMode()
 {
     return midiChannelEncState;
 }
-
-Encoders encoders;

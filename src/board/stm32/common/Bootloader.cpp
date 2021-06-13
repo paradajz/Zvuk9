@@ -44,7 +44,6 @@ namespace Board
 
         void runBootloader()
         {
-            detail::io::indicateBTLDR();
             detail::setup::usb();
         }
 
